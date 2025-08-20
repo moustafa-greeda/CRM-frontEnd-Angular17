@@ -38,6 +38,9 @@
               "node_modules/ngx-toastr/toastr.css",
               "node_modules/ngx-spinner/animations/ball-scale-multiple.css"
             ],
+            "allowedCommonJsDependencies": [
+              "@canvasjs/charts"
+            ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
             ],

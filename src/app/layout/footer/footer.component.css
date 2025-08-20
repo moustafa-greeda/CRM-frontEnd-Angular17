@@ -1,0 +1,18 @@
+@media (max-width: 768px) {
+  .footer {
+    padding: var(--spacing-md);
+  }
+
+  .footer-content {
+    flex-direction: column;
+    gap: var(--spacing-sm);
+  }
+
+  .footer-links {
+    gap: var(--spacing-md);
+  }
+
+  .footer-divider {
+    display: none;
+  }
+}

@@ -1,0 +1,9 @@
+<div class="dashboard-layout">
+  <app-nav class="header"> </app-nav>
+  <app-sidebar class="sidebar"></app-sidebar>
+  <div class="backdrop" (click)="closeSidebar()"></div>
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+  <app-footer class="footer"></app-footer>
+</div>

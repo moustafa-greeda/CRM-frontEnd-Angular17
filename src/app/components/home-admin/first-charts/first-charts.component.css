@@ -1,0 +1,33 @@
+.parent-charts {
+  display: grid;
+  gap: 15px;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  padding: 20px;
+}
+
+.parent-charts div {
+  background: #2c2f33;
+  padding: 30px;
+  text-align: center;
+  border-radius: 10px;
+}
+
+/* responsive */
+@media (max-width: 1024px) {
+  .parent-charts {
+    grid-template-columns: 1fr 1fr 1fr;
+    color: #fff;
+  }
+}
+
+@media (max-width: 900px) {
+  .parent-charts {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 600px) {
+  .parent-charts {
+    grid-template-columns: 1fr;
+  }
+}

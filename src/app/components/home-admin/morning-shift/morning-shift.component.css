@@ -1,0 +1,110 @@
+/* Container for the entire section cards shifts*/
+.shift-section {
+  padding: 20px;
+  margin-bottom: 20px;
+  border-radius: 10px;
+}
+
+/* Title for each shift */
+.shift-title {
+  color: #fff;
+  font-size: 24px;
+  font-weight: bold;
+  text-align: center;
+}
+
+/* Grid layout for the cards */
+.cards-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+  gap: 15px;
+}
+
+/* Styling for each card */
+.card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background-color: #2c2f33;
+  border: 1px solid #e36012;
+  border-radius: 8px;
+  padding: 15px;
+  text-align: center;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+}
+
+/* Style for the absent card to have a red border */
+.card.absent {
+  border: 1px solid #d9534f;
+}
+
+/* Card content */
+.card-icon svg {
+  width: 30px;
+  height: 30px;
+  fill: #fff;
+}
+
+.card-value {
+  font-size: 24px;
+  font-weight: bold;
+  color: #fff;
+  margin-top: 10px;
+}
+
+.card-label {
+  font-size: 12px;
+  color: #bbb;
+  margin-top: 5px;
+}
+
+.cards-container .card:nth-child(1) {
+  border: 2px solid #008299;
+}
+.cards-container .card:nth-child(2) {
+  border: 2px solid #b44b00;
+}
+.cards-container .card:nth-child(3) {
+  border: 2px solid #168c2e;
+}
+.cards-container .card:nth-child(4) {
+  border: 2px solid #da7e37;
+}
+.cards-container .card:nth-child(5) {
+  border: 2px solid #4b741d;
+}
+.cards-container .card:nth-child(6) {
+  border: 2px solid #e20000;
+}
+.cards-container .card:nth-child(7) {
+  border: 2px solid #307386;
+}
+
+/* responsive */
+
+/* الموبايل الصغير جدا */
+@media (max-width: 350px) {
+  .cards-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* الموبايل */
+@media (max-width: 600px) {
+  .cards-container {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+/* التابلت */
+@media (max-width: 1024px) {
+  .cards-container {
+    grid-template-columns: 1fr 1fr 1fr;
+  }
+}

@@ -1,20 +1,101 @@
 import { NgModule } from '@angular/core';
-import { BrowserModule, provideClientHydration } from '@angular/platform-browser';
+import {
+  BrowserModule,
+  provideClientHydration,
+} from '@angular/platform-browser';
 
-import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
+import { LoginComponent } from './login/login.component';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
+import { ToastrModule } from 'ngx-toastr';
+import { LayoutComponent } from './layout/layout.component';
+import { NgxSpinnerModule } from 'ngx-spinner';
+import { SpinnerInterceptor } from './core/loader/spinner.interceptor';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { MatTableModule } from '@angular/material/table';
+import { MatPaginatorModule } from '@angular/material/paginator';
+import { MatSortModule } from '@angular/material/sort';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { DepartmentsComponent } from './components/departments/departments.component';
+import { AppRoutingModule } from './app-routing.module';
+import { FormDialogComponent } from './shared/form/form-dialog/form-dialog.component';
+import { ConfirmDeleteComponent } from './shared/form/confirm-delete/confirm-delete.component';
+import { TableComponent } from './shared/table/table.component';
+import { FooterComponent } from './layout/footer/footer.component';
+import { HeaderComponent } from './layout/header/nav.component';
+import { SidebarComponent } from './layout/sidebar/sidebar.component';
+import { DashboardAdminComponent } from './dashboard/dashboard-admin/dashboard-admin.component';
+import { DashboardCustomerComponent } from './dashboard/dashboard-customer/dashboard-customer.component';
+import { DashboardEmployeeComponent } from './dashboard/dashboard-employee/dashboard-employee.component';
+import { MorningShiftComponent } from './components/home-admin/morning-shift/morning-shift.component';
+import { NightShiftComponent } from './components/home-admin/night-shift/night-shift.component';
+import { FirstChartsComponent } from './components/home-admin/first-charts/first-charts.component';
+import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
+import { EmployeeComponent } from './components/employee/employee.component';
+import { HomeAdminComponent } from './components/home-admin/home-admin.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    LoginComponent,
+    LayoutComponent,
+    HeaderComponent,
+    SidebarComponent,
+    FooterComponent,
+    DepartmentsComponent,
+    FormDialogComponent,
+    ConfirmDeleteComponent,
+    TableComponent,
+    DashboardAdminComponent,
+    DashboardCustomerComponent,
+    DashboardEmployeeComponent,
+    MorningShiftComponent,
+    NightShiftComponent,
+    FirstChartsComponent,
+    EmployeeComponent,
+    HomeAdminComponent,
   ],
   imports: [
     BrowserModule,
-    AppRoutingModule
+    AppRoutingModule,
+    FormsModule,
+    ReactiveFormsModule,
+    HttpClientModule,
+    BrowserAnimationsModule,
+    ToastrModule.forRoot({
+      timeOut: 3000,
+      preventDuplicates: true,
+    }),
+    NgxSpinnerModule.forRoot({ type: 'ball-scale-multiple' }),
+    MatTableModule,
+    MatPaginatorModule,
+    MatSortModule,
+    MatProgressSpinnerModule,
+    MatDialogModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDatepickerModule,
+    CanvasJSAngularChartsModule,
   ],
   providers: [
-    provideClientHydration()
+    provideClientHydration(),
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: SpinnerInterceptor,
+      multi: true,
+    },
+    provideAnimationsAsync(),
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
 })
-export class AppModule { }
+export class AppModule {}

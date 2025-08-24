@@ -3,6 +3,7 @@ import { Injectable } from '@angular/core';
 import { BehaviorSubject, Observable, tap } from 'rxjs';
 import { environment } from '../../../environments/environment';
 import { IDepartments } from '../../core/Models/departments/idepartments.model';
+import { catchError, map, of } from 'rxjs';
 
 interface PagedResponse<T> {
   data: { items: T[]; totalCount: number };
@@ -68,16 +69,32 @@ export class DepartmentsService {
     if (params.Id != null) httpParams = httpParams.set('Id', String(params.Id));
 
     // Make HTTP GET request and update BehaviorSubjects
-    return this.http
-      .get<PagedResponse<IDepartments>>(`${this.BASE_API_URL}/Department`, {
-        params: httpParams,
-      })
-      .pipe(
-        tap((res) => {
-          this.departmentsSubject.next(res.data.items);
-          this.totalCountSubject.next(res.data.totalCount);
+    return (
+      this.http
+        .get<PagedResponse<IDepartments>>(`${this.BASE_API_URL}/Department`, {
+          params: httpParams,
         })
-      );
+        // .pipe(
+        //   tap((res) => {
+        //     this.departmentsSubject.next(res.data.items);
+        //     this.totalCountSubject.next(res.data.totalCount);
+        //   })
+        // );
+        .pipe(
+          // حوّل أي body غير متوقّع لقيمة آمنة
+          map((res) => {
+            const items = res?.data?.items ?? [];
+            const total = res?.data?.totalCount ?? 0;
+            return { items, total };
+          }),
+          // برضه لو حصل خطأ HTTP رجّع فاضي بدل ما يكسر الصفحة
+          catchError(() => of({ items: [], total: 0 })),
+          tap(({ items, total }) => {
+            this.departmentsSubject.next(items);
+            this.totalCountSubject.next(total);
+          })
+        )
+    );
   }
 
   /**

@@ -24,21 +24,29 @@
       <!-- input password  -->
       <div class="form-login">
         <label for="password">كلمة المرور</label>
-        <input
-          id="password"
-          type="password"
-          name="password"
-          [(ngModel)]="password"
-          placeholder="ادخل كلمة المرور"
-          required
-        />
+
+        <div class="password-wrapper">
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            name="password"
+            [(ngModel)]="password"
+            placeholder="ادخل كلمة المرور"
+            required
+          />
+          <i
+            class="bi bi-eye-fill toggle-password"
+            (click)="togglePassword()"
+          ></i>
+        </div>
+
         <small class="error" *ngIf="fieldErrors['password']">
           {{ fieldErrors["password"] }}
         </small>
       </div>
 
       <div class="check-group">
-        <p>نسيت كلمة السر</p>
+        <a routerLink="/forget-password">نسيت كلمة السر</a>
         <input type="checkbox" />
       </div>
       <button type="submit">متابعه</button>

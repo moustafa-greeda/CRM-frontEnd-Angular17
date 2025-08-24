@@ -7,6 +7,7 @@ import { IDepartments } from '../../core/Models/departments/idepartments.model';
 import { ITableColumn } from '../../core/Models/table/itable-column';
 import { FormDialogComponent } from '../../shared/form/form-dialog/form-dialog.component';
 import { ConfirmDeleteComponent } from '../../shared/form/confirm-delete/confirm-delete.component';
+import { NotifyDialogService } from '../../shared/notify-dialog/notify-dialog.service';
 
 @Component({
   selector: 'app-departments',
@@ -26,17 +27,20 @@ export class DepartmentsComponent {
   sortField = '';
   sortDir: 'asc' | 'desc' | '' = '';
 
+  searchKeyword = '';
+
   // Table column definitions
   columns: ITableColumn<IDepartments>[] = [
-    { key: 'name', header: 'Name', sortable: true },
-    { key: 'description', header: 'Description', sortable: false },
-    { key: 'actions', header: 'Actions' },
+    { key: 'name', header: 'القسم', sortable: true },
+    { key: 'description', header: 'الوصف', sortable: false },
+    { key: 'actions', header: 'العمليات' },
   ];
 
   constructor(
     private departmentsService: DepartmentsService,
     private toastr: ToastrService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
+    private notify: NotifyDialogService
   ) {}
 
   ngOnInit(): void {
@@ -53,6 +57,7 @@ export class DepartmentsComponent {
       pageSize: this.pageSize,
       SortField: this.sortField || undefined,
       SortDirection: this.sortDir || undefined,
+      SearchKeyword: this.searchKeyword || undefined,
     });
   }
 
@@ -75,6 +80,13 @@ export class DepartmentsComponent {
     this.fetch();
   }
 
+  // <app-table (search)="onSearch($event)">
+  onSearch(term: string) {
+    this.searchKeyword = term;
+    this.pageIndex = 0;
+    this.fetch();
+  }
+
   /**
    * Opens the Add/Edit department form dialog.
    * param dept - Department data if editing, undefined if adding.
@@ -86,10 +98,10 @@ export class DepartmentsComponent {
       data: {
         title: isEdit ? 'Edit Department' : 'Add Department',
         fields: [
-          { name: 'name', label: 'Name', type: 'text', required: true },
+          { name: 'name', label: 'القسم', type: 'text', required: true },
           {
             name: 'description',
-            label: 'Description',
+            label: 'الوصف',
             type: 'textarea',
             required: true,
           },
@@ -108,7 +120,11 @@ export class DepartmentsComponent {
           : this.departmentsService.add(result);
 
       req$.subscribe(() => {
-        this.toastr.success(isEdit ? 'Department updated' : 'Department added');
+        //Show success dialog with dynamic title
+        this.notify.success({
+          title: isEdit ? 'تعديل ناجح' : 'نجاح',
+          description: isEdit ? 'تم تعديل القسم بنجاح' : 'تم اضافة القسم بنجاح',
+        });
         this.fetch();
       });
     });
@@ -139,7 +155,10 @@ export class DepartmentsComponent {
     dialogRef.afterClosed().subscribe((ok) => {
       if (!ok) return;
       this.departmentsService.delete(dept.id!).subscribe(() => {
-        this.toastr.error('Department deleted');
+        // this.toastr.error('Department deleted');
+        this.notify.error({
+          title: 'نجاح',
+        });
         this.fetch();
       });
     });

@@ -1,0 +1,86 @@
+/* employee-dialog.component.scss */
+
+/* Dialog container */
+.mat-dialog-container {
+  background: rgba(0, 0, 0, 0.85);
+  border: 1px solid #ff7b00; /* orange border */
+  border-radius: 8px;
+  padding: 24px;
+  color: #fff;
+  backdrop-filter: blur(8px);
+}
+
+/* Title */
+.mat-dialog-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #ff7b00;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+/* Form grid */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 16px;
+}
+
+.full {
+  grid-column: 1 / -1;
+}
+
+/* Form field styles */
+::ng-deep .mat-form-field-appearance-fill .mat-form-field-flex {
+  background-color: transparent !important;
+  border: 1px solid #ff7b00;
+  border-radius: 6px;
+  color: #fff;
+}
+
+::ng-deep .mat-form-field-label {
+  color: #aaa !important;
+}
+
+::ng-deep .mat-input-element {
+  color: #fff !important;
+}
+
+::ng-deep .mat-select-value {
+  color: #fff !important;
+}
+
+::ng-deep .mat-datepicker-toggle-default-icon {
+  color: #ff7b00;
+}
+
+/* File input */
+input[type="file"] {
+  border: 1px solid #ff7b00;
+  padding: 6px;
+  border-radius: 6px;
+  background: transparent;
+  color: #fff;
+  width: 100%;
+}
+
+/* Divider */
+.mat-divider {
+  border-top-color: #333;
+  margin: 20px 0;
+}
+
+/* Buttons */
+.mat-dialog-actions {
+  margin-top: 20px;
+}
+
+button[mat-button] {
+  color: #ccc;
+}
+
+button[mat-raised-button] {
+  background-color: #ff7b00;
+  color: #fff;
+  font-weight: 600;
+}

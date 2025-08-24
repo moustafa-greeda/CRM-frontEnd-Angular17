@@ -1,0 +1,414 @@
+/* ===== Palette ===== */
+:root {
+  --inner: rgba(255, 255, 255, 0.06);
+  --border: rgba(183, 183, 183, 1);
+  --border-soft: rgba(135, 135, 135, 0.7);
+  --line: rgba(255, 255, 255, 0.15);
+  --text: #fff;
+  --muted: #c9c9c9;
+  --accent: #ff5f00; /* orange from Figma underlines/buttons */
+}
+
+/* ===== Dialog header ===== */
+.dlg-title {
+  margin: 0 0 12px;
+  text-align: center;
+  color: #dedede;
+  font-weight: 700;
+  font-size: 18px;
+}
+
+/* ===== Outer card ===== */
+.erb-form {
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  color: var(--text);
+}
+
+/* ===== Columns + vertical divider ===== */
+.two-cols {
+  display: flex;
+  gap: 57px; /* Figma: gap 57px */
+  align-items: flex-start;
+}
+
+.col {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 12px 12px 16px;
+  border: 1px solid var(--border-soft);
+  border-radius: 12px;
+  background: var(--inner);
+}
+
+.v-divider {
+  width: 1px;
+  background: var(--line);
+  align-self: stretch; /* make the divider match tallest column */
+}
+
+/* ===== Section titles with underline ===== */
+.sec-title {
+  color: #e6e6e6;
+  font-weight: 700;
+  font-size: 14px;
+  margin-block: 4px 14px;
+  position: relative;
+}
+.sec-title::after {
+  content: "";
+  inline-size: 130px; /* underline length per Figma */
+  position: absolute;
+  inset-block-end: -8px;
+  inset-inline-end: 0;
+  border-block-end: 1px solid var(--accent);
+}
+
+/* ===== Fields ===== */
+.field {
+  display: flex;
+  flex-direction: column;
+}
+.field label {
+  font-size: 13px;
+  color: #fff;
+  margin-block-end: 6px;
+}
+
+/* Inputs/selects */
+.field input[type="text"],
+.field input[type="email"],
+.field input[type="tel"],
+.field input[type="date"],
+.field select {
+  appearance: none; /* allow custom look */
+  background: rgba(0, 0, 0, 0.35);
+  color: #fff !important;
+  border: 0.5px solid #fff !important; /* thin white border like Figma */
+  border-radius: 10px;
+  padding-block: 12px;
+  padding-inline: 14px;
+  outline: none;
+  transition: box-shadow 0.15s ease, border-color 0.15s ease,
+    background-color 0.15s ease;
+}
+.field input::placeholder {
+  color: #fff;
+}
+
+.field input:focus,
+.field select:focus {
+  border-color: #e0e0e0;
+  box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.06) inset,
+    0 0 0 1px rgba(160, 160, 160, 0.35);
+}
+
+/* Radios for gender */
+.inline {
+  display: flex;
+  gap: 16px;
+  align-items: center;
+}
+.radio {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 14px;
+  color: #fff;
+}
+.radio input[type="radio"] {
+  accent-color: var(--accent);
+}
+
+/* Select arrow (keeps native semantics) */
+.field select {
+  background-image: linear-gradient(45deg, transparent 50%, #cfcfcf 50%),
+    linear-gradient(135deg, #cfcfcf 50%, transparent 50%);
+  background-position: calc(100% - 18px) center, calc(100% - 12px) center;
+  background-size: 6px 6px, 6px 6px;
+  background-repeat: no-repeat;
+  padding-inline-end: 34px; /* space for arrow */
+}
+
+/* Date picker indicator tint */
+.field input[type="date"]::-webkit-calendar-picker-indicator {
+  filter: invert(0.9) saturate(1.2);
+  opacity: 0.9;
+  cursor: pointer;
+}
+
+/* parent-file  */
+.parent-file {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+/* Upload row (button + hidden input) */
+.upload-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.upload-row input[type="file"] {
+  display: none; /* triggered by the orange button */
+}
+.file-hint {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Buttons */
+.actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-block-start: 16px;
+}
+.btn {
+  padding: 10px 18px;
+  border-radius: 10px;
+  font-weight: 700;
+  cursor: pointer;
+  border: 1px solid transparent;
+}
+.btn.primary {
+  background: #d1d1d1;
+  color: #111;
+  border-color: #e1e1e1;
+}
+.btn.primary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.btn.ghost {
+  background: transparent;
+  color: #c9c9c9;
+  border-color: rgba(255, 255, 255, 0.15);
+}
+.btn.ghost:hover {
+  color: #fff;
+}
+
+.btn.orange {
+  background: var(--accent);
+  border: 1px solid var(--accent);
+  color: #111;
+  padding: 8px 14px;
+  border-radius: 8px;
+}
+
+/* Responsive */
+@media (max-width: 880px) {
+  .two-cols {
+    flex-direction: column;
+    gap: 20px;
+  }
+  .v-divider {
+    display: none;
+  }
+}
+
+/* a11y helper */
+.title-file span {
+  color: #fff;
+  padding: 5px;
+}
+
+.visually-hidden {
+  position: absolute !important;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  border: 0;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+}
+
+/* Upload row container */
+.upload-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+/* Hide native file input */
+.upload-row input[type="file"] {
+  display: none;
+}
+
+/* Orange upload button */
+.btn.orange {
+  background: #ff5f00; /* Figma orange */
+  border: 1px solid #ff5f00;
+  color: #fff;
+  font-weight: 600;
+  border-radius: 8px;
+  padding: 10px 18px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+  transition: background 0.2s ease, transform 0.1s ease;
+}
+.btn.orange:hover {
+  background: #e65100;
+}
+.btn.orange:active {
+  transform: scale(0.97);
+}
+
+/* File name / hint */
+.file-name {
+  color: #c9c9c9;
+  font-size: 14px;
+}
+
+/* ===================== Animations & Motion ===================== */
+
+/* Keyframes */
+@keyframes cardIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes underlineSlide {
+  from {
+    inline-size: 0;
+    opacity: 0.6;
+  }
+  to {
+    inline-size: 130px;
+    opacity: 1;
+  }
+}
+
+@keyframes inputGlow {
+  0% {
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+  }
+  100% {
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.06) inset,
+      0 0 0 1px rgba(160, 160, 160, 0.35);
+  }
+}
+
+@keyframes docLift {
+  from {
+    transform: translateY(0);
+    box-shadow: 0 0 0 rgba(0, 0, 0, 0);
+  }
+  to {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(0, 0, 0, 0.25);
+  }
+}
+
+/* Divider pulse is very subtle, only on hover of the container */
+@keyframes dividerPulse {
+  0% {
+    background: var(--line);
+  }
+  50% {
+    background: rgba(255, 95, 0, 0.28);
+  }
+  100% {
+    background: var(--line);
+  }
+}
+
+/* Button shine (runs once on hover) */
+@keyframes shine {
+  from {
+    background-position: 150% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+
+/* ===================== Apply animations ===================== */
+
+/* 1) Card entrance */
+.erb-form.animated {
+  animation: cardIn 0.35s ease-out both;
+}
+
+/* 2) Section underline slides in */
+.sec-title::after {
+  /* existing underline color kept; only the animation added */
+  animation: underlineSlide 0.45s ease-out both;
+}
+
+/* 3) Inputs glow on focus using keyframe (for smoother feel) */
+.field input[type="text"],
+.field input[type="email"],
+.field input[type="tel"],
+.field input[type="date"],
+.field select {
+  transition: transform 0.12s ease, border-color 0.15s ease; /* keep a quick transform */
+}
+.field input:focus,
+.field select:focus {
+  animation: inputGlow 0.18s ease-out both;
+  transform: translateY(-1px);
+}
+
+/* 4) Document rows lift on hover/focus-within */
+.doc-row {
+  transition: transform 0.18s ease, box-shadow 0.18s ease,
+    border-color 0.2s ease;
+}
+.doc-row:hover,
+.doc-row:focus-within {
+  animation: docLift 0.18s ease-out forwards;
+  border-color: var(--border);
+}
+
+/* 5) Divider gentle pulse when either column is hovered */
+.two-cols:hover .v-divider {
+  animation: dividerPulse 1.6s ease-in-out;
+}
+
+/* 6) Orange upload buttons: shine + tiny press effect */
+.btn.orange.shiny {
+  position: relative;
+  overflow: hidden;
+  background-image: linear-gradient(
+      120deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.15) 40%,
+      rgba(255, 255, 255, 0) 60%
+    ),
+    linear-gradient(0deg, var(--accent), var(--accent));
+  background-size: 220% 100%, 100% 100%;
+  background-position: 150% 0, 0 0;
+  transition: transform 0.08s ease, filter 0.2s ease,
+    background-position 0.6s ease;
+}
+.btn.orange.shiny:hover {
+  animation: shine 0.9s ease-out 1;
+  filter: brightness(1.04);
+}
+.btn.orange.shiny:active {
+  transform: translateY(1px) scale(0.99);
+}
+
+/* 7) Respect user motion preferences */
+@media (prefers-reduced-motion: reduce) {
+  * {
+    animation: none !important;
+    transition: none !important;
+  }
+}

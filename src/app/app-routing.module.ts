@@ -1,6 +1,6 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './Auth/login/login.component';
 import { LayoutComponent } from './layout/layout.component';
 import { TasksComponent } from './dashboard/tasks/tasks.component';
 import { DepartmentsComponent } from './components/departments/departments.component';
@@ -9,10 +9,16 @@ import { DashboardCustomerComponent } from './dashboard/dashboard-customer/dashb
 import { DashboardEmployeeComponent } from './dashboard/dashboard-employee/dashboard-employee.component';
 import { EmployeeComponent } from './components/employee/employee.component';
 import { HomeAdminComponent } from './components/home-admin/home-admin.component';
+import { ResetPasswordComponent } from './Auth/reset-password/reset-password.component';
+import { ForgetPasswordComponent } from './Auth/forget-password/forget-password.component';
+import { OtpComponent } from './Auth/otp/otp.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
   { path: 'login', component: LoginComponent },
+  { path: 'forget-password', component: ForgetPasswordComponent },
+  { path: 'otp-password', component: OtpComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
 
   {
     path: 'dashboard',

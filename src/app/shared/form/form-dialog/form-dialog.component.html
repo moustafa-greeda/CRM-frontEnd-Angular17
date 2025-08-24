@@ -1,37 +1,128 @@
 <h1 mat-dialog-title>{{ data.title }}</h1>
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <ng-container *ngFor="let field of data.fields">
-    <mat-form-field appearance="fill" class="full-width">
-      <mat-label>{{ field.label }}</mat-label>
+  <div class="form-fields">
+    <ng-container *ngFor="let field of data.fields">
+      <!-- text / email / number / textarea / select / date -->
+      <div
+        *ngIf="
+          field.type !== 'checkbox' &&
+          field.type !== 'radio' &&
+          field.type !== 'image'
+        "
+        class="field-wrapper"
+      >
+        <!-- label ABOVE -->
+        <label class="field-label">{{ field.label }}</label>
 
-      <input
-        *ngIf="field.type !== 'textarea'"
-        matInput
-        [type]="field.type"
-        [formControlName]="field.name"
-        [required]="!!field.required"
-      />
-      <textarea
-        *ngIf="field.type === 'textarea'"
-        matInput
-        [formControlName]="field.name"
-        [required]="!!field.required"
-      ></textarea>
-    </mat-form-field>
-    <!-- Error Message -->
-    <mat-error
-      *ngIf="
-        form.get(field.name)?.hasError('required') &&
-        (form.get(field.name)?.touched || form.get(field.name)?.dirty)
-      "
-    >
-      {{ field.label }} is required
-    </mat-error>
-  </ng-container>
+        <mat-form-field appearance="fill" class="full-width">
+          <!-- text / email / number -->
+          <input
+            *ngIf="
+              field.type === 'text' ||
+              field.type === 'email' ||
+              field.type === 'number'
+            "
+            matInput
+            [type]="field.type"
+            [formControlName]="field.name"
+            [required]="!!field.required"
+          />
+
+          <!-- textarea -->
+          <textarea
+            *ngIf="field.type === 'textarea'"
+            matInput
+            [formControlName]="field.name"
+            [required]="!!field.required"
+          ></textarea>
+
+          <!-- select -->
+          <mat-select
+            *ngIf="field.type === 'select'"
+            [formControlName]="field.name"
+            [required]="!!field.required"
+          >
+            <mat-option *ngFor="let opt of field.options" [value]="opt.value">
+              {{ opt.label }}
+            </mat-option>
+          </mat-select>
+
+          <!-- date -->
+          <ng-container *ngIf="field.type === 'date'">
+            <input
+              matInput
+              [matDatepicker]="picker"
+              [formControlName]="field.name"
+              [required]="!!field.required"
+            />
+            <mat-datepicker-toggle
+              matSuffix
+              [for]="picker"
+            ></mat-datepicker-toggle>
+            <mat-datepicker #picker></mat-datepicker>
+          </ng-container>
+
+          <!-- errors -->
+          <mat-error
+            *ngIf="
+              form.get(field.name)?.invalid &&
+              (form.get(field.name)?.touched || form.get(field.name)?.dirty)
+            "
+          >
+            {{ field.label }} is required
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <!-- checkbox -->
+      <div *ngIf="field.type === 'checkbox'" class="control-wrapper">
+        <mat-checkbox [formControlName]="field.name">
+          {{ field.label }}
+        </mat-checkbox>
+      </div>
+
+      <!-- radio -->
+      <div *ngIf="field.type === 'radio'" class="control-wrapper">
+        <label class="field-label">{{ field.label }}</label>
+        <mat-radio-group [formControlName]="field.name" class="radio-group">
+          <mat-radio-button
+            *ngFor="let opt of field.options"
+            [value]="opt.value"
+            class="radio-option"
+          >
+            {{ opt.label }}
+          </mat-radio-button>
+        </mat-radio-group>
+      </div>
+
+      <!-- image -->
+      <div *ngIf="field.type === 'image'" class="control-wrapper">
+        <label class="field-label">{{ field.label }}</label>
+        <input
+          type="file"
+          accept="image/*"
+          (change)="onImageChange($event, field.name)"
+        />
+        <img
+          *ngIf="previews[field.name]"
+          class="image-preview"
+          [src]="previews[field.name]"
+          alt="preview"
+        />
+      </div>
+    </ng-container>
+  </div>
 
   <div mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="onCancel()">Cancle</button>
-    <button mat-flat-button color="primary" type="submit">Submit</button>
+    <button mat-button type="button" (click)="onCancel()">Cancel</button>
+    <button
+      mat-flat-button
+      color="primary"
+      type="submit"
+      [disabled]="form.invalid"
+    >
+      Submit
+    </button>
   </div>
 </form>

@@ -1,46 +1,86 @@
-import { Component, inject, Inject } from '@angular/core';
+import { Component, Inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
-import { FormFieldConfig } from '../../../core/Models/form/user';
 
 @Component({
   selector: 'app-form-dialog',
   templateUrl: './form-dialog.component.html',
-  styleUrl: './form-dialog.component.css',
+  styleUrls: ['./form-dialog.component.css'],
 })
-export class FormDialogComponent {
+export class FormDialogComponent implements OnInit {
   form!: FormGroup;
+  previews: Record<string, string> = {};
+
   constructor(
-    public dialogRef: MatDialogRef<FormDialogComponent>,
     private fb: FormBuilder,
+    private ref: MatDialogRef<FormDialogComponent>,
     @Inject(MAT_DIALOG_DATA)
     public data: {
       title: string;
-      fields: FormFieldConfig[];
-      initialData?: any;
+      fields: Array<
+        | {
+            name: string;
+            label: string;
+            type: 'text' | 'email' | 'number' | 'textarea';
+            required?: boolean;
+          }
+        | {
+            name: string;
+            label: string;
+            type: 'select';
+            required?: boolean;
+            options: { value: any; label: string }[];
+          }
+        | { name: string; label: string; type: 'date'; required?: boolean }
+        | { name: string; label: string; type: 'checkbox'; required?: boolean }
+        | {
+            name: string;
+            label: string;
+            type: 'radio';
+            required?: boolean;
+            options: { value: any; label: string }[];
+          }
+        | { name: string; label: string; type: 'image'; required?: boolean }
+      >;
+      initialData?: Record<string, any>;
     }
   ) {}
 
   ngOnInit(): void {
-    const formGroup: { [key: string]: any } = {};
-    this.data.fields.forEach((field) => {
-      formGroup[field.name] = [
-        this.data.initialData?.[field.name] || '',
-        field.required ? Validators.required : [],
-      ];
-    });
-    this.form = this.fb.group(formGroup);
-  }
-
-  onCancel(): void {
-    this.dialogRef.close();
-  }
-
-  onSubmit(): void {
-    if (this.form.invalid) {
-      this.form.markAllAsTouched();
-      return;
+    const controls: Record<string, any> = {};
+    for (const f of this.data.fields) {
+      const validators = f.required ? [Validators.required] : [];
+      const initial =
+        f.type === 'checkbox'
+          ? !!this.data.initialData?.[f.name]
+          : f.type === 'image'
+          ? null
+          : this.data.initialData?.[f.name] ?? '';
+      controls[f.name] = [initial, validators];
     }
-    this.dialogRef.close(this.form.value);
+    this.form = this.fb.group(controls);
+  }
+
+  onImageChange(ev: Event, controlName: string) {
+    const input = ev.target as HTMLInputElement;
+    const file = input.files && input.files[0] ? input.files[0] : null;
+    this.form.get(controlName)?.setValue(file);
+    this.form.get(controlName)?.markAsDirty();
+
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = () =>
+        (this.previews[controlName] = String(reader.result));
+      reader.readAsDataURL(file);
+    } else {
+      delete this.previews[controlName];
+    }
+  }
+
+  onCancel() {
+    this.ref.close();
+  }
+  onSubmit() {
+    if (this.form.valid) this.ref.close(this.form.value);
   }
 }

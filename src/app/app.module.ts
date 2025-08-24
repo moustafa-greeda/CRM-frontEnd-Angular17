@@ -1,11 +1,11 @@
-import { NgModule } from '@angular/core';
+import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 import {
   BrowserModule,
   provideClientHydration,
 } from '@angular/platform-browser';
 
 import { AppComponent } from './app.component';
-import { LoginComponent } from './login/login.component';
+import { LoginComponent } from './Auth/login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
@@ -22,7 +22,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
+import { MatIcon, MatIconModule } from '@angular/material/icon';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { DepartmentsComponent } from './components/departments/departments.component';
 import { AppRoutingModule } from './app-routing.module';
@@ -41,6 +41,15 @@ import { FirstChartsComponent } from './components/home-admin/first-charts/first
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { EmployeeComponent } from './components/employee/employee.component';
 import { HomeAdminComponent } from './components/home-admin/home-admin.component';
+import { NotifyDialogHostComponent } from './shared/notify-dialog-host/notify-dialog-host.component';
+import { BidiModule } from '@angular/cdk/bidi';
+import { MatSelectModule } from '@angular/material/select';
+import { MatNativeDateModule } from '@angular/material/core';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { EmployeeFormComponent } from './components/employee/employee-form/employee-form.component';
+import { ForgetPasswordComponent } from './Auth/forget-password/forget-password.component';
+import { ResetPasswordComponent } from './Auth/reset-password/reset-password.component';
+import { OtpComponent } from './Auth/otp/otp.component';
 
 @NgModule({
   declarations: [
@@ -62,6 +71,11 @@ import { HomeAdminComponent } from './components/home-admin/home-admin.component
     FirstChartsComponent,
     EmployeeComponent,
     HomeAdminComponent,
+    NotifyDialogHostComponent,
+    EmployeeFormComponent,
+    ForgetPasswordComponent,
+    ResetPasswordComponent,
+    OtpComponent,
   ],
   imports: [
     BrowserModule,
@@ -85,6 +99,12 @@ import { HomeAdminComponent } from './components/home-admin/home-admin.component
     MatButtonModule,
     MatIconModule,
     MatDatepickerModule,
+    BidiModule,
+    MatSelectModule,
+    MatDatepickerModule,
+    MatNativeDateModule,
+    MatCheckboxModule,
+    MatIcon,
     CanvasJSAngularChartsModule,
   ],
   providers: [
@@ -97,5 +117,6 @@ import { HomeAdminComponent } from './components/home-admin/home-admin.component
     provideAnimationsAsync(),
   ],
   bootstrap: [AppComponent],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class AppModule {}

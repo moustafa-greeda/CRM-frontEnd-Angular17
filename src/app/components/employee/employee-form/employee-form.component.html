@@ -1,0 +1,209 @@
+<h2 class="dlg-title">إضافة موظف</h2>
+
+<form
+  class="erb-form animated"
+  dir="rtl"
+  [formGroup]="form"
+  (ngSubmit)="save()"
+>
+  <div class="two-cols">
+    <!-- Right column: المعلومات الشخصية -->
+    <section class="col">
+      <h3 class="sec-title">المعلومات الشخصية</h3>
+
+      <div class="field">
+        <label for="firstName">اسم الموظف</label>
+        <input
+          id="firstName"
+          type="text"
+          formControlName="firstName"
+          placeholder="ادخل اسم الموظف"
+        />
+      </div>
+
+      <div class="field">
+        <label for="email">البريد الإلكتروني</label>
+        <input
+          id="email"
+          type="email"
+          formControlName="email"
+          placeholder="ادخل البريد الإلكتروني"
+        />
+      </div>
+
+      <div class="field">
+        <label for="phone">رقم الهاتف</label>
+        <input
+          id="phone"
+          type="text"
+          formControlName="phone"
+          placeholder="ادخل رقم الهاتف"
+        />
+      </div>
+
+      <div class="field">
+        <label>النوع</label>
+        <div class="inline">
+          <label class="radio">
+            <input type="radio" formControlName="gender" value="ذكر" />
+            <span>ذكر</span>
+          </label>
+          <label class="radio">
+            <input type="radio" formControlName="gender" value="أنثى" />
+            <span>أنثى</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="birthDate">تاريخ الميلاد</label>
+        <input id="birthDate" type="date" formControlName="birthDate" />
+      </div>
+
+      <div class="field span-2">
+        <label for="address">العنوان</label>
+        <input
+          id="address"
+          type="text"
+          formControlName="address"
+          placeholder="ادخل العنوان"
+        />
+      </div>
+    </section>
+
+    <!-- vertical divider -->
+    <div class="v-divider" aria-hidden="true"></div>
+
+    <!-- Left column: تفاصيل الشركة -->
+    <section class="col">
+      <h3 class="sec-title">تفاصيل الشركة</h3>
+
+      <div class="field">
+        <label for="title">المسمى الوظيفي</label>
+        <select id="title" formControlName="type">
+          <option value="front">front</option>
+          <option value="back">back</option>
+          <option value="full">full</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="department">القسم</label>
+        <select id="department" formControlName="department">
+          <option value="المبيعات">المبيعات</option>
+          <option value="المحاسبة">المحاسبة</option>
+          <option value="تقنية المعلومات">تقنية المعلومات</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="role">المنصب</label>
+        <select id="role" formControlName="role">
+          <option value="موظف">موظف</option>
+          <option value="قائد">قائد فريق</option>
+          <option value="مدير">مدير</option>
+        </select>
+      </div>
+
+      <div class="field">
+        <label for="hireDate">تاريخ الالتحاق بالشركة</label>
+        <input id="hireDate" type="date" formControlName="hireDate" />
+      </div>
+
+      <div class="field">
+        <label for="salary">الراتب</label>
+        <input
+          id="salary"
+          type="text"
+          formControlName="salary"
+          placeholder="ادخل الراتب"
+        />
+      </div>
+
+      <h3 class="sec-title">المستندات</h3>
+
+      <div class="field span-2 parent-file">
+        <div class="title-file">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="16"
+            viewBox="0 0 20 16"
+            fill="none"
+          >
+            <path
+              d="M0.833313 0.5H19.1666V15.5H0.833313V0.5ZM2.49998 2.16667V13.8333H17.5V2.16667H15.8333V7.58333L13.3333 5.70833L10.8333 7.58333V2.16667H2.49998ZM12.5 2.16667V4.25L13.3333 3.625L14.1666 4.25V2.16667H12.5ZM4.16665 7.16667H9.16665V8.83333H4.16665V7.16667ZM4.16665 10.5H15.8333V12.1667H4.16665V10.5Z"
+              fill="white"
+            />
+          </svg>
+          <span>الشهاده</span>
+        </div>
+        <div class="upload-row">
+          <button type="button" class="btn orange" (click)="fileInput.click()">
+            <i class="bi bi-upload"></i>
+            إرفاق الملف
+          </button>
+
+          <!-- hidden input -->
+          <input #fileInput type="file" id="idDoc" />
+
+          <span class="file-name"> </span>
+        </div>
+      </div>
+
+      <div class="field span-2 parent-file">
+        <div class="title-file">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+          >
+            <path
+              d="M7.79998 6.35008C8.35998 6.35008 8.80998 5.90008 8.80998 5.34008C8.80998 4.78008 8.35998 4.33008 7.79998 4.33008C7.23998 4.33008 6.78998 4.78008 6.78998 5.34008C6.78998 5.90008 7.23998 6.35008 7.79998 6.35008Z"
+              fill="white"
+            />
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M9.83 8.54994C9.83 7.46994 8.92 6.68994 7.8 6.68994C6.68 6.68994 5.77 7.46994 5.77 8.54994V9.05994C5.77 9.14994 5.81 9.23994 5.87 9.29994C5.93 9.35994 6.02 9.39994 6.11 9.39994H9.49C9.58 9.39994 9.67 9.35994 9.73 9.29994C9.79 9.23994 9.83 9.14994 9.83 9.05994V8.54994ZM5.75 11.4999C5.75 11.301 5.82902 11.1103 5.96967 10.9696C6.11032 10.829 6.30109 10.7499 6.5 10.7499H13.5C13.6989 10.7499 13.8897 10.829 14.0303 10.9696C14.171 11.1103 14.25 11.301 14.25 11.4999C14.25 11.6989 14.171 11.8896 14.0303 12.0303C13.8897 12.1709 13.6989 12.2499 13.5 12.2499H6.5C6.30109 12.2499 6.11032 12.1709 5.96967 12.0303C5.82902 11.8896 5.75 11.6989 5.75 11.4999ZM5.75 14.4999C5.75 14.301 5.82902 14.1103 5.96967 13.9696C6.11032 13.829 6.30109 13.7499 6.5 13.7499H13.5C13.6989 13.7499 13.8897 13.829 14.0303 13.9696C14.171 14.1103 14.25 14.301 14.25 14.4999C14.25 14.6989 14.171 14.8896 14.0303 15.0303C13.8897 15.1709 13.6989 15.2499 13.5 15.2499H6.5C6.30109 15.2499 6.11032 15.1709 5.96967 15.0303C5.82902 14.8896 5.75 14.6989 5.75 14.4999Z"
+              fill="white"
+            />
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M2.5 2.5C2.5 1.398 3.398 0.5 4.5 0.5H11.19C11.752 0.5 12.282 0.738 12.655 1.131L12.661 1.138L16.973 5.84C17.332 6.223 17.5 6.724 17.5 7.2V17.5C17.5 18.602 16.602 19.5 15.5 19.5H4.5C3.398 19.5 2.5 18.602 2.5 17.5V2.5ZM11.189 2.5H4.5V17.5H15.5V7.192L11.204 2.507L11.201 2.506L11.189 2.5Z"
+              fill="white"
+            />
+            <path
+              fill-rule="evenodd"
+              clip-rule="evenodd"
+              d="M11.19 0.5C11.4552 0.5 11.7096 0.605357 11.8971 0.792893C12.0846 0.98043 12.19 1.23478 12.19 1.5V6.2H16.5C16.6313 6.2 16.7614 6.22587 16.8827 6.27612C17.004 6.32638 17.1143 6.40003 17.2071 6.49289C17.3 6.58575 17.3736 6.69599 17.4239 6.81732C17.4741 6.93864 17.5 7.06868 17.5 7.2C17.5 7.33132 17.4741 7.46136 17.4239 7.58268C17.3736 7.70401 17.3 7.81425 17.2071 7.90711C17.1143 7.99997 17.004 8.07362 16.8827 8.12388C16.7614 8.17413 16.6313 8.2 16.5 8.2H11.19C10.9248 8.2 10.6704 8.09464 10.4829 7.90711C10.2954 7.71957 10.19 7.46522 10.19 7.2V1.5C10.19 1.23478 10.2954 0.98043 10.4829 0.792893C10.6704 0.605357 10.9248 0.5 11.19 0.5Z"
+              fill="white"
+            />
+          </svg>
+          <span>السيرة الذاتية</span>
+        </div>
+        <div class="upload-row">
+          <button type="button" class="btn orange" (click)="fileInput.click()">
+            <i class="bi bi-upload"></i>
+            إرفاق الملف
+          </button>
+
+          <!-- hidden input -->
+          <input #fileInput type="file" id="idDoc" />
+
+          <span class="file-name"> </span>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <div class="actions">
+    <button type="button" class="btn ghost" (click)="cancel()">إلغاء</button>
+    <button type="submit" class="btn primary" [disabled]="form.invalid">
+      حفظ
+    </button>
+  </div>
+</form>

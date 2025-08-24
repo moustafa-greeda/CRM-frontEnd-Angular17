@@ -36,11 +36,10 @@
               "@angular/material/prebuilt-themes/indigo-pink.css",
               "src/styles.css",
               "node_modules/ngx-toastr/toastr.css",
-              "node_modules/ngx-spinner/animations/ball-scale-multiple.css"
+              "node_modules/ngx-spinner/animations/ball-scale-multiple.css",
+              "node_modules/bootstrap-icons/font/bootstrap-icons.css"
             ],
-            "allowedCommonJsDependencies": [
-              "@canvasjs/charts"
-            ],
+            "allowedCommonJsDependencies": ["@canvasjs/charts"],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
             ],
@@ -54,14 +53,14 @@
             "production": {
               "budgets": [
                 {
-                   "type": "initial",
-                   "maximumWarning": "2mb",
-                   "maximumError": "5mb"
+                  "type": "initial",
+                  "maximumWarning": "2mb",
+                  "maximumError": "5mb"
                 },
                 {
-                   "type": "anyComponentStyle",
-                   "maximumWarning": "6kb",
-                   "maximumError": "10kb"
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "6kb",
+                  "maximumError": "10kb"
                 }
               ],
               "outputHashing": "all",

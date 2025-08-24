@@ -1,31 +1,33 @@
 import { Router } from '@angular/router';
 import { AuthService } from './auth.service';
 import { Component, Inject } from '@angular/core';
-import { ToastrService } from 'ngx-toastr';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID } from '@angular/core';
+import { NotifyDialogService } from '../../shared/notify-dialog/notify-dialog.service';
 
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
-  styleUrl: './login.component.css',
+  styleUrls: ['./login.component.css'],
 })
 export class LoginComponent {
   login: string = '';
   password: string = '';
   errorMessage: string = '';
   validationErrors: { [key: string]: string } = {};
+  fieldErrors: { [key: string]: string } = {};
+
+  showPassword = false;
 
   constructor(
     private service: AuthService,
     private router: Router,
-    private toastr: ToastrService,
     private spinner: NgxSpinnerService,
-    @Inject(PLATFORM_ID) private readonly platformId: Object
+    @Inject(PLATFORM_ID) private readonly platformId: Object,
+    private notify: NotifyDialogService
   ) {}
 
-  fieldErrors: { [key: string]: string } = {};
   loginUser() {
     this.errorMessage = '';
     this.fieldErrors = {};
@@ -35,9 +37,18 @@ export class LoginComponent {
       password: this.password,
     };
 
+    this.spinner.show();
+
     this.service.login(model).subscribe({
       next: (res) => {
-        this.toastr.success('login success');
+        // ✅ إظهار dialog نجاح
+        this.notify.success({
+          title: 'تم تسجيل الدخول',
+          description: 'أهلاً بك!',
+          imageUrl: 'assets/logo_elbatt.png',
+          soundUrl: 'assets/sound/duck.mp3',
+          autoCloseMs: 3000,
+        });
 
         if (isPlatformBrowser(this.platformId)) {
           localStorage.setItem('token', res.data.tokken);
@@ -70,6 +81,7 @@ export class LoginComponent {
       },
       error: (err) => {
         this.spinner.hide();
+
         if (
           err.status === 400 &&
           err.error?.validationErrors &&
@@ -89,8 +101,22 @@ export class LoginComponent {
         } else {
           this.errorMessage = 'حدث خطأ أثناء تسجيل الدخول.';
         }
+
+        // ✅ إظهار dialog خطأ
+        this.notify.error({
+          title: 'فشل تسجيل الدخول',
+          description: this.errorMessage,
+          imageUrl: 'assets/logo_elbatt.png',
+          soundUrl: 'assets/sound/Failure_Alert.mp3',
+        });
       },
     });
+  }
+
+  // =================================== togglePassword =================================
+
+  togglePassword() {
+    this.showPassword = !this.showPassword;
   }
 
   logout() {
@@ -98,7 +124,6 @@ export class LoginComponent {
       localStorage.removeItem('token');
       localStorage.removeItem('roles');
     }
-
     this.router.navigate(['/login']);
   }
 }

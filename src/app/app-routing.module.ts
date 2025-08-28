@@ -12,19 +12,21 @@ import { HomeAdminComponent } from './components/home-admin/home-admin.component
 import { ResetPasswordComponent } from './Auth/reset-password/reset-password.component';
 import { ForgetPasswordComponent } from './Auth/forget-password/forget-password.component';
 import { OtpComponent } from './Auth/otp/otp.component';
+import { LeadsComponent } from './components/leads/leads.component';
 
 const routes: Routes = [
-  { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
-  { path: 'forget-password', component: ForgetPasswordComponent },
-  { path: 'otp-password', component: OtpComponent },
-  { path: 'reset-password', component: ResetPasswordComponent },
+  // { path: '', redirectTo: 'login', pathMatch: 'full' },
+  // { path: 'login', component: LoginComponent },
+  // { path: 'forget-password', component: ForgetPasswordComponent },
+  // { path: 'otp-password', component: OtpComponent },
+  // { path: 'reset-password', component: ResetPasswordComponent },
+  { path: '', redirectTo: 'dashboard/admin', pathMatch: 'full' },
 
   {
     path: 'dashboard',
     component: LayoutComponent,
     children: [
-      { path: '', redirectTo: 'tasks', pathMatch: 'full' },
+      { path: '', redirectTo: 'home', pathMatch: 'full' },
 
       // Common routes
       { path: 'tasks', component: TasksComponent },
@@ -36,6 +38,8 @@ const routes: Routes = [
           { path: '', redirectTo: 'home', pathMatch: 'full' },
           { path: 'home', component: HomeAdminComponent },
           { path: 'departments', component: DepartmentsComponent },
+          { path: 'leads', component: LeadsComponent },
+
           { path: 'employee', component: EmployeeComponent },
         ],
       },

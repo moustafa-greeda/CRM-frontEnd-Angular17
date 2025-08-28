@@ -50,6 +50,7 @@ import { EmployeeFormComponent } from './components/employee/employee-form/emplo
 import { ForgetPasswordComponent } from './Auth/forget-password/forget-password.component';
 import { ResetPasswordComponent } from './Auth/reset-password/reset-password.component';
 import { OtpComponent } from './Auth/otp/otp.component';
+import { LeadsComponent } from './components/leads/leads.component';
 
 @NgModule({
   declarations: [
@@ -75,6 +76,7 @@ import { OtpComponent } from './Auth/otp/otp.component';
     EmployeeFormComponent,
     ForgetPasswordComponent,
     ResetPasswordComponent,
+    LeadsComponent,
     OtpComponent,
   ],
   imports: [

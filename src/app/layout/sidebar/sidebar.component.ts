@@ -20,17 +20,17 @@ export class SidebarComponent implements OnInit {
     }
   }
 
-  isAdmin(): boolean {
-    return this.roles.includes('Admin');
-  }
+  // isAdmin(): boolean {
+  //   return this.roles.includes('Admin');
+  // }
 
-  isUser(): boolean {
-    return this.roles.includes('User');
-  }
+  // isUser(): boolean {
+  //   return this.roles.includes('User');
+  // }
 
-  isCustomer(): boolean {
-    return this.roles.includes('Customer');
-  }
+  // isCustomer(): boolean {
+  //   return this.roles.includes('Customer');
+  // }
 
   toggleEmployee(): void {
     this.employeeOpen = !this.employeeOpen;

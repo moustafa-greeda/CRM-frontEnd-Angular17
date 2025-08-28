@@ -132,7 +132,7 @@ body {
   flex-direction: column;
   line-height: 1.6;
   font-size: 16px;
-  overflow-x: hidden;
+  /* overflow-x: hidden; */
 }
 
 /* ===== Typography, links, inputs*/
@@ -279,11 +279,9 @@ app-notify-dialog-host .nd-modal {
 
 /* ===================== EMPLOYEE dialog (dark + orange) ===================== */
 .form-dialog--employee .mat-mdc-dialog-surface {
-  /* background: rgba(15, 17, 26, 0.7) !important; */
-  /* background: rgba(255, 255, 255, 0.12) !important; */
-  background: rgba(30,30,30,.8) !important;
+  background: rgba(30,30,30,.5) !important;
   backdrop-filter: blur(8px);
-  border-radius: var(--radius-2xl);
+  border-radius: 24px !important;
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-xl);

@@ -1,0 +1,161 @@
+<div class="header-container">
+  <h2 class="header-color">العملاء</h2>
+  <div class="parent-icon">
+    <button mat-raised-button class="button-color">
+      <img src="assets/icon/lets-icons_export.svg" alt="" />
+    </button>
+    <button mat-raised-button class="button-color">
+      <img src="assets/icon/mdi_import.svg" alt="" />
+    </button>
+    <button mat-raised-button class="button-color">
+      اضافة عميل
+      <img src="assets/icon/material-symbols_add.svg" alt="" />
+    </button>
+  </div>
+</div>
+
+<div class="table-wrapper mat-elevation-z8 hover-elevate">
+  <div class="parent-filter">
+    <div class="parent-search">
+      <div class="search-box">
+        <input type="text" placeholder="بحث..." [formControl]="searchCtrl" />
+        <mat-icon class="search-icon">search</mat-icon>
+      </div>
+
+      <div class="filter-top">
+        <!-- Country (ClientLocation) -->
+        <div class="field select-wrapper">
+          <select [formControl]="countryCtrl">
+            <option value="">اختر الدولة</option>
+            <option
+              *ngFor="let c of countries$ | async"
+              [value]="c.clientLocation"
+            >
+              {{ c.clientLocation }} ({{ c.count }})
+            </option>
+          </select>
+        </div>
+
+        <!-- City (Region) -->
+        <div class="field select-wrapper">
+          <select [formControl]="cityCtrl">
+            <option value="">اختر المدينة</option>
+            <option
+              *ngFor="let city of cities$ | async"
+              [value]="city.clientCity"
+            >
+              {{ city.clientCity }} ({{ city.count }})
+            </option>
+          </select>
+        </div>
+
+        <!-- Source Company -->
+        <div class="field select-wrapper">
+          <select [formControl]="companyCtrl">
+            <option value="">اختر الشركة</option>
+            <option
+              *ngFor="let s of companies$ | async"
+              [value]="s.sourceCompany"
+            >
+              {{ s.sourceCompany }} ({{ s.count }})
+            </option>
+          </select>
+        </div>
+
+        <!-- Channel (EntryChannel) -->
+        <div class="field select-wrapper">
+          <select [formControl]="channelCtrl">
+            <option value="">اختر القناة</option>
+            <option
+              *ngFor="let ch of channels$ | async"
+              [value]="ch.entryChannel"
+            >
+              {{ ch.entryChannel }} ({{ ch.count }})
+            </option>
+          </select>
+        </div>
+
+        <!-- Campaign Source (ClientWebsite) -->
+        <div class="field select-wrapper">
+          <select [formControl]="sourceCtrl">
+            <option value="">اختر المصدر</option>
+            <option
+              *ngFor="let cs of campSources$ | async"
+              [value]="cs.clientWebsite"
+            >
+              {{ cs.clientWebsite }} ({{ cs.count }})
+            </option>
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div class="filter-bottom">
+      <button (click)="resetFilters()">الكل</button>
+      <button>رقم الهاتف</button>
+      <button>المجال</button>
+      <button>المجال الفرعي</button>
+      <button>القناة / الوسيط</button>
+      <button>مصدر العميل</button>
+    </div>
+  </div>
+
+  <div class="parent-table">
+    <ng-container *ngIf="clients$ | async as clients">
+      <table class="full-width-table">
+        <thead>
+          <tr class="header-row">
+            <th class="header-cell">#</th>
+            <th
+              *ngFor="let col of columns"
+              class="header-cell"
+              role="button"
+              (click)="sortBy(col.key)"
+              [attr.aria-sort]="sortField === col.key ? sortDir : null"
+            >
+              {{ col.header }}
+              <span class="mat-sort-indicator">
+                {{
+                  sortField === col.key ? (sortDir === "asc" ? "▲" : "▼") : ""
+                }}
+              </span>
+            </th>
+            <th class="header-cell">Actions</th>
+          </tr>
+        </thead>
+
+        <tbody>
+          <tr *ngFor="let row of clients; let i = index" class="data-row">
+            <td class="data-cell">{{ i + 1 + pageIndex * pageSize }}</td>
+            <td *ngFor="let col of columns" class="data-cell">
+              {{ col.get(row) }}
+            </td>
+            <td class="data-cell parent-icon">
+              <button mat-icon-button color="primary" matTooltip="Edit">
+                <mat-icon>edit</mat-icon>
+              </button>
+              <button mat-icon-button color="warn" matTooltip="Delete">
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+
+          <tr *ngIf="!clients || clients.length === 0">
+            <td class="no-data-alert" [attr.colspan]="columns.length + 2">
+              {{ searchCtrl.value ? "No matching results" : "No data" }}
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </ng-container>
+  </div>
+
+  <mat-paginator
+    [length]="(totalCount$ | async) || 0"
+    [pageIndex]="pageIndex"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[5, 10, 25, 50, 100, 500, 1000]"
+    (page)="onPageChange($event)"
+    showFirstLastButtons
+  ></mat-paginator>
+</div>

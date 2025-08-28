@@ -84,3 +84,60 @@ button[mat-raised-button] {
   color: #fff;
   font-weight: 600;
 }
+
+/* ========================================================================== */
+/*                            FORM DIALOG STYLES                              */
+/*   Use panelClass: 'form-dialog--employee' or 'form-dialog--department'     */
+/* ========================================================================== */
+
+/* grid wrapper used inside your dialog template */
+.form-fields {
+  display: grid;
+  gap: var(--spacing-md);
+}
+
+/* ===================== EMPLOYEE dialog (dark + orange) ===================== */
+.form-dialog--employee .mat-mdc-dialog-surface {
+  /* background: rgba(15, 17, 26, 0.7) !important; */
+  /* background: rgba(255, 255, 255, 0.12) !important; */
+  background: rgba(30, 30, 30, 0.8) !important;
+  backdrop-filter: blur(8px);
+  border-radius: var(--radius-2xl);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-xl);
+  padding: 20px;
+}
+
+/* glowing border */
+.form-dialog--employee .mat-mdc-dialog-surface::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(
+    135deg,
+    rgba(227, 96, 18, 0.8),
+    rgba(227, 96, 18, 0.25)
+  );
+  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
+}
+
+/* title & actions */
+.form-dialog--employee {
+  color: var(--white-color) !important;
+  font-weight: 20px;
+  border-radius: 24px;
+  border: 1px solid #e36012;
+  background: linear-gradient(
+      0deg,
+      rgba(0, 0, 0, 0.2) 0%,
+      rgba(0, 0, 0, 0.2) 100%
+    ),
+    linear-gradient(0deg, rgba(0, 0, 0, 0.2) 0%, rgba(0, 0, 0, 0.2) 100%),
+    rgba(30, 30, 30, 0.75);
+}

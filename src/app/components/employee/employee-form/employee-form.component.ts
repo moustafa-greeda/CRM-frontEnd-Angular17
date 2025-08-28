@@ -19,7 +19,6 @@ export class EmployeeFormComponent {
   form = this.fb.group({
     // شخصي
     firstName: this.fb.control<string>('', { nonNullable: true }),
-    lastName: this.fb.control<string>('', { nonNullable: true }),
     email: this.fb.control<string>('', { nonNullable: true }),
     phone: this.fb.control<string>('', { nonNullable: true }),
     gender: this.fb.control<string>('ذكر', { nonNullable: true }),

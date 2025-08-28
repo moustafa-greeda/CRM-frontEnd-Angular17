@@ -1,4 +1,4 @@
-<div class="header-container">
+<!-- <div class="header-container">
   <h2 class="header-color">العملاء</h2>
   <div class="parent-icon">
     <button mat-raised-button class="button-color">
@@ -23,7 +23,6 @@
       </div>
 
       <div class="filter-top">
-        <!-- Country (ClientLocation) -->
         <div class="field select-wrapper">
           <select [formControl]="countryCtrl">
             <option value="">اختر الدولة</option>
@@ -36,7 +35,6 @@
           </select>
         </div>
 
-        <!-- City (Region) -->
         <div class="field select-wrapper">
           <select [formControl]="cityCtrl">
             <option value="">اختر المدينة</option>
@@ -49,7 +47,6 @@
           </select>
         </div>
 
-        <!-- Source Company -->
         <div class="field select-wrapper">
           <select [formControl]="companyCtrl">
             <option value="">اختر الشركة</option>
@@ -62,7 +59,6 @@
           </select>
         </div>
 
-        <!-- Channel (EntryChannel) -->
         <div class="field select-wrapper">
           <select [formControl]="channelCtrl">
             <option value="">اختر القناة</option>
@@ -75,7 +71,6 @@
           </select>
         </div>
 
-        <!-- Campaign Source (ClientWebsite) -->
         <div class="field select-wrapper">
           <select [formControl]="sourceCtrl">
             <option value="">اختر المصدر</option>
@@ -158,4 +153,187 @@
     (page)="onPageChange($event)"
     showFirstLastButtons
   ></mat-paginator>
-</div>
+</div> -->
+
+<form
+  [formGroup]="form"
+  class="filters"
+  style="display: flex; gap: 12px; flex-wrap: wrap"
+>
+  <mat-form-field appearance="fill">
+    <mat-label>الدولة</mat-label>
+    <mat-select formControlName="country">
+      <mat-option value="">الكل</mat-option>
+      <mat-option
+        *ngFor="let c of countries$ | async"
+        [value]="c.clientLocation"
+      >
+        {{ c.clientLocation }} ({{ c.count }})
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>المدينة</mat-label>
+    <mat-select formControlName="city">
+      <mat-option value="">الكل</mat-option>
+      <mat-option *ngFor="let r of cities$ | async" [value]="r">{{
+        r
+      }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>الشركة</mat-label>
+    <mat-select formControlName="company">
+      <mat-option value="">الكل</mat-option>
+      <mat-option
+        *ngFor="let s of companies$ | async"
+        [value]="s.sourceCompany"
+        >{{ s.sourceCompany }}</mat-option
+      >
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill">
+    <mat-label>القناة</mat-label>
+    <mat-select formControlName="channel">
+      <mat-option value="">الكل</mat-option>
+      <mat-option
+        *ngFor="let ch of channels$ | async"
+        [value]="ch.entryChannel"
+        >{{ ch.entryChannel }}</mat-option
+      >
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" style="min-width: 220px">
+    <mat-label>مصدر العميل</mat-label>
+    <mat-select formControlName="source">
+      <mat-option value="">الكل</mat-option>
+      <mat-option
+        *ngFor="let s of campSources$ | async"
+        [value]="s.clientWebsite"
+        >{{ s.clientWebsite }}</mat-option
+      >
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" style="min-width: 240px">
+    <mat-label>بحث</mat-label>
+    <input matInput formControlName="search" />
+  </mat-form-field>
+
+  <button
+    mat-stroked-button
+    color="primary"
+    type="button"
+    (click)="resetFilters()"
+  >
+    إعادة تعيين
+  </button>
+</form>
+
+<table
+  mat-table
+  [dataSource]="(clients$ | async) || []"
+  matSort
+  (matSortChange)="onSortChange($event)"
+  class="table-wrapper mat-elevation-z8 hover-elevate"
+  style="width: 100%; margin-top: 12px"
+>
+  <!-- مثالات للأعمدة -->
+  <ng-container matColumnDef="clientName">
+    <th mat-header-cell *matHeaderCellDef>العميل</th>
+    <td mat-cell *matCellDef="let r">{{ r.clientName }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="clientPhone">
+    <th mat-header-cell *matHeaderCellDef>الهاتف</th>
+    <td mat-cell *matCellDef="let r">{{ r.clientPhone }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="requestType">
+    <th mat-header-cell *matHeaderCellDef>requestType</th>
+    <td mat-cell *matCellDef="let r">{{ r.requestType }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="entryCampaign">
+    <th mat-header-cell *matHeaderCellDef>entryCampaign</th>
+    <td mat-cell *matCellDef="let r">{{ r.entryCampaign }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="sourceCompany">
+    <th mat-header-cell *matHeaderCellDef>sourceCompany</th>
+    <td mat-cell *matCellDef="let r">{{ r.sourceCompany }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="clientCategory">
+    <th mat-header-cell *matHeaderCellDef>clientCategory</th>
+    <td mat-cell *matCellDef="let r">{{ r.clientCategory }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="entryChannel">
+    <th mat-header-cell *matHeaderCellDef>entryChannel</th>
+    <td mat-cell *matCellDef="let r">{{ r.entryChannel }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="region">
+    <th mat-header-cell *matHeaderCellDef>region</th>
+    <td mat-cell *matCellDef="let r">{{ r.region }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="clientLocation">
+    <th mat-header-cell *matHeaderCellDef>الدولة</th>
+    <td mat-cell *matCellDef="let r">{{ r.clientLocation || "-" }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="createdAt">
+    <th mat-header-cell *matHeaderCellDef mat-sort-header>تاريخ الإنشاء</th>
+    <td mat-cell *matCellDef="let r">{{ r.createdAt | date : "short" }}</td>
+  </ng-container>
+
+  <tr
+    mat-header-row
+    *matHeaderRowDef="[
+      'clientName',
+      'clientPhone',
+      'requestType',
+      'entryCampaign',
+      'sourceCompany',
+      'clientCategory',
+      'clientLocation',
+      'entryChannel',
+      'region',
+      'createdAt'
+    ]"
+  ></tr>
+  <tr
+    mat-row
+    *matRowDef="
+      let row;
+      columns: [
+        'clientName',
+        'clientPhone',
+        'requestType',
+        'entryCampaign',
+        'sourceCompany',
+        'clientCategory',
+        'clientLocation',
+        'entryChannel',
+        'region',
+        'createdAt'
+      ]
+    "
+  ></tr>
+</table>
+
+<mat-paginator
+  [length]="(totalCount$ | async) ?? 0"
+  [pageIndex]="0"
+  [pageSize]="10"
+  [pageSizeOptions]="[10, 20, 50, 100, 500, 1000]"
+  (page)="onPageChange($event)"
+  style="margin-top: 8px"
+>
+</mat-paginator>

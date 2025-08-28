@@ -228,16 +228,20 @@ button:focus{ outline: 2px solid var(--link-color); outline-offset: 2px; }
 .mat-mdc-select-arrow svg { fill:#fff !important; stroke:#fff !important; }
 
 /* ========== Tables transparent so background image shows through ========== */
-.table-wrapper { background: transparent !important; box-shadow: none; }
+.table-wrapper { background: transparent !important; box-shadow: none; border: 1px solid #E36012 !important; border-radius: 50px !important; }
 .mat-mdc-table { background: transparent !important; }
 .mat-mdc-header-row,
-.mat-mdc-row { background: rgba(30,30,30,0.55) !important; }
-.mat-mdc-header-cell,
-.mat-mdc-cell { background: transparent !important; color:#fff; }
+.mat-mdc-row { background: rgba(30,30,30,0.95) !important; }
+.mat-mdc-row:hover { outline: 1px solid #E36012 !important;  transition: ease-in-out .3s; transform: scaleX(1.01);}
+
+
+.mat-mdc-row:nth-child(odd) { background: rgba(30,30,30,0.65) !important; }
+.mat-mdc-header-cell{ background: transparent !important; color:#E36012; text-align: center !important; padding: 5px;}
+.mat-mdc-cell { background: transparent !important; color:#fff; text-align: center !important; }
 .mat-mdc-paginator { background: rgba(30,30,30,0.4) !important; }
 
 .mat-mdc-table .mat-mdc-header-cell { text-align: center !important; }
-.mat-mdc-table .mat-mdc-header-cell .mat-sort-header-container { width:100%; justify-content:center !important; align-items:center; }
+.mat-mdc-table .mat-mdc-header-cell .mat-sort-header-container { width:100%; justify-content:center !important; align-items:center;  color: #E36012;}
 .mat-mdc-table .mat-mdc-cell, .mat-mdc-table .mat-mdc-footer-cell { text-align: center; }
 .full-width-table .header-cell, .full-width-table .data-cell { display: table-cell; text-align: center !important; }
 
@@ -372,3 +376,43 @@ background: rgba(255, 255, 255, 0.12) !important;
 .cdk-overlay-container .form-dialog--employee mat-error {
   color: #ffb199 !important; /* tweak if you like */
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+/* ============================================================== paginator ====================================================== */
+
+/*  */
+.mat-mdc-paginator-container {
+  color: #ffff !important;
+  background-color: #1e1e1e !important;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 0 8px;
+  flex-wrap: wrap;
+  width: 100%;
+  min-height: var(--mat-paginator-container-size);
+}
+

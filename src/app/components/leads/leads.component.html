@@ -1,237 +1,104 @@
-<!-- <div class="header-container">
+<div class="header-container">
   <h2 class="header-color">العملاء</h2>
   <div class="parent-icon">
-    <button mat-raised-button class="button-color">
+    <button mat-raised-button>
       <img src="assets/icon/lets-icons_export.svg" alt="" />
     </button>
-    <button mat-raised-button class="button-color">
+    <button mat-raised-button>
       <img src="assets/icon/mdi_import.svg" alt="" />
     </button>
-    <button mat-raised-button class="button-color">
-      اضافة عميل
+    <button mat-raised-button>
       <img src="assets/icon/material-symbols_add.svg" alt="" />
     </button>
   </div>
 </div>
-
-<div class="table-wrapper mat-elevation-z8 hover-elevate">
-  <div class="parent-filter">
-    <div class="parent-search">
-      <div class="search-box">
-        <input type="text" placeholder="بحث..." [formControl]="searchCtrl" />
-        <mat-icon class="search-icon">search</mat-icon>
-      </div>
-
-      <div class="filter-top">
-        <div class="field select-wrapper">
-          <select [formControl]="countryCtrl">
-            <option value="">اختر الدولة</option>
-            <option
-              *ngFor="let c of countries$ | async"
-              [value]="c.clientLocation"
-            >
-              {{ c.clientLocation }} ({{ c.count }})
-            </option>
-          </select>
-        </div>
-
-        <div class="field select-wrapper">
-          <select [formControl]="cityCtrl">
-            <option value="">اختر المدينة</option>
-            <option
-              *ngFor="let city of cities$ | async"
-              [value]="city.clientCity"
-            >
-              {{ city.clientCity }} ({{ city.count }})
-            </option>
-          </select>
-        </div>
-
-        <div class="field select-wrapper">
-          <select [formControl]="companyCtrl">
-            <option value="">اختر الشركة</option>
-            <option
-              *ngFor="let s of companies$ | async"
-              [value]="s.sourceCompany"
-            >
-              {{ s.sourceCompany }} ({{ s.count }})
-            </option>
-          </select>
-        </div>
-
-        <div class="field select-wrapper">
-          <select [formControl]="channelCtrl">
-            <option value="">اختر القناة</option>
-            <option
-              *ngFor="let ch of channels$ | async"
-              [value]="ch.entryChannel"
-            >
-              {{ ch.entryChannel }} ({{ ch.count }})
-            </option>
-          </select>
-        </div>
-
-        <div class="field select-wrapper">
-          <select [formControl]="sourceCtrl">
-            <option value="">اختر المصدر</option>
-            <option
-              *ngFor="let cs of campSources$ | async"
-              [value]="cs.clientWebsite"
-            >
-              {{ cs.clientWebsite }} ({{ cs.count }})
-            </option>
-          </select>
-        </div>
-      </div>
-    </div>
-
-    <div class="filter-bottom">
-      <button (click)="resetFilters()">الكل</button>
-      <button>رقم الهاتف</button>
-      <button>المجال</button>
-      <button>المجال الفرعي</button>
-      <button>القناة / الوسيط</button>
-      <button>مصدر العميل</button>
-    </div>
-  </div>
-
-  <div class="parent-table">
-    <ng-container *ngIf="clients$ | async as clients">
-      <table class="full-width-table">
-        <thead>
-          <tr class="header-row">
-            <th class="header-cell">#</th>
-            <th
-              *ngFor="let col of columns"
-              class="header-cell"
-              role="button"
-              (click)="sortBy(col.key)"
-              [attr.aria-sort]="sortField === col.key ? sortDir : null"
-            >
-              {{ col.header }}
-              <span class="mat-sort-indicator">
-                {{
-                  sortField === col.key ? (sortDir === "asc" ? "▲" : "▼") : ""
-                }}
-              </span>
-            </th>
-            <th class="header-cell">Actions</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          <tr *ngFor="let row of clients; let i = index" class="data-row">
-            <td class="data-cell">{{ i + 1 + pageIndex * pageSize }}</td>
-            <td *ngFor="let col of columns" class="data-cell">
-              {{ col.get(row) }}
-            </td>
-            <td class="data-cell parent-icon">
-              <button mat-icon-button color="primary" matTooltip="Edit">
-                <mat-icon>edit</mat-icon>
-              </button>
-              <button mat-icon-button color="warn" matTooltip="Delete">
-                <mat-icon>delete</mat-icon>
-              </button>
-            </td>
-          </tr>
-
-          <tr *ngIf="!clients || clients.length === 0">
-            <td class="no-data-alert" [attr.colspan]="columns.length + 2">
-              {{ searchCtrl.value ? "No matching results" : "No data" }}
-            </td>
-          </tr>
-        </tbody>
-      </table>
-    </ng-container>
-  </div>
-
-  <mat-paginator
-    [length]="(totalCount$ | async) || 0"
-    [pageIndex]="pageIndex"
-    [pageSize]="pageSize"
-    [pageSizeOptions]="[5, 10, 25, 50, 100, 500, 1000]"
-    (page)="onPageChange($event)"
-    showFirstLastButtons
-  ></mat-paginator>
-</div> -->
 
 <form
   [formGroup]="form"
   class="filters"
   style="display: flex; gap: 12px; flex-wrap: wrap"
 >
-  <mat-form-field appearance="fill">
-    <mat-label>الدولة</mat-label>
-    <mat-select formControlName="country">
-      <mat-option value="">الكل</mat-option>
-      <mat-option
-        *ngFor="let c of countries$ | async"
-        [value]="c.clientLocation"
+  <div class="parent-search">
+    <div class="search-box">
+      <input type="text" placeholder="بحث..." formControlName="search" />
+      <mat-icon class="search-icon">search</mat-icon>
+    </div>
+
+    <div class="filter-top">
+      <div class="field select-wrapper">
+        <select formControlName="country">
+          <option value="">اختر الدولة</option>
+          <option
+            *ngFor="let c of countries$ | async"
+            [ngValue]="c.clientLocation"
+          >
+            {{ c.clientLocation }} ({{ c.count }})
+          </option>
+        </select>
+      </div>
+
+      <div class="field select-wrapper">
+        <select formControlName="city">
+          <option value="">المدينة</option>
+          <option *ngFor="let r of cities$ | async" [ngValue]="r">
+            {{ r }}
+          </option>
+        </select>
+      </div>
+      <div class="field select-wrapper">
+        <select formControlName="company">
+          <option value="">company</option>
+          <option
+            *ngFor="let s of companies$ | async"
+            [ngValue]="s.sourceCompany"
+          >
+            {{ s.sourceCompany }}
+          </option>
+        </select>
+      </div>
+      <div class="field select-wrapper">
+        <select formControlName="channel">
+          <option value="">القناة</option>
+          <option
+            *ngFor="let ch of channels$ | async"
+            [ngValue]="ch.entryChannel"
+          >
+            {{ ch.entryChannel }}
+          </option>
+        </select>
+      </div>
+      <div class="field select-wrapper">
+        <select formControlName="country">
+          <option value="">اختر الدولة</option>
+          <option
+            *ngFor="let c of countries$ | async"
+            [ngValue]="c.clientLocation"
+          >
+            {{ c.clientLocation }} ({{ c.count }})
+          </option>
+        </select>
+      </div>
+      <div class="field select-wrapper">
+        <select formControlName="source">
+          <option value="">مصدر العميل</option>
+          <option
+            *ngFor="let s of campSources$ | async"
+            [ngValue]="s.clientWebsite"
+          >
+            {{ s.clientWebsite }}
+          </option>
+        </select>
+      </div>
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="resetFilters()"
+        class="button-color"
       >
-        {{ c.clientLocation }} ({{ c.count }})
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <mat-form-field appearance="fill">
-    <mat-label>المدينة</mat-label>
-    <mat-select formControlName="city">
-      <mat-option value="">الكل</mat-option>
-      <mat-option *ngFor="let r of cities$ | async" [value]="r">{{
-        r
-      }}</mat-option>
-    </mat-select>
-  </mat-form-field>
-
-  <mat-form-field appearance="fill">
-    <mat-label>الشركة</mat-label>
-    <mat-select formControlName="company">
-      <mat-option value="">الكل</mat-option>
-      <mat-option
-        *ngFor="let s of companies$ | async"
-        [value]="s.sourceCompany"
-        >{{ s.sourceCompany }}</mat-option
-      >
-    </mat-select>
-  </mat-form-field>
-
-  <mat-form-field appearance="fill">
-    <mat-label>القناة</mat-label>
-    <mat-select formControlName="channel">
-      <mat-option value="">الكل</mat-option>
-      <mat-option
-        *ngFor="let ch of channels$ | async"
-        [value]="ch.entryChannel"
-        >{{ ch.entryChannel }}</mat-option
-      >
-    </mat-select>
-  </mat-form-field>
-
-  <mat-form-field appearance="fill" style="min-width: 220px">
-    <mat-label>مصدر العميل</mat-label>
-    <mat-select formControlName="source">
-      <mat-option value="">الكل</mat-option>
-      <mat-option
-        *ngFor="let s of campSources$ | async"
-        [value]="s.clientWebsite"
-        >{{ s.clientWebsite }}</mat-option
-      >
-    </mat-select>
-  </mat-form-field>
-
-  <mat-form-field appearance="fill" style="min-width: 240px">
-    <mat-label>بحث</mat-label>
-    <input matInput formControlName="search" />
-  </mat-form-field>
-
-  <button
-    mat-stroked-button
-    color="primary"
-    type="button"
-    (click)="resetFilters()"
-  >
-    إعادة تعيين
-  </button>
+        إعادة تعيين
+      </button>
+    </div>
+  </div>
 </form>
 
 <table
@@ -242,7 +109,6 @@
   class="table-wrapper mat-elevation-z8 hover-elevate"
   style="width: 100%; margin-top: 12px"
 >
-  <!-- مثالات للأعمدة -->
   <ng-container matColumnDef="clientName">
     <th mat-header-cell *matHeaderCellDef>العميل</th>
     <td mat-cell *matCellDef="let r">{{ r.clientName }}</td>

@@ -13,9 +13,11 @@
 }
 
 .parent-icon > button {
+  color: #fff;
+  background-color: #e36012;
+  width: 48px;
+  height: 48;
   display: flex;
-  min-width: 48px;
-  height: 48px;
   padding: 8px;
   justify-content: center;
   align-items: center;
@@ -35,22 +37,19 @@
 }
 
 /* ========================================= tabel ======================================== */
-
-/* السكroll على الكونتينر */
 .table-wrapper {
   border-radius: 8px;
-  overflow: visible !important; /* تأكد إن مفيش hidden من الأب */
+  overflow: visible !important;
 
-  overflow-x: auto !important; /* أو scroll لو عايز الشريط ثابت */
+  overflow-x: auto !important;
   overflow-y: hidden;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
   transition: all 0.3s ease;
 }
 
-/* خَلّي الجدول يقدر يتمدد بعرض المحتوى */
 .full-width-table {
-  width: max-content !important; /* بدل 100% */
-  min-width: 1200px; /* ما يقلش عن عرض الشاشة */
+  width: max-content !important;
+  min-width: 1200px;
   table-layout: auto;
   border-collapse: collapse;
 }
@@ -269,7 +268,7 @@
   border: 1px solid #b7b7b7;
   background-color: rgba(30, 30, 30, 0.8);
   color: #fff;
-  padding: 10px 40px 10px 14px;
+  padding: 10px 5px;
   box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.25);
   font-size: 14px;
   cursor: pointer;

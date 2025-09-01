@@ -11,17 +11,16 @@ import {
   switchMap,
   takeUntil,
 } from 'rxjs/operators';
-import { LeadsService, LeadsQuery } from './leads.service';
 import { NotifyDialogService } from '../../shared/notify-dialog/notify-dialog.service';
 import { MatDialog } from '@angular/material/dialog';
-import { ChatDialogComponent } from './chat/chat-dialog.component';
+import { DistributionService, LeadsQuery } from './distribution.service';
 
 @Component({
-  selector: 'app-leads',
-  templateUrl: './leads.component.html',
-  styleUrls: ['./leads.component.css'],
+  selector: 'app-distribution',
+  templateUrl: './distribution.component.html',
+  styleUrl: './distribution.component.css',
 })
-export class LeadsComponent implements OnInit, OnDestroy {
+export class DistributionComponent implements OnInit, OnDestroy {
   clients$ = this.clientsService.clients$;
   totalCount$ = this.clientsService.totalCount$;
 
@@ -59,10 +58,10 @@ export class LeadsComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   constructor(
-    private clientsService: LeadsService,
+    private clientsService: DistributionService,
     private fb: NonNullableFormBuilder,
 
-    private _employeeService: LeadsService,
+    private _employeeService: DistributionService,
     private dialog: MatDialog,
     private notify: NotifyDialogService
   ) {}
@@ -204,16 +203,5 @@ export class LeadsComponent implements OnInit, OnDestroy {
       search: '',
     });
     this.page$.next({ index: 0, size: this.page$.value.size });
-  }
-
-  // dialog chat
-  // dialog chat
-  openDialog(): void {
-    this.dialog.open(ChatDialogComponent, {
-      width: '560px',
-      panelClass: 'form-dialog--employee',
-      data: { title: 'المساعد الذكي' },
-      autoFocus: false,
-    });
   }
 }

@@ -28,7 +28,7 @@ export interface LeadsQuery {
 }
 
 @Injectable({ providedIn: 'root' })
-export class LeadsService {
+export class DistributionService {
   private readonly base = environment.apiUrl;
   private readonly list$ = new BehaviorSubject<ILeads[]>([]);
   private readonly total$ = new BehaviorSubject<number>(0);
@@ -52,11 +52,15 @@ export class LeadsService {
     const params = this.toParams(q);
 
     return this.http
-      .get<PagedResponse<ILeads>>(`${this.base}/Client/GetAllClients`, {
-        params,
-      })
+      .get<PagedResponse<ILeads>>(
+        `${this.base}/Client/GetClientsWithDistributeFilter`,
+        {
+          params,
+        }
+      )
       .pipe(
         map((res) => {
+          console.log(res);
           const root = res?.data ?? {};
           const items =
             root.items ??

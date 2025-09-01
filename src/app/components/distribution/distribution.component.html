@@ -7,13 +7,13 @@
     <button mat-raised-button>
       <img src="assets/icon/mdi_import.svg" alt="" />
     </button>
-    <button mat-raised-button (click)="openDialog()">
+    <button mat-raised-button>
       <img src="assets/icon/material-symbols_add.svg" alt="" />
     </button>
   </div>
 </div>
 
-<form
+<!-- <form
   [formGroup]="form"
   class="filters"
   style="display: flex; gap: 12px; flex-wrap: wrap"
@@ -67,17 +67,6 @@
           </option>
         </select>
       </div>
-      <!-- <div class="field select-wrapper">
-        <select formControlName="entryCampaign">
-          <option value="">اختر الحملة</option>
-          <option
-            *ngFor="let campaign of campaigns$ | async"
-            [ngValue]="campaign"
-          >
-            {{ campaign }}
-          </option>
-        </select>
-      </div> -->
 
       <div class="field select-wrapper">
         <select formControlName="source">
@@ -101,7 +90,7 @@
       </button>
     </div>
   </div>
-</form>
+</form> -->
 
 <table
   mat-table
@@ -113,37 +102,53 @@
 >
   <ng-container matColumnDef="clientName">
     <th mat-header-cell *matHeaderCellDef>العميل</th>
-    <td mat-cell *matCellDef="let r">{{ r.clientName }}</td>
+    <td mat-cell *matCellDef="let r">{{ r.client_name }}</td>
   </ng-container>
 
   <ng-container matColumnDef="clientPhone">
     <th mat-header-cell *matHeaderCellDef>الهاتف</th>
-    <td mat-cell *matCellDef="let r">{{ r.clientPhone }}</td>
+    <td mat-cell *matCellDef="let r">{{ r.client_phone }}</td>
   </ng-container>
 
   <ng-container matColumnDef="requestType">
     <th mat-header-cell *matHeaderCellDef>requestType</th>
-    <td mat-cell *matCellDef="let r">{{ r.requestType }}</td>
+    <td mat-cell *matCellDef="let r">{{ r.request_type }}</td>
   </ng-container>
 
   <ng-container matColumnDef="entryCampaign">
     <th mat-header-cell *matHeaderCellDef>entryCampaign</th>
-    <td mat-cell *matCellDef="let r">{{ r.entryCampaign }}</td>
+    <td mat-cell *matCellDef="let r">{{ r.entry_campaign }}</td>
   </ng-container>
 
   <ng-container matColumnDef="sourceCompany">
     <th mat-header-cell *matHeaderCellDef>sourceCompany</th>
-    <td mat-cell *matCellDef="let r">{{ r.sourceCompany }}</td>
+    <td mat-cell *matCellDef="let r">{{ r.source_company }}</td>
   </ng-container>
 
   <ng-container matColumnDef="clientCategory">
     <th mat-header-cell *matHeaderCellDef>clientCategory</th>
-    <td mat-cell *matCellDef="let r">{{ r.clientCategory }}</td>
+    <td mat-cell *matCellDef="let r">{{ r.client_category }}</td>
   </ng-container>
 
   <ng-container matColumnDef="entryChannel">
     <th mat-header-cell *matHeaderCellDef>entryChannel</th>
-    <td mat-cell *matCellDef="let r">{{ r.entryChannel }}</td>
+    <td mat-cell *matCellDef="let r">{{ r.entry_channel }}</td>
+  </ng-container>
+
+  <!--  -->
+  <ng-container matColumnDef="client_main_domain">
+    <th mat-header-cell *matHeaderCellDef>client_main_domain</th>
+    <td mat-cell *matCellDef="let r">{{ r.client_main_domain }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="client_sub_domain">
+    <th mat-header-cell *matHeaderCellDef>client_sub_domain</th>
+    <td mat-cell *matCellDef="let r">{{ r.client_sub_domain }}</td>
+  </ng-container>
+
+  <ng-container matColumnDef="companyReceived">
+    <th mat-header-cell *matHeaderCellDef>companyReceived</th>
+    <td mat-cell *matCellDef="let r">{{ r.companyReceived }}</td>
   </ng-container>
 
   <ng-container matColumnDef="region">

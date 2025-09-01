@@ -39,18 +39,18 @@ import { MorningShiftComponent } from './components/home-admin/morning-shift/mor
 import { NightShiftComponent } from './components/home-admin/night-shift/night-shift.component';
 import { FirstChartsComponent } from './components/home-admin/first-charts/first-charts.component';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
-import { EmployeeComponent } from './components/employee/employee.component';
 import { HomeAdminComponent } from './components/home-admin/home-admin.component';
 import { NotifyDialogHostComponent } from './shared/notify-dialog-host/notify-dialog-host.component';
 import { BidiModule } from '@angular/cdk/bidi';
 import { MatSelectModule } from '@angular/material/select';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { EmployeeFormComponent } from './components/employee/employee-form/employee-form.component';
 import { ForgetPasswordComponent } from './Auth/forget-password/forget-password.component';
 import { ResetPasswordComponent } from './Auth/reset-password/reset-password.component';
 import { OtpComponent } from './Auth/otp/otp.component';
 import { LeadsComponent } from './components/leads/leads.component';
+import { ChatDialogComponent } from './components/leads/chat/chat-dialog.component';
+import { DistributionComponent } from './components/distribution/distribution.component';
 
 @NgModule({
   declarations: [
@@ -70,14 +70,14 @@ import { LeadsComponent } from './components/leads/leads.component';
     MorningShiftComponent,
     NightShiftComponent,
     FirstChartsComponent,
-    EmployeeComponent,
     HomeAdminComponent,
     NotifyDialogHostComponent,
-    EmployeeFormComponent,
+    ChatDialogComponent,
     ForgetPasswordComponent,
     ResetPasswordComponent,
     LeadsComponent,
     OtpComponent,
+    DistributionComponent,
   ],
   imports: [
     BrowserModule,

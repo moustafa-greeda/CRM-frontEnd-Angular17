@@ -297,6 +297,9 @@ app-notify-dialog-host .nd-modal {
 
 /* ===================== EMPLOYEE dialog (dark + orange) ===================== */
 .form-dialog--employee .mat-mdc-dialog-surface {
+  background-image: url("./assets/background-login.svg") !important;
+  background-position: center;
+  background-size: cover;
   background: rgba(30,30,30,.5) !important;
   backdrop-filter: blur(8px);
   border-radius: 24px !important;

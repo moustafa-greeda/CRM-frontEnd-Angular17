@@ -36,9 +36,46 @@
   padding: 10px;
 }
 
+/* toggel button */
+::ng-deep .mat-button-toggle-group {
+  height: 50px;
+  /* margin: 2px; */
+  padding: 5px 10px;
+  background-color: #00000080;
+  color: #fff !important;
+  border-radius: 10px !important;
+  border: 1px solid rgba(255, 95, 0, 1) !important;
+}
+
+::ng-deep .mat-button-toggle {
+  display: flex;
+  align-items: center;
+  color: #fff !important;
+  border-radius: 6px;
+  background-color: transparent !important;
+  margin: 2px;
+}
+
+::ng-deep .mat-button-toggle:hover {
+  transform: scale(1.05);
+  background-color: #33323280 !important;
+}
+
+::ng-deep .mat-pseudo-checkbox::after {
+  color: #fff !important;
+}
+
+.active {
+  background: rgba(226, 84, 0, 1) !important;
+  color: white !important;
+  padding: 0px 5px;
+  transition: all ease-in-out 0.3s;
+  transform: scale(1.05);
+}
+
 /* ========================================= tabel ======================================== */
 .table-wrapper {
-  border-radius: 8px;
+  border-radius: 8px !important;
   overflow: visible !important;
 
   overflow-x: auto !important;
@@ -140,6 +177,15 @@
 
 .filter-bottom button:hover {
   background-color: rgba(110, 110, 110, 0.1) !important;
+}
+
+.reset-filter {
+  min-width: 100px;
+  height: 50px;
+  padding: 5px 10px;
+  border-radius: 10px;
+  color: #fff !important;
+  background-color: #e36012;
 }
 
 /* =========================== Table header =========================== */

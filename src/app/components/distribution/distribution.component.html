@@ -1,5 +1,5 @@
 <div class="header-container">
-  <h2 class="header-color">العملاء</h2>
+  <h2 class="header-color">التوزيع</h2>
   <div class="parent-icon">
     <button mat-raised-button>
       <img src="assets/icon/lets-icons_export.svg" alt="" />
@@ -13,7 +13,7 @@
   </div>
 </div>
 
-<!-- <form
+<form
   [formGroup]="form"
   class="filters"
   style="display: flex; gap: 12px; flex-wrap: wrap"
@@ -24,73 +24,111 @@
       <mat-icon class="search-icon">search</mat-icon>
     </div>
 
+    <mat-button-toggle-group formControlName="mode">
+      <mat-button-toggle
+        [value]="'0'"
+        [ngClass]="{ active: form.value.mode === '0' }"
+        >غير موزع</mat-button-toggle
+      >
+      <mat-button-toggle
+        [value]="'1'"
+        [ngClass]="{ active: form.value.mode === '1' }"
+        >موزع منذ 3 شهور</mat-button-toggle
+      >
+    </mat-button-toggle-group>
+
+    <button mat-raised-button type="button" class="button-color">
+      تطبيق الفلاتر
+    </button>
+
+    <button
+      mat-stroked-button
+      type="button"
+      (click)="resetFilters()"
+      class="reset-filter"
+    >
+      إعادة تعيين
+    </button>
+
     <div class="filter-top">
+      <!-- الدولة -->
       <div class="field select-wrapper">
-        <select formControlName="country">
+        <select formControlName="client_location">
           <option value="">اختر الدولة</option>
           <option
             *ngFor="let c of countries$ | async"
-            [ngValue]="c.clientLocation"
+            [value]="c.clientLocation"
           >
             {{ c.clientLocation }} ({{ c.count }})
           </option>
         </select>
       </div>
 
+      <!-- المدينة -->
       <div class="field select-wrapper">
         <select formControlName="city">
-          <option value="">المدينة</option>
-          <option *ngFor="let r of cities$ | async" [ngValue]="r">
-            {{ r }}
+          <option *ngIf="!form.get('client_location')!.value" value="">
+            يجب اختيار الدولة أولا
           </option>
+          <ng-container *ngIf="form.get('client_location')!.value">
+            <option value="">اختر المدينة</option>
+            <option *ngFor="let r of cities$ | async" [value]="r">
+              {{ r }}
+            </option>
+          </ng-container>
         </select>
       </div>
+
+      <!-- الشركة (source_company) -->
       <div class="field select-wrapper">
-        <select formControlName="company">
-          <option value="">الشركه</option>
+        <select formControlName="source_company">
+          <option value="">source_company</option>
           <option
             *ngFor="let s of companies$ | async"
-            [ngValue]="s.sourceCompany"
+            [value]="s.sourceCompany"
           >
             {{ s.sourceCompany }}
           </option>
         </select>
       </div>
+
+      <!-- القناة (entry_channel) -->
       <div class="field select-wrapper">
-        <select formControlName="channel">
-          <option value="">القناة</option>
+        <select formControlName="entry_channel">
+          <option value="">entry_channel</option>
           <option
             *ngFor="let ch of channels$ | async"
-            [ngValue]="ch.entryChannel"
+            [value]="ch.entryChannel"
           >
             {{ ch.entryChannel }}
           </option>
         </select>
       </div>
 
+      <!-- الحملة (entry_campaign) -->
       <div class="field select-wrapper">
-        <select formControlName="source">
-          <option value="">مصدر العميل</option>
+        <select formControlName="entry_campaign">
+          <option value="">entry_campaign</option>
           <option
-            *ngFor="let s of campSources$ | async"
-            [ngValue]="s.clientWebsite"
+            *ngFor="let c of campaigns$ | async"
+            [value]="c.entryCampaign"
           >
-            {{ s.clientWebsite }}
+            {{ c.entryCampaign }}
           </option>
         </select>
       </div>
 
-      <button
-        mat-stroked-button
-        type="button"
-        (click)="resetFilters()"
-        class="button-color"
-      >
-        إعادة تعيين
-      </button>
+      <!-- Has Social Media -->
+      <div class="field select-wrapper">
+        <select formControlName="isHaveSocialMedia">
+          <option [ngValue]="null">IsHaveSocialMedia</option>
+          <option [ngValue]="true">true</option>
+          <option [ngValue]="false">false</option>
+        </select>
+      </div>
     </div>
   </div>
-</form> -->
+</form>
 
 <table
   mat-table
@@ -116,13 +154,15 @@
   </ng-container>
 
   <ng-container matColumnDef="entryCampaign">
-    <th mat-header-cell *matHeaderCellDef>entryCampaign</th>
+    <th mat-header-cell *matHeaderCellDef>الحملة</th>
     <td mat-cell *matCellDef="let r">{{ r.entry_campaign }}</td>
   </ng-container>
 
   <ng-container matColumnDef="sourceCompany">
     <th mat-header-cell *matHeaderCellDef>sourceCompany</th>
-    <td mat-cell *matCellDef="let r">{{ r.source_company }}</td>
+    <td mat-cell *matCellDef="let r">
+      {{ r.source_company ?? r.sourceCompany }}
+    </td>
   </ng-container>
 
   <ng-container matColumnDef="clientCategory">
@@ -131,23 +171,22 @@
   </ng-container>
 
   <ng-container matColumnDef="entryChannel">
-    <th mat-header-cell *matHeaderCellDef>entryChannel</th>
+    <th mat-header-cell *matHeaderCellDef>القناة</th>
     <td mat-cell *matCellDef="let r">{{ r.entry_channel }}</td>
   </ng-container>
 
-  <!--  -->
   <ng-container matColumnDef="client_main_domain">
-    <th mat-header-cell *matHeaderCellDef>client_main_domain</th>
+    <th mat-header-cell *matHeaderCellDef>المجال الرئيسي</th>
     <td mat-cell *matCellDef="let r">{{ r.client_main_domain }}</td>
   </ng-container>
 
   <ng-container matColumnDef="client_sub_domain">
-    <th mat-header-cell *matHeaderCellDef>client_sub_domain</th>
+    <th mat-header-cell *matHeaderCellDef>المجال الفرعي</th>
     <td mat-cell *matCellDef="let r">{{ r.client_sub_domain }}</td>
   </ng-container>
 
   <ng-container matColumnDef="companyReceived">
-    <th mat-header-cell *matHeaderCellDef>companyReceived</th>
+    <th mat-header-cell *matHeaderCellDef>الشركة المستلمة</th>
     <td mat-cell *matCellDef="let r">{{ r.companyReceived }}</td>
   </ng-container>
 
@@ -158,7 +197,7 @@
 
   <ng-container matColumnDef="clientLocation">
     <th mat-header-cell *matHeaderCellDef>الدولة</th>
-    <td mat-cell *matCellDef="let r">{{ r.clientLocation || "-" }}</td>
+    <td mat-cell *matCellDef="let r">{{ r.client_location || "-" }}</td>
   </ng-container>
 
   <ng-container matColumnDef="createdAt">
@@ -177,6 +216,9 @@
       'clientCategory',
       'clientLocation',
       'entryChannel',
+      'client_main_domain',
+      'client_sub_domain',
+      'companyReceived',
       'region',
       'createdAt'
     ]"
@@ -194,6 +236,9 @@
         'clientCategory',
         'clientLocation',
         'entryChannel',
+        'client_main_domain',
+        'client_sub_domain',
+        'companyReceived',
         'region',
         'createdAt'
       ]

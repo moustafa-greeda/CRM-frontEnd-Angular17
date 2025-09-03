@@ -210,7 +210,8 @@ export class LeadsComponent implements OnInit, OnDestroy {
   // dialog chat
   openDialog(): void {
     this.dialog.open(ChatDialogComponent, {
-      width: '560px',
+      width: '877px',
+      height: '693px',
       panelClass: 'form-dialog--employee',
       data: { title: 'المساعد الذكي' },
       autoFocus: false,

@@ -138,7 +138,6 @@ body {
 /* ===== Typography, links, inputs*/
 h1,h2,h3,h4,h5,h6 { font-weight: 600; line-height: 1.25; margin-bottom: var(--spacing-md); color: var(--text-color); }
 h1{font-size:2.25rem} h2{font-size:1.875rem} h3{font-size:1.5rem} h4{font-size:1.25rem} h5{font-size:1.125rem} h6{font-size:1rem}
-/* p{ margin-bottom: var(--spacing-md); color: var(--text-color); } */
 
 a{ color: var(--link-color); text-decoration: none; transition: color var(--transition-fast); }
 a:hover{ color: var(--link-hover-color); }
@@ -243,7 +242,11 @@ button:focus{ outline: 2px solid var(--link-color); outline-offset: 2px; }
 
 /* ========== Tables transparent so background image shows through ========== */
 .table-wrapper { background: transparent !important; box-shadow: none; border: 1px solid #E36012 !important; border-radius: 50px !important; }
-.mat-mdc-table { background: transparent !important; }
+/* .mat-mdc-table { background: transparent !important; } */
+.mat-mdc-table {
+  border-radius: 50px !important;
+  background-color: transparent !important;
+}
 .mat-mdc-header-row,
 .mat-mdc-row { background: rgba(30,30,30,0.95) !important; }
 .mat-mdc-row:hover { outline: 1px solid #E36012 !important;  transition: ease-in-out .3s; transform: scaleX(1.01);}
@@ -296,25 +299,34 @@ app-notify-dialog-host .nd-modal {
 .form-fields { display: grid; gap: var(--spacing-md); }
 
 /* ===================== EMPLOYEE dialog (dark + orange) ===================== */
-.form-dialog--employee .mat-mdc-dialog-surface {
-  background-image: url("./assets/background-login.svg") !important;
+.mat-mdc-dialog-container .mdc-dialog__surface {
+  background-image: url("./assets/bg-chat3.svg") !important;
+  background-position: center;
+  background-size: 100% 100% !important; 
+  background-repeat: no-repeat;
+}
+.mat-mdc-dialog-surface {
   background-position: center;
   background-size: cover;
   background: rgba(30,30,30,.5) !important;
   backdrop-filter: blur(8px);
-  border-radius: 24px !important;
+  border-radius: 100px !important;
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-xl);
-  padding: 20px;
+  padding: 30px;
+  
 }
+
+
+
 
 /* glowing border */
 .form-dialog--employee .mat-mdc-dialog-surface::before {
   content: '';
   position: absolute; inset: 0;
-  padding: 1px; border-radius: inherit;
-  background: linear-gradient(135deg, rgba(227,96,18,.8), rgba(227,96,18,.25));
+  /* padding: 1px; border-radius: inherit; */
+  /* background: linear-gradient(135deg, rgba(227,96,18,.8), rgba(227,96,18,.25)); */
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude;
   pointer-events: none;

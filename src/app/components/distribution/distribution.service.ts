@@ -349,19 +349,36 @@ export class DistributionService {
       );
   }
 
+  // getChannels(q: LeadsQuery = {}) {
+  //   const { entry_channel, ...rest } = q as any; // exclude self-filter
+  //   const params = this.toParams(rest);
+
+  //   return this.http
+  //     .get<PagedResponse<any>>(`${this.base}/Client/GetAllChanell`, { params })
+  //     .pipe(
+  //       map((res) =>
+  //         (Array.isArray(res?.data) ? res.data : []).map((x: any) => ({
+  //           entryChannel: x.entryChannel,
+  //           count: Number(x.count) || 0,
+  //         }))
+  //       ),
+  //       catchError(() => of([] as { entryChannel: string; count: number }[]))
+  //     );
+  // }
+
   getChannels(q: LeadsQuery = {}) {
-    const { entry_channel, ...rest } = q as any; // exclude self-filter
+    const { entry_channel, source_company, client_location, ...rest } =
+      q as any;
     const params = this.toParams(rest);
 
     return this.http
       .get<PagedResponse<any>>(`${this.base}/Client/GetAllChanell`, { params })
       .pipe(
-        map((res) =>
-          (Array.isArray(res?.data) ? res.data : []).map((x: any) => ({
-            entryChannel: x.entryChannel,
-            count: Number(x.count) || 0,
-          }))
-        ),
+        map((res) => {
+          const channels = Array.isArray(res?.data) ? res.data : [];
+          // تصفية القنوات التي تحتوي على بيانات (count > 0)
+          return channels.filter((channel: any) => channel.count > 0);
+        }),
         catchError(() => of([] as { entryChannel: string; count: number }[]))
       );
   }

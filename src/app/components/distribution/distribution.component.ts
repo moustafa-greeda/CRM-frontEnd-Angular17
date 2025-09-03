@@ -34,7 +34,6 @@ export class DistributionComponent implements OnInit, OnDestroy {
   categories$ = new BehaviorSubject<string[]>([]);
   mainDomains$ = new BehaviorSubject<string[]>([]);
   subDomains$ = new BehaviorSubject<string[]>([]);
-
   form = this.fb.group({
     search: [''],
 
@@ -117,18 +116,52 @@ export class DistributionComponent implements OnInit, OnDestroy {
       .subscribe((companies) => this.companies$.next(companies));
 
     // Channels depend on current filters (excluding entry_channel itself)
-    this.form.valueChanges
-      .pipe(
-        startWith(this.form.value),
-        map((f) => this.mapToQuery(f)),
-        map((q) => {
-          const { entry_channel, ...rest } = q as any;
-          return rest as LeadsQuery;
+    // this.form.valueChanges
+    //   .pipe(
+    //     startWith(this.form.value),
+    //     map((f) => this.mapToQuery(f)),
+    //     map((q) => {
+    //       const { entry_channel, ...rest } = q as any;
+    //       return rest as LeadsQuery;
+    //     }),
+    //     switchMap((q) => this.clientsService.getChannels(q)),
+    //     takeUntil(this.destroy$)
+    //   )
+    //   .subscribe((channels) => this.channels$.next(channels));
+
+    // عندما يختار المستخدم شركة من القائمة (source_company)
+    this.form
+      .get('source_company')!
+      .valueChanges.pipe(
+        switchMap((sourceCompany) => {
+          const filters: LeadsQuery = {
+            source_company: sourceCompany, // نرسل الشركة المختارة كفلتر
+            client_location: this.form.get('client_location')?.value, // إضافة فلاتر أخرى إذا كانت موجودة
+          };
+
+          return this.clientsService.getChannels(filters); // جلب القنوات بناءً على الفلاتر
         }),
-        switchMap((q) => this.clientsService.getChannels(q)),
         takeUntil(this.destroy$)
       )
       .subscribe((channels) => this.channels$.next(channels));
+    // تحديث القنوات بناءً على اختيار الشركة المصدر
+    // this.form
+    //   .get('source_company')!
+    //   .valueChanges.pipe(
+    //     switchMap((sourceCompany) => {
+    //       if (!sourceCompany) {
+    //         // إذا لم يتم اختيار شركة، نعرض جميع القنوات المتاحة
+    //         return this.clientsService.getChannels({});
+    //       } else {
+    //         // إذا تم اختيار شركة، نعرض القنوات الخاصة بتلك الشركة فقط
+    //         return this.clientsService.getChannels({
+    //           source_company: sourceCompany,
+    //         });
+    //       }
+    //     }),
+    //     takeUntil(this.destroy$)
+    //   )
+    //   .subscribe((channels) => this.channels$.next(channels));
 
     // Campaigns depend on current filters (excluding entry_campaign itself)
     this.form.valueChanges

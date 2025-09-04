@@ -18,19 +18,21 @@
 //   SortField?: string;
 //   SortDirection?: 'asc' | 'desc' | '';
 //   SearchKeyword?: string;
+
 //   source_company?: string;
-//   client_location?: string;
+//   client_location?: string; // country
 //   entry_channel?: string;
 //   entry_campaign?: string;
 //   client_category?: string;
 //   request_type?: string;
 //   client_main_domain?: string;
 //   client_sub_domain?: string;
+
 //   FeedbackStatus?: number;
 //   IsHaveSocialMedia?: boolean;
 //   CreatedAt?: string;
 //   gender?: string;
-//   Region?: string;
+//   Region?: string; // city
 //   Mode?: 0 | 1;
 // }
 
@@ -46,17 +48,15 @@
 //   constructor(private http: HttpClient) {}
 
 //   private toParams(obj: Record<string, any>): HttpParams {
-//     // helper: converts an object to HttpParams, skipping empty values
 //     let p = new HttpParams();
 //     Object.entries(obj).forEach(([k, v]) => {
 //       if (v === undefined || v === null || v === '') return;
 //       p = p.set(k, String(v));
 //     });
 //     return p;
-//   } // end: toParams
+//   }
 
 //   getCountries() {
-//     // API: /Client/GetClientCountries -> [{ clientLocation, count }]
 //     return this.http
 //       .get<PagedResponse<any>>(`${this.base}/Client/GetClientCountries`)
 //       .pipe(
@@ -70,10 +70,9 @@
 //         }),
 //         catchError(() => of([] as { clientLocation: string; count: number }[]))
 //       );
-//   } // end: getCountries
+//   }
 
 //   getCitiesByCountry(country: string) {
-//     // API: /Client/GetClientCity?country=... -> string[]
 //     const params = new HttpParams().set('country', country || '');
 //     return this.http
 //       .get<PagedResponse<string[]>>(`${this.base}/Client/GetClientCity`, {
@@ -83,92 +82,92 @@
 //         map((res) => (Array.isArray(res?.data) ? res.data : [])),
 //         catchError(() => of([] as string[]))
 //       );
-//   } // end: getCitiesByCountry
+//   }
 
-//   // getSourceCompanies(q: LeadsQuery = {}) {
-//   //   // API: /Client/GetAllSourceCompanies -> [{ sourceCompany|source_company, count }]
-//   //   const { source_company, ...rest } = q as any; // exclude self-filter
-//   //   const params = this.toParams(rest);
+//   getSourceCompaniesByLocation(country?: string, city?: string) {
+//     let params = new HttpParams();
+//     if (country) params = params.set('country', country);
+//     if (city) params = params.set('city', city);
 
-//   //   return this.http
-//   //     .get<PagedResponse<any>>(`${this.base}/Client/GetAllSourceCompanies`, {
-//   //       params,
-//   //     })
-//   //     .pipe(
-//   //       map((res) =>
-//   //         (Array.isArray(res?.data) ? res.data : []).map((x: any) => ({
-//   //           sourceCompany: x.sourceCompany ?? x.source_company ?? '',
-//   //           count: Number(x.count) || 0,
-//   //         }))
-//   //       ),
-//   //       catchError(() => of([] as { sourceCompany: string; count: number }[]))
-//   //     );
-//   // } // end: getSourceCompanies
-
-//   // يرجّع قائمة الشركات (source_company) — هذا الـ endpoint لا يقبل أي باراميترات
-//   getSourceCompanies() {
-//     return (
-//       this.http
-//         // .get<PagedResponse<any>>(`${this.base}/Client/GetAllSourceCompanies`)
-//         .get<PagedResponse<any>>(`${this.base}/Client/GetAllSourceComapnies`)
-
-//         .pipe(
-//           map((res) =>
-//             (Array.isArray(res?.data) ? res.data : []).map((x: any) => ({
-//               sourceCompany: x.sourceCompany ?? x.source_company ?? '',
-//               count: Number(x.count) || 0,
-//             }))
-//           ),
-//           catchError((err) => {
-//             console.error('getSourceCompanies error', err);
-//             return of([] as { sourceCompany: string; count: number }[]);
-//           })
-//         )
-//     );
+//     return this.http
+//       .get<PagedResponse<any>>(`${this.base}/Client/GetAllSourceCompanies`, {
+//         params,
+//       })
+//       .pipe(
+//         map((res) =>
+//           (Array.isArray(res?.data) ? res.data : []).map((x: any) => ({
+//             sourceCompany: x.sourceCompany ?? x.source_company ?? '',
+//             count: Number(x.count) || 0,
+//           }))
+//         ),
+//         catchError(() => of([] as { sourceCompany: string; count: number }[]))
+//       );
 //   }
 
 //   getChannels(q: LeadsQuery = {}) {
-//     // API: /Client/GetAllChanell -> [{ entryChannel, count }]
-//     const { entry_channel, ...rest } = q as any; // exclude self-filter
-//     const params = this.toParams(rest);
+//     const { entry_channel, entry_campaign, ...rest } = q as any;
+//     let params = this.toParams(rest);
+
+//     if (q.source_company)
+//       params = params.set('sourceCompany', q.source_company);
+//     if (q.client_location)
+//       params = params.set('clientLocation', q.client_location);
+//     if (q.Region) params = params.set('region', q.Region);
 
 //     return this.http
 //       .get<PagedResponse<any>>(`${this.base}/Client/GetAllChanell`, { params })
 //       .pipe(
 //         map((res) =>
 //           (Array.isArray(res?.data) ? res.data : []).map((x: any) => ({
-//             entryChannel: x.entryChannel,
+//             entryChannel: String(
+//               x.entryChannel ?? x.entry_channel ?? ''
+//             ).trim(),
 //             count: Number(x.count) || 0,
 //           }))
 //         ),
 //         catchError(() => of([] as { entryChannel: string; count: number }[]))
 //       );
-//   } // end: getChannels
+//   }
 
 //   getCampaigns(q: LeadsQuery = {}) {
-//     // API: /Client/GetCampianSource -> treat "clientWebsite" as entryCampaign
-//     const { entry_campaign, ...rest } = q as any; // exclude self-filter
-//     const params = this.toParams(rest);
+//     const { entry_campaign, ...rest } = q as any;
+
+//     const qForFacet: LeadsQuery = {
+//       ...rest,
+//       PageIndex: 1,
+//       PageSize: 10000,
+//     };
+
+//     const params = this.toParams(qForFacet);
 
 //     return this.http
-//       .get<PagedResponse<any>>(`${this.base}/Client/GetCampianSource`, {
-//         params,
-//       })
+//       .get<PagedResponse<any>>(
+//         `${this.base}/Client/GetClientsWithDistributeFilter`,
+//         { params }
+//       )
 //       .pipe(
-//         map((res) =>
-//           (Array.isArray(res?.data) ? res.data : []).map((x: any) => ({
-//             entryCampaign: x.clientWebsite ?? x.entry_campaign ?? '',
-//             count: Number(x.count) || 0,
-//           }))
-//         ),
+//         map((res) => {
+//           const root = res?.data ?? {};
+//           const items = root.result ?? root.items ?? root.data ?? [];
+
+//           const counts = new Map<string, number>();
+//           (items as any[]).forEach((it) => {
+//             const key = String(it.entry_campaign ?? '').trim();
+//             if (!key) return;
+//             counts.set(key, (counts.get(key) ?? 0) + 1);
+//           });
+
+//           return Array.from(counts.entries()).map(([entryCampaign, count]) => ({
+//             entryCampaign,
+//             count,
+//           }));
+//         }),
 //         catchError(() => of([] as { entryCampaign: string; count: number }[]))
 //       );
-//   } // end: getCampaigns
+//   }
 
 //   getAll(q: LeadsQuery = {}) {
-//     // API: /Client/GetClientsWithDistributeFilter -> paged grid data
 //     const params = this.toParams(q);
-
 //     return this.http
 //       .get<PagedResponse<Idistribution>>(
 //         `${this.base}/Client/GetClientsWithDistributeFilter`,
@@ -200,10 +199,9 @@
 //           return of({ items: [], total: 0 });
 //         })
 //       );
-//   } // end: getAll
+//   }
 
 //   getAllItems(q: LeadsQuery = {}) {
-//     // API: same as getAll but fetches big page for building secondary facets
 //     const qForFacet: LeadsQuery = {
 //       ...q,
 //       PageIndex: 1,
@@ -227,10 +225,9 @@
 //         }),
 //         catchError(() => of([] as Idistribution[]))
 //       );
-//   } // end: getAllItems
+//   }
 
 //   buildFacets(items: Idistribution[]) {
-//     // builds other “static” facets (campaign names list, categories, domains)
 //     const uniq = (arr: any[]) => [...new Set(arr)].filter(Boolean);
 //     return {
 //       campaignsRaw: uniq((items as any[]).map((x) => x.entry_campaign)),
@@ -238,7 +235,39 @@
 //       mainDomainsRaw: uniq((items as any[]).map((x) => x.client_main_domain)),
 //       subDomainsRaw: uniq((items as any[]).map((x) => x.client_sub_domain)),
 //     };
-//   } // end: buildFacets
+//   }
+
+//   // دالة تخصيص العملاء لشركة معينة
+//   assignClientsToCompany(clientIds: number[], companyToName: string) {
+//     const body = {
+//       clientIds: clientIds,
+//       companyToName: companyToName,
+//     };
+//     return this.http.post(this.base, body).pipe(
+//       catchError((error) => {
+//         console.error('Error during assignment:', error);
+//         return of({ succeeded: false, message: 'حدث خطأ أثناء التخصيص' });
+//       })
+//     );
+//   }
+
+//   displayedColumns: string[] = [
+//     'select',
+//     'index',
+//     'clientName',
+//     'clientPhone',
+//     'requestType',
+//     'entryCampaign',
+//     'sourceCompany',
+//     'clientCategory',
+//     'entryChannel',
+//     'client_main_domain',
+//     'client_sub_domain',
+//     'companyReceived',
+//     'region',
+//     'clientLocation',
+//     'createdAt',
+//   ];
 // }
 
 import { HttpClient, HttpParams } from '@angular/common/http';
@@ -263,7 +292,7 @@ export interface LeadsQuery {
   SearchKeyword?: string;
 
   source_company?: string;
-  client_location?: string; // country
+  client_location?: string;
   entry_channel?: string;
   entry_campaign?: string;
   client_category?: string;
@@ -272,10 +301,10 @@ export interface LeadsQuery {
   client_sub_domain?: string;
 
   FeedbackStatus?: number;
-  IsHaveSocialMedia?: boolean; // <— here
+  IsHaveSocialMedia?: boolean;
   CreatedAt?: string;
   gender?: string;
-  Region?: string; // city
+  Region?: string;
   Mode?: 0 | 1;
 }
 
@@ -327,13 +356,11 @@ export class DistributionService {
       );
   }
 
-  /** New: source companies filtered by (country, city) — either or both */
   getSourceCompaniesByLocation(country?: string, city?: string) {
     let params = new HttpParams();
     if (country) params = params.set('country', country);
     if (city) params = params.set('city', city);
 
-    // Use the correct endpoint name per Swagger: GetAllSourceCompanies
     return this.http
       .get<PagedResponse<any>>(`${this.base}/Client/GetAllSourceCompanies`, {
         params,
@@ -349,55 +376,64 @@ export class DistributionService {
       );
   }
 
-  // getChannels(q: LeadsQuery = {}) {
-  //   const { entry_channel, ...rest } = q as any; // exclude self-filter
-  //   const params = this.toParams(rest);
-
-  //   return this.http
-  //     .get<PagedResponse<any>>(`${this.base}/Client/GetAllChanell`, { params })
-  //     .pipe(
-  //       map((res) =>
-  //         (Array.isArray(res?.data) ? res.data : []).map((x: any) => ({
-  //           entryChannel: x.entryChannel,
-  //           count: Number(x.count) || 0,
-  //         }))
-  //       ),
-  //       catchError(() => of([] as { entryChannel: string; count: number }[]))
-  //     );
-  // }
-
   getChannels(q: LeadsQuery = {}) {
-    const { entry_channel, source_company, client_location, ...rest } =
-      q as any;
-    const params = this.toParams(rest);
+    const { entry_channel, entry_campaign, ...rest } = q as any;
+    let params = this.toParams(rest);
+
+    if (q.source_company)
+      params = params.set('sourceCompany', q.source_company);
+    if (q.client_location)
+      params = params.set('clientLocation', q.client_location);
+    if (q.Region) params = params.set('region', q.Region);
 
     return this.http
       .get<PagedResponse<any>>(`${this.base}/Client/GetAllChanell`, { params })
       .pipe(
-        map((res) => {
-          const channels = Array.isArray(res?.data) ? res.data : [];
-          // تصفية القنوات التي تحتوي على بيانات (count > 0)
-          return channels.filter((channel: any) => channel.count > 0);
-        }),
+        map((res) =>
+          (Array.isArray(res?.data) ? res.data : []).map((x: any) => ({
+            entryChannel: String(
+              x.entryChannel ?? x.entry_channel ?? ''
+            ).trim(),
+            count: Number(x.count) || 0,
+          }))
+        ),
         catchError(() => of([] as { entryChannel: string; count: number }[]))
       );
   }
 
   getCampaigns(q: LeadsQuery = {}) {
-    const { entry_campaign, ...rest } = q as any; // exclude self-filter
-    const params = this.toParams(rest);
+    const { entry_campaign, ...rest } = q as any;
+
+    const qForFacet: LeadsQuery = {
+      ...rest,
+      PageIndex: 1,
+      PageSize: 10000,
+    };
+
+    const params = this.toParams(qForFacet);
 
     return this.http
-      .get<PagedResponse<any>>(`${this.base}/Client/GetCampianSource`, {
-        params,
-      })
+      .get<PagedResponse<any>>(
+        `${this.base}/Client/GetClientsWithDistributeFilter`,
+        { params }
+      )
       .pipe(
-        map((res) =>
-          (Array.isArray(res?.data) ? res.data : []).map((x: any) => ({
-            entryCampaign: x.clientWebsite ?? x.entry_campaign ?? '',
-            count: Number(x.count) || 0,
-          }))
-        ),
+        map((res) => {
+          const root = res?.data ?? {};
+          const items = root.result ?? root.items ?? root.data ?? [];
+
+          const counts = new Map<string, number>();
+          (items as any[]).forEach((it) => {
+            const key = String(it.entry_campaign ?? '').trim();
+            if (!key) return;
+            counts.set(key, (counts.get(key) ?? 0) + 1);
+          });
+
+          return Array.from(counts.entries()).map(([entryCampaign, count]) => ({
+            entryCampaign,
+            count,
+          }));
+        }),
         catchError(() => of([] as { entryCampaign: string; count: number }[]))
       );
   }
@@ -471,5 +507,19 @@ export class DistributionService {
       mainDomainsRaw: uniq((items as any[]).map((x) => x.client_main_domain)),
       subDomainsRaw: uniq((items as any[]).map((x) => x.client_sub_domain)),
     };
+  }
+
+  // Assign clients to company
+  assignClientsToCompany(clientIds: number[], companyToName: string) {
+    const body = {
+      clientIds: clientIds,
+      companyToName: companyToName,
+    };
+    return this.http.post(this.base, body).pipe(
+      catchError((error) => {
+        console.error('Error during assignment:', error);
+        return of({ succeeded: false, message: 'حدث خطأ أثناء التخصيص' });
+      })
+    );
   }
 }

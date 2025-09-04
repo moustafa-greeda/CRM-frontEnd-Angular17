@@ -15,13 +15,13 @@ import { LeadsComponent } from './components/leads/leads.component';
 import { DistributionComponent } from './components/distribution/distribution.component';
 
 const routes: Routes = [
-  // { path: '', redirectTo: 'login', pathMatch: 'full' },
-  // { path: 'login', component: LoginComponent },
-  // { path: 'forget-password', component: ForgetPasswordComponent },
-  // { path: 'otp-password', component: OtpComponent },
-  // { path: 'reset-password', component: ResetPasswordComponent },
-  { path: '', redirectTo: 'dashboard/admin', pathMatch: 'full' },
-
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: 'login', component: LoginComponent },
+  { path: 'forget-password', component: ForgetPasswordComponent },
+  { path: 'otp-password', component: OtpComponent },
+  { path: 'reset-password', component: ResetPasswordComponent },
+  // { path: '', redirectTo: 'dashboard/admin', pathMatch: 'full' },
+  //
   {
     path: 'dashboard',
     component: LayoutComponent,

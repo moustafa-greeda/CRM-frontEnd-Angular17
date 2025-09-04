@@ -35,13 +35,14 @@
 
   <div class="parent-button">
     <div class="field select-wrapper">
-      <select formControlName="client_location" class="assign">
-        <option value="">تخصيص الشركة</option>
-        <option *ngFor="let c of countries$ | async" [value]="c.clientLocation">
-          {{ c.clientLocation }} ({{ c.count }})
+      <select formControlName="source_company">
+        <option value="">تخصيص الشركه</option>
+        <option *ngFor="let s of companies$ | async" [value]="s.sourceCompany">
+          {{ s.sourceCompany }}
         </option>
       </select>
     </div>
+
     <!-- <button mat-raised-button type="button" class="run-filter">
       تطبيق الفلاتر
     </button> -->
@@ -96,13 +97,6 @@
 
   <!-- القناة (entry_channel) -->
   <div class="field select-wrapper">
-    <!-- <select formControlName="entry_channel">
-      <option value="">entry_channel</option>
-      <option *ngFor="let ch of channels$ | async" [value]="ch.entryChannel">
-        {{ ch.entryChannel }}
-      </option>
-    </select> -->
-
     <select formControlName="entry_channel">
       <option value="">اختر القناة</option>
       <option *ngFor="let ch of channels$ | async" [value]="ch.entryChannel">
@@ -139,6 +133,24 @@
     (matSortChange)="onSortChange($event)"
     class="mat-mdc-table mat-elevation-z8 hover-elevate"
   >
+    <!-- <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef>
+        <mat-checkbox
+          (change)="selectAllRows($event)"
+          [checked]="isAllSelected()"
+          [indeterminate]="isSomeSelected() && !isAllSelected()"
+        >
+        </mat-checkbox>
+      </th>
+      <td mat-cell *matCellDef="let row">
+        <mat-checkbox
+          [(ngModel)]="isSelected[row.id]"
+          (change)="onSelectionChange(row.id)"
+        >
+        </mat-checkbox>
+      </td>
+    </ng-container> -->
+
     <ng-container matColumnDef="index">
       <th mat-header-cell *matHeaderCellDef>#</th>
       <td mat-cell *matCellDef="let row; let i = index">{{ i + 1 }}</td>

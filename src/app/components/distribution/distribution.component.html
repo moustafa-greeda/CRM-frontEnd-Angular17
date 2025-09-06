@@ -96,19 +96,14 @@
   <!-- المدينة -->
   <div class="field select-wrapper">
     <select formControlName="city">
-      <option *ngIf="!form.get('client_location')!.value" value="">
-        يجب اختيار الدولة أولا
+      <option value="">اختر المدينة</option>
+      <option *ngFor="let r of cities$ | async" [value]="r">
+        {{ r }}
       </option>
-      <ng-container *ngIf="form.get('client_location')!.value">
-        <option value="">اختر المدينة</option>
-        <option *ngFor="let r of cities$ | async" [value]="r">
-          {{ r }}
-        </option>
-      </ng-container>
     </select>
   </div>
 
-  <!-- الشركة (source_company) -->
+  <!-- الشركة -->
   <div class="field select-wrapper">
     <select formControlName="source_company">
       <option value="">مصدر الشركة</option>
@@ -118,7 +113,7 @@
     </select>
   </div>
 
-  <!-- القناة (entry_channel) -->
+  <!-- القناة -->
   <div class="field select-wrapper">
     <select formControlName="entry_channel">
       <option value="">اختر القناة</option>
@@ -128,7 +123,7 @@
     </select>
   </div>
 
-  <!-- الحملة (entry_campaign) -->
+  <!-- الحملة -->
   <div class="field select-wrapper">
     <select formControlName="entry_campaign">
       <option value="">مصدر الحملة</option>
@@ -138,7 +133,7 @@
     </select>
   </div>
 
-  <!-- Has Social Media -->
+  <!-- لينكات السوشيال -->
   <div class="field select-wrapper">
     <select formControlName="isHaveSocialMedia">
       <option [ngValue]="null">لينكات السوشيال</option>

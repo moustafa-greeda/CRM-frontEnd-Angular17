@@ -73,6 +73,9 @@ export class DistributionService {
   }
 
   getCitiesByCountry(country: string) {
+      if (!country) {
+    return of([] as string[]); // ما تبعتش Request
+  }
     const params = new HttpParams().set('country', country || '');
     return this.http
       .get<PagedResponse<string[]>>(`${this.base}/Client/GetClientCity`, {
@@ -135,7 +138,7 @@ export class DistributionService {
     const qForFacet: LeadsQuery = {
       ...rest,
       PageIndex: 1,
-      PageSize: 10000,
+      PageSize: 10,
     };
 
     const params = this.toParams(qForFacet);
@@ -174,6 +177,8 @@ export class DistributionService {
         { params }
       )
       .pipe(
+              tap((res) => console.log('Raw API response:', res)), // 🌟 اطبع الرد الخام
+
         map((res) => {
           const root = res?.data ?? {};
           const items =
@@ -200,47 +205,8 @@ export class DistributionService {
         })
       );
   }
-
-  getAllItems(q: LeadsQuery = {}) {
-    const qForFacet: LeadsQuery = {
-      ...q,
-      PageIndex: 1,
-      PageSize: 10000,
-      SortField: undefined,
-      SortDirection: undefined,
-    };
-    const params = this.toParams(qForFacet);
-
-    return this.http
-      .get<PagedResponse<Idistribution>>(
-        `${this.base}/Client/GetClientsWithDistributeFilter`,
-        { params }
-      )
-      .pipe(
-        map((res) => {
-          const root = res?.data ?? {};
-          const items =
-            root.items ?? root.data ?? (Array.isArray(root) ? root : []) ?? [];
-          return items as Idistribution[];
-        }),
-        catchError(() => of([] as Idistribution[]))
-      );
-  }
-
-  buildFacets(items: Idistribution[]) {
-    const uniq = (arr: any[]) => [...new Set(arr)].filter(Boolean);
-    return {
-      campaignsRaw: uniq((items as any[]).map((x) => x.entry_campaign)),
-      categoriesRaw: uniq((items as any[]).map((x) => x.client_category)),
-      mainDomainsRaw: uniq((items as any[]).map((x) => x.client_main_domain)),
-      subDomainsRaw: uniq((items as any[]).map((x) => x.client_sub_domain)),
-    };
-  }
-
-  // ارسال IDs + اسم الشركة
   assignClientsToCompany(clientIds: number[], companyToName: string) {
     const body = { clientIds, companyToName };
-    // غيّر المسار لو الباك إند عندكم مختلف
     return this.http
       .post<PagedResponse<any>>(`${this.base}/Client/edit-distribution`, body)
       .pipe(

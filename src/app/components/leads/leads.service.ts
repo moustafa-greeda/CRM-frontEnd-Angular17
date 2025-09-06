@@ -88,7 +88,7 @@ export class LeadsService {
     const qForFacet: LeadsQuery = {
       ...q,
       PageIndex: 1,
-      PageSize: 10000,
+      PageSize: 100,
       SortField: undefined,
       SortDirection: undefined,
     };

@@ -19,7 +19,8 @@ html {
   --navbar-bg: #ffffff;
   --navbar-text: #1e293b;
 
-  --bg-image: url('assets/bg.svg');
+  --bg-image: url('assets/background.svg');
+   --bg-dim: 0.35;
   --bg-overlay: rgba(0, 0, 0, 0.35);
 
   /* button */
@@ -123,16 +124,19 @@ html {
 body {
   font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
     "Oxygen", "Ubuntu", "Cantarell", sans-serif;
-  background:
+  /* background:
     var(--bg-image) center / cover no-repeat fixed,
-    var(--bg-color) !important;
+    var(--bg-color) !important; */
+      background:
+    linear-gradient(rgba(0,0,0,var(--bg-dim)), rgba(0,0,0,var(--bg-dim))), 
+    var(--bg-image) center / cover no-repeat fixed,
+    var(--bg-color);
   color: var(--text-color);
   min-height: 100vh;
   display: flex;
   flex-direction: column;
   line-height: 1.6;
   font-size: 16px;
-  /* overflow-x: hidden; */
 }
 
 /* ===== Typography, links, inputs*/
@@ -252,7 +256,9 @@ button:focus{ outline: 2px solid var(--link-color); outline-offset: 2px; }
 .mat-mdc-row:hover { outline: 1px solid #E36012 !important;  transition: ease-in-out .3s; transform: scaleX(1.01);}
 
 
-.mat-mdc-row:nth-child(odd) { background: rgba(30,30,30,0.65) !important; }
+/* .mat-mdc-row:nth-child(odd) { background: rgba(30,30,30,0.65) !important; } */
+.mat-mdc-row:nth-child(odd) { background: rgba(30,30,30,0.8) !important; }
+
 .mat-mdc-header-cell{ background: transparent !important; color:#E36012; text-align: center !important; padding: 5px;}
 .mat-mdc-cell { background: transparent !important; color:#fff; text-align: center !important; }
 .mat-mdc-paginator { background: rgba(30,30,30,0.4) !important; }

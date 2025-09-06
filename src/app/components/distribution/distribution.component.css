@@ -23,72 +23,47 @@
   align-items: center;
   gap: 10px;
 }
+/* =========================== cards count =========================== */
 
-.no-data-alert {
-  padding: 20px;
-  margin: 20px 0;
+.status .status-title {
   text-align: center;
-  font-weight: 500;
-  color: #856404;
-  background-color: #fff3cd;
-  border: 1px solid #ffeeba;
-  border-radius: 4px;
-  padding: 10px;
+  color: #ffff;
 }
 
-/* toggel button */
-::ng-deep .mat-button-toggle-group {
-  height: 50px;
-  /* margin: 2px; */
-  padding: 5px 10px;
-  background-color: #00000080;
-  color: #fff !important;
-  border-radius: 10px !important;
-  border: 1px solid rgba(255, 95, 0, 1) !important;
-}
-
-::ng-deep .mat-button-toggle {
+.parent-stats {
+  max-width: 1200px;
+  margin: 50px auto;
   display: flex;
   align-items: center;
-  color: #fff !important;
-  border-radius: 6px;
-  background-color: transparent !important;
-  margin: 2px;
+  justify-content: space-between;
 }
 
-::ng-deep .mat-button-toggle:hover {
-  transform: scale(1.05);
-  background-color: #33323280 !important;
+.status .parent-stats .card {
+  position: relative;
+  color: #fff;
+  min-width: 316.64px;
+  min-height: 110px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #252f3a !important;
+  color: #fff;
 }
 
-::ng-deep .mat-pseudo-checkbox::after {
-  color: #fff !important;
+.status .parent-stats .card::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: url("/assets/bg-card.svg") center/contain no-repeat;
+
+  /* opacity: 0.2; */
+  z-index: 0;
 }
 
-.active {
-  background: rgba(226, 84, 0, 1) !important;
-  color: white !important;
-  padding: 0px 5px;
-  transition: all ease-in-out 0.3s;
-  transform: scale(1.05);
-}
-
-/* ========================================= tabel ======================================== */
-.table-wrapper {
-  border-radius: 8px !important;
-  overflow: visible !important;
-
-  overflow-x: auto !important;
-  overflow-y: hidden;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
-  transition: all 0.3s ease;
-}
-
-.full-width-table {
-  width: max-content !important;
-  min-width: 1200px;
-  table-layout: auto;
-  border-collapse: collapse;
+.status .parent-stats .card .label,
+.status .parent-stats .card .value {
+  position: relative;
+  z-index: 1;
 }
 
 /* =========================== Search Box =========================== */
@@ -100,7 +75,7 @@
 }
 
 .search-box {
-  width: 400px;
+  width: 314px;
   height: 50px;
   display: flex;
   align-items: center;
@@ -196,7 +171,6 @@
   align-items: center;
   border-radius: 10px;
   justify-content: space-between;
-  /* background-color: #383737 !important; */
 }
 
 /* =========================== Custom select =========================== */
@@ -234,11 +208,137 @@
   pointer-events: none;
 }
 
+/* ========================================= tabel ======================================== */
+.table-wrapper {
+  border-radius: 8px !important;
+  overflow: visible !important;
+
+  overflow-x: auto !important;
+  overflow-y: hidden;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+.full-width-table {
+  width: max-content !important;
+  min-width: 1200px;
+  table-layout: auto;
+  border-collapse: collapse;
+}
+
+.no-data-alert {
+  padding: 20px;
+  margin: 20px 0;
+  text-align: center;
+  font-weight: 500;
+  color: #856404;
+  background-color: #fff3cd;
+  border: 1px solid #ffeeba;
+  border-radius: 4px;
+  padding: 10px;
+}
+
+/*************************************** toggel button *******************************/
+::ng-deep .mat-button-toggle-group {
+  height: 50px;
+  padding: 5px 10px;
+  background-color: #00000080;
+  color: #fff !important;
+  border-radius: 10px !important;
+  border: 1px solid rgba(255, 95, 0, 1) !important;
+}
+
+::ng-deep .mat-button-toggle {
+  display: flex;
+  align-items: center;
+  color: #fff !important;
+  border-radius: 6px;
+  background-color: transparent !important;
+  margin: 2px;
+}
+
+::ng-deep .mat-button-toggle:hover {
+  transform: scale(1.05);
+  background-color: #33323280 !important;
+}
+
+::ng-deep .mat-pseudo-checkbox::after {
+  color: #fff !important;
+}
+
+.active {
+  background: rgba(226, 84, 0, 1) !important;
+  color: white !important;
+  padding: 0px 5px;
+  transition: all ease-in-out 0.3s;
+  transform: scale(1.05);
+}
+
+/**************************************** check box *****************************/
+/* ألوان الأساس عبر متغيرات MDC */
+:host ::ng-deep .brand-checkbox {
+  /* لون الصندوق وهو متعلم (checked) */
+  --mdc-checkbox-selected-icon-color: #ff7a00;
+  /* لون علامة الصح ✓ */
+  --mdc-checkbox-selected-checkmark-color: #fff !important;
+  /* لون الإطار وهو غير متعلم (unchecked) */
+  --mdc-checkbox-unselected-icon-color: #ff7a00 !important;
+
+  /* لون طبقة الهوفر/الفوكس/الضغط (التوهّج) */
+  --mdc-checkbox-selected-hover-state-layer-color: rgba(255, 122, 0, 0.18);
+  --mdc-checkbox-unselected-hover-state-layer-color: rgba(255, 255, 255, 0.12);
+  --mdc-checkbox-selected-focus-state-layer-color: rgba(107, 96, 85, 0.22);
+  --mdc-checkbox-unselected-focus-state-layer-color: rgba(255, 255, 255, 0.16);
+}
+
+/* ===================== تأثيرات hover الفعلية ===================== */
+
+/* Unchecked + hover: غيّر لون الـborder عند المرور */
+:host ::ng-deep .brand-checkbox:hover .mdc-checkbox__background {
+  border-color: #ff7a00 !important;
+}
+
+/* Checked: تعبئة + حد برتقالي */
+:host
+  ::ng-deep
+  .brand-checkbox.mat-mdc-checkbox-checked
+  .mdc-checkbox__background {
+  background-color: #ff7a00 !important;
+  border-color: #ff7a00 !important;
+}
+
+/* Checked + hover: افتح الدرجة شوية */
+:host
+  ::ng-deep
+  .brand-checkbox.mat-mdc-checkbox-checked:hover
+  .mdc-checkbox__background {
+  background-color: #ff8c1a !important;
+  border-color: #ff8c1a !important;
+}
+
+/* لون علامة الصح (احتياطي لو ما التقط المتغير) */
+:host ::ng-deep .brand-checkbox .mdc-checkbox__checkmark-path {
+  stroke: #fff !important;
+}
+
+/* لون تموّج الـ ripple عند hover/press */
+:host ::ng-deep .brand-checkbox .mdc-checkbox__ripple::before,
+:host ::ng-deep .brand-checkbox .mdc-checkbox__ripple::after {
+  background-color: rgba(230, 125, 28, 0.2) !important;
+}
+
+/* (اختياري) تكبير بسيط */
+:host ::ng-deep .brand-checkbox .mdc-checkbox {
+  transform: scale(1.15);
+}
+
 /* =========================== Table header =========================== */
+
 .full-width-table .header-row {
   border-bottom: 1px solid #e36012;
 }
 
+/* لون علامة الصح */
 .full-width-table .header-cell {
   color: #fff !important;
   background-color: #3b3b3b !important;

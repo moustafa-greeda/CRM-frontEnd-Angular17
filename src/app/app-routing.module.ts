@@ -26,7 +26,7 @@ const routes: Routes = [
     path: 'dashboard',
     component: LayoutComponent,
     children: [
-      { path: '', redirectTo: 'home', pathMatch: 'full' },
+      { path: '', redirectTo: 'leads', pathMatch: 'full' },
 
       // Common routes
       { path: 'tasks', component: TasksComponent },
@@ -35,13 +35,16 @@ const routes: Routes = [
         path: 'admin',
         component: DashboardAdminComponent,
         children: [
-          { path: '', redirectTo: 'home', pathMatch: 'full' },
+          { path: '', redirectTo: 'leads', pathMatch: 'full' },
           { path: 'home', component: HomeAdminComponent },
           { path: 'leads', component: LeadsComponent },
           { path: 'distribution', component: DistributionComponent },
         ],
       },
-      { path: 'customer', component: DashboardCustomerComponent },
+      {
+        path: 'customer',
+        component: DashboardCustomerComponent,
+      },
       { path: 'employee', component: DashboardEmployeeComponent },
       //
     ],

@@ -182,6 +182,7 @@ import { OtpComponent } from './Auth/otp/otp.component';
 import { LeadsComponent } from './components/leads/leads.component';
 import { ChatDialogComponent } from './components/leads/chat/chat-dialog.component';
 import { DistributionComponent } from './components/distribution/distribution.component';
+import { AuthTokenInterceptor } from './core/auth-token.interceptor';
 
 @NgModule({
   declarations: [
@@ -246,11 +247,13 @@ import { DistributionComponent } from './components/distribution/distribution.co
   providers: [
     provideClientHydration(),
     provideAnimationsAsync(),
+
     {
       provide: HTTP_INTERCEPTORS,
       useClass: SpinnerInterceptor,
       multi: true,
     },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

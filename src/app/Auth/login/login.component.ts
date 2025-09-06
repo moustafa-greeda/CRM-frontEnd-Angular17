@@ -68,7 +68,7 @@ export class LoginComponent {
               redirectUrl = '/dashboard/admin';
               break;
             case 'Customer':
-              redirectUrl = '/dashboard/customer';
+              redirectUrl = '/dashboard/admin';
               break;
             default:
               redirectUrl = '/dashboard/employee';

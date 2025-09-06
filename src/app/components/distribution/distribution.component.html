@@ -12,6 +12,25 @@
     </button>
   </div>
 </div>
+<!---------------------  cards destributed --------------------->
+<div class="status">
+  <h1 class="status-title">رصيد التوزيع</h1>
+  <div class="parent-stats">
+    <div class="card">
+      <div class="label">إجمالي العملاء</div>
+      <div class="value">{{ clientsCount$ | async }}</div>
+    </div>
+    <div class="card">
+      <div class="label">موزعين</div>
+      <div class="value">{{ DistributedCount$ | async }}</div>
+    </div>
+
+    <div class="card">
+      <div class="label">غير موزعين</div>
+      <div class="value">{{ notDistributedCount$ | async }}</div>
+    </div>
+  </div>
+</div>
 
 <form [formGroup]="form" class="parent-search">
   <!-- <div class="parent-search"> -->
@@ -31,21 +50,25 @@
       [ngClass]="{ active: form.value.mode === '1' }"
       >موزع منذ 3 شهور</mat-button-toggle
     >
+    <mat-button-toggle
+      [value]="'2'"
+      [ngClass]="{ active: form.value.mode === '2' }"
+      >موزع ومعداش عليه 3 شهور</mat-button-toggle
+    >
   </mat-button-toggle-group>
 
   <div class="parent-button">
     <div class="field select-wrapper">
-      <select formControlName="source_company">
+      <select
+        formControlName="assign_company"
+        [disabled]="clients.length === 0"
+      >
         <option value="">تخصيص الشركه</option>
         <option *ngFor="let s of companies$ | async" [value]="s.sourceCompany">
           {{ s.sourceCompany }}
         </option>
       </select>
     </div>
-
-    <!-- <button mat-raised-button type="button" class="run-filter">
-      تطبيق الفلاتر
-    </button> -->
 
     <button
       mat-stroked-button
@@ -88,7 +111,7 @@
   <!-- الشركة (source_company) -->
   <div class="field select-wrapper">
     <select formControlName="source_company">
-      <option value="">source_company</option>
+      <option value="">مصدر الشركة</option>
       <option *ngFor="let s of companies$ | async" [value]="s.sourceCompany">
         {{ s.sourceCompany }}
       </option>
@@ -108,7 +131,7 @@
   <!-- الحملة (entry_campaign) -->
   <div class="field select-wrapper">
     <select formControlName="entry_campaign">
-      <option value="">entry_campaign</option>
+      <option value="">مصدر الحملة</option>
       <option *ngFor="let c of campaigns$ | async" [value]="c.entryCampaign">
         {{ c.entryCampaign }}
       </option>
@@ -118,9 +141,9 @@
   <!-- Has Social Media -->
   <div class="field select-wrapper">
     <select formControlName="isHaveSocialMedia">
-      <option [ngValue]="null">IsHaveSocialMedia</option>
-      <option [ngValue]="true">true</option>
-      <option [ngValue]="false">false</option>
+      <option [ngValue]="null">لينكات السوشيال</option>
+      <option [ngValue]="true">نعم</option>
+      <option [ngValue]="false">لا</option>
     </select>
   </div>
 </form>
@@ -133,9 +156,10 @@
     (matSortChange)="onSortChange($event)"
     class="mat-mdc-table mat-elevation-z8 hover-elevate"
   >
-    <!-- <ng-container matColumnDef="select">
+    <ng-container matColumnDef="select">
       <th mat-header-cell *matHeaderCellDef>
         <mat-checkbox
+          class="brand-checkbox"
           (change)="selectAllRows($event)"
           [checked]="isAllSelected()"
           [indeterminate]="isSomeSelected() && !isAllSelected()"
@@ -144,12 +168,13 @@
       </th>
       <td mat-cell *matCellDef="let row">
         <mat-checkbox
+          class="brand-checkbox"
           [(ngModel)]="isSelected[row.id]"
-          (change)="onSelectionChange(row.id)"
+          (change)="onSelectionChange(row)"
         >
         </mat-checkbox>
       </td>
-    </ng-container> -->
+    </ng-container>
 
     <ng-container matColumnDef="index">
       <th mat-header-cell *matHeaderCellDef>#</th>
@@ -177,14 +202,14 @@
     </ng-container>
 
     <ng-container matColumnDef="sourceCompany">
-      <th mat-header-cell *matHeaderCellDef>sourceCompany</th>
+      <th mat-header-cell *matHeaderCellDef>مصدر الشركة</th>
       <td mat-cell *matCellDef="let r">
         {{ r.source_company ?? r.sourceCompany }}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="clientCategory">
-      <th mat-header-cell *matHeaderCellDef>clientCategory</th>
+      <th mat-header-cell *matHeaderCellDef>الصنيف</th>
       <td mat-cell *matCellDef="let r">{{ r.client_category }}</td>
     </ng-container>
 
@@ -203,13 +228,13 @@
       <td mat-cell *matCellDef="let r">{{ r.client_sub_domain }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="companyReceived">
+    <ng-container matColumnDef="companyName">
       <th mat-header-cell *matHeaderCellDef>الشركة المستلمة</th>
-      <td mat-cell *matCellDef="let r">{{ r.companyReceived }}</td>
+      <td mat-cell *matCellDef="let r">{{ r.companyName || "-" }}</td>
     </ng-container>
 
     <ng-container matColumnDef="region">
-      <th mat-header-cell *matHeaderCellDef>region</th>
+      <th mat-header-cell *matHeaderCellDef>المدينة</th>
       <td mat-cell *matCellDef="let r">{{ r.region }}</td>
     </ng-container>
 
@@ -226,6 +251,7 @@
     <tr
       mat-header-row
       *matHeaderRowDef="[
+        'select',
         'index',
         'clientName',
         'clientPhone',
@@ -237,7 +263,7 @@
         'entryChannel',
         'client_main_domain',
         'client_sub_domain',
-        'companyReceived',
+        'companyName',
         'region',
         'createdAt'
       ]"
@@ -247,6 +273,7 @@
       *matRowDef="
         let row;
         columns: [
+          'select',
           'index',
           'clientName',
           'clientPhone',
@@ -258,7 +285,7 @@
           'entryChannel',
           'client_main_domain',
           'client_sub_domain',
-          'companyReceived',
+          'companyName',
           'region',
           'createdAt'
         ]

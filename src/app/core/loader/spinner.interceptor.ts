@@ -34,7 +34,7 @@ export class SpinnerInterceptor implements HttpInterceptor {
 
     const shouldSkipSpinner = shouldSkipUrl || isPost;
 
-    if (!shouldSkipSpinner) {
+    if (shouldSkipSpinner) {
       this.showSpinner();
     }
 

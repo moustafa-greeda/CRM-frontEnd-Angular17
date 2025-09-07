@@ -64,11 +64,21 @@
         [disabled]="clients.length === 0"
       >
         <option value="">تخصيص الشركه</option>
-        <option *ngFor="let s of companies$ | async" [value]="s.sourceCompany">
-          {{ s.sourceCompany }}
+
+        <option *ngFor="let country of allCountries" [value]="country.name">
+          {{ country.name }}
         </option>
       </select>
     </div>
+
+    <button
+      mat-stroked-button
+      type="button"
+      class="run-filter"
+      (click)="applyFilters()"
+    >
+      تطبيق الفلتر
+    </button>
 
     <button
       mat-stroked-button
@@ -187,7 +197,7 @@
     </ng-container>
 
     <ng-container matColumnDef="requestType">
-      <th mat-header-cell *matHeaderCellDef>requestType</th>
+      <th mat-header-cell *matHeaderCellDef>نوع الطلب</th>
       <td mat-cell *matCellDef="let r">{{ r.request_type }}</td>
     </ng-container>
 

@@ -6,9 +6,11 @@ import { BehaviorSubject, Subject, combineLatest, of } from 'rxjs';
 import {
   debounceTime,
   distinctUntilChanged,
+  filter,
   map,
   startWith,
   switchMap,
+  take,
   takeUntil,
 } from 'rxjs/operators';
 import { NotifyDialogService } from '../../shared/notify-dialog/notify-dialog.service';
@@ -47,6 +49,11 @@ export class DistributionComponent implements OnInit, OnDestroy {
   mainDomains$ = new BehaviorSubject<string[]>([]);
   subDomains$ = new BehaviorSubject<string[]>([]);
 
+  // allCompanies$ = new BehaviorSubject<
+  //   { sourceCompany: string; count: number }[]
+  // >([]);
+  allCountries: { name: string }[] = [];
+
   // assign to company
   selectedRows = new Set<number>();
   isSelected: { [key: number]: boolean } = {};
@@ -56,10 +63,11 @@ export class DistributionComponent implements OnInit, OnDestroy {
     search: [''],
     region: [''],
     client_location: [''],
-    city: [''],
-    source_company: [''],
-    entry_channel: [''],
-    entry_campaign: [''],
+    city: [{ value: '', disabled: true }],
+    source_company: [{ value: '', disabled: true }],
+    entry_channel: [{ value: '', disabled: true }],
+    entry_campaign: [{ value: '', disabled: true }],
+
     client_category: [''],
     client_main_domain: [''],
     client_sub_domain: [''],
@@ -89,158 +97,39 @@ export class DistributionComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    // عشان نخزن الداتا في clients[]
     this.clientsService.clients$
       .pipe(takeUntil(this.destroy$))
-      .subscribe((rows) => (this.clients = rows));
+      .subscribe((rows) => {
+        this.clients = rows;
+      });
 
-    // Countries
+    this.form
+      .get('mode')!
+      .valueChanges.pipe(
+        debounceTime(0),
+        startWith(this.form.value.mode),
+        takeUntil(this.destroy$)
+      )
+      .subscribe(() => this.applyFilters());
+
+    this.clientsService.GetAllCountries().subscribe((data) => {
+      this.allCountries = data;
+    });
+
+    // نجيب الدول ونحطها في الـ dropdown
     this.clientsService
       .getCountries()
       .pipe(takeUntil(this.destroy$))
       .subscribe((countries) => this.countries$.next(countries));
 
-    // Cities
-    this.form
-      .get('client_location')!
-      .valueChanges.pipe(
-        switchMap((country) => {
-          const cityCtrl = this.form.get('city')!;
-          cityCtrl.setValue('', { emitEvent: false });
-          if (!country) return of([] as string[]);
-          return this.clientsService.getCitiesByCountry(country);
-        }),
-        takeUntil(this.destroy$)
-      )
-      .subscribe((cities) => this.cities$.next(cities));
+    // جهز الفلاتر كلها من البداية (cities, companies, channels, campaigns)
+    this.setupFilters();
 
-    // Companies
-    combineLatest([
-      this.form
-        .get('client_location')!
-        .valueChanges.pipe(startWith(this.form.value.client_location)),
-      this.form.get('city')!.valueChanges.pipe(startWith(this.form.value.city)),
-    ])
-      .pipe(
-        switchMap(([country, city]) =>
-          this.clientsService.getSourceCompaniesByLocation(
-            country || undefined,
-            city || undefined
-          )
-        ),
-        takeUntil(this.destroy$)
-      )
-      .subscribe((companies) => this.companies$.next(companies));
+    // أول ما يفتح الكومبوننت، رجعلي بيانات الجدول
+    this.applyFilters();
 
-    // Channels
-    this.form.valueChanges
-      .pipe(
-        startWith(this.form.value),
-        debounceTime(200),
-        map((f) => {
-          const q = this.mapToQuery(f) as any;
-          const { entry_channel, entry_campaign, ...rest } = q;
-          return rest as LeadsQuery;
-        }),
-        distinctUntilChanged((a, b) => JSON.stringify(a) === JSON.stringify(b)),
-        switchMap((q) => this.clientsService.getChannels(q)),
-        takeUntil(this.destroy$)
-      )
-      .subscribe((channels) => {
-        const list = channels.map((c) => ({
-          entryChannel: (c.entryChannel || '').trim(),
-          count: c.count,
-        }));
-        this.channels$.next(list);
-
-        const current = (this.form.get('entry_channel')!.value || '').trim();
-        const exists =
-          !!current &&
-          list.some(
-            (c) => c.entryChannel.toLowerCase() === current.toLowerCase()
-          );
-        if (current && !exists) {
-          this.form.get('entry_channel')!.setValue('', { emitEvent: false });
-        }
-      });
-    
-// chanels and campaigns
-    this.form
-      .get('entry_channel')!
-      .valueChanges.pipe(
-        startWith(this.form.value.entry_channel),
-        debounceTime(200), // تأخير 200 ملي ثانية لتقليل عدد الطلبات
-        distinctUntilChanged(), // لا ترسل الطلب إذا كانت القيمة لم تتغير
-        switchMap((channel) => {
-          if (!channel) return of([]); // إذا لم يتم اختيار قناة، نرجع قائمة فارغة
-          // إذا كانت الحملات موجودة في التخزين المؤقت، نعرضها مباشرة
-          if (this.campaigns$.value.length > 0) {
-            return of(this.campaigns$.value);
-          }
-          // إذا لم تكن الحملات موجودة في التخزين المؤقت، نقوم بإرسال الطلب
-          return this.clientsService.getCampaigns({ entry_channel: channel });
-        }),
-        takeUntil(this.destroy$)
-      )
-      .subscribe((campaigns) => {
-        this.campaigns$.next(campaigns); // تحديث قائمة الحملات في التخزين المؤقت
-
-        // إعادة تعيين الحملة إذا كانت لا توجد في الحملات الجديدة
-        const currentCampaign = this.form.get('entry_campaign')!.value;
-        const exists =
-          !!currentCampaign &&
-          campaigns.some((c) => c.entryCampaign === currentCampaign);
-        if (currentCampaign && !exists) {
-          this.form.get('entry_campaign')!.setValue('', { emitEvent: false });
-        }
-      });
-    
-        this.form.valueChanges
-    .pipe(
-      startWith(this.form.value),
-      debounceTime(300),
-      switchMap((f) => {
-        const q = this.mapToQuery(f);
-        return combineLatest([
-          this.clientsService.getCountries(),
-          this.clientsService.getCitiesByCountry(f.client_location || ''),
-          this.clientsService.getSourceCompaniesByLocation(f.client_location , f.city),
-          this.clientsService.getChannels(q),
-          this.clientsService.getCampaigns(q),
-        ]);
-      }),
-      takeUntil(this.destroy$)
-    )
-.subscribe(([countries, cities, companies, channels, campaigns]) => {
-  this.countries$.next(countries);
-  this.cities$.next(cities);
-  this.companies$.next(companies);
-  this.channels$.next(channels);
-  this.campaigns$.next(campaigns);
-});
-
-    // Grid
-    combineLatest([
-      this.form.valueChanges.pipe(startWith(this.form.value)),
-      this.page$,
-      this.sort$,
-    ])
-      .pipe(
-        map(
-          ([f, page, sort]) =>
-            ({
-              ...this.mapToQuery(f),
-              PageIndex: page.index + 1,
-              PageSize: page.size,
-              SortField: sort.field || undefined,
-              SortDirection: sort.dir || undefined,
-            } as LeadsQuery)
-        ),
-        switchMap((q) => this.clientsService.getAll(q)),
-        takeUntil(this.destroy$)
-      )
-      .subscribe();
-
-    //========================== assign to company ===============================
+    // ================== Assign to company ==================
     this.form
       .get('assign_company')!
       .valueChanges.pipe(takeUntil(this.destroy$))
@@ -256,7 +145,6 @@ export class DistributionComponent implements OnInit, OnDestroy {
             soundUrl: 'assets/sound/duck.mp3',
             autoCloseMs: 3000,
           });
-          // خليك على نفس قيمة الاختيار أو فضّيها حسب رغبتك
           this.form.get('assign_company')!.setValue('', { emitEvent: false });
           return;
         }
@@ -271,6 +159,15 @@ export class DistributionComponent implements OnInit, OnDestroy {
                   ids,
                   company as string
                 );
+                //update count
+                this.clientsCount$ = this.clientsService.getClientsCount();
+                this.DistributedCount$ =
+                  this.clientsService.getDistributedCount();
+                this.DistributedCount$ =
+                  this.clientsService.getDistributedCount();
+
+                this.notDistributedCount$ =
+                  this.clientsService.getNotDistributedCount();
 
                 const msg = res?.data?.message || 'تم تخصيص العملاء بنجاح.';
                 this.notify.success({
@@ -286,7 +183,6 @@ export class DistributionComponent implements OnInit, OnDestroy {
                 this.form
                   .get('assign_company')!
                   .setValue('', { emitEvent: false });
-
                 this.page$.next({ ...this.page$.value });
               } else {
                 this.notify.error({
@@ -308,6 +204,125 @@ export class DistributionComponent implements OnInit, OnDestroy {
               });
             },
           });
+      });
+  }
+
+  private setupFilters() {
+    // Cities
+    this.form
+      .get('client_location')!
+      .valueChanges.pipe(
+        takeUntil(this.destroy$),
+        switchMap((country) => {
+          const cityCtrl = this.form.get('city')!;
+          cityCtrl.setValue('', { emitEvent: false });
+          if (!country) {
+            this.cities$.next([]);
+            cityCtrl.disable({ emitEvent: false });
+            return of([]);
+          }
+          cityCtrl.enable({ emitEvent: false });
+          return this.clientsService.getCitiesByCountry(country);
+        })
+      )
+      .subscribe((cities) => this.cities$.next(cities));
+
+    // Companies
+    this.form
+      .get('city')!
+      .valueChanges.pipe(
+        takeUntil(this.destroy$),
+        switchMap((city) => {
+          const companyCtrl = this.form.get('source_company')!;
+          companyCtrl.setValue('', { emitEvent: false });
+          if (!city) {
+            this.companies$.next([]);
+            companyCtrl.disable({ emitEvent: false });
+            return of([]);
+          }
+          companyCtrl.enable({ emitEvent: false });
+          const country = this.form.get('client_location')!.value;
+          return this.clientsService.getSourceCompaniesByLocation(
+            country,
+            city
+          );
+        })
+      )
+      .subscribe((companies) => this.companies$.next(companies));
+
+    // Channels
+    this.form
+      .get('source_company')!
+      .valueChanges.pipe(
+        takeUntil(this.destroy$),
+        switchMap((company) => {
+          const channelCtrl = this.form.get('entry_channel')!;
+          channelCtrl.setValue('', { emitEvent: false });
+          if (!company) {
+            this.channels$.next([]);
+            channelCtrl.disable({ emitEvent: false });
+            return of([]);
+          }
+          channelCtrl.enable({ emitEvent: false });
+          return this.clientsService.getChannels({ source_company: company });
+        })
+      )
+      .subscribe((channels) => this.channels$.next(channels));
+
+    // Campaigns
+    this.form
+      .get('entry_channel')!
+      .valueChanges.pipe(
+        takeUntil(this.destroy$),
+        switchMap((channel) => {
+          const campaignCtrl = this.form.get('entry_campaign')!;
+          campaignCtrl.setValue('', { emitEvent: false });
+          if (!channel) {
+            this.campaigns$.next([]);
+            campaignCtrl.disable({ emitEvent: false });
+            return of([]);
+          }
+          campaignCtrl.enable({ emitEvent: false });
+          return this.clientsService.getCampaigns({ entry_channel: channel });
+        })
+      )
+      .subscribe((campaigns) => this.campaigns$.next(campaigns));
+  }
+
+  applyFilters() {
+    const filters = this.mapToQuery(this.form.value);
+
+    const query: LeadsQuery = {
+      ...filters,
+      PageIndex: this.page$.value.index + 1,
+      PageSize: this.page$.value.size,
+      SortField: this.sort$.value.field || undefined,
+      SortDirection: this.sort$.value.dir || undefined,
+    };
+
+    // get all clients
+    this.clientsService
+      .getAll(query)
+      .pipe(takeUntil(this.destroy$))
+      .subscribe({
+        next: () => {
+          this.notify.success({
+            title: 'تم بنجاح',
+            description: 'تم الفلتر بنجاح',
+            imageUrl: 'assets/logo_elbatt.png',
+            soundUrl: 'assets/sound/duck.mp3',
+            autoCloseMs: 2000,
+          });
+        },
+        error: () => {
+          this.notify.error({
+            title: 'خطأ',
+            description: 'فشل في تطبيق الفلتر',
+            imageUrl: 'assets/logo_elbatt.png',
+            soundUrl: 'assets/sound/duck.mp3',
+            autoCloseMs: 2000,
+          });
+        },
       });
   }
 
@@ -345,6 +360,7 @@ export class DistributionComponent implements OnInit, OnDestroy {
       createdAt: '',
     });
     this.page$.next({ index: 0, size: this.page$.value.size });
+    this.applyFilters();
   }
 
   private mapToQuery(f: any): LeadsQuery {
@@ -408,19 +424,20 @@ export class DistributionComponent implements OnInit, OnDestroy {
     const numRows = this.clients.length;
     return numSelected > 0 && numSelected < numRows;
   }
+
+  // private updateCounts() {
+  //   const clients = this.clients; // كل العملاء الحاليين
+
+  //   const total = clients.length;
+  //   const distributed = clients.filter((c) => c.source_company).length;
+  //   const notDistributed = total - distributed;
+
+  //   // افترض أن clientsCount$, DistributedCount$, notDistributedCount$ كلها BehaviorSubject
+  //   (this.clientsCount$ as BehaviorSubject<number>).next(total);
+  //   (this.DistributedCount$ as BehaviorSubject<number>).next(distributed);
+  //   (this.notDistributedCount$ as BehaviorSubject<number>).next(notDistributed);
+  // }
 }
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import { Component, OnDestroy, OnInit } from '@angular/core';
 // import { NonNullableFormBuilder } from '@angular/forms';

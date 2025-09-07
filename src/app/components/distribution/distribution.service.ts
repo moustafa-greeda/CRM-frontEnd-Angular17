@@ -73,9 +73,9 @@ export class DistributionService {
   }
 
   getCitiesByCountry(country: string) {
-      if (!country) {
-    return of([] as string[]); // ما تبعتش Request
-  }
+    if (!country) {
+      return of([] as string[]); // ما تبعتش Request
+    }
     const params = new HttpParams().set('country', country || '');
     return this.http
       .get<PagedResponse<string[]>>(`${this.base}/Client/GetClientCity`, {
@@ -177,8 +177,6 @@ export class DistributionService {
         { params }
       )
       .pipe(
-              tap((res) => console.log('Raw API response:', res)), // 🌟 اطبع الرد الخام
-
         map((res) => {
           const root = res?.data ?? {};
           const items =
@@ -255,6 +253,20 @@ export class DistributionService {
       .pipe(
         map((res) => Number((res?.data as any) ?? 0)),
         catchError(() => of(0))
+      );
+  }
+
+  // get all companies
+  GetAllCountries() {
+    return this.http
+      .get<PagedResponse<any>>(`${this.base}/Client/GetAllCountries`)
+      .pipe(
+        map((res) =>
+          (Array.isArray(res?.data) ? res.data : []).map((x: any) => ({
+            name: x.name ?? '', // ناخذ فقط الاسم
+          }))
+        ),
+        catchError(() => of([] as { name: string }[]))
       );
   }
 }

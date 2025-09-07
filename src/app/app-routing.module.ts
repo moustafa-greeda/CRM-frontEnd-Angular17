@@ -35,9 +35,9 @@ const routes: Routes = [
         path: 'admin',
         component: DashboardAdminComponent,
         children: [
-          { path: '', redirectTo: 'leads', pathMatch: 'full' },
-          { path: 'home', component: HomeAdminComponent },
-          { path: 'leads', component: LeadsComponent },
+          { path: '', redirectTo: 'distribution', pathMatch: 'full' },
+          // { path: 'home', component: HomeAdminComponent },
+          // { path: 'leads', component: LeadsComponent },
           { path: 'distribution', component: DistributionComponent },
         ],
       },

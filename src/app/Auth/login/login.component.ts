@@ -41,8 +41,6 @@ export class LoginComponent {
 
     this.service.login(model).subscribe({
       next: (res) => {
-        console.log(res);
-
         // ✅ إظهار dialog نجاح
         this.notify.success({
           title: 'تم تسجيل الدخول',

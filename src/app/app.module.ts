@@ -135,12 +135,12 @@ import {
 import { AppComponent } from './app.component';
 import { LoginComponent } from './Auth/login/login.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { HTTP_INTERCEPTORS, HttpClientModule } from '@angular/common/http';
+import { HTTP_INTERCEPTORS, HttpClientModule, provideHttpClient, withFetch } from '@angular/common/http';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { ToastrModule } from 'ngx-toastr';
 import { LayoutComponent } from './layout/layout.component';
 import { NgxSpinnerModule } from 'ngx-spinner';
-import { SpinnerInterceptor } from './core/loader/spinner.interceptor';
+// import { SpinnerInterceptor } from './core/loader/spinner.interceptor';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 
 import { MatTableModule } from '@angular/material/table';
@@ -182,7 +182,7 @@ import { OtpComponent } from './Auth/otp/otp.component';
 import { LeadsComponent } from './components/leads/leads.component';
 import { ChatDialogComponent } from './components/leads/chat/chat-dialog.component';
 import { DistributionComponent } from './components/distribution/distribution.component';
-import { AuthTokenInterceptor } from './core/auth-token.interceptor';
+// import { AuthTokenInterceptor } from './core/auth-token.interceptor';
 
 @NgModule({
   declarations: [
@@ -248,12 +248,14 @@ import { AuthTokenInterceptor } from './core/auth-token.interceptor';
     provideClientHydration(),
     provideAnimationsAsync(),
 
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: SpinnerInterceptor,
-      multi: true,
-    },
-    { provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },
+    // {
+    //   provide: HTTP_INTERCEPTORS,
+    //   useClass: SpinnerInterceptor,
+    //   multi: true,
+    // },
+    // { provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },
+    // Enable fetch for HttpClient (better SSR compatibility)
+    provideHttpClient(withFetch()),
   ],
   bootstrap: [AppComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

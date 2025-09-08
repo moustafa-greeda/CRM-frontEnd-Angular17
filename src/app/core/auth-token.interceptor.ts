@@ -1,24 +1,71 @@
-import { Injectable } from '@angular/core';
-import {
-  HttpInterceptor,
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-} from '@angular/common/http';
-import { Observable } from 'rxjs';
+// // import { Injectable } from '@angular/core';
+// // import {
+// //   HttpInterceptor,
+// //   HttpRequest,
+// //   HttpHandler,
+// //   HttpEvent,
+// // } from '@angular/common/http';
+// // import { Observable } from 'rxjs';
 
-@Injectable()
-export class AuthTokenInterceptor implements HttpInterceptor {
-  intercept(
-    req: HttpRequest<any>,
-    next: HttpHandler
-  ): Observable<HttpEvent<any>> {
-    const token = localStorage.getItem('token');
-    if (!token) return next.handle(req);
+// // @Injectable()
+// // export class AuthTokenInterceptor implements HttpInterceptor {
+// //   intercept(
+// //     req: HttpRequest<any>,
+// //     next: HttpHandler
+// //   ): Observable<HttpEvent<any>> {
+// //     const token = localStorage.getItem('token');
+// //     if (!token) return next.handle(req);
+// //     if (req.url.includes('/assets/') || req.url.endsWith('.html')) {
+// //       return next.handle(req);
+// //     }
 
-    const authed = req.clone({
-      setHeaders: { Authorization: `Bearer ${token}` },
-    });
-    return next.handle(authed);
-  }
-}
+// //     const authed = req.clone({
+// //       setHeaders: { Authorization: `Bearer ${token}` },
+// //     });
+// //     return next.handle(authed);
+// //   }
+// // }
+
+// import { Injectable } from '@angular/core';
+// import {
+//   HttpInterceptor,
+//   HttpRequest,
+//   HttpHandler,
+//   HttpEvent,
+// } from '@angular/common/http';
+// import { Observable } from 'rxjs';
+
+// @Injectable()
+// export class AuthTokenInterceptor implements HttpInterceptor {
+//   intercept(
+//     req: HttpRequest<any>,
+//     next: HttpHandler
+//   ): Observable<HttpEvent<any>> {
+//     // تجاهل requests للـ assets و html
+//     if (req.url.includes('/assets/') || req.url.endsWith('.html')) {
+//       // console.log('[INTERCEPTOR] Skipping assets/html request:', req.url);
+//       return next.handle(req);
+//     }
+
+//     const token = localStorage.getItem('token');
+
+//     // لو مفيش توكن اطبع warning
+//     if (!token) {
+//       console.warn(
+//         '[INTERCEPTOR] No token found → request sent without auth:',
+//         req.url
+//       );
+//       return next.handle(req);
+//     }
+
+//     // اطبع التوكن والـ url قبل ما تبعت
+//     // console.log('[INTERCEPTOR] Attaching token to request:', req.url);
+//     // console.log('[INTERCEPTOR] Token:', token);
+
+//     const authedReq = req.clone({
+//       setHeaders: { Authorization: `Bearer ${token}` },
+//     });
+
+//     return next.handle(authedReq);
+//   }
+// }

@@ -344,7 +344,7 @@
   background-color: #3b3b3b !important;
   font-weight: 600;
   font-size: 14px;
-  padding: 16px 12px;
+  /* padding: 16px 12px; */
   border-bottom: 1px solid #e36012;
   text-transform: uppercase;
   letter-spacing: 0.5px;

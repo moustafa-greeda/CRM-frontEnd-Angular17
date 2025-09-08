@@ -50,7 +50,8 @@ const routes: Routes = [
     ],
   },
 
-  { path: '**', redirectTo: 'login' },
+  // { path: '**', redirectTo: 'login' },
+  { path: '**', component: LoginComponent },
 ];
 
 @NgModule({

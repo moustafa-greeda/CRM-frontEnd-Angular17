@@ -57,8 +57,10 @@ export class DistributionService {
   }
 
   getCountries() {
+    const token = localStorage.getItem('token'); // احصل على الـ token من التخزين
+    const headers = { Authorization: `Bearer ${token}` };
     return this.http
-      .get<PagedResponse<any>>(`${this.base}/Client/GetClientCountries`)
+      .get<PagedResponse<any>>(`${this.base}/Client/GetClientCountries` , {headers})
       .pipe(
         map((res) => {
           const root = res?.data ?? {};
@@ -73,14 +75,14 @@ export class DistributionService {
   }
 
   getCitiesByCountry(country: string) {
+    const token = localStorage.getItem('token'); // احصل على الـ token من التخزين
+    const headers = { Authorization: `Bearer ${token}` };
     if (!country) {
       return of([] as string[]); // ما تبعتش Request
     }
     const params = new HttpParams().set('country', country || '');
     return this.http
-      .get<PagedResponse<string[]>>(`${this.base}/Client/GetClientCity`, {
-        params,
-      })
+      .get<PagedResponse<string[]>>(`${this.base}/Client/GetClientCity`, {params , headers})
       .pipe(
         map((res) => (Array.isArray(res?.data) ? res.data : [])),
         catchError(() => of([] as string[]))
@@ -88,6 +90,8 @@ export class DistributionService {
   }
 
   getSourceCompaniesByLocation(country?: string, city?: string) {
+    const token = localStorage.getItem('token'); // احصل على الـ token من التخزين
+    const headers = { Authorization: `Bearer ${token}` };
     let params = new HttpParams();
     if (country) params = params.set('country', country);
     if (city) params = params.set('city', city);
@@ -95,6 +99,7 @@ export class DistributionService {
     return this.http
       .get<PagedResponse<any>>(`${this.base}/Client/GetAllSourceCompanies`, {
         params,
+        headers,
       })
       .pipe(
         map((res) =>
@@ -110,7 +115,8 @@ export class DistributionService {
   getChannels(q: LeadsQuery = {}) {
     const { entry_channel, entry_campaign, ...rest } = q as any;
     let params = this.toParams(rest);
-
+    const token = localStorage.getItem('token'); // احصل على الـ token من التخزين
+    const headers = { Authorization: `Bearer ${token}` };
     if (q.source_company)
       params = params.set('sourceCompany', q.source_company);
     if (q.client_location)
@@ -118,7 +124,7 @@ export class DistributionService {
     if (q.Region) params = params.set('region', q.Region);
 
     return this.http
-      .get<PagedResponse<any>>(`${this.base}/Client/GetAllChanell`, { params })
+      .get<PagedResponse<any>>(`${this.base}/Client/GetAllChanell`, { params , headers})
       .pipe(
         map((res) =>
           (Array.isArray(res?.data) ? res.data : []).map((x: any) => ({
@@ -134,7 +140,8 @@ export class DistributionService {
 
   getCampaigns(q: LeadsQuery = {}) {
     const { entry_campaign, ...rest } = q as any;
-
+    const token = localStorage.getItem('token'); // احصل على الـ token من التخزين
+    const headers = { Authorization: `Bearer ${token}` };
     const qForFacet: LeadsQuery = {
       ...rest,
       PageIndex: 1,
@@ -146,7 +153,7 @@ export class DistributionService {
     return this.http
       .get<PagedResponse<any>>(
         `${this.base}/Client/GetClientsWithDistributeFilter`,
-        { params }
+        { params , headers}
       )
       .pipe(
         map((res) => {
@@ -171,10 +178,12 @@ export class DistributionService {
 
   getAll(q: LeadsQuery = {}) {
     const params = this.toParams(q);
+    const token = localStorage.getItem('token'); // احصل على الـ token من التخزين
+    const headers = { Authorization: `Bearer ${token}` };
     return this.http
       .get<PagedResponse<Idistribution>>(
         `${this.base}/Client/GetClientsWithDistributeFilter`,
-        { params }
+        { params , headers}
       )
       .pipe(
         map((res) => {
@@ -205,8 +214,10 @@ export class DistributionService {
   }
   assignClientsToCompany(clientIds: number[], companyToName: string) {
     const body = { clientIds, companyToName };
+    const token = localStorage.getItem('token'); // احصل على الـ token من التخزين
+    const headers = { Authorization: `Bearer ${token}` };
     return this.http
-      .post<PagedResponse<any>>(`${this.base}/Client/edit-distribution`, body)
+      .post<PagedResponse<any>>(`${this.base}/Client/edit-distribution`, body, {headers})
       .pipe(
         catchError((error) => {
           console.error('Error during assignment:', error);
@@ -231,16 +242,20 @@ export class DistributionService {
   // ========================= get count of clients , destributed , not destributed ===========================
 
   getClientsCount() {
+    const token = localStorage.getItem('token'); // احصل على الـ token من التخزين
+    const headers = { Authorization: `Bearer ${token}` };
     return this.http
-      .get<PagedResponse<number>>(`${this.base}/Client/count`)
+      .get<PagedResponse<number>>(`${this.base}/Client/count`, {headers})
       .pipe(
         map((res) => Number((res?.data as any) ?? 0)),
         catchError(() => of(0))
       );
   }
   getDistributedCount() {
+    const token = localStorage.getItem('token'); // احصل على الـ token من التخزين
+    const headers = { Authorization: `Bearer ${token}` };
     return this.http
-      .get<PagedResponse<number>>(`${this.base}/Client/count/distributed`)
+      .get<PagedResponse<number>>(`${this.base}/Client/count/distributed`, {headers})
       .pipe(
         map((res) => Number((res?.data as any) ?? 0)),
         catchError(() => of(0))
@@ -248,8 +263,10 @@ export class DistributionService {
   }
 
   getNotDistributedCount() {
-    return this.http
-      .get<PagedResponse<number>>(`${this.base}/Client/count/not-distributed`)
+    const token = localStorage.getItem('token'); // احصل على الـ token من التخزين
+    const headers = { Authorization: `Bearer ${token}` };
+          return this.http
+      .get<PagedResponse<number>>(`${this.base}/Client/count/not-distributed`, {headers})
       .pipe(
         map((res) => Number((res?.data as any) ?? 0)),
         catchError(() => of(0))
@@ -258,8 +275,10 @@ export class DistributionService {
 
   // get all companies
   GetAllCountries() {
+    const token = localStorage.getItem('token'); // احصل على الـ token من التخزين
+    const headers = { Authorization: `Bearer ${token}` };
     return this.http
-      .get<PagedResponse<any>>(`${this.base}/Client/GetAllCountries`)
+      .get<PagedResponse<any>>(`${this.base}/Client/GetAllCountries`, {headers})
       .pipe(
         map((res) =>
           (Array.isArray(res?.data) ? res.data : []).map((x: any) => ({

@@ -41,7 +41,7 @@ export class LoginComponent {
 
     this.service.login(model).subscribe({
       next: (res) => {
-        // ✅ إظهار dialog نجاح
+        // إظهار dialog نجاح
         this.notify.success({
           title: 'تم تسجيل الدخول',
           description: 'أهلاً بك!',
@@ -51,7 +51,18 @@ export class LoginComponent {
         });
 
         if (isPlatformBrowser(this.platformId)) {
-          localStorage.setItem('token', res.data.tokken);
+          const token =
+            res?.data?.tokken ||
+            res?.data?.token ||
+            res?.token ||
+            res?.accessToken ||
+            '';
+          console.log('[LOGIN] extracted token:', token ? 'present' : 'missing');
+          if (token) {
+            localStorage.setItem('token', token);
+          } else {
+            console.warn('[LOGIN] token key not found in response shape', res);
+          }
 
           const roles =
             Array.isArray(res.data.roles) && res.data.roles.length > 0

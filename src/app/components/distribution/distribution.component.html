@@ -32,7 +32,7 @@
   </div>
 </div>
 
-<form [formGroup]="form" class="parent-search">
+<form [formGroup]="form" class="parent-search" (ngSubmit)="$event.preventDefault()">
   <!-- <div class="parent-search"> -->
   <div class="search-box">
     <input type="text" placeholder="بحث..." formControlName="search" />
@@ -61,7 +61,6 @@
     <div class="field select-wrapper">
       <select
         formControlName="assign_company"
-        [disabled]="clients.length === 0"
       >
         <option value="">تخصيص الشركه</option>
 
@@ -92,7 +91,7 @@
   <!-- </div> -->
 </form>
 
-<form [formGroup]="form" class="parent-filters">
+<form [formGroup]="form" class="parent-filters" (ngSubmit)="$event.preventDefault()">
   <!-- الدولة -->
   <div class="field select-wrapper">
     <select formControlName="client_location">

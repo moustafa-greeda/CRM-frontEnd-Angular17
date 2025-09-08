@@ -42,7 +42,7 @@
   display: none;
 }
 
-@media (max-width: 991px) {
+/* @media (max-width: 991px) { */
   .dashboard-layout {
     grid-template-areas:
       "header"
@@ -51,7 +51,6 @@
     grid-template-columns: 1fr;
   }
 
-  /* Off-canvas sidebar */
   .sidebar {
     position: fixed;
     top: 0;
@@ -64,7 +63,6 @@
     padding-top: 70px;
   }
 
-  /* Show when toggled */
   .dashboard-layout.sidebar-open .sidebar {
     transform: translateX(0);
   }
@@ -80,4 +78,5 @@
     background: rgba(0, 0, 0, 0.5);
     z-index: 999;
   }
-}
+/* }  */
+

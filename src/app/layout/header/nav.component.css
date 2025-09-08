@@ -17,7 +17,7 @@
 
 /* Hamburger (mobile only) */
 .menu-btn {
-  display: none;
+  /* display: none; */
   width: 42px;
   height: 38px;
   border: 1px solid var(--button-color);

@@ -3,20 +3,14 @@ import { NonNullableFormBuilder } from '@angular/forms';
 import { PageEvent } from '@angular/material/paginator';
 import { Sort } from '@angular/material/sort';
 import { BehaviorSubject, Subject, combineLatest, of } from 'rxjs';
-import {
-  debounceTime,
-  distinctUntilChanged,
-  filter,
-  map,
-  startWith,
-  switchMap,
-  take,
-  takeUntil,
-} from 'rxjs/operators';
+import { debounceTime, startWith, switchMap, takeUntil } from 'rxjs/operators';
 import { NotifyDialogService } from '../../shared/notify-dialog/notify-dialog.service';
-import { MatDialog } from '@angular/material/dialog';
 import { DistributionService, LeadsQuery } from './distribution.service';
 import { Idistribution } from '../../core/Models/distribution/idistribution';
+import { FormDialogComponent } from '../../shared/form/form-dialog/form-dialog.component';
+import { IDepartments } from '../../core/Models/departments/idepartments.model';
+import { DepartmentsService } from './../departments/departments.service';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-distribution',
@@ -48,16 +42,16 @@ export class DistributionComponent implements OnInit, OnDestroy {
   categories$ = new BehaviorSubject<string[]>([]);
   mainDomains$ = new BehaviorSubject<string[]>([]);
   subDomains$ = new BehaviorSubject<string[]>([]);
-
-  // allCompanies$ = new BehaviorSubject<
-  //   { sourceCompany: string; count: number }[]
-  // >([]);
   allCountries: { name: string }[] = [];
 
   // assign to company
   selectedRows = new Set<number>();
   isSelected: { [key: number]: boolean } = {};
   clients: Idistribution[] = [];
+
+  //show and hide filter
+  showFilters = false;
+  private firstLoad = true; 
 
   form = this.fb.group({
     search: [''],
@@ -91,6 +85,7 @@ export class DistributionComponent implements OnInit, OnDestroy {
   private destroy$ = new Subject<void>();
 
   constructor(
+    private dialog: MatDialog,
     private clientsService: DistributionService,
     private fb: NonNullableFormBuilder,
     private notify: NotifyDialogService
@@ -111,7 +106,7 @@ export class DistributionComponent implements OnInit, OnDestroy {
       .get('mode')!
       .valueChanges.pipe(
         debounceTime(0),
-        startWith(this.form.value.mode),
+        // startWith(this.form.value.mode),
         takeUntil(this.destroy$)
       )
       .subscribe(() => this.applyFilters());
@@ -292,7 +287,7 @@ export class DistributionComponent implements OnInit, OnDestroy {
       )
       .subscribe((campaigns) => this.campaigns$.next(campaigns));
   }
-
+  // ==================================== applyFilters function  ====================================
   applyFilters() {
     const filters = this.mapToQuery(this.form.value);
 
@@ -310,13 +305,17 @@ export class DistributionComponent implements OnInit, OnDestroy {
       .pipe(takeUntil(this.destroy$))
       .subscribe({
         next: () => {
-          this.notify.success({
-            title: 'تم بنجاح',
-            description: 'تم الفلتر بنجاح',
-            imageUrl: 'assets/logo_elbatt.png',
-            soundUrl: 'assets/sound/duck.mp3',
-            autoCloseMs: 2000,
-          });
+          // skip notify on first load
+          if (!this.firstLoad) {
+            this.notify.success({
+              title: 'تم بنجاح',
+              description: 'تم الفلتر بنجاح',
+              imageUrl: 'assets/logo_elbatt.png',
+              soundUrl: 'assets/sound/duck.mp3',
+              autoCloseMs: 2000,
+            });
+          }
+          this.firstLoad = false; // mark first load as complete
         },
         error: () => {
           this.notify.error({
@@ -329,7 +328,10 @@ export class DistributionComponent implements OnInit, OnDestroy {
         },
       });
   }
-
+  // ==================================== toggel filter  function  ====================================
+  toggelFilters() {
+    this.showFilters = !this.showFilters;
+  }
   ngOnDestroy(): void {
     this.destroy$.next();
     this.destroy$.complete();
@@ -432,4 +434,80 @@ export class DistributionComponent implements OnInit, OnDestroy {
     const numRows = this.clients.length;
     return numSelected > 0 && numSelected < numRows;
   }
+  // ============================================ dialog add leads =========================================
+  openDialog(dept?: IDepartments): void {
+    const isEdit = !!dept;
+    const dialogRef = this.dialog.open(FormDialogComponent, {
+      width: '877px',
+      height: '693px',
+      panelClass: 'form-dialog--employee',
+      data: {
+        title: isEdit ? 'Edit Department' : 'Add Department',
+        fields: [
+          { name: 'name', label: 'القسم', type: 'text', required: true },
+          { name: 'name', label: 'القسم', type: 'text', required: true },
+          { name: 'name', label: 'القسم', type: 'text', required: true },
+          { name: 'name', label: 'القسم', type: 'text', required: true },
+          { name: 'name', label: 'القسم', type: 'text', required: true },
+          { name: 'name', label: 'القسم', type: 'text', required: true },
+          { name: 'name', label: 'القسم', type: 'text', required: true },
+          { name: 'name', label: 'القسم', type: 'text', required: true },
+        ],
+        initialData: dept || {},
+      },
+    });
+
+    // Handle dialog result (save changes)
+    // dialogRef.afterClosed().subscribe((result) => {
+    //   if (!result) return;
+
+    //   const req$ =
+    //     isEdit && dept?.id
+    //       ? this.DepartmentsService.update(dept.id, result)
+    //       : this.DepartmentsService.add(result);
+
+    //   req$.subscribe(() => {
+    //     //Show success dialog with dynamic title
+    //     this.notify.success({
+    //       title: isEdit ? 'تعديل ناجح' : 'نجاح',
+    //       description: isEdit ? 'تم تعديل القسم بنجاح' : 'تم اضافة القسم بنجاح',
+    //     });
+    //     this.fetch();
+    //   });
+    // });
+  }
+
+  /**
+   * Triggered when clicking the Edit action.
+   */
+  // onEditDepartment(dept: IDepartments) {
+  //   this.openDialog(dept);
+  // }
+
+  /**
+   * Opens confirmation dialog for deleting a department.
+   */
+  // onDeleteDepartment(dept?: IDepartments): void {
+  //   if (!dept?.id) {
+  //     this.toastr.error('Invalid department ID');
+  //     return;
+  //   }
+
+  //   const dialogRef = this.dialog.open(ConfirmDeleteComponent, {
+  //     width: '420px',
+  //     data: { title: 'Department', message: 'department' },
+  //   });
+
+  //   // Handle delete confirmation
+  //   dialogRef.afterClosed().subscribe((ok) => {
+  //     if (!ok) return;
+  //     this.departmentsService.delete(dept.id!).subscribe(() => {
+  //       // this.toastr.error('Department deleted');
+  //       this.notify.error({
+  //         title: 'نجاح',
+  //       });
+  //       this.fetch();
+  //     });
+  //   });
+  // }
 }

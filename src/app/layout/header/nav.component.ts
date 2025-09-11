@@ -18,7 +18,7 @@ export class HeaderComponent {
 
   theme$ = this.themeService.theme$;
 
-  isSidebarOpen = false;
+  isSidebarOpen = true;
 
   toggleSidebar() {
     this.isSidebarOpen = !this.isSidebarOpen;

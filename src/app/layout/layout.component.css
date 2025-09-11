@@ -1,3 +1,7 @@
+:root {
+  --sidebar-width: 250px;
+}
+
 .dashboard-layout {
   display: grid;
   min-height: 100vh;
@@ -5,78 +9,120 @@
     "sidebar header"
     "sidebar content"
     "sidebar footer";
-  grid-template-columns: 250px 1fr;
+  grid-template-columns: 0 1fr;
   grid-template-rows: auto 1fr auto;
-  gap: 1px;
-  position: relative;
+  transition: grid-template-columns 0.3s ease;
+  overflow-x: hidden;
 }
 
-.sidebar {
-  grid-area: sidebar;
-  padding: 1rem;
-  background-color: var(--sidebar-bg);
-  color: var(--white-color);
-  transition: transform 0.3s ease;
+.dashboard-layout.sidebar-open {
+  grid-template-columns: var(--sidebar-width) 1fr;
+}
+
+.dashboard-layout.sidebar-closed {
+  grid-template-columns: 0 1fr;
 }
 
 .header {
   grid-area: header;
 }
-
+.sidebar {
+  grid-area: sidebar;
+  background-color: var(--sidebar-bg, #111);
+  color: var(--white-color, #fff);
+  overflow: hidden;
+}
 .content {
   grid-area: content;
-
-  margin: 20px;
+  margin: 16px;
+  min-width: 0; /
 }
-
 .footer {
   grid-area: footer;
   background: #222;
-  color: white;
+  color: #fff;
   padding: 1rem;
   text-align: center;
 }
 
-/* Backdrop for mobile when sidebar is open */
-.backdrop {
-  display: none;
+.content table,
+.content .table,
+.content .data-grid {
+  width: 100%;
+  max-width: 100%;
+}
+.content .scroll-h {
+  overflow-x: auto;
 }
 
-/* @media (max-width: 991px) { */
+/* ====== الموبايل (عرض أقل من 992px) ====== */
+@media (max-width: 991px) {
+  /* نخلي الشبكة عمود واحد (Header / Content / Footer) */
   .dashboard-layout {
     grid-template-areas:
       "header"
       "content"
       "footer";
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr; /* المحتوى ياخد العرض كله */
   }
 
+  /* الـ sidebar يبقى off-canvas فوق المحتوى */
   .sidebar {
+    grid-area: unset; /* مهم → ما يبقاش جزء من grid */
     position: fixed;
-    top: 0;
+    top: 75px; /* تحت الهيدر */
     bottom: 0;
-    left: 0;
-    width: 250px;
-    max-width: 80%;
-    transform: translateX(-100%);
+    right: 0; /* أو right:0 لو RTL */
+    width: var(--sidebar-width); /* العرض المطلوب */
+    max-width: 85vw; /* يمنع يغطي الشاشة كلها */
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
     z-index: 1000;
-    padding-top: 70px;
+    padding-top: 16px;
+    background: var(--sidebar-bg, #111);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
 
+  /* لما يفتح */
   .dashboard-layout.sidebar-open .sidebar {
     transform: translateX(0);
   }
 
+  .dashboard-layout.sidebar-open {
+    grid-template-columns: 1fr;
+  }
+
+  /* الـ backdrop */
   .backdrop {
     display: none;
   }
-
   .dashboard-layout.sidebar-open .backdrop {
     display: block;
     position: fixed;
+    width: 100%;
     inset: 0;
     background: rgba(0, 0, 0, 0.5);
     z-index: 999;
   }
-/* }  */
 
+  /* المحتوى يفضل بعرض الشاشة كلها */
+  .content {
+    margin: 12px;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  /* الجداول العريضة تلف داخل حاوية قابلة للتمرير أفقي */
+  .content table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* منع تحرك الصفحة تحت الـ off-canvas عند الفتح */
+  body.sidebar-lock,
+  .dashboard-layout.sidebar-open {
+    touch-action: none;
+  }
+}

@@ -6,8 +6,13 @@ import { Component } from '@angular/core';
   styleUrl: './layout.component.css',
 })
 export class LayoutComponent {
+  isSidebarOpen = true;
+
+  toggleSidebar() {
+    this.isSidebarOpen = !this.isSidebarOpen;
+  }
+
   closeSidebar() {
-    const layout = document.querySelector('.dashboard-layout');
-    layout?.classList.remove('sidebar-open');
+    this.isSidebarOpen = false;
   }
 }

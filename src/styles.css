@@ -205,12 +205,14 @@ button:focus{ outline: 2px solid var(--link-color); outline-offset: 2px; }
 }
 
 .mat-mdc-paginator-container {
+  font-size: 18px;
+  font-weight: bold;
   color: #ffff !important;
   background-color: #1e1e1e !important;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  padding: 0 8px;
+  padding: 5px 15px;
   flex-wrap: wrap;
   width: 100%;
   min-height: var(--mat-paginator-container-size);
@@ -247,24 +249,26 @@ button:focus{ outline: 2px solid var(--link-color); outline-offset: 2px; }
 
 /* ========== Tables transparent so background image shows through ========== */
 .table-wrapper { background: transparent !important; box-shadow: none; border: 1px solid #E36012 !important; border-radius: 50px !important; }
-/* .mat-mdc-table { background: transparent !important; } */
 .mat-mdc-table {
   border-radius: 50px !important;
   background-color: transparent !important;
+  animation: tableFadeIn 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
+  transform-origin: top center;
 }
+
+
 .mat-mdc-header-row,
-.mat-mdc-row { background: rgba(30,30,30,0.95) !important; }
+.mat-mdc-row { 
+  background: rgba(30,30,30,0.95) !important; 
+}
+
+
+
 .mat-mdc-row:hover { outline: 1px solid #E36012 !important;  transition: ease-in-out .3s; transform: scaleX(1.01);}
-
-
-/* .mat-mdc-row:nth-child(odd) { background: rgba(30,30,30,0.65) !important; } */
 .mat-mdc-row:nth-child(odd) { background: rgba(30,30,30,0.8) !important; }
 
 .mat-mdc-header-cell{ background: transparent !important; color:#E36012; text-align: center !important; padding: 5px 0 !important;}
 .mat-mdc-cell { background: transparent !important; color:#fff; text-align: center !important; }
-.mdc-data-table__cell, .mdc-data-table__header-cell {
-  padding: 0 !important;
-}
 .mat-mdc-paginator { background: rgba(30,30,30,0.4) !important; }
 
 .mat-mdc-table .mat-mdc-header-cell { text-align: center !important; }
@@ -309,6 +313,7 @@ app-notify-dialog-host .nd-modal {
 .form-fields { display: grid; gap: var(--spacing-md); }
 
 /* ===================== EMPLOYEE dialog (dark + orange) ===================== */
+
 .mat-mdc-dialog-container .mdc-dialog__surface {
   background-image: url("./assets/bg-chat3.svg") !important;
   background-position: center;
@@ -324,19 +329,14 @@ app-notify-dialog-host .nd-modal {
   position: relative;
   overflow: hidden;
   box-shadow: var(--shadow-xl);
-  padding: 30px;
+  padding: 30px 40px;
   
 }
-
-
-
 
 /* glowing border */
 .form-dialog--employee .mat-mdc-dialog-surface::before {
   content: '';
   position: absolute; inset: 0;
-  /* padding: 1px; border-radius: inherit; */
-  /* background: linear-gradient(135deg, rgba(227,96,18,.8), rgba(227,96,18,.25)); */
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
   -webkit-mask-composite: xor; mask-composite: exclude;
   pointer-events: none;
@@ -346,11 +346,19 @@ app-notify-dialog-host .nd-modal {
 .form-dialog--employee [mat-dialog-title] { color: var(--white-color) !important; font-weight: 20px; }
 .form-dialog--employee [mat-dialog-actions] .mat-mdc-unelevated-button {
   background: var(--button-color); color: #111;
+  display: flex;
+  justify-content: space-between !important;
 }
-
-/* two-column grid on desktop */
-.form-dialog--employee .form-fields { grid-template-columns: 1fr 1fr; }
-@media (max-width: 768px) { .form-dialog--employee .form-fields { grid-template-columns: 1fr; } }
+.mdc-dialog__actions {
+  justify-content: space-between !important;
+}
+.mdc-dialog__actions button {
+  color: #fff !important;
+}
+.mdc-dialog__actions button[mat-dialog-close] {
+  background-color: #802a2a !important;
+  color: #fff !important;
+}
 
 /* Material inputs on dark bg */
 .form-dialog--employee .mat-mdc-form-field { width: 100%; color: var(--white-color);}
@@ -366,6 +374,21 @@ background: rgba(255, 255, 255, 0.12) !important;
 }
 .form-dialog--employee .mdc-floating-label,
 .form-dialog--employee .mat-mdc-form-field-subscript-wrapper { color: var(--text-muted); }
+.form-dialog--employee .form-fields { grid-template-columns: 1fr 1fr; }
+
+/* responsive form dialog */
+/* two-column grid on desktop */
+@media (max-width: 768px) { 
+  .form-dialog--employee .form-fields { 
+  grid-template-columns: 1fr;
+  gap: 5px !important;
+  background-image: none !important;
+ }
+ .mat-mdc-dialog-container .mdc-dialog__surface {
+  background-image: none !important;
+  min-height: 50vh !important;
+ }
+ }
 
 /* ===================== DEPARTMENT dialog (light/simple) ==================== */
 .form-dialog--department .mat-mdc-dialog-surface {
@@ -417,41 +440,26 @@ background: rgba(255, 255, 255, 0.12) !important;
 }
 
 
+/* ============================================================== responsive tabel ====================================================== */
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-/* ============================================================== paginator ====================================================== */
-
-/*  */
-.mat-mdc-paginator-container {
-  color: #ffff !important;
-  background-color: #1e1e1e !important;
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  padding: 0 8px;
-  flex-wrap: wrap;
-  width: 100%;
-  min-height: var(--mat-paginator-container-size);
+/* موبايل */
+@media (max-width: 600px) {
+  .mat-mdc-table {
+    font-size: 12px;
+  }
+  .mat-mdc-cell, .mat-mdc-header-cell {
+    padding: 10px !important;
+  }
 }
+
+/* لابتوب */
+@media (min-width: 1024px) {
+  .mat-mdc-table {
+    font-size: 16px;
+  }
+  .mat-mdc-cell, .mat-mdc-header-cell {
+    padding: 10px !important;
+  }
+}
+
 

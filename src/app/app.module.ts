@@ -182,6 +182,8 @@ import { OtpComponent } from './Auth/otp/otp.component';
 import { LeadsComponent } from './components/leads/leads.component';
 import { ChatDialogComponent } from './components/leads/chat/chat-dialog.component';
 import { DistributionComponent } from './components/distribution/distribution.component';
+import { CitiesComponent } from './components/cities/cities.component';
+import { CountriesComponent } from './components/countries/countries.component';
 // import { AuthTokenInterceptor } from './core/auth-token.interceptor';
 
 @NgModule({
@@ -210,6 +212,8 @@ import { DistributionComponent } from './components/distribution/distribution.co
     LeadsComponent,
     OtpComponent,
     DistributionComponent,
+    CitiesComponent,
+    CountriesComponent,
   ],
   imports: [
     BrowserModule,

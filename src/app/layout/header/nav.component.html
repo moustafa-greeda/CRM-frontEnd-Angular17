@@ -1,19 +1,9 @@
 <header class="header">
   <div class="user-profile">
-    <!-- <button
-      class="menu-btn"
-      type="button"
-      (click)="toggleSidebar()"
-      aria-label="Toggle menu"
-      [attr.aria-expanded]="isSidebarOpen ? 'true' : 'false'"
-    >
-      <mat-icon class="">{{ isSidebarOpen ? "close" : "menu" }}</mat-icon>
-    </button> -->
-
     <button class="menu-btn" (click)="toggleSidebar()">
-      <mat-icon>{{ isSidebarOpen ? 'close' : 'menu' }}</mat-icon>
+      <mat-icon>{{ isSidebarOpen ? "close" : "menu" }}</mat-icon>
     </button>
-    
+
     <div class="user-details">
       <span class="user-name">Andy Warhol</span>
       <span class="user-email">email</span>

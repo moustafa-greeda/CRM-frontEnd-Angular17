@@ -17,13 +17,13 @@
 
 /* Hamburger (mobile only) */
 .menu-btn {
-  /* display: none; */
   width: 42px;
   height: 38px;
   border: 1px solid var(--button-color);
   border-radius: 6px;
   background: #2c2c2c;
   color: var(--white-color);
+  display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;

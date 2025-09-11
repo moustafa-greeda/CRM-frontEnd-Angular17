@@ -1,7 +1,7 @@
-<div class="dashboard-layout">
-  <app-nav class="header"> </app-nav>
-  <app-sidebar class="sidebar"></app-sidebar>
-  <div class="backdrop" (click)="closeSidebar()"></div>
+<div class="dashboard-layout" [ngClass]="{ 'sidebar-open': isSidebarOpen }">
+  <app-nav class="header" (menuToggle)="toggleSidebar()"></app-nav>
+  <app-sidebar class="sidebar" (click)="$event.stopPropagation()"></app-sidebar>
+  <div class="backdrop" *ngIf="isSidebarOpen" (click)="closeSidebar()"></div>
   <div class="content">
     <router-outlet></router-outlet>
   </div>

@@ -7,7 +7,7 @@
     <button mat-raised-button>
       <img src="assets/icon/mdi_import.svg" alt="" />
     </button>
-    <button mat-raised-button>
+    <button mat-raised-button (click)="openDialog()">
       <img src="assets/icon/material-symbols_add.svg" alt="" />
     </button>
   </div>
@@ -31,67 +31,83 @@
     </div>
   </div>
 </div>
+<!-- top filter -->
 
-<form [formGroup]="form" class="parent-search" (ngSubmit)="$event.preventDefault()">
-  <!-- <div class="parent-search"> -->
-  <div class="search-box">
-    <input type="text" placeholder="بحث..." formControlName="search" />
-    <mat-icon class="search-icon">search</mat-icon>
-  </div>
-
-  <mat-button-toggle-group formControlName="mode">
-    <mat-button-toggle
-      [value]="'0'"
-      [ngClass]="{ active: form.value.mode === '0' }"
-      >غير موزع</mat-button-toggle
-    >
-    <mat-button-toggle
-      [value]="'1'"
-      [ngClass]="{ active: form.value.mode === '1' }"
-      >موزع منذ 3 شهور</mat-button-toggle
-    >
-    <mat-button-toggle
-      [value]="'2'"
-      [ngClass]="{ active: form.value.mode === '2' }"
-      >موزع ومعداش عليه 3 شهور</mat-button-toggle
-    >
-  </mat-button-toggle-group>
-
-  <div class="parent-button">
-    <div class="field select-wrapper">
-      <select
-        formControlName="assign_company"
-      >
-        <option value="">تخصيص الشركه</option>
-
-        <option *ngFor="let country of allCountries" [value]="country.name">
-          {{ country.name }}
-        </option>
-      </select>
+<form
+  [formGroup]="form"
+  class="parent-search"
+  (ngSubmit)="$event.preventDefault()"
+>
+  <div class="top-filter">
+    <div class="search-box">
+      <input type="text" placeholder="بحث..." formControlName="search" />
+      <mat-icon class="search-icon">search</mat-icon>
     </div>
 
-    <button
-      mat-stroked-button
-      type="button"
-      class="run-filter"
-      (click)="applyFilters()"
-    >
-      تطبيق الفلتر
-    </button>
+    <mat-button-toggle-group formControlName="mode">
+      <mat-button-toggle
+        [value]="'0'"
+        [ngClass]="{ active: form.value.mode === '0' }"
+        >غير موزع</mat-button-toggle
+      >
+      <mat-button-toggle
+        [value]="'1'"
+        [ngClass]="{ active: form.value.mode === '1' }"
+        >موزع منذ 3 شهور</mat-button-toggle
+      >
+      <mat-button-toggle
+        [value]="'2'"
+        [ngClass]="{ active: form.value.mode === '2' }"
+        >موزع ومعداش عليه 3 شهور</mat-button-toggle
+      >
+    </mat-button-toggle-group>
 
-    <button
-      mat-stroked-button
-      type="button"
-      (click)="resetFilters()"
-      class="reset-filter"
-    >
-      إعادة تعيين
-    </button>
+    <div class="parent-button">
+      <div class="field select-wrapper">
+        <select formControlName="assign_company">
+          <option value="">تخصيص الشركه</option>
+
+          <option *ngFor="let country of allCountries" [value]="country.name">
+            {{ country.name }}
+          </option>
+        </select>
+      </div>
+      <button
+        type="button"
+        class="toggel-filter reset-filter"
+        (click)="toggelFilters()"
+      >
+        الفلتر
+        <i class="bi bi-funnel"></i>
+      </button>
+
+      <button
+        mat-stroked-button
+        type="button"
+        class="run-filter"
+        (click)="applyFilters()"
+      >
+        تطبيق الفلتر
+      </button>
+
+      <button
+        mat-stroked-button
+        type="button"
+        (click)="resetFilters()"
+        class="reset-filter"
+      >
+        إعادة تعيين
+      </button>
+    </div>
   </div>
-  <!-- </div> -->
 </form>
-
-<form [formGroup]="form" class="parent-filters" (ngSubmit)="$event.preventDefault()">
+<!-- bottom filter -->
+<form
+  [formGroup]="form"
+  class="bottom-filters"
+  [class.collapsed]="!showFilters"
+  (ngSubmit)="$event.preventDefault()"
+>
   <!-- الدولة -->
   <div class="field select-wrapper">
     <select formControlName="client_location">

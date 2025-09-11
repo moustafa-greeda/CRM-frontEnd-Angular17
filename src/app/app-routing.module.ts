@@ -13,6 +13,8 @@ import { ForgetPasswordComponent } from './Auth/forget-password/forget-password.
 import { OtpComponent } from './Auth/otp/otp.component';
 import { LeadsComponent } from './components/leads/leads.component';
 import { DistributionComponent } from './components/distribution/distribution.component';
+import { CitiesComponent } from './components/cities/cities.component';
+import { CountriesComponent } from './components/countries/countries.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -35,10 +37,12 @@ const routes: Routes = [
         path: 'admin',
         component: DashboardAdminComponent,
         children: [
-          { path: '', redirectTo: 'distribution', pathMatch: 'full' },
+          { path: '', redirectTo: 'countries', pathMatch: 'full' },
           // { path: 'home', component: HomeAdminComponent },
           // { path: 'leads', component: LeadsComponent },
-          { path: 'distribution', component: DistributionComponent },
+          // { path: 'distribution', component: DistributionComponent },
+          {path: 'countries' , component: CountriesComponent},
+          {path: 'cities' , component: CitiesComponent},
         ],
       },
       {

@@ -34,8 +34,8 @@
 }
 .content {
   grid-area: content;
-  margin: 16px;
-  min-width: 0; /
+  margin: 0;
+  min-width: 0;
 }
 .footer {
   grid-area: footer;
@@ -108,7 +108,7 @@
 
   /* المحتوى يفضل بعرض الشاشة كلها */
   .content {
-    margin: 12px;
+    margin: 0px !important;
     min-width: 0;
     overflow-x: hidden;
   }

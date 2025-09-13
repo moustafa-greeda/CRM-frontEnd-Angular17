@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { IApiResponse, ICountry } from '../../core/Models/icountry';
@@ -13,6 +13,22 @@ export class CountriesService {
   constructor(private http: HttpClient) { }
 
   /**
+   * Get headers with authorization token
+   */
+  private getHeaders(): HttpHeaders {
+    const token = localStorage.getItem('token');
+    let headers = new HttpHeaders({
+      'Content-Type': 'application/json'
+    });
+    
+    if (token) {
+      headers = headers.set('Authorization', `Bearer ${token}`);
+    }
+    
+    return headers;
+  }
+
+  /**
    * Get countries from local JSON file (assets/json/countriesdb.json)
    */
   getCountriesFromJSON(): Observable<ICountry[]> {
@@ -23,28 +39,36 @@ export class CountriesService {
    * Get countries from database (API)
    */
   getCountriesFromAPI(): Observable<IApiResponse> {
-    return this.http.get<IApiResponse>(`${this.BASE_API_URL}/Country`);
+    return this.http.get<IApiResponse>(`${this.BASE_API_URL}/Country`, {
+      headers: this.getHeaders()
+    });
   }
 
   /**
    * Add new country (POST to API)
    */
   addCountry(country: ICountry): Observable<any> {
-    return this.http.post(`${this.BASE_API_URL}/Country/save`, country);
+    return this.http.post(`${this.BASE_API_URL}/Country/save`, country, {
+      headers: this.getHeaders()
+    });
   }
 
   /**
    * Update existing country (same endpoint as add in your Swagger)
    */
   updateCountry(country: ICountry): Observable<any> {
-    return this.http.post(`${this.BASE_API_URL}/Country/save`, country);
+    return this.http.post(`${this.BASE_API_URL}/Country/save`, country, {
+      headers: this.getHeaders()
+    });
   }
 
   /**
    * Delete country by id
    */
   deleteCountry(id: number): Observable<any> {
-    return this.http.delete(`${this.BASE_API_URL}/Country/${id}`);
+    return this.http.delete(`${this.BASE_API_URL}/Country/${id}`, {
+      headers: this.getHeaders()
+    });
   }
 
 

@@ -184,7 +184,8 @@ import { ChatDialogComponent } from './components/leads/chat/chat-dialog.compone
 import { DistributionComponent } from './components/distribution/distribution.component';
 import { CitiesComponent } from './components/cities/cities.component';
 import { CountriesComponent } from './components/countries/countries.component';
-// import { AuthTokenInterceptor } from './core/auth-token.interceptor';
+import { WizardComponent } from './components/wizard/wizard.component';
+import { AuthTokenInterceptor } from './core/auth-token.interceptor';
 
 @NgModule({
   declarations: [
@@ -214,6 +215,7 @@ import { CountriesComponent } from './components/countries/countries.component';
     DistributionComponent,
     CitiesComponent,
     CountriesComponent,
+    WizardComponent,
   ],
   imports: [
     BrowserModule,
@@ -257,7 +259,7 @@ import { CountriesComponent } from './components/countries/countries.component';
     //   useClass: SpinnerInterceptor,
     //   multi: true,
     // },
-    // { provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },
+    { provide: HTTP_INTERCEPTORS, useClass: AuthTokenInterceptor, multi: true },
     // Enable fetch for HttpClient (better SSR compatibility)
     provideHttpClient(withFetch()),
   ],

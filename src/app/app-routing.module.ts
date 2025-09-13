@@ -15,6 +15,7 @@ import { LeadsComponent } from './components/leads/leads.component';
 import { DistributionComponent } from './components/distribution/distribution.component';
 import { CitiesComponent } from './components/cities/cities.component';
 import { CountriesComponent } from './components/countries/countries.component';
+import { WizardComponent } from './components/wizard/wizard.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -43,6 +44,8 @@ const routes: Routes = [
           // { path: 'distribution', component: DistributionComponent },
           {path: 'countries' , component: CountriesComponent},
           {path: 'cities' , component: CitiesComponent},
+          {path: 'addLead' , component: WizardComponent},
+
         ],
       },
       {

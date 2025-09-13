@@ -26,7 +26,8 @@ export class CountriesComponent implements OnInit {
   countryForm = new FormGroup({
     id: new FormControl(0),
     name: new FormControl('', Validators.required),
-    keyCode: new FormControl('', Validators.required)
+    keyCode: new FormControl('', Validators.required),
+    iso_2: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(2)])
   });
 
   isEditMode = false;
@@ -47,6 +48,11 @@ export class CountriesComponent implements OnInit {
       this.filteredCountries$.next(filteredCountries);
       this.totalCountriesCount = filteredCountries.length;  // Update total count after filter
       this.paginateData(filteredCountries);  // Apply pagination
+    });
+
+    // Watch for ISO code changes to update flag
+    this.countryForm.get('iso_2')?.valueChanges.subscribe(value => {
+      // This will trigger the flag update in the template
     });
   }
 
@@ -171,7 +177,8 @@ export class CountriesComponent implements OnInit {
     this.countryForm.setValue({
       id: country.id || null,  // Handle null or undefined for ID
       name: country.name,
-      keyCode: country.keyCode || null  // Ensure keyCode is null if it's undefined
+      keyCode: country.keyCode || null,  // Ensure keyCode is null if it's undefined
+      iso_2: country.iso_2 || null  // Ensure iso_2 is null if it's undefined
     });
     this.loadCountries();  // Reload the countries list after update
   }
@@ -180,4 +187,25 @@ export class CountriesComponent implements OnInit {
   clearForm() {
     this.countryForm.reset({ id: 0 });
   }
+
+  // Get flag emoji from ISO code
+  getFlagEmoji(isoCode: string): string {
+    if (!isoCode || isoCode.length !== 2) return '';
+    
+    const codePoints = isoCode
+      .toUpperCase()
+      .split('')
+      .map(char => 127397 + char.charCodeAt(0));
+    
+    return String.fromCodePoint(...codePoints);
+  }
+
+  getCurrentFlag(): string {
+    const code = this.countryForm.get('iso_2')?.value;
+    if (!code) {
+      return ''; 
+    }
+    return `./assets/images/${code.toLowerCase()}.svg`;
+  }
+  
 }

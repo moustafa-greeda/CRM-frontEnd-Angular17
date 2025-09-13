@@ -1,18 +1,8 @@
-<!-- Head + actions -->
+<section class="country">
+	<!-- Head + actions -->
 <div class="page-header" dir="rtl">
 	<div class="title">إدارة الدول</div>
-	<div class="actions">
-		<button mat-raised-button color="primary">الرئيسية</button>
-	</div>
 </div>
-
-<!-- Search -->
-<!-- <div class="search-box" dir="rtl">
-	<mat-form-field appearance="fill" class="search-field">
-		<mat-icon matPrefix>search</mat-icon>
-		<input matInput placeholder="ابحث..." [formControl]="search">
-	</mat-form-field>
-</div> -->
 
 <div class="search-box">
     <input type="text" placeholder="بحث..." [formControl]="search"/>
@@ -20,41 +10,7 @@
   </div>
 
 <!-- Two columns -->
-<div class="grid-2" dir="rtl">
-	<!-- Left: custom form (no Angular Material) -->
-	<div class="panel form-card">
-		<div class="form-title">إضافة دولة جديدة</div>
-
-		<form [formGroup]="countryForm" class="form">
-			<label class="field">
-				<span class="label">اسم الدولة</span>
-				<input class="input" type="text" formControlName="name" placeholder="أدخل اسم الدولة" />
-				<small class="hint" *ngIf="countryForm.get('name')?.invalid && countryForm.get('name')?.touched">
-					مطلوب
-				</small>
-			</label>
-
-			<label class="field">
-				<span class="label">كود الاتصال</span>
-				<div class="input-with-prefix">
-					<span class="prefix">+</span>
-					<input class="input naked" type="text" formControlName="keyCode" placeholder="966" />
-				</div>
-				<small class="hint" *ngIf="countryForm.get('keyCode')?.invalid && countryForm.get('keyCode')?.touched">
-					مطلوب
-				</small>
-			</label>
-
-			<div class="actions">
-				<button type="button" class="btn btn-ghost" (click)="clearForm()">مسح</button>
-				<button type="button" class="btn btn-accent" (click)="onSaveCountry()">
-					{{ isEditMode ? 'تحديث' : 'حفظ' }}
-				</button>
-				<button *ngIf="isEditMode" type="button" class="btn btn-outline" (click)="cancelEdit()">إلغاء</button>
-			</div>
-		</form>
-	</div>
-
+<div class="grid-2">
 	<!-- Right: table -->
 	<mat-card class="panel">
 		<table mat-table [dataSource]="(pagedCountries$ | async) ?? []" class="full-width-table">
@@ -101,4 +57,89 @@
 			(page)="onPageChange($event)">
 		</mat-paginator>
 	</mat-card>
+
+		<!-- Left: Form Cards -->
+		<div class="form-cards-container">
+			<!-- Input Card -->
+			<div class="panel form-input-card">
+				<div class="form-title">إضافة دولة جديدة</div>
+				<div class="form-subtitle">قم بإدخال بيانات الدولة الجديدة</div>
+		
+				<form [formGroup]="countryForm" class="form">
+					<label class="field">
+						<span class="label">اسم الدولة</span>
+						<input class="input" type="text" formControlName="name" placeholder="أدخل اسم الدولة" />
+						<small class="hint" *ngIf="countryForm.get('name')?.invalid && countryForm.get('name')?.touched">
+							مطلوب
+						</small>
+					</label>
+		
+					<!-- <label class="field">
+						<span class="label">كود الهاتف</span>
+						<div class="input-with-prefix">
+							<span class="prefix flag-prefix">
+
+								<span *ngIf="countryForm.get('iso_2')?.value" class="flag-emoji">
+									{{ getCurrentFlag() }}
+								</span>
+								<span *ngIf="!countryForm.get('iso_2')?.value" class="default-prefix">+</span>
+							</span>
+							<input class="input naked" type="text" formControlName="keyCode" placeholder="966" />
+						</div>
+						<small class="hint" *ngIf="countryForm.get('keyCode')?.invalid && countryForm.get('keyCode')?.touched">
+							مطلوب
+						</small>
+					</label> -->
+
+
+					<label class="field">
+						<span class="label">كود الهاتف</span>
+						<div class="input-with-prefix">
+						  <span class="prefix flag-prefix">
+					  
+							<!-- لو في كود دولة -->
+							<img *ngIf="countryForm.get('iso_2')?.value"
+								 [src]="getCurrentFlag()"
+								 class="flag-emoji"
+								 alt="flag" />
+					  
+							<!-- لو مفيش كود دولة -->
+							<span *ngIf="!countryForm.get('iso_2')?.value" class="default-prefix">+</span>
+						  </span>
+					  
+						  <input class="input naked" type="text" formControlName="keyCode" placeholder="966" />
+						</div>
+						<small class="hint" *ngIf="countryForm.get('keyCode')?.invalid && countryForm.get('keyCode')?.touched">
+						  مطلوب
+						</small>
+					  </label>
+					  
+					<label class="field">
+						<span class="label">كود الدولة (ISO)</span>
+						<input class="input" type="text" formControlName="iso_2" placeholder="SA" maxlength="2" />
+						<small class="hint" *ngIf="countryForm.get('iso_2')?.invalid && countryForm.get('iso_2')?.touched">
+							مطلوب (2 أحرف)
+						</small>
+					</label>
+				</form>
+			</div>
+
+			<!-- Actions Card -->
+			<div class="panel form-actions-card">
+				<div class="actions">
+					<button type="button" class="btn btn-ghost" (click)="clearForm()">
+						<mat-icon>refresh</mat-icon>
+					</button>
+					<button type="button" class="btn btn-accent" (click)="onSaveCountry()">
+						<mat-icon>save</mat-icon>
+					</button>
+					<button *ngIf="isEditMode" type="button" class="btn btn-outline" (click)="cancelEdit()">
+						<mat-icon>edit</mat-icon>
+					</button>
+				</div>
+			</div>
+		</div>
+	
 </div>
+
+</section>

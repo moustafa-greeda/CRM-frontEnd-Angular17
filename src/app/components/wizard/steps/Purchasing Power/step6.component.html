@@ -1,0 +1,47 @@
+<div class="step-content" [formGroup]="form">
+  <div class="form-group">
+    <label for="monthlyIncome">الدخل الشهري *</label>
+    <select id="monthlyIncome" formControlName="monthlyIncome" class="form-select" (blur)="onFieldBlur('monthlyIncome')" (change)="onFieldChange('monthlyIncome')">
+      <option value="">اختر فئة الدخل</option>
+      <option value="under_5000">أقل من 5,000 ريال</option>
+      <option value="5000_10000">5,000 - 10,000 ريال</option>
+      <option value="10000_20000">10,000 - 20,000 ريال</option>
+      <option value="20000_50000">20,000 - 50,000 ريال</option>
+      <option value="over_50000">أكثر من 50,000 ريال</option>
+    </select>
+    <div class="error-message" *ngIf="getErrorMessage('monthlyIncome')">
+      {{ getErrorMessage('monthlyIncome') }}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="averageSpending">متوسط الإنفاق الشهري *</label>
+    <select id="averageSpending" formControlName="averageSpending" class="form-select" (blur)="onFieldBlur('averageSpending')" (change)="onFieldChange('averageSpending')">
+      <option value="">اختر فئة الإنفاق</option>
+      <option value="under_2000">أقل من 2,000 ريال</option>
+      <option value="2000_5000">2,000 - 5,000 ريال</option>
+      <option value="5000_10000">5,000 - 10,000 ريال</option>
+      <option value="10000_20000">10,000 - 20,000 ريال</option>
+      <option value="over_20000">أكثر من 20,000 ريال</option>
+    </select>
+    <div class="error-message" *ngIf="getErrorMessage('averageSpending')">
+      {{ getErrorMessage('averageSpending') }}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="preferredProducts">المنتجات المفضلة *</label>
+    <textarea 
+      id="preferredProducts" 
+      formControlName="preferredProducts" 
+      placeholder="اذكر المنتجات أو الخدمات التي تفضل شراءها"
+      class="form-textarea"
+      rows="3"
+      (blur)="onFieldBlur('preferredProducts')" 
+      (input)="onFieldChange('preferredProducts')"
+    ></textarea>
+    <div class="error-message" *ngIf="getErrorMessage('preferredProducts')">
+      {{ getErrorMessage('preferredProducts') }}
+    </div>
+  </div>
+</div>

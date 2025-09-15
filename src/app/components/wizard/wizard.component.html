@@ -24,11 +24,11 @@
     </div>
 
     <!-- Progress Indicator -->
-    <div class="progress-indicator">
+    <div class="progress-indicator"  >
       <div class="progress-bar">
         <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
       </div>
-      <div class="progress-icons">
+      <!-- <div class="progress-icons">
         <div 
           *ngFor="let step of stepTitles; let i = index" 
           class="progress-icon"
@@ -42,45 +42,199 @@
           <span *ngIf="!isStepCompleted(i) && !isCurrentStep(i)" class="step-number">{{ i + 1 }}</span>
           <span *ngIf="isCurrentStep(i)" class="current-step">{{ i + 1 }}</span>
         </div>
-      </div>
+      </div> -->
     </div>
   </div>
 
   <!-- Form Container -->
   <div class="form-container">
     <!-- Pac-Man Progress Tracker -->
-    <div class="pacman-tracker">
-      <div class="dots-row">
+    <!-- Dynamic Status Tracker for Each Form -->
+    <div class="status-tracker" [ngClass]="'tracker-step-' + currentStep">
+      
+      <!-- Step 0-1: Personal Data Forms - Classic Pac-Man Style -->
+      <div *ngIf="currentStep <= 1" class="pacman-tracker">
+        <div class="dots-row">
+          <div 
+            *ngFor="let field of getCurrentFields(); let i = index" 
+            class="dot-container"
+            [class.eaten]="isFieldCompleted(currentStep + '_' + field)"
+            [class.current]="isCurrentField(currentStep + '_' + field)"
+          >
+            <img 
+              *ngIf="!isFieldCompleted(currentStep + '_' + field)"
+              src="assets/duck-eat.svg" 
+              alt="Dot" 
+              class="dot"
+            >
+            <!-- <div class="field-label">{{ field }}</div> -->
+          </div>
+        </div>
+        
+        <!-- Pac-Man Character -->
         <div 
-          *ngFor="let field of getCurrentFields(); let i = index" 
-          class="dot-container"
-          [class.eaten]="isFieldCompleted(currentStep + '_' + field)"
-          [class.current]="isCurrentField(currentStep + '_' + field)"
+          class="pacman-character"
+          [style.left.%]="getPacmanPosition()"
+          [class.moving]="isPacmanMoving"
+          [class.mouth-open]="isPacmanMoving"
         >
           <img 
-            *ngIf="!isFieldCompleted(currentStep + '_' + field)"
-            src="assets/images/dot.svg" 
-            alt="Dot" 
-            class="dot"
+            src="assets/pacman.svg" 
+            alt="Pac-Man" 
+            class="pacman-icon"
+            (error)="onImageError($event, 'pacman')"
+            (load)="onImageLoad($event, 'pacman')"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
           >
-          <div class="field-label">{{ field }}</div>
+          <!-- Fallback Pac-Man using CSS -->
+          <div class="pacman-fallback" style="display: none; width: 30px; height: 30px; background: #FFD700; border-radius: 50%; position: relative;">
+            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid #FFD700; border-top: 15px solid transparent; border-bottom: 15px solid transparent; clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);"></div>
+          </div>
         </div>
       </div>
-      
-      <!-- Pac-Man Character -->
-      <div 
-        class="pacman-character"
-        [style.left.%]="getPacmanPosition()"
-        [class.moving]="isPacmanMoving"
-        [class.mouth-open]="isPacmanMoving"
-      >
-        <img 
-          src="assets/images/pacman.svg" 
-          alt="Pac-Man" 
-          class="pacman-icon"
-          (error)="onImageError($event, 'pacman')"
-          (load)="onImageLoad($event, 'pacman')"
-        >
+
+      <!-- Step 2: Company Data - Building Blocks Style -->
+      <div *ngIf="currentStep === 2" class="building-tracker">
+        <div class="building-row">
+          <div 
+            *ngFor="let field of getCurrentFields(); let i = index" 
+            class="building-block"
+            [class.completed]="isFieldCompleted(currentStep + '_' + field)"
+            [class.current]="isCurrentField(currentStep + '_' + field)"
+          >
+            <div class="block-icon">🏢</div>
+            <div class="field-label">{{ field }}</div>
+          </div>
+        </div>
+        <div class="progress-line" [style.width.%]="getBuildingProgress()"></div>
+      </div>
+
+      <!-- Step 3: Technical Data - Circuit Board Style -->
+      <div *ngIf="currentStep === 3" class="circuit-tracker">
+        <div class="circuit-row">
+          <div 
+            *ngFor="let field of getCurrentFields(); let i = index" 
+            class="circuit-node"
+            [class.connected]="isFieldCompleted(currentStep + '_' + field)"
+            [class.active]="isCurrentField(currentStep + '_' + field)"
+          >
+            <div class="node-icon">⚡</div>
+            <div class="field-label">{{ field }}</div>
+          </div>
+        </div>
+        <div class="circuit-line" [style.width.%]="getCircuitProgress()"></div>
+      </div>
+
+      <!-- Step 4: Behavior - Heart Rate Style -->
+      <div *ngIf="currentStep === 4" class="heartbeat-tracker">
+        <div class="heartbeat-row">
+          <div 
+            *ngFor="let field of getCurrentFields(); let i = index" 
+            class="heartbeat-node"
+            [class.beating]="isFieldCompleted(currentStep + '_' + field)"
+            [class.current]="isCurrentField(currentStep + '_' + field)"
+          >
+            <div class="heart-icon">💓</div>
+            <div class="field-label">{{ field }}</div>
+          </div>
+        </div>
+        <div class="heartbeat-line" [style.width.%]="getHeartbeatProgress()"></div>
+      </div>
+
+      <!-- Step 5: Purchasing Power - Money Flow Style -->
+      <div *ngIf="currentStep === 5" class="money-tracker">
+        <div class="money-row">
+          <div 
+            *ngFor="let field of getCurrentFields(); let i = index" 
+            class="money-node"
+            [class.earned]="isFieldCompleted(currentStep + '_' + field)"
+            [class.current]="isCurrentField(currentStep + '_' + field)"
+          >
+            <div class="money-icon">💰</div>
+            <div class="field-label">{{ field }}</div>
+          </div>
+        </div>
+        <div class="money-flow" [style.width.%]="getMoneyProgress()"></div>
+      </div>
+
+      <!-- Step 6: Purchase Intentions - Shopping Cart Style -->
+      <div *ngIf="currentStep === 6" class="shopping-tracker">
+        <div class="shopping-row">
+          <div 
+            *ngFor="let field of getCurrentFields(); let i = index" 
+            class="shopping-item"
+            [class.added]="isFieldCompleted(currentStep + '_' + field)"
+            [class.current]="isCurrentField(currentStep + '_' + field)"
+          >
+            <div class="item-icon">🛒</div>
+            <div class="field-label">{{ field }}</div>
+          </div>
+        </div>
+        <div class="shopping-progress" [style.width.%]="getShoppingProgress()"></div>
+      </div>
+
+      <!-- Step 7: Psychographic - Brain Network Style -->
+      <div *ngIf="currentStep === 7" class="brain-tracker">
+        <div class="brain-row">
+          <div 
+            *ngFor="let field of getCurrentFields(); let i = index" 
+            class="brain-node"
+            [class.activated]="isFieldCompleted(currentStep + '_' + field)"
+            [class.current]="isCurrentField(currentStep + '_' + field)"
+          >
+            <div class="brain-icon">🧠</div>
+            <div class="field-label">{{ field }}</div>
+          </div>
+        </div>
+        <div class="neural-path" [style.width.%]="getBrainProgress()"></div>
+      </div>
+
+      <!-- Step 8: Transactional Data - Database Style -->
+      <div *ngIf="currentStep === 8" class="database-tracker">
+        <div class="database-row">
+          <div 
+            *ngFor="let field of getCurrentFields(); let i = index" 
+            class="database-record"
+            [class.saved]="isFieldCompleted(currentStep + '_' + field)"
+            [class.current]="isCurrentField(currentStep + '_' + field)"
+          >
+            <div class="record-icon">💾</div>
+            <div class="field-label">{{ field }}</div>
+          </div>
+        </div>
+        <div class="database-progress" [style.width.%]="getDatabaseProgress()"></div>
+      </div>
+
+      <!-- Step 9: Campaigns - Rocket Launch Style -->
+      <div *ngIf="currentStep === 9" class="rocket-tracker">
+        <div class="rocket-row">
+          <div 
+            *ngFor="let field of getCurrentFields(); let i = index" 
+            class="rocket-stage"
+            [class.launched]="isFieldCompleted(currentStep + '_' + field)"
+            [class.current]="isCurrentField(currentStep + '_' + field)"
+          >
+            <div class="stage-icon">🚀</div>
+            <div class="field-label">{{ field }}</div>
+          </div>
+        </div>
+        <div class="rocket-trail" [style.width.%]="getRocketProgress()"></div>
+      </div>
+
+      <!-- Step 10: Relationships - Network Connection Style -->
+      <div *ngIf="currentStep === 10" class="network-tracker">
+        <div class="network-row">
+          <div 
+            *ngFor="let field of getCurrentFields(); let i = index" 
+            class="network-node"
+            [class.connected]="isFieldCompleted(currentStep + '_' + field)"
+            [class.current]="isCurrentField(currentStep + '_' + field)"
+          >
+            <div class="node-icon">🔗</div>
+            <div class="field-label">{{ field }}</div>
+          </div>
+        </div>
+        <div class="connection-line" [style.width.%]="getNetworkProgress()"></div>
       </div>
       
       <!-- Level Complete Animation -->
@@ -95,388 +249,57 @@
 
     <!-- Step 0: بيانات الأشخاص - Form 1 -->
     <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 0">
-      <div class="step-content personal-data-form" [@slideAnimation]>
-        <div class="form-header">
-          <h2>بيانات الأشخاص - النموذج الأول</h2>
-        </div>
-        
-        <div class="form-row">
-          <div class="form-column">
-            <div class="form-group">
-              <label for="jobTitle">المسمى الوظيفي *</label>
-              <select id="jobTitle" formControlName="jobTitle" class="form-select" (focus)="onFieldFocus('0_jobTitle')" (blur)="onFieldBlur()">
-                <option value="">إختر إسم الدولة</option>
-                <option value="manager">مدير</option>
-                <option value="developer">مطور</option>
-                <option value="analyst">محلل</option>
-              </select>
-              <div class="error-message" *ngIf="getErrorMessage('jobTitle')">
-                {{ getErrorMessage('jobTitle') }}
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="customerLevel">مستوى العميل *</label>
-              <select id="customerLevel" formControlName="customerLevel" class="form-select" (focus)="onFieldFocus('0_customerLevel')" (blur)="onFieldBlur()">
-                <option value="">إختر إسم الدولة</option>
-                <option value="gold">ذهبي</option>
-                <option value="silver">فضي</option>
-                <option value="bronze">برونزي</option>
-              </select>
-              <div class="error-message" *ngIf="getErrorMessage('customerLevel')">
-                {{ getErrorMessage('customerLevel') }}
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="personalityType">نوع الشخصية *</label>
-              <select id="personalityType" formControlName="personalityType" class="form-select" (focus)="onFieldFocus('0_personalityType')" (blur)="onFieldBlur()">
-                <option value="">إختر إسم الدولة</option>
-                <option value="introvert">انطوائي</option>
-                <option value="extrovert">منفتح</option>
-                <option value="ambivert">متوازن</option>
-              </select>
-              <div class="error-message" *ngIf="getErrorMessage('personalityType')">
-                {{ getErrorMessage('personalityType') }}
-              </div>
-            </div>
-          </div>
-
-          <div class="form-column">
-            <div class="form-group">
-              <label for="email">البريد الإلكتروني *</label>
-              <input 
-                type="email" 
-                id="email" 
-                formControlName="email" 
-                placeholder="إختر إسم الدولة"
-                class="form-input"
-                (focus)="onFieldFocus('0_email')" 
-                (blur)="onFieldBlur()"
-              >
-              <div class="error-message" *ngIf="getErrorMessage('email')">
-                {{ getErrorMessage('email') }}
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="department">القسم *</label>
-              <select id="department" formControlName="department" class="form-select" (focus)="onFieldFocus('0_department')" (blur)="onFieldBlur()">
-                <option value="">إختر إسم الدولة</option>
-                <option value="it">تقنية المعلومات</option>
-                <option value="hr">الموارد البشرية</option>
-                <option value="finance">المالية</option>
-              </select>
-              <div class="error-message" *ngIf="getErrorMessage('department')">
-                {{ getErrorMessage('department') }}
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="language">اللغة *</label>
-              <select id="language" formControlName="language" class="form-select" (focus)="onFieldFocus('0_language')" (blur)="onFieldBlur()">
-                <option value="">إختر إسم الدولة</option>
-                <option value="arabic">العربية</option>
-                <option value="english">الإنجليزية</option>
-                <option value="french">الفرنسية</option>
-              </select>
-              <div class="error-message" *ngIf="getErrorMessage('language')">
-                {{ getErrorMessage('language') }}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-footer">
-          <button type="button" class="btn btn-outline" (click)="previousStep()">
-            السابق
-          </button>
-          <button type="button" class="btn btn-primary" (click)="nextPersonalForm()">
-            التالي
-          </button>
-        </div>
-      </div>
+      <app-step1 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step1>
     </form>
 
     <!-- Step 1: بيانات الأشخاص - Form 2 -->
     <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 1">
-      <div class="step-content personal-data-form" [@slideAnimation]>
-        <div class="form-header">
-          <h2>بيانات الأشخاص - النموذج الثاني</h2>
-        </div>
-        
-        <div class="form-row">
-          <div class="form-column">
-            <div class="form-group">
-              <label for="mobileNumber">رقم الموبايل *</label>
-              <input 
-                type="tel" 
-                id="mobileNumber" 
-                formControlName="mobileNumber" 
-                placeholder="إدخل رقم الهاتف"
-                class="form-input"
-                (focus)="onFieldFocus('1_mobileNumber')" 
-                (blur)="onFieldBlur()"
-              >
-              <div class="error-message" *ngIf="getErrorMessage('mobileNumber')">
-                {{ getErrorMessage('mobileNumber') }}
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="customerType">نوع العميل *</label>
-              <select id="customerType" formControlName="customerType" class="form-select" (focus)="onFieldFocus('1_customerType')" (blur)="onFieldBlur()">
-                <option value="">اختر نوع العميل</option>
-                <option value="individual">فردي</option>
-                <option value="corporate">شركة</option>
-                <option value="government">حكومي</option>
-              </select>
-              <div class="error-message" *ngIf="getErrorMessage('customerType')">
-                {{ getErrorMessage('customerType') }}
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="city">المدينة *</label>
-              <select id="city" formControlName="city" class="form-select" (focus)="onFieldFocus('1_city')" (blur)="onFieldBlur()">
-                <option value="">إختر إسم المدينة</option>
-                <option value="riyadh">الرياض</option>
-                <option value="jeddah">جدة</option>
-                <option value="dammam">الدمام</option>
-              </select>
-              <div class="error-message" *ngIf="getErrorMessage('city')">
-                {{ getErrorMessage('city') }}
-              </div>
-            </div>
-          </div>
-
-          <div class="form-column">
-            <div class="form-group">
-              <label for="name">الإسم *</label>
-              <input 
-                type="text" 
-                id="name" 
-                formControlName="name" 
-                placeholder="إدخل الإسم"
-                class="form-input"
-                (focus)="onFieldFocus('1_name')" 
-                (blur)="onFieldBlur()"
-              >
-              <div class="error-message" *ngIf="getErrorMessage('name')">
-                {{ getErrorMessage('name') }}
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="birthDate">تاريخ الميلاد *</label>
-              <input 
-                type="date" 
-                id="birthDate" 
-                formControlName="birthDate" 
-                class="form-input"
-                (focus)="onFieldFocus('1_birthDate')" 
-                (blur)="onFieldBlur()"
-              >
-              <div class="error-message" *ngIf="getErrorMessage('birthDate')">
-                {{ getErrorMessage('birthDate') }}
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="age">العمر *</label>
-              <input 
-                type="number" 
-                id="age" 
-                formControlName="age" 
-                placeholder="إدخل العمر"
-                class="form-input"
-                (focus)="onFieldFocus('1_age')" 
-                (blur)="onFieldBlur()"
-              >
-              <small class="hint">ادخل العمر أولا</small>
-              <div class="error-message" *ngIf="getErrorMessage('age')">
-                {{ getErrorMessage('age') }}
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="country">الدولة *</label>
-              <select id="country" formControlName="country" class="form-select" (focus)="onFieldFocus('1_country')" (blur)="onFieldBlur()">
-                <option value="">إختر إسم الدولة</option>
-                <option value="saudi">السعودية</option>
-                <option value="uae">الإمارات</option>
-                <option value="kuwait">الكويت</option>
-              </select>
-              <div class="error-message" *ngIf="getErrorMessage('country')">
-                {{ getErrorMessage('country') }}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      <app-step2 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step2>
     </form>
 
-    <!-- Step 2: بيانات الأشخاص - Form 3 (Complete Data) -->
+    <!-- Step 2: بيانات الشركة -->
     <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 2">
-      <div class="step-content personal-data-form" [@slideAnimation]>
-        <div class="form-header">
-          <h2>بيانات الأشخاص - إكمال البيانات</h2>
-        </div>
-        
-        <div class="form-row">
-          <div class="form-column">
-            <div class="form-group">
-              <label for="address">العنوان *</label>
-              <textarea 
-                id="address" 
-                formControlName="address" 
-                placeholder="أدخل العنوان الكامل"
-                class="form-textarea"
-                rows="3"
-                (focus)="onFieldFocus('2_address')" 
-                (blur)="onFieldBlur()"
-              ></textarea>
-              <div class="error-message" *ngIf="getErrorMessage('address')">
-                {{ getErrorMessage('address') }}
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="nationality">الجنسية *</label>
-              <select id="nationality" formControlName="nationality" class="form-select" (focus)="onFieldFocus('2_nationality')" (blur)="onFieldBlur()">
-                <option value="">اختر الجنسية</option>
-                <option value="saudi">سعودي</option>
-                <option value="emirati">إماراتي</option>
-                <option value="kuwaiti">كويتي</option>
-                <option value="other">أخرى</option>
-              </select>
-              <div class="error-message" *ngIf="getErrorMessage('nationality')">
-                {{ getErrorMessage('nationality') }}
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="maritalStatus">الحالة الاجتماعية *</label>
-              <select id="maritalStatus" formControlName="maritalStatus" class="form-select" (focus)="onFieldFocus('2_maritalStatus')" (blur)="onFieldBlur()">
-                <option value="">اختر الحالة الاجتماعية</option>
-                <option value="single">أعزب</option>
-                <option value="married">متزوج</option>
-                <option value="divorced">مطلق</option>
-                <option value="widowed">أرمل</option>
-              </select>
-              <div class="error-message" *ngIf="getErrorMessage('maritalStatus')">
-                {{ getErrorMessage('maritalStatus') }}
-              </div>
-            </div>
-          </div>
-
-          <div class="form-column">
-            <div class="form-group">
-              <label for="education">المستوى التعليمي *</label>
-              <select id="education" formControlName="education" class="form-select" (focus)="onFieldFocus('2_education')" (blur)="onFieldBlur()">
-                <option value="">اختر المستوى التعليمي</option>
-                <option value="high-school">ثانوي</option>
-                <option value="diploma">دبلوم</option>
-                <option value="bachelor">بكالوريوس</option>
-                <option value="master">ماجستير</option>
-                <option value="phd">دكتوراه</option>
-              </select>
-              <div class="error-message" *ngIf="getErrorMessage('education')">
-                {{ getErrorMessage('education') }}
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="occupation">المهنة *</label>
-              <input 
-                type="text" 
-                id="occupation" 
-                formControlName="occupation" 
-                placeholder="أدخل المهنة"
-                class="form-input"
-                (focus)="onFieldFocus('2_occupation')" 
-                (blur)="onFieldBlur()"
-              >
-              <div class="error-message" *ngIf="getErrorMessage('occupation')">
-                {{ getErrorMessage('occupation') }}
-              </div>
-            </div>
-
-            <div class="form-group">
-              <label for="income">الدخل الشهري *</label>
-              <select id="income" formControlName="income" class="form-select" (focus)="onFieldFocus('2_income')" (blur)="onFieldBlur()">
-                <option value="">اختر فئة الدخل</option>
-                <option value="0-5000">0 - 5,000 ريال</option>
-                <option value="5000-10000">5,000 - 10,000 ريال</option>
-                <option value="10000-15000">10,000 - 15,000 ريال</option>
-                <option value="15000-25000">15,000 - 25,000 ريال</option>
-                <option value="25000+">أكثر من 25,000 ريال</option>
-              </select>
-              <div class="error-message" *ngIf="getErrorMessage('income')">
-                {{ getErrorMessage('income') }}
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div class="form-footer">
-          <button type="button" class="btn btn-outline" (click)="previousPersonalForm2()">
-            السابق
-          </button>
-          <button type="button" class="btn btn-primary" (click)="nextStep()">
-            التالي
-          </button>
-        </div>
-      </div>
+      <app-step3 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step3>
     </form>
 
-    <!-- Step 3: بيانات الشركة -->
+    <!-- Step 3: بيانات تقنية -->
     <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 3">
-      <div class="step-content" [@slideAnimation]>
-        <div class="form-group">
-          <label for="companyName">اسم الشركة *</label>
-          <input 
-            type="text" 
-            id="companyName" 
-            formControlName="companyName" 
-            placeholder="أدخل اسم الشركة"
-            class="form-input"
-          >
-          <div class="error-message" *ngIf="getErrorMessage('companyName')">
-            {{ getErrorMessage('companyName') }}
-          </div>
-        </div>
+      <app-step4 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step4>
+    </form>
 
-        <div class="form-group">
-          <label for="sector">القطاع *</label>
-          <select id="sector" formControlName="sector" class="form-select">
-            <option value="">اختر القطاع</option>
-            <option value="technology">التكنولوجيا</option>
-            <option value="healthcare">الرعاية الصحية</option>
-            <option value="finance">التمويل</option>
-            <option value="education">التعليم</option>
-            <option value="retail">التجارة</option>
-            <option value="manufacturing">التصنيع</option>
-          </select>
-          <div class="error-message" *ngIf="getErrorMessage('sector')">
-            {{ getErrorMessage('sector') }}
-          </div>
-        </div>
+    <!-- Step 4: السلوك -->
+    <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 4">
+      <app-step5 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step5>
+    </form>
 
-        <div class="form-group">
-          <label for="employeeCount">عدد الموظفين *</label>
-          <input 
-            type="number" 
-            id="employeeCount" 
-            formControlName="employeeCount" 
-            placeholder="أدخل عدد الموظفين"
-            class="form-input"
-          >
-          <div class="error-message" *ngIf="getErrorMessage('employeeCount')">
-            {{ getErrorMessage('employeeCount') }}
-          </div>
-        </div>
-      </div>
+    <!-- Step 5: القدرة الشرائية -->
+    <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 5">
+      <app-step6 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step6>
+    </form>
+
+    <!-- Step 6: نوايا الشراء -->
+    <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 6">
+      <app-step7 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step7>
+    </form>
+
+    <!-- Step 7: البعد النفسي -->
+    <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 7">
+      <app-step8 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step8>
+    </form>
+
+    <!-- Step 8: بيانات المعاملات -->
+    <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 8">
+      <app-step9 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step9>
+    </form>
+
+    <!-- Step 9: الحملات -->
+    <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 9">
+      <app-step10 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step10>
+    </form>
+
+    <!-- Step 10: العلاقات -->
+    <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 10">
+      <app-step11 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step11>
     </form>
 
     <!-- Navigation Buttons -->
@@ -491,7 +314,7 @@
       </button>
 
       <button 
-        *ngIf="currentStep < 11"
+        *ngIf="currentStep < 10"
         type="button" 
         class="btn btn-next" 
         (click)="nextStep()"
@@ -500,7 +323,7 @@
       </button>
 
       <button 
-        *ngIf="currentStep === 11"
+        *ngIf="currentStep === 10"
         type="button" 
         class="btn btn-submit" 
         (click)="submitForm()"

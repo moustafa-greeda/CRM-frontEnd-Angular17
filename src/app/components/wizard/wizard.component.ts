@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { trigger, transition, style, animate } from '@angular/animations';
+import { ErrorHandlerService } from '../../core/services/error-handler.service';
 
 @Component({
   selector: 'app-wizard',
@@ -23,13 +24,12 @@ import { trigger, transition, style, animate } from '@angular/animations';
 })
 export class WizardComponent implements OnInit {
   currentStep = 0;
-  totalSteps = 12;
+  totalSteps = 11;
   
   // Form groups for each step
   step1Form!: FormGroup;
   step1Form2!: FormGroup; // Second personal form
-  step2Form!: FormGroup;
-  step3Form!: FormGroup;
+  step3Form!: FormGroup; // Company data form
   step4Form!: FormGroup;
   step5Form!: FormGroup;
   step6Form!: FormGroup;
@@ -37,10 +37,12 @@ export class WizardComponent implements OnInit {
   step8Form!: FormGroup;
   step9Form!: FormGroup;
   step10Form!: FormGroup;
+  step11Form!: FormGroup;
 
   // Step titles in Arabic
   stepTitles = [
-    'بيانات الأشخاص',
+    'بيانات الأشخاص 1',
+    'بيانات الأشخاص 2', 
     'بيانات الشركة',
     'بيانات تقنية',
     'السلوك',
@@ -62,28 +64,28 @@ export class WizardComponent implements OnInit {
   currentFocusedField = '';
   completedFields: string[] = [];
   
-  // Egg tracking properties
-  currentFieldIndex = 0;
+  // Field tracking properties
   fieldStates: { [key: string]: 'pending' | 'in-progress' | 'completed' } = {};
-  eggAnimations: { [key: string]: boolean } = {};
   
   // Form field configurations
   formFields = {
     0: ['jobTitle', 'customerLevel', 'personalityType', 'email', 'department', 'language'], // بيانات الأشخاص - Form 1
     1: ['mobileNumber', 'customerType', 'city', 'name', 'birthDate', 'age', 'country'], // بيانات الأشخاص - Form 2
-    2: ['address', 'nationality', 'maritalStatus', 'education', 'occupation', 'income'], // بيانات الأشخاص - Form 3
-    3: ['companyName', 'sector', 'employeeCount'], // بيانات الشركة
-    4: ['devices', 'softwareType', 'techLevel'], // بيانات تقنية
-    5: ['consumptionPattern', 'interests', 'dailyActivities'], // السلوك
-    6: ['monthlyIncome', 'averageSpending', 'preferredProducts'], // القدرة الشرائية
-    7: ['purchaseIntention', 'timeFrame', 'priority'], // نوايا الشراء
-    8: ['personality', 'motivation', 'decisionPattern'], // البعد النفسي
-    9: ['paymentMethods', 'monthlyTransactions', 'averageTransactionValue'], // بيانات المعاملات
-    10: ['previousCampaigns', 'campaignResults', 'budget'], // الحملات
-    11: ['partners', 'customers', 'professionalRelations'] // العلاقات
+    2: ['companyName', 'industry', 'companyStage', 'companySize', 'location', 'digitalTransformation', 'ownership', 'branches'], // بيانات الشركة
+    3: ['cloudProvider', 'companyName', 'techSpending', 'saasTools'], // بيانات تقنية
+    4: ['consumptionPattern', 'interests', 'dailyActivities'], // السلوك
+    5: ['monthlyIncome', 'averageSpending', 'preferredProducts'], // القدرة الشرائية
+    6: ['purchaseIntention', 'timeFrame', 'priority'], // نوايا الشراء
+    7: ['personality', 'motivation', 'decisionPattern'], // البعد النفسي
+    8: ['paymentMethods', 'monthlyTransactions', 'averageTransactionValue'], // بيانات المعاملات
+    9: ['previousCampaigns', 'campaignResults', 'budget'], // الحملات
+    10: ['partners', 'customers', 'professionalRelations'] // العلاقات
   };
 
-  constructor(private fb: FormBuilder) {
+  constructor(
+    private fb: FormBuilder,
+    private errorHandler: ErrorHandlerService
+  ) {
     this.initializeForms();
   }
 
@@ -110,7 +112,6 @@ export class WizardComponent implements OnInit {
       const fields = this.formFields[step as keyof typeof this.formFields];
       fields.forEach(field => {
         this.fieldStates[`${step}_${field}`] = 'pending';
-        this.eggAnimations[`${step}_${field}`] = false;
       });
     }
   }
@@ -118,30 +119,101 @@ export class WizardComponent implements OnInit {
   initializeForms(): void {
     // Step 1: بيانات الأشخاص - Form 1
     this.step1Form = this.fb.group({
-      jobTitle: ['', Validators.required],
-      customerLevel: ['', Validators.required],
-      personalityType: ['', Validators.required],
-      email: ['', [Validators.required, Validators.email]],
-      department: ['', Validators.required],
-      language: ['', Validators.required]
+      jobTitle: [''],
+      customerLevel: [''],
+      personalityType: [''],
+      email: ['', Validators.email],
+      department: [''],
+      language: ['']
     });
 
     // Step 1.5: بيانات الأشخاص - Form 2
     this.step1Form2 = this.fb.group({
-      mobileNumber: ['', [Validators.required, Validators.pattern(/^[0-9]+$/)]],
-      customerType: ['', Validators.required],
-      city: ['', Validators.required],
-      name: ['', Validators.required],
-      birthDate: ['', Validators.required],
-      age: ['', [Validators.required, Validators.min(1), Validators.max(120)]],
-      country: ['', Validators.required]
+      mobileNumber: ['', Validators.pattern(/^[0-9]+$/)],
+      customerType: [''],
+      city: [''],
+      name: [''],
+      birthDate: [''],
+      age: ['', [Validators.min(1), Validators.max(120)]],
+      country: ['']
     });
 
     // Step 2: بيانات الشركة
-    this.step2Form = this.fb.group({
-      companyName: ['', [Validators.required, Validators.minLength(2)]],
-      sector: ['', [Validators.required]],
-      employeeCount: ['', [Validators.required, Validators.min(1)]]
+    this.step3Form = this.fb.group({
+      companyName: ['', Validators.minLength(2)],
+      industry: [''],
+      companyStage: [''],
+      companySize: [''],
+      location: [''],
+      digitalTransformation: [''],
+      ownership: [''],
+      branches: ['']
+    });
+
+    // Step 3: بيانات تقنية
+    this.step4Form = this.fb.group({
+      cloudProvider: [''],
+      companyName: ['', Validators.minLength(2)],
+      techSpending: [''],
+      saasTools: ['']
+    });
+
+    // Step 4: السلوك
+    this.step5Form = this.fb.group({
+      consumptionPattern: [''],
+      sports: [false],
+      technology: [false],
+      travel: [false],
+      music: [false],
+      reading: [false],
+      gaming: [false],
+      dailyActivities: ['', Validators.minLength(20)]
+    });
+
+    // Step 5: القدرة الشرائية
+    this.step6Form = this.fb.group({
+      monthlyIncome: [''],
+      averageSpending: [''],
+      preferredProducts: ['', Validators.minLength(10)]
+    });
+
+    // Step 6: نوايا الشراء
+    this.step7Form = this.fb.group({
+      purchaseIntention: [''],
+      timeFrame: [''],
+      priority: ['']
+    });
+
+    // Step 7: البعد النفسي
+    this.step8Form = this.fb.group({
+      personality: [''],
+      motivation: [''],
+      decisionPattern: ['']
+    });
+
+    // Step 8: بيانات المعاملات
+    this.step9Form = this.fb.group({
+      cash: [false],
+      credit_card: [false],
+      debit_card: [false],
+      bank_transfer: [false],
+      digital_wallet: [false],
+      monthlyTransactions: [''],
+      averageTransactionValue: ['']
+    });
+
+    // Step 9: الحملات
+    this.step10Form = this.fb.group({
+      previousCampaigns: [''],
+      campaignResults: [''],
+      budget: ['']
+    });
+
+    // Step 10: العلاقات
+    this.step11Form = this.fb.group({
+      partners: [''],
+      customers: [''],
+      professionalRelations: ['']
     });
 
     // Initialize field states for all forms
@@ -178,7 +250,7 @@ export class WizardComponent implements OnInit {
   collectAllData(): any {
     return {
       step1: this.step1Form.value,
-      step2: this.step2Form.value,
+      step2: this.step1Form2.value,
       step3: this.step3Form.value,
       step4: this.step4Form.value,
       step5: this.step5Form.value,
@@ -186,15 +258,13 @@ export class WizardComponent implements OnInit {
       step7: this.step7Form.value,
       step8: this.step8Form.value,
       step9: this.step9Form.value,
-      step10: this.step10Form.value
+      step10: this.step10Form.value,
+      step11: this.step11Form.value
     };
   }
 
   markFormGroupTouched(formGroup: FormGroup): void {
-    Object.keys(formGroup.controls).forEach(key => {
-      const control = formGroup.get(key);
-      control?.markAsTouched();
-    });
+    this.errorHandler.markFormGroupTouched(formGroup);
   }
 
 
@@ -226,7 +296,7 @@ export class WizardComponent implements OnInit {
   private getFormByStep(stepIndex: number): FormGroup | null {
     switch (stepIndex) {
       case 0: return this.step1Form;
-      case 1: return this.step2Form;
+      case 1: return this.step1Form2;
       case 2: return this.step3Form;
       case 3: return this.step4Form;
       case 4: return this.step5Form;
@@ -235,39 +305,110 @@ export class WizardComponent implements OnInit {
       case 7: return this.step8Form;
       case 8: return this.step9Form;
       case 9: return this.step10Form;
+      case 10: return this.step11Form;
       default: return null;
     }
   }
 
+  // Global Error Message Handler for Wizard
   getErrorMessage(controlName: string): string {
-    const control = this.getCurrentForm().get(controlName);
-    if (control?.errors && control.touched) {
-      if (control.errors['required']) {
-        return 'هذا الحقل مطلوب';
-      }
-      if (control.errors['email']) {
-        return 'يرجى إدخال بريد إلكتروني صحيح';
-      }
-      if (control.errors['minlength']) {
-        return `يجب أن يكون ${control.errors['minlength'].requiredLength} أحرف على الأقل`;
-      }
-      if (control.errors['min']) {
-        return `يجب أن تكون القيمة ${control.errors['min'].min} على الأقل`;
-      }
-      if (control.errors['max']) {
-        return `يجب أن تكون القيمة ${control.errors['max'].max} على الأكثر`;
-      }
-      if (control.errors['pattern']) {
-        return 'تنسيق غير صحيح';
+    return this.errorHandler.getErrorMessage(controlName, this.getCurrentForm());
+  }
+
+  // Centralized Error Message Handler
+  handleFieldError(controlName: string, form: FormGroup): string {
+    return this.errorHandler.handleFieldError(controlName, form);
+  }
+
+  // Check if field has error
+  hasFieldError(controlName: string, form?: FormGroup): boolean {
+    const targetForm = form || this.getCurrentForm();
+    return this.errorHandler.hasFieldError(controlName, targetForm);
+  }
+
+  // Get all errors for current form
+  getAllFormErrors(): { [key: string]: string } {
+    return this.errorHandler.getAllFormErrors(this.getCurrentForm());
+  }
+
+  // Check if current form has any errors
+  hasFormErrors(): boolean {
+    return this.errorHandler.hasFormErrors(this.getCurrentForm());
+  }
+
+  // Clear all errors for a specific field
+  clearFieldError(controlName: string, form?: FormGroup): void {
+    const targetForm = form || this.getCurrentForm();
+    this.errorHandler.clearFieldError(controlName, targetForm);
+  }
+
+  // Clear all errors for current form
+  clearAllFormErrors(): void {
+    this.errorHandler.clearAllFormErrors(this.getCurrentForm());
+  }
+
+  // Mark field as touched and dirty to trigger validation
+  markFieldAsTouched(controlName: string, form?: FormGroup): void {
+    const targetForm = form || this.getCurrentForm();
+    this.errorHandler.markFieldAsTouched(controlName, targetForm);
+  }
+
+  // Validate current form and return validation status
+  validateCurrentForm(): { isValid: boolean; errors: { [key: string]: string } } {
+    return this.errorHandler.validateCurrentForm(this.getCurrentForm());
+  }
+
+  // Validate specific form by step index
+  validateFormByStep(stepIndex: number): { isValid: boolean; errors: { [key: string]: string } } {
+    const form = this.getFormByStep(stepIndex);
+    if (!form) {
+      return { isValid: false, errors: {} };
+    }
+    return this.errorHandler.validateCurrentForm(form);
+  }
+
+  // Get validation summary for all forms
+  getValidationSummary(): { [stepIndex: number]: { isValid: boolean; errors: { [key: string]: string } } } {
+    const summary: { [stepIndex: number]: { isValid: boolean; errors: { [key: string]: string } } } = {};
+    
+    for (let i = 0; i < this.totalSteps; i++) {
+      summary[i] = this.validateFormByStep(i);
+    }
+    
+    return summary;
+  }
+
+  // Check if all forms are valid
+  areAllFormsValid(): boolean {
+    for (let i = 0; i < this.totalSteps; i++) {
+      const validation = this.validateFormByStep(i);
+      if (!validation.isValid) {
+        return false;
       }
     }
-    return '';
+    return true;
+  }
+
+  // Force validation on current form
+  forceValidationCurrentForm(): void {
+    this.errorHandler.forceValidationCurrentForm(this.getCurrentForm());
+  }
+
+  // Force validation on all forms
+  forceValidationAllForms(): void {
+    for (let i = 0; i < this.totalSteps; i++) {
+      const form = this.getFormByStep(i);
+      if (form) {
+        this.errorHandler.forceValidationCurrentForm(form);
+      }
+    }
   }
 
   // Pac-Man animation methods
   checkFormProgress(): void {
     const form = this.getCurrentForm();
     const fields = this.formFields[this.currentStep as keyof typeof this.formFields];
+    let hasNewCompletion = false;
     
     fields.forEach((field, index) => {
       const fieldKey = `${this.currentStep}_${field}`;
@@ -279,7 +420,7 @@ export class WizardComponent implements OnInit {
           // Add to completed fields if not already there
           if (!this.completedFields.includes(fieldKey)) {
             this.completedFields.push(fieldKey);
-            this.triggerPacmanMove(fieldKey);
+            hasNewCompletion = true;
           }
         }
       } else if (control?.value && !control.valid) {
@@ -287,91 +428,50 @@ export class WizardComponent implements OnInit {
       } else {
         this.fieldStates[fieldKey] = 'pending';
         // Remove from completed fields if invalid
-        const index = this.completedFields.indexOf(fieldKey);
-        if (index > -1) {
-          this.completedFields.splice(index, 1);
+        const fieldIndex = this.completedFields.indexOf(fieldKey);
+        if (fieldIndex > -1) {
+          this.completedFields.splice(fieldIndex, 1);
         }
       }
     });
+    
+    // Trigger Pac-Man movement if any field was just completed
+    if (hasNewCompletion) {
+      this.triggerPacmanMove('any_field');
+    }
   }
 
-  triggerEggAnimation(fieldKey: string, fieldIndex: number): void {
-    // Set duck position to current field
-    this.currentFieldIndex = fieldIndex;
-    
-    // Trigger egg cracking animation
-    this.eggAnimations[fieldKey] = true;
-    
-    // Play Pac-Man sound
-    this.pacmanSound.play().catch(() => {
-      // Ignore audio play errors
-    });
-    
-    // Reset animation after completion
-    setTimeout(() => {
-      this.eggAnimations[fieldKey] = false;
-    }, 2000);
-  }
 
   getFieldState(fieldKey: string): 'pending' | 'in-progress' | 'completed' {
     return this.fieldStates[fieldKey] || 'pending';
   }
 
-  getEggImage(fieldKey: string): string {
-    const state = this.getFieldState(fieldKey);
-    switch (state) {
-      case 'pending':
-        return 'assets/egg.png';
-      case 'in-progress':
-        return 'assets/duck.png';
-      case 'completed':
-        return 'assets/duckling.png';
-      default:
-        return 'assets/egg.png';
-    }
-  }
-
-  isEggAnimating(fieldKey: string): boolean {
-    return this.eggAnimations[fieldKey] || false;
-  }
 
   getCurrentFields(): string[] {
     return this.formFields[this.currentStep as keyof typeof this.formFields] || [];
   }
 
-  moveDuck(newPosition: number): void {
-    if (this.isPacmanMoving) return;
-    
-    this.isPacmanMoving = true;
-    this.pacmanPosition = newPosition;
-    
-    // Play Pac-Man sound
-    this.pacmanSound.play().catch(() => {
-      // Ignore audio play errors
-    });
-    
-    // Reset moving state after animation
-    setTimeout(() => {
-      this.isPacmanMoving = false;
-    }, 1000);
-  }
-
-  getDuckStyle(): any {
-    return {
-      'left': `${this.pacmanPosition}%`,
-      'transition': 'left 0.8s ease-in-out'
-    };
-  }
 
   // Handle field focus - Pac-Man moves to the focused field
   onFieldFocus(fieldKey: string) {
     this.currentFocusedField = fieldKey;
-    this.triggerPacmanMove(fieldKey);
+    // Don't trigger movement on focus, only on completion
   }
 
-  // Handle field blur
-  onFieldBlur() {
-    // Keep the duck on the last focused field
+  // Handle field input - trigger movement when any field is filled
+  onFieldInput(fieldKey: string) {
+    // Check if this field is now completed
+    const form = this.getCurrentForm();
+    const control = form.get(fieldKey);
+    
+    if (control?.value && control.valid) {
+      const fullFieldKey = `${this.currentStep}_${fieldKey}`;
+      if (!this.completedFields.includes(fullFieldKey)) {
+        this.completedFields.push(fullFieldKey);
+        this.fieldStates[fullFieldKey] = 'completed';
+        this.triggerPacmanMove(fieldKey);
+      }
+    }
   }
 
   // Check if a field is currently focused
@@ -388,21 +488,100 @@ export class WizardComponent implements OnInit {
       // Ignore audio play errors
     });
 
+    // Calculate new position based on current progress
+    const newPosition = this.getPacmanPosition();
+    console.log(`Pac-Man moving to position: ${newPosition}%`);
+
     // Stop animation after 1 second
     setTimeout(() => {
       this.isPacmanMoving = false;
     }, 1000);
   }
 
-  // Get Pac-Man position based on completed fields
+  // Get Pac-Man position based on completed fields (any order)
   getPacmanPosition(): number {
     const currentFields = this.getCurrentFields();
     const completedCount = currentFields.filter(field => 
       this.isFieldCompleted(this.currentStep + '_' + field)
     ).length;
     
-    if (completedCount === 0) return 5; // Start slightly to the right
-    return Math.min((completedCount / currentFields.length) * 90, 90); // Cap at 90% to stay visible
+    // Calculate position based on any completed fields, not sequential order
+    const position = completedCount === 0 ? 5 : Math.min((completedCount / currentFields.length) * 90, 90);
+    console.log(`Pac-Man position: ${position}% (${completedCount}/${currentFields.length} completed)`);
+    return position;
+  }
+
+  // Progress calculation methods for different trackers
+  getBuildingProgress(): number {
+    const currentFields = this.getCurrentFields();
+    const completedCount = currentFields.filter(field => 
+      this.isFieldCompleted(this.currentStep + '_' + field)
+    ).length;
+    return (completedCount / currentFields.length) * 100;
+  }
+
+  getCircuitProgress(): number {
+    const currentFields = this.getCurrentFields();
+    const completedCount = currentFields.filter(field => 
+      this.isFieldCompleted(this.currentStep + '_' + field)
+    ).length;
+    return (completedCount / currentFields.length) * 100;
+  }
+
+  getHeartbeatProgress(): number {
+    const currentFields = this.getCurrentFields();
+    const completedCount = currentFields.filter(field => 
+      this.isFieldCompleted(this.currentStep + '_' + field)
+    ).length;
+    return (completedCount / currentFields.length) * 100;
+  }
+
+  getMoneyProgress(): number {
+    const currentFields = this.getCurrentFields();
+    const completedCount = currentFields.filter(field => 
+      this.isFieldCompleted(this.currentStep + '_' + field)
+    ).length;
+    return (completedCount / currentFields.length) * 100;
+  }
+
+  getShoppingProgress(): number {
+    const currentFields = this.getCurrentFields();
+    const completedCount = currentFields.filter(field => 
+      this.isFieldCompleted(this.currentStep + '_' + field)
+    ).length;
+    return (completedCount / currentFields.length) * 100;
+  }
+
+  getBrainProgress(): number {
+    const currentFields = this.getCurrentFields();
+    const completedCount = currentFields.filter(field => 
+      this.isFieldCompleted(this.currentStep + '_' + field)
+    ).length;
+    return (completedCount / currentFields.length) * 100;
+  }
+
+  getDatabaseProgress(): number {
+    const currentFields = this.getCurrentFields();
+    const completedCount = currentFields.filter(field => 
+      this.isFieldCompleted(this.currentStep + '_' + field)
+    ).length;
+    return (completedCount / currentFields.length) * 100;
+  }
+
+  getRocketProgress(): number {
+    const currentFields = this.getCurrentFields();
+    const completedCount = currentFields.filter(field => 
+      this.isFieldCompleted(this.currentStep + '_' + field)
+    ).length;
+    return (completedCount / currentFields.length) * 100;
+  }
+
+  getNetworkProgress(): number {
+    const currentFields = this.getCurrentFields();
+    const completedCount = currentFields.filter(field => 
+      this.isFieldCompleted(this.currentStep + '_' + field)
+    ).length;
+    return (completedCount / currentFields.length) * 100;
   }
 
   // Check if a field is completed
@@ -427,41 +606,6 @@ export class WizardComponent implements OnInit {
     console.log(`Successfully loaded ${type} image:`, event.target.src);
   }
 
-  // Save form method
-  saveForm() {
-    if (this.getCurrentForm().valid) {
-      console.log('Form saved:', this.getCurrentForm().value);
-      alert('تم حفظ البيانات بنجاح!');
-    } else {
-      this.markFormGroupTouched(this.getCurrentForm());
-      alert('يرجى ملء جميع الحقول المطلوبة');
-    }
-  }
-
-  // Navigation methods for split personal forms
-  nextPersonalForm() {
-    if (this.getCurrentForm().valid) {
-      this.currentStep = 1; // Go to second personal form
-    } else {
-      this.markFormGroupTouched(this.getCurrentForm());
-    }
-  }
-
-  previousPersonalForm() {
-    this.currentStep = 0; // Go back to first personal form
-  }
-
-  nextPersonalForm2() {
-    if (this.getCurrentForm().valid) {
-      this.currentStep = 2; // Go to third personal form
-    } else {
-      this.markFormGroupTouched(this.getCurrentForm());
-    }
-  }
-
-  previousPersonalForm2() {
-    this.currentStep = 1; // Go back to second personal form
-  }
 
   // Override getCurrentForm to handle split forms
   getCurrentForm(): FormGroup {
@@ -469,13 +613,11 @@ export class WizardComponent implements OnInit {
       return this.step1Form;
     } else if (this.currentStep === 1) {
       return this.step1Form2;
-    } else if (this.currentStep === 2) {
-      return this.step1Form; // For the third personal form, we'll use step1Form
     }
     
     const forms = [
-      this.step1Form, this.step1Form2, this.step1Form, this.step2Form, this.step3Form, this.step4Form, this.step5Form,
-      this.step6Form, this.step7Form, this.step8Form, this.step9Form, this.step10Form
+      this.step1Form, this.step1Form2, this.step3Form, this.step4Form, this.step5Form,
+      this.step6Form, this.step7Form, this.step8Form, this.step9Form, this.step10Form, this.step11Form
     ];
     return forms[this.currentStep];
   }

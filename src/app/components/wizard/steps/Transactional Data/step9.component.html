@@ -1,0 +1,57 @@
+<div class="step-content" [formGroup]="form">
+  <div class="form-group">
+    <label>طرق الدفع المفضلة</label>
+    <div class="checkbox-group">
+      <label class="checkbox-item">
+            <input type="checkbox" formControlName="cash" value="cash" (change)="onFieldChange('cash')">
+        <span>نقدي</span>
+      </label>
+      <label class="checkbox-item">
+            <input type="checkbox" formControlName="credit_card" value="credit_card" (change)="onFieldChange('credit_card')">
+        <span>بطاقة ائتمان</span>
+      </label>
+      <label class="checkbox-item">
+            <input type="checkbox" formControlName="debit_card" value="debit_card" (change)="onFieldChange('debit_card')">
+        <span>بطاقة خصم</span>
+      </label>
+      <label class="checkbox-item">
+            <input type="checkbox" formControlName="bank_transfer" value="bank_transfer" (change)="onFieldChange('bank_transfer')">
+        <span>تحويل بنكي</span>
+      </label>
+      <label class="checkbox-item">
+            <input type="checkbox" formControlName="digital_wallet" value="digital_wallet" (change)="onFieldChange('digital_wallet')">
+        <span>محفظة رقمية</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="monthlyTransactions">عدد المعاملات الشهرية *</label>
+    <select id="monthlyTransactions" formControlName="monthlyTransactions" class="form-select" (blur)="onFieldBlur('monthlyTransactions')" (change)="onFieldChange('monthlyTransactions')">
+      <option value="">اختر عدد المعاملات</option>
+      <option value="1_5">1 - 5 معاملات</option>
+      <option value="6_15">6 - 15 معاملة</option>
+      <option value="16_30">16 - 30 معاملة</option>
+      <option value="31_50">31 - 50 معاملة</option>
+      <option value="over_50">أكثر من 50 معاملة</option>
+    </select>
+    <div class="error-message" *ngIf="getErrorMessage('monthlyTransactions')">
+      {{ getErrorMessage('monthlyTransactions') }}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="averageTransactionValue">متوسط قيمة المعاملة *</label>
+    <select id="averageTransactionValue" formControlName="averageTransactionValue" class="form-select" (blur)="onFieldBlur('averageTransactionValue')" (change)="onFieldChange('averageTransactionValue')">
+      <option value="">اختر متوسط القيمة</option>
+      <option value="under_100">أقل من 100 ريال</option>
+      <option value="100_500">100 - 500 ريال</option>
+      <option value="500_1000">500 - 1,000 ريال</option>
+      <option value="1000_5000">1,000 - 5,000 ريال</option>
+      <option value="over_5000">أكثر من 5,000 ريال</option>
+    </select>
+    <div class="error-message" *ngIf="getErrorMessage('averageTransactionValue')">
+      {{ getErrorMessage('averageTransactionValue') }}
+    </div>
+  </div>
+</div>

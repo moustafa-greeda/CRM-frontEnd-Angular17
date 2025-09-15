@@ -1,0 +1,74 @@
+<div class="step-content technical-data-form" [formGroup]="form">
+  <div class="form-row">
+    <div class="form-group">
+      <label for="cloudProvider">مزود الخدمات السحابية *</label>
+      <select id="cloudProvider" formControlName="cloudProvider" class="form-select" (blur)="onFieldBlur('cloudProvider')" (change)="onFieldChange('cloudProvider')">
+        <option value="">إختر الخدمة</option>
+        <option value="aws">Amazon Web Services (AWS)</option>
+        <option value="azure">Microsoft Azure</option>
+        <option value="google">Google Cloud Platform</option>
+        <option value="oracle">Oracle Cloud</option>
+        <option value="ibm">IBM Cloud</option>
+        <option value="alibaba">Alibaba Cloud</option>
+        <option value="other">أخرى</option>
+      </select>
+      <div class="error-message" *ngIf="getErrorMessage('cloudProvider')">
+        {{ getErrorMessage('cloudProvider') }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="companyName">اسم الشركة *</label>
+      <input 
+        type="text" 
+        id="companyName" 
+        formControlName="companyName" 
+        placeholder="أدخل إسم الشركة"
+        class="form-input"
+        (blur)="onFieldBlur('companyName')" 
+        (input)="onFieldChange('companyName')"
+      >
+      <div class="error-message" *ngIf="getErrorMessage('companyName')">
+        {{ getErrorMessage('companyName') }}
+      </div>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-group">
+      <label for="techSpending">حجم الإنفاق التكنولوجي *</label>
+      <input 
+        type="text" 
+        id="techSpending" 
+        formControlName="techSpending" 
+        placeholder="إدخل حجم الإنفاق"
+        class="form-input"
+        (blur)="onFieldBlur('techSpending')" 
+        (input)="onFieldChange('techSpending')"
+      >
+      <div class="error-message" *ngIf="getErrorMessage('techSpending')">
+        {{ getErrorMessage('techSpending') }}
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label for="saasTools">أدوات Saas *</label>
+      <select id="saasTools" formControlName="saasTools" class="form-select" (blur)="onFieldBlur('saasTools')" (change)="onFieldChange('saasTools')">
+        <option value="">إختر الأدوات</option>
+        <option value="salesforce">Salesforce</option>
+        <option value="microsoft365">Microsoft 365</option>
+        <option value="google_workspace">Google Workspace</option>
+        <option value="slack">Slack</option>
+        <option value="zoom">Zoom</option>
+        <option value="dropbox">Dropbox</option>
+        <option value="notion">Notion</option>
+        <option value="asana">Asana</option>
+        <option value="trello">Trello</option>
+        <option value="other">أخرى</option>
+      </select>
+      <div class="error-message" *ngIf="getErrorMessage('saasTools')">
+        {{ getErrorMessage('saasTools') }}
+      </div>
+    </div>
+  </div>
+</div>

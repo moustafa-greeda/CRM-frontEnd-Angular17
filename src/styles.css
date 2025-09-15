@@ -3,6 +3,49 @@ html {
   direction: rtl;
   scroll-behavior: smooth;
 }
+
+/* RTL specific styles */
+[dir="rtl"] {
+  text-align: right;
+}
+
+[dir="rtl"] .form-row {
+  direction: rtl;
+}
+
+[dir="rtl"] .form-group {
+  text-align: right;
+}
+
+[dir="rtl"] .form-input,
+[dir="rtl"] .form-select {
+  text-align: right;
+}
+
+[dir="rtl"] .error-message {
+  text-align: right;
+}
+
+[dir="rtl"] .step-tabs {
+  direction: rtl;
+}
+
+[dir="rtl"] .navigation-buttons {
+  direction: rtl;
+}
+
+[dir="rtl"] .btn {
+  margin-left: 10px;
+  margin-right: 0;
+}
+
+[dir="rtl"] .btn:first-child {
+  margin-left: 0;
+}
+
+[dir="rtl"] .btn:last-child {
+  margin-right: 0;
+}
 * {
   margin: 0;
   padding: 0;
@@ -338,7 +381,9 @@ app-notify-dialog-host .nd-modal {
   content: '';
   position: absolute; inset: 0;
   -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor; mask-composite: exclude;
+  -webkit-mask-composite: xor; 
+  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+  mask-composite: exclude;
   pointer-events: none;
 }
 

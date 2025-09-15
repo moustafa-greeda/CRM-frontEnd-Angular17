@@ -1,0 +1,112 @@
+<div class="step-content personal-data-form" [formGroup]="form">
+  <div class="form-row">
+    <div class="form-column">
+      <div class="form-group">
+        <label for="mobileNumber">رقم الموبايل *</label>
+        <input 
+          type="tel" 
+          id="mobileNumber" 
+          formControlName="mobileNumber" 
+          placeholder="إدخل رقم الهاتف"
+          class="form-input"
+          (blur)="onFieldBlur('mobileNumber')" 
+          (input)="onFieldChange('mobileNumber')"
+        >
+        <div class="error-message" *ngIf="getErrorMessage('mobileNumber')">
+          {{ getErrorMessage('mobileNumber') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="customerType">نوع العميل *</label>
+        <select id="customerType" formControlName="customerType" class="form-select" (blur)="onFieldBlur('customerType')" (change)="onFieldChange('customerType')">
+          <option value="">اختر نوع العميل</option>
+          <option value="individual">فردي</option>
+          <option value="corporate">شركة</option>
+          <option value="government">حكومي</option>
+        </select>
+        <div class="error-message" *ngIf="getErrorMessage('customerType')">
+          {{ getErrorMessage('customerType') }}
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="city">المدينة *</label>
+        <select id="city" formControlName="city" class="form-select" (blur)="onFieldBlur('city')" (change)="onFieldChange('city')">
+          <option value="">إختر إسم المدينة</option>
+          <option value="riyadh">الرياض</option>
+          <option value="jeddah">جدة</option>
+          <option value="dammam">الدمام</option>
+        </select>
+        <div class="error-message" *ngIf="getErrorMessage('city')">
+          {{ getErrorMessage('city') }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-column">
+      <div class="form-group">
+        <label for="name">الإسم *</label>
+        <input 
+          type="text" 
+          id="name" 
+          formControlName="name" 
+          placeholder="إدخل الإسم"
+          class="form-input"
+          (blur)="onFieldBlur('name')" 
+          (input)="onFieldChange('name')"
+        >
+        <div class="error-message" *ngIf="getErrorMessage('name')">
+          {{ getErrorMessage('name') }}
+        </div>
+      </div>
+
+      <div class="form-group-row">
+        <div class="form-group">
+          <label for="birthDate">تاريخ الميلاد *</label>
+          <input 
+            type="date" 
+            id="birthDate" 
+            formControlName="birthDate" 
+            class="form-input"
+            (blur)="onFieldBlur('birthDate')" 
+            (change)="onFieldChange('birthDate')"
+          >
+          <div class="error-message" *ngIf="getErrorMessage('birthDate')">
+            {{ getErrorMessage('birthDate') }}
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="age">العمر *</label>
+          <input 
+            type="number" 
+            id="age" 
+            formControlName="age" 
+            placeholder="إدخل العمر"
+            class="form-input"
+            (blur)="onFieldBlur('age')" 
+            (input)="onFieldChange('age')"
+          >
+          <div class="error-message" *ngIf="getErrorMessage('age')">
+            {{ getErrorMessage('age') }}
+          </div>
+        </div>
+      </div>
+
+
+      <div class="form-group">
+        <label for="country">الدولة *</label>
+        <select id="country" formControlName="country" class="form-select" (blur)="onFieldBlur('country')" (change)="onFieldChange('country')">
+          <option value="">إختر إسم الدولة</option>
+          <option value="saudi">السعودية</option>
+          <option value="uae">الإمارات</option>
+          <option value="kuwait">الكويت</option>
+        </select>
+        <div class="error-message" *ngIf="getErrorMessage('country')">
+          {{ getErrorMessage('country') }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

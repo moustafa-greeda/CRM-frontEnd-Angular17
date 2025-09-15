@@ -1,0 +1,61 @@
+<div class="step-content" [formGroup]="form">
+  <div class="form-group">
+    <label for="consumptionPattern">نمط الاستهلاك *</label>
+    <select id="consumptionPattern" formControlName="consumptionPattern" class="form-select" (blur)="onFieldBlur('consumptionPattern')" (change)="onFieldChange('consumptionPattern')">
+      <option value="">اختر نمط الاستهلاك</option>
+      <option value="conservative">محافظ</option>
+      <option value="moderate">معتدل</option>
+      <option value="aggressive">عدواني</option>
+      <option value="luxury">فاخر</option>
+    </select>
+    <div class="error-message" *ngIf="getErrorMessage('consumptionPattern')">
+      {{ getErrorMessage('consumptionPattern') }}
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label>الاهتمامات</label>
+    <div class="checkbox-group">
+      <label class="checkbox-item">
+            <input type="checkbox" formControlName="sports" value="sports" (change)="onFieldChange('sports')">
+        <span>الرياضة</span>
+      </label>
+      <label class="checkbox-item">
+            <input type="checkbox" formControlName="technology" value="technology" (change)="onFieldChange('technology')">
+        <span>التكنولوجيا</span>
+      </label>
+      <label class="checkbox-item">
+            <input type="checkbox" formControlName="travel" value="travel" (change)="onFieldChange('travel')">
+        <span>السفر</span>
+      </label>
+      <label class="checkbox-item">
+            <input type="checkbox" formControlName="music" value="music" (change)="onFieldChange('music')">
+        <span>الموسيقى</span>
+      </label>
+      <label class="checkbox-item">
+            <input type="checkbox" formControlName="reading" value="reading" (change)="onFieldChange('reading')">
+        <span>القراءة</span>
+      </label>
+      <label class="checkbox-item">
+            <input type="checkbox" formControlName="gaming" value="gaming" (change)="onFieldChange('gaming')">
+        <span>الألعاب</span>
+      </label>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <label for="dailyActivities">الأنشطة اليومية *</label>
+    <textarea 
+      id="dailyActivities" 
+      formControlName="dailyActivities" 
+      placeholder="صف الأنشطة اليومية المعتادة"
+      class="form-textarea"
+      rows="4"
+      (blur)="onFieldBlur('dailyActivities')" 
+      (input)="onFieldChange('dailyActivities')"
+    ></textarea>
+    <div class="error-message" *ngIf="getErrorMessage('dailyActivities')">
+      {{ getErrorMessage('dailyActivities') }}
+    </div>
+  </div>
+</div>

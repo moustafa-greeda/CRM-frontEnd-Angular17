@@ -1,0 +1,42 @@
+<div class="step-content" [formGroup]="form">
+  <div class="form-group">
+    <label for="partners">الشركاء</label>
+    <textarea 
+      id="partners" 
+      formControlName="partners" 
+      placeholder="اذكر الشركاء أو المؤسسات التي تتعامل معها"
+      class="form-textarea"
+      rows="3"
+      (blur)="onFieldBlur('partners')" 
+      (input)="onFieldChange('partners')"
+    ></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="customers">العملاء</label>
+    <textarea 
+      id="customers" 
+      formControlName="customers" 
+      placeholder="اذكر أنواع العملاء أو العملاء المستهدفين"
+      class="form-textarea"
+      rows="3"
+      (blur)="onFieldBlur('customers')" 
+      (input)="onFieldChange('customers')"
+    ></textarea>
+  </div>
+
+  <div class="form-group">
+    <label for="professionalRelations">العلاقات المهنية *</label>
+    <select id="professionalRelations" formControlName="professionalRelations" class="form-select" (blur)="onFieldBlur('professionalRelations')" (change)="onFieldChange('professionalRelations')">
+      <option value="">اختر نوع العلاقات المهنية</option>
+      <option value="networking">شبكة علاقات</option>
+      <option value="partnerships">شراكات</option>
+      <option value="suppliers">موردين</option>
+      <option value="clients">عملاء</option>
+      <option value="mixed">مختلطة</option>
+    </select>
+    <div class="error-message" *ngIf="getErrorMessage('professionalRelations')">
+      {{ getErrorMessage('professionalRelations') }}
+    </div>
+  </div>
+</div>

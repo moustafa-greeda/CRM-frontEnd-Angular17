@@ -59,6 +59,7 @@ export class FormDialogComponent implements OnInit {
       controls[f.name] = [initial, validators];
     }
     this.form = this.fb.group(controls);
+
   }
 
   onImageChange(ev: Event, controlName: string) {
@@ -84,3 +85,4 @@ export class FormDialogComponent implements OnInit {
     if (this.form.valid) this.ref.close(this.form.value);
   }
 }
+

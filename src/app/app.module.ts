@@ -185,6 +185,7 @@ import { DistributionComponent } from './components/distribution/distribution.co
 import { CitiesComponent } from './components/cities/cities.component';
 import { CountriesComponent } from './components/countries/countries.component';
 import { WizardComponent } from './components/wizard/wizard.component';
+import { StepsModule } from './components/wizard/steps/steps.module';
 import { AuthTokenInterceptor } from './core/auth-token.interceptor';
 
 @NgModule({
@@ -249,6 +250,9 @@ import { AuthTokenInterceptor } from './core/auth-token.interceptor';
     }),
     NgxSpinnerModule.forRoot({ type: 'ball-scale-multiple' }),
     CanvasJSAngularChartsModule,
+    
+    // Custom modules
+    StepsModule,
   ],
   providers: [
     provideClientHydration(),

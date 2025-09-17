@@ -186,6 +186,7 @@ import { CitiesComponent } from './components/cities/cities.component';
 import { CountriesComponent } from './components/countries/countries.component';
 import { WizardComponent } from './components/wizard/wizard.component';
 import { StepsModule } from './components/wizard/steps/steps.module';
+import { FilterLeadsModule } from './components/filter-leads/filter-leads.module';
 import { AuthTokenInterceptor } from './core/auth-token.interceptor';
 
 @NgModule({
@@ -253,6 +254,7 @@ import { AuthTokenInterceptor } from './core/auth-token.interceptor';
     
     // Custom modules
     StepsModule,
+    FilterLeadsModule,
   ],
   providers: [
     provideClientHydration(),

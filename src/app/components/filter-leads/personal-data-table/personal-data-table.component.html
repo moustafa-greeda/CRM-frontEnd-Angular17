@@ -1,0 +1,201 @@
+<div class="personal-data-table-container">
+  <!-- Table Header with Search and Filter -->
+  <div class="table-header">
+    <h3>البيانات الشخصية</h3>
+    <div class="search-and-filter-container">
+      <div class="search-box">
+        <input type="text" placeholder="ابحث في البيانات الشخصية...." formControlName="search" />
+        <mat-icon class="search-icon">search</mat-icon>
+      </div>
+      
+      <button class="filter-btn" (click)="toggleFilterButtons()">
+        <!-- <span class="filter-icon">🔍</span> -->
+
+        فلتر
+        <img src="assets/icon-filter.svg" alt="filter">
+
+        <span class="filter-count" *ngIf="getActiveFiltersCount() > 0">({{ getActiveFiltersCount() }})</span>
+      </button>
+      
+      <button class="clear-filters-btn" (click)="clearFilters()" *ngIf="getActiveFiltersCount() > 0">
+        مسح الفلاتر ({{ getActiveFiltersCount() }})
+      </button>
+    </div>
+  </div>
+
+    <!-- Filter System -->
+    <div class="filter-system">
+      <!-- Filter Button -->
+      <div class="filter-controls">
+        <button class="apply-filters-btn" (click)="executeFilters()" *ngIf="hasActiveFilters()">
+          <span class="btn-icon"></span>
+          تطبيق الفلاتر
+        </button>
+        
+        <button class="clear-filters-btn" (click)="clearAllFilters()" *ngIf="selectedFilters.length > 0 || showCountryDropdown || showCityDropdown">
+          مسح جميع الفلاتر
+        </button>
+      </div>
+  
+      <!-- Available Filter Buttons -->
+      <div class="available-filters" *ngIf="showFilterButtons">
+        <div class="filter-buttons-grid">
+          <button 
+            *ngFor="let filter of availableFilters" 
+            class="filter-option-btn"
+            (click)="addFilter(filter.id)"
+            [disabled]="isFilterSelected(filter.id)">
+            {{ filter.name }}
+          </button>
+          
+          <!-- Country and City Buttons -->
+          <button 
+            class="filter-option-btn location-btn"
+            (click)="toggleCountryDropdown()"
+            [class.active]="showCountryDropdown">
+            الدولة
+          </button>
+          
+          <button 
+            class="filter-option-btn location-btn"
+            (click)="toggleCityDropdown()"
+            [class.active]="showCityDropdown"
+            [disabled]="!countryId">
+            المدينة
+          </button>
+        </div>
+      </div>
+
+      <!-- Selected Filters Container -->
+      <div class="selected-filters-container" *ngIf="selectedFilters.length > 0 || showCountryDropdown || showCityDropdown">
+        <!-- Selected Filters -->
+        <div class="selected-filters">
+          <!-- Country Dropdown -->
+          <div class="filter-dropdown-item" *ngIf="showCountryDropdown">
+            <label class="filter-label">الدولة:</label>
+            <select (change)="onCountryChange($event)" class="filter-select">
+              <option value="">اختر الدولة</option>
+              <option *ngFor="let country of countries" [value]="country.id">
+                {{ country.name }}
+              </option>
+            </select>
+            <button 
+              class="remove-filter-btn"
+              (click)="toggleCountryDropdown()"
+              title="إزالة فلتر الدولة">
+              ✕
+            </button>
+          </div>
+
+          <!-- City Dropdown -->
+          <div class="filter-dropdown-item" *ngIf="showCityDropdown && countryId">
+            <label class="filter-label">المدينة:</label>
+            <select class="filter-select" (change)="onCityChange($event)" [disabled]="cities.length === 0">
+              <option value="">
+                {{ cities.length === 0 ? 'جاري تحميل المدن...' : 'اختر المدينة' }}
+              </option>
+              <option *ngFor="let city of cities" [value]="city.id">
+                {{ city.name }}
+              </option>
+            </select>
+            <button 
+              class="remove-filter-btn"
+              (click)="toggleCityDropdown()"
+              title="إزالة فلتر المدينة">
+              ✕
+            </button>
+          </div>
+
+          <!-- Other Selected Filters -->
+          <div 
+            *ngFor="let filter of selectedFilters" 
+            class="filter-dropdown-item">
+            
+            <label class="filter-label">{{ filter.name }}</label>
+            
+            <!-- Select Dropdown -->
+            <select 
+              *ngIf="filter.type === 'select'" 
+              [value]="filter.value"
+              (change)="onSelectChange(filter.id, $event)"
+              class="filter-select">
+              <option value="">{{ 'اختر ' + filter.name }}</option>
+              <option 
+                *ngFor="let option of filter.options" 
+                [value]="filter.isDynamic ? option.value : option">
+                {{ filter.isDynamic ? option.label : option }}
+              </option>
+            </select>
+            
+            <!-- Text Input -->
+            <input 
+              *ngIf="filter.type === 'text'" 
+              type="text"
+              [placeholder]="filter.placeholder"
+              [value]="filter.value"
+              (input)="onInputChange(filter.id, $event)"
+              class="filter-input">
+            
+            <!-- Remove Button -->
+            <button 
+              class="remove-filter-btn"
+              (click)="removeFilter(filter.id)"
+              title="إزالة الفلتر">
+              ✕
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    
+
+
+  <!-- Data Table -->
+  <!-- <div class="table-wrapper"> -->
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>الشخصية</th>
+          <th>مستوى العميل</th>
+          <th>نوع العميل</th>
+          <th>اللغة</th>
+          <th>القسم</th>
+          <th>المدينة</th>
+          <th>الدولة</th>
+          <th>العمر</th>
+          <th>المسمى الوظيفي</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of filteredData$ | async; let i = index" [class.selected]="isRowSelected(row)">
+          <td>{{ i + 1 }}</td>
+          <td>{{ row.personality }}</td>
+          <td>{{ row.customerLevel }}</td>
+          <td>{{ row.customerType }}</td>
+          <td>{{ row.language }}</td>
+          <td>{{ row.department }}</td>
+          <td>{{ row.city }}</td>
+          <td>{{ row.country }}</td>
+          <td>{{ row.age }}</td>
+          <td>{{ row.jobTitle }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <!-- <div class="pagination">
+    <span>عرض من 1 إلى 10 من أصل {{ (filteredData$ | async)?.length || 0 }}</span>
+  </div> -->
+  <!-- <mat-paginator
+  [length]="(totalCount$ | async) ?? 0"
+  [pageIndex]="0"
+  [pageSize]="10"
+  [pageSizeOptions]="[10, 20, 50, 100, 500, 1000]"
+  (page)="onPageChange($event)"
+  style="margin-top: 8px"
+>
+</mat-paginator> -->
+<!-- </div> -->

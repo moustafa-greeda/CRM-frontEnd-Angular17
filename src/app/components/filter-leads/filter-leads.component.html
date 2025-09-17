@@ -1,0 +1,74 @@
+<div class="filter-leads-container">
+  
+  <!-- Navigation Tabs -->
+  <div class="nav-tabs">
+    <button 
+      class="nav-tab" 
+      [class.active]="activeTab === 'personal'"
+      (click)="setActiveTab('personal')">
+      <!-- <span class="tab-icon">👤</span> -->
+      <span class="tab-label">البيانات الشخصية</span>
+      <!-- <span class="tab-count">{{ personalDataFiltered.length }}</span> -->
+    </button>
+    
+    <button 
+      class="nav-tab" 
+      [class.active]="activeTab === 'company'"
+      (click)="setActiveTab('company')">
+      <!-- <span class="tab-icon">🏢</span> -->
+      <span class="tab-label">بيانات الشركة</span>
+      <!-- <span class="tab-count">{{ companyDataFiltered.length }}</span> -->
+    </button>
+    
+    <button 
+      class="nav-tab" 
+      [class.active]="activeTab === 'all'"
+      (click)="setActiveTab('all')">
+      <!-- <span class="tab-icon">📊</span> -->
+      <span class="tab-label">جميع البيانات</span>
+      <!-- <span class="tab-count">{{ personalDataFiltered.length + companyDataFiltered.length }}</span> -->
+    </button>
+  </div>
+  
+
+  <!-- Table Components -->
+  <div class="tables-container">
+    <!-- Personal Data Table -->
+    <div *ngIf="activeTab === 'personal' || activeTab === 'all'" class="">
+      <app-personal-data-table 
+        [data]="personalData"
+        (filteredDataChange)="onPersonalDataFiltered($event)"
+        (selectedRowsChange)="onPersonalDataSelected($event)">
+      </app-personal-data-table>
+    </div>
+
+    <!-- Company Table -->
+    <div *ngIf="activeTab === 'company' || activeTab === 'all'" class="">
+      <app-company-table 
+        [data]="companyData"
+        (filteredDataChange)="onCompanyDataFiltered($event)"
+        (selectedRowsChange)="onCompanyDataSelected($event)">
+      </app-company-table>
+    </div>
+  </div>
+<!-- 
+  <div class="summary-section">
+    <div class="summary-card">
+      <h3>ملخص التصفية</h3>
+      <div class="summary-stats">
+        <div class="stat">
+          <span class="label">البيانات الشخصية:</span>
+          <span class="value">{{ personalDataFiltered.length }}</span>
+        </div>
+        <div class="stat">
+          <span class="label">بيانات الشركة:</span>
+          <span class="value">{{ companyDataFiltered.length }}</span>
+        </div>
+        <div class="stat">
+          <span class="label">المحدد:</span>
+          <span class="value">{{ selectedPersonalData.length + selectedCompanyData.length }}</span>
+        </div>
+      </div>
+    </div>
+  </div> -->
+</div>

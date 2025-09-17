@@ -54,36 +54,43 @@
       
       <!-- Step 0-1: Personal Data Forms - Classic Pac-Man Style -->
       <div *ngIf="currentStep <= 1" class="pacman-tracker">
-        <div class="dots-row">
-          <div 
-            *ngFor="let field of getCurrentFields(); let i = index" 
-            class="dot-container"
-            [class.eaten]="isFieldCompleted(currentStep + '_' + field)"
-            [class.current]="isCurrentField(currentStep + '_' + field)"
+      <div class="dots-row">
+        <div 
+          *ngFor="let field of getCurrentFields(); let i = index" 
+          class="dot-container"
+          [class.eaten]="isFieldCompleted(currentStep + '_' + field)"
+          [class.current]="isCurrentField(currentStep + '_' + field)"
+            [class.available]="isFieldAvailableForCompletion(i)"
+        >
+          <img 
+              *ngIf="!isFieldCompleted(currentStep + '_' + field) && isFieldAvailableForCompletion(i)"
+              src="assets/duck-eat.svg" 
+              alt="Duck" 
+            class="dot"
           >
             <img 
-              *ngIf="!isFieldCompleted(currentStep + '_' + field)"
-              src="assets/duck-eat.svg" 
-              alt="Dot" 
-              class="dot"
+              *ngIf="isFieldCompleted(currentStep + '_' + field)"
+              src="assets/duckling.png" 
+              alt="Eaten Duck" 
+              class="dot eaten-duck"
             >
             <!-- <div class="field-label">{{ field }}</div> -->
           </div>
-        </div>
-        
-        <!-- Pac-Man Character -->
-        <div 
-          class="pacman-character"
-          [style.left.%]="getPacmanPosition()"
-          [class.moving]="isPacmanMoving"
-          [class.mouth-open]="isPacmanMoving"
-        >
-          <img 
+      </div>
+      
+      <!-- Pac-Man Character -->
+      <div 
+        class="pacman-character"
+        [style.left.%]="getPacmanPosition()"
+        [class.moving]="isPacmanMoving"
+        [class.mouth-open]="isPacmanMoving"
+      >
+        <img 
             src="assets/pacman.svg" 
-            alt="Pac-Man" 
-            class="pacman-icon"
-            (error)="onImageError($event, 'pacman')"
-            (load)="onImageLoad($event, 'pacman')"
+          alt="Pac-Man" 
+          class="pacman-icon"
+          (error)="onImageError($event, 'pacman')"
+          (load)="onImageLoad($event, 'pacman')"
             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
           >
           <!-- Fallback Pac-Man using CSS -->

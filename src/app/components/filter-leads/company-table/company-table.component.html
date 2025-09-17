@@ -1,0 +1,179 @@
+<div class="company-table-container">
+  <!-- Table Header with Search and Filter -->
+  <div class="table-header">
+    <h3>الشركة</h3>
+    <div class="search-and-filter-container">
+      <div class="search-box">
+        <input 
+          type="text" 
+          formControlName="search"
+          placeholder="ابحث في بيانات الشركة..."
+          class="search-input"
+        />
+        <span class="search-icon">🔍</span>
+      </div>
+      
+      <button class="filter-btn" (click)="toggleFilterButtons()">
+        <span class="filter-icon">🔍</span>
+        فلتر
+        <span class="filter-count" *ngIf="getActiveFiltersCount() > 0">({{ getActiveFiltersCount() }})</span>
+      </button>
+      
+      <button class="clear-filters-btn" (click)="clearFilters()" *ngIf="getActiveFiltersCount() > 0">
+        مسح الفلاتر ({{ getActiveFiltersCount() }})
+      </button>
+    </div>
+  </div>
+
+  <!-- Filter Dropdown (shown when filter button is clicked) -->
+  <div class="filter-dropdown" *ngIf="showFilterButtons">
+    <div class="filter-dropdown-content">
+      <h4>اختر الفلاتر المطلوبة</h4>
+      <div class="filter-options-grid">
+        <button class="filter-option-btn" (click)="showFilterButtons = false">
+          <span>التعاملات الرقمية</span>
+        </button>
+        <button class="filter-option-btn" (click)="showFilterButtons = false">
+          <span>عدد الفروع</span>
+        </button>
+        <button class="filter-option-btn" (click)="showFilterButtons = false">
+          <span>نوع الملكية</span>
+        </button>
+        <button class="filter-option-btn" (click)="showFilterButtons = false">
+          <span>الموقع</span>
+        </button>
+        <button class="filter-option-btn" (click)="showFilterButtons = false">
+          <span>مرحلة الشركة</span>
+        </button>
+        <button class="filter-option-btn" (click)="showFilterButtons = false">
+          <span>الحجم</span>
+        </button>
+        <button class="filter-option-btn" (click)="showFilterButtons = false">
+          <span>الصناعة</span>
+        </button>
+        <button class="filter-option-btn" (click)="showFilterButtons = false">
+          <span>اسم الشركة</span>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter Chips -->
+  <form [formGroup]="filterForm">
+    <div class="filter-chips">
+    <div class="filter-chip" [class.active]="filterForm.get('digitalTransactions')?.value">
+      <span>التعاملات الرقمية</span>
+      <select formControlName="digitalTransactions">
+        <option value="">جميع المستويات</option>
+        <option *ngFor="let option of digitalTransactionOptions" [value]="option">
+          {{ option }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-chip" [class.active]="filterForm.get('branches')?.value">
+      <span>الفروع</span>
+      <input type="number" formControlName="branches" placeholder="عدد الفروع">
+    </div>
+
+    <div class="filter-chip" [class.active]="filterForm.get('ownership')?.value">
+      <span>الملكية</span>
+      <select formControlName="ownership">
+        <option value="">جميع أنواع الملكية</option>
+        <option *ngFor="let option of ownershipOptions" [value]="option">
+          {{ option }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-chip" [class.active]="filterForm.get('location')?.value">
+      <span>الموقع</span>
+      <input type="text" formControlName="location" placeholder="أدخل الموقع">
+    </div>
+
+    <div class="filter-chip" [class.active]="filterForm.get('companyStage')?.value">
+      <span>مرحلة الشركة</span>
+      <select formControlName="companyStage">
+        <option value="">جميع المراحل</option>
+        <option *ngFor="let option of companyStageOptions" [value]="option">
+          {{ option }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-chip" [class.active]="filterForm.get('size')?.value">
+      <span>الحجم</span>
+      <select formControlName="size">
+        <option value="">جميع الأحجام</option>
+        <option *ngFor="let option of sizeOptions" [value]="option">
+          {{ option }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-chip" [class.active]="filterForm.get('industry')?.value">
+      <span>الصناعة</span>
+      <select formControlName="industry">
+        <option value="">جميع الصناعات</option>
+        <option *ngFor="let option of industryOptions" [value]="option">
+          {{ option }}
+        </option>
+      </select>
+    </div>
+
+    <div class="filter-chip" [class.active]="filterForm.get('companyName')?.value">
+      <span>اسم الشركة</span>
+      <input type="text" formControlName="companyName" placeholder="أدخل اسم الشركة">
+    </div>
+    </div>
+  </form>
+
+  <!-- Data Table -->
+  <div class="table-wrapper">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>
+            <input 
+              type="checkbox" 
+              [checked]="isAllSelected"
+              (change)="onSelectAll($event)"
+            />
+          </th>
+          <th>التعاملات الرقمية</th>
+          <th>الفروع</th>
+          <th>الملكية</th>
+          <th>الموقع</th>
+          <th>مرحلة الشركة</th>
+          <th>الحجم</th>
+          <th>الصناعة</th>
+          <th>اسم الشركة</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr *ngFor="let row of filteredData$ | async" [class.selected]="isRowSelected(row)">
+          <td>
+            <input 
+              type="checkbox" 
+              [checked]="isRowSelected(row)"
+              (change)="onSelectRow(row, $event)"
+            />
+          </td>
+          <td>{{ row.digitalTransactions }}</td>
+          <td>{{ row.branches }}</td>
+          <td>{{ row.ownership }}</td>
+          <td>{{ row.location }}</td>
+          <td>{{ row.companyStage }}</td>
+          <td>{{ row.size }}</td>
+          <td>{{ row.industry }}</td>
+          <td>{{ row.companyName }}</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  <div class="pagination">
+    <span>عرض من 1 إلى 10 من أصل {{ (filteredData$ | async)?.length || 0 }}</span>
+  </div>
+</div>

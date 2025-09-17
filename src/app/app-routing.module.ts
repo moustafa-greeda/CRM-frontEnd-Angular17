@@ -16,6 +16,7 @@ import { DistributionComponent } from './components/distribution/distribution.co
 import { CitiesComponent } from './components/cities/cities.component';
 import { CountriesComponent } from './components/countries/countries.component';
 import { WizardComponent } from './components/wizard/wizard.component';
+import { FilterLeadsComponent } from './components/filter-leads/filter-leads.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -45,6 +46,7 @@ const routes: Routes = [
           {path: 'countries' , component: CountriesComponent},
           {path: 'cities' , component: CitiesComponent},
           {path: 'addLead' , component: WizardComponent},
+          {path: 'filterLeads' , component: FilterLeadsComponent},
 
         ],
       },

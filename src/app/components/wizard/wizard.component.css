@@ -266,6 +266,67 @@
   animation: dotEaten 0.5s ease-out forwards;
 }
 
+.dot-container.available .dot {
+  opacity: 1;
+  transform: scale(1);
+  transition: all 0.3s ease;
+  animation: duckAppear 0.5s ease-in-out;
+}
+
+.dot-container:not(.available) .dot {
+  opacity: 0;
+  transform: scale(0.3) translateX(30px);
+  transition: all 0.5s ease;
+}
+
+.dot-container.eaten .dot {
+  animation: duckEaten 0.8s ease-out forwards;
+}
+
+.eaten-duck {
+  filter: grayscale(100%) brightness(0.7);
+  transform: scale(0.8);
+  opacity: 0.6;
+}
+
+@keyframes duckAppear {
+  0% {
+    opacity: 0;
+    transform: scale(0.3) translateX(30px);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(0.8) translateX(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+  }
+}
+
+@keyframes duckEaten {
+  0% {
+    opacity: 1;
+    transform: scale(1) translateX(0);
+  }
+  25% {
+    opacity: 0.9;
+    transform: scale(1.1) translateX(-5px);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.3) translateX(-15px);
+  }
+  75% {
+    opacity: 0.4;
+    transform: scale(0.8) translateX(-25px);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(0.2) translateX(-40px);
+  }
+}
+
 .dot {
   width: 50px;
   height: 50px;

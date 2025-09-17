@@ -75,16 +75,43 @@ export class CountriesService {
   //  Merge data from JSON and API (optional, can be extended)
 getCountries(): Observable<ICountry[]> {
   return new Observable<ICountry[]>((observer) => {
-    this.getCountriesFromJSON().subscribe(jsonData => {
-      this.getCountriesFromAPI().subscribe((apiResponse: IApiResponse) => {
-        console.log('API Response:', apiResponse);  // تحقق من الاستجابة
-        const apiData = apiResponse.data.items;  // استخراج الـ items من استجابة الـ API
-        console.log('API Data:', apiData);  // تحقق من الـ items المستخرجة
-        // دمج الـ jsonData مع apiData
-        const combinedData = [...jsonData, ...apiData];
-        observer.next(combinedData);
-        observer.complete();
-      });
+    this.getCountriesFromJSON().subscribe({
+      next: (jsonData) => {
+        console.log('JSON Data loaded:', jsonData);
+        this.getCountriesFromAPI().subscribe({
+          next: (apiResponse: IApiResponse) => {
+            console.log('API Response:', apiResponse);
+            const apiData = apiResponse.data?.items || [];
+            console.log('API Data:', apiData);
+            // دمج الـ jsonData مع apiData
+            const combinedData = [...jsonData, ...apiData];
+            console.log('Combined Data:', combinedData);
+            observer.next(combinedData);
+            observer.complete();
+          },
+          error: (apiError) => {
+            console.error('API Error, using JSON data only:', apiError);
+            observer.next(jsonData);
+            observer.complete();
+          }
+        });
+      },
+      error: (jsonError) => {
+        console.error('JSON Error:', jsonError);
+        // Try to get data from API only
+        this.getCountriesFromAPI().subscribe({
+          next: (apiResponse: IApiResponse) => {
+            const apiData = apiResponse.data?.items || [];
+            observer.next(apiData);
+            observer.complete();
+          },
+          error: (apiError) => {
+            console.error('Both JSON and API failed:', apiError);
+            observer.next([]);
+            observer.complete();
+          }
+        });
+      }
     });
   });
 }

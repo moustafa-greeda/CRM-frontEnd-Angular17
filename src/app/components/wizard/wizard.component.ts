@@ -408,9 +408,11 @@ export class WizardComponent implements OnInit {
   checkFormProgress(): void {
     const form = this.getCurrentForm();
     const fields = this.formFields[this.currentStep as keyof typeof this.formFields];
-    let hasNewCompletion = false;
+    let hasNewSequentialCompletion = false;
     
-    fields.forEach((field, index) => {
+    // Check fields in order from left to right
+    for (let i = 0; i < fields.length; i++) {
+      const field = fields[i];
       const fieldKey = `${this.currentStep}_${field}`;
       const control = form.get(field);
       
@@ -420,7 +422,7 @@ export class WizardComponent implements OnInit {
           // Add to completed fields if not already there
           if (!this.completedFields.includes(fieldKey)) {
             this.completedFields.push(fieldKey);
-            hasNewCompletion = true;
+            hasNewSequentialCompletion = true;
           }
         }
       } else if (control?.value && !control.valid) {
@@ -433,11 +435,11 @@ export class WizardComponent implements OnInit {
           this.completedFields.splice(fieldIndex, 1);
         }
       }
-    });
+    }
     
-    // Trigger Pac-Man movement if any field was just completed
-    if (hasNewCompletion) {
-      this.triggerPacmanMove('any_field');
+    // Trigger Pac-Man movement only if a sequential field was completed
+    if (hasNewSequentialCompletion) {
+      this.triggerPacmanMove('sequential_field');
     }
   }
 
@@ -458,18 +460,22 @@ export class WizardComponent implements OnInit {
     // Don't trigger movement on focus, only on completion
   }
 
-  // Handle field input - trigger movement when any field is filled
+  // Handle field input - trigger movement for any field completion
   onFieldInput(fieldKey: string) {
-    // Check if this field is now completed
     const form = this.getCurrentForm();
     const control = form.get(fieldKey);
     
     if (control?.value && control.valid) {
       const fullFieldKey = `${this.currentStep}_${fieldKey}`;
+      const currentFormFields = this.getCurrentFields();
+      const fieldIndex = currentFormFields.indexOf(fieldKey);
+      
+      // Allow completion of any field without order restriction
       if (!this.completedFields.includes(fullFieldKey)) {
         this.completedFields.push(fullFieldKey);
         this.fieldStates[fullFieldKey] = 'completed';
         this.triggerPacmanMove(fieldKey);
+        console.log(`Pac-Man ate duck at position ${fieldIndex + 1}: ${fieldKey}`);
       }
     }
   }
@@ -498,14 +504,14 @@ export class WizardComponent implements OnInit {
     }, 1000);
   }
 
-  // Get Pac-Man position based on completed fields (any order)
+  // Get Pac-Man position based on any field completion (left to right)
   getPacmanPosition(): number {
     const currentFields = this.getCurrentFields();
     const completedCount = currentFields.filter(field => 
       this.isFieldCompleted(this.currentStep + '_' + field)
     ).length;
     
-    // Calculate position based on any completed fields, not sequential order
+    // Calculate position from left to right
     const position = completedCount === 0 ? 5 : Math.min((completedCount / currentFields.length) * 90, 90);
     console.log(`Pac-Man position: ${position}% (${completedCount}/${currentFields.length} completed)`);
     return position;
@@ -587,6 +593,12 @@ export class WizardComponent implements OnInit {
   // Check if a field is completed
   isFieldCompleted(fieldKey: string): boolean {
     return this.completedFields.includes(fieldKey);
+  }
+
+  // Check if a field is available for completion (any field can be completed)
+  isFieldAvailableForCompletion(fieldIndex: number): boolean {
+    // All fields are always available for completion
+    return true;
   }
 
   // Check if current level is complete

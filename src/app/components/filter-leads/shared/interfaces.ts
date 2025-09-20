@@ -1,15 +1,18 @@
 
 export interface PersonalData {
-  id: string;
-  personality: string;
-  customerLevel: string;
-  customerType: string;
-  language: string;
-  department: string;
-  city: string;
-  country: string;
-  age: number;
-  jobTitle: string;
+  id?: string;
+  personality?: string;
+  customerLevel?: string;
+  customerType?: string;
+  language?: string;
+  department?: string;
+  city?: string;
+  country?: string;
+  age?: number;
+  jobTitle?: string;
+  jobLevel?: string; 
+  industry?: string;
+  comapnySize?: string;
 }
 
 export interface CompanyData {

@@ -1,0 +1,61 @@
+
+
+
+
+
+
+
+
+
+<div class="container ">
+  <!-- البروجريس بار -->
+  <div class="steps">
+    <div
+      class="step"
+      *ngFor="let step of steps; let i = index"
+      #stepRef
+    >
+      <img src="./assets/images/Vector.png" class="swords " />
+      <div class="circle" [class.active]="i <= currentStep">{{ step }}</div>
+
+      <!-- الخط بين الدواير -->
+      <div
+        *ngIf="i < steps.length - 1"
+        class="connector"
+        [class.active]="i < currentStep"
+      ></div>
+    </div>
+
+    <!-- الماركر المتحرك -->
+    <img
+      src="./assets/images/Image_fx__64_-removebg-preview 1.png"
+      class="marker"
+      [style.left.px]="markerLeft"
+    />
+  </div>
+
+  <!-- الفلتر + الإنپوت -->
+  <div class="filter-container  ">
+    <input type="text" placeholder="ابحث هنا..." class="form-control" />
+    <button (click)="toggleFilters()">فلتر</button>
+  </div>
+
+  <!-- الأوبشنز -->
+  <div class="options d-flex" *ngIf="showFilters">
+    <div
+      class="option"
+      *ngFor="let option of filterOptions; let i = index"
+      (click)="selectOption(i)"
+    >
+      {{ option }}
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+

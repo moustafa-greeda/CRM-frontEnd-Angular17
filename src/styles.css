@@ -12,20 +12,20 @@ html {
 }
 
 /* Force personal data table background */
-.personal-data-table-container {
+/* .personal-data-table-container {
   background-color: #11181F !important;
   background-image: none !important;
   background: #11181F !important;
-}
+} */
 
 /* More specific selectors */
-app-personal-data-table .personal-data-table-container,
+/* app-personal-data-table .personal-data-table-container,
 .tables-container app-personal-data-table .personal-data-table-container,
 .filter-leads-container .tables-container app-personal-data-table .personal-data-table-container {
   background-color: #11181F !important;
   background-image: none !important;
   background: #11181F !important;
-}
+} */
 
 /* RTL specific styles */
 [dir="rtl"] {

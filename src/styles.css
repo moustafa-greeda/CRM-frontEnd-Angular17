@@ -1,4 +1,11 @@
 /* ========== Reset & Base ========== */
+
+* {
+  padding: 0px;
+  margin: 0px;
+  box-sizing: border-box;
+}
+
 html {
   direction: rtl;
   scroll-behavior: smooth;

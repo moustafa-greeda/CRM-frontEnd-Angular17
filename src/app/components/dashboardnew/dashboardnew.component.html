@@ -1,0 +1,431 @@
+ <!-- <section class="dashboard-info">
+  
+    <div class="col-12">
+      <div class="dashbpard-head">
+        <h5>العرض العام</h5>
+      </div>
+    </div>
+
+    
+      <div class="about-us">
+        <div class="row">
+      
+
+
+                <div class="col-lg-2 col-sm-12 col-md-4">
+            <div class="info-about">
+              <h3>إجمالي الصناعات</h3>
+              <p>23</p>
+            </div>
+          </div>
+
+
+
+              <div class="col-lg-2 col-sm-12 col-md-4">
+            <div class="info-about">
+              <h3>إجمالي الدول المصدرة للعملاء </h3>
+              <p>88.12K</p>
+            </div>
+          </div>
+
+
+
+              <div class="col-lg-2 col-sm-12 col-md-4">
+            <div class="info-about">
+              <h3> إجمالي العملاء</h3>
+              <p> 7</p>
+            </div>
+          </div>
+
+
+
+
+
+        </div>
+      </div> 
+
+   <div class="about-us">
+        
+      
+
+
+                
+            <div class="info-about">
+              <h3>إجمالي الصناعات</h3>
+              <p>23</p>
+            
+          </div>
+
+
+
+            
+            <div class="info-about">
+              <h3>إجمالي الدول المصدرة للعملاء </h3>
+              <p>88.12K</p>
+            
+          </div>
+
+
+
+             
+            <div class="info-about">
+              <h3> إجمالي العملاء</h3>
+              <p> 7</p>
+            
+          </div>
+
+
+
+
+
+        </div>
+      
+
+
+
+    
+
+
+
+
+
+
+
+
+
+
+<div class="col-12">
+  <div class="dashboard-container">
+    <div class="row ">
+      <div class="col-lg-4 col-sm-12 col-md-4">
+    <div class="chart-card mb-5">
+    <canvasjs-chart [options]="lineChartOptions"></canvasjs-chart>
+   </div>
+      </div>
+
+
+      <div class="col-lg-4 col-sm-12 col-md-4">
+    <div class="chart-card mb-5">
+    <canvasjs-chart [options]="doughnutOptions"></canvasjs-chart>
+  </div>
+      </div>
+
+
+
+      <div class="col-lg-4 col-sm-12 col-md-4">
+ <div class="chart-card mb-5">
+    <canvasjs-chart [options]="lineOptions"></canvasjs-chart>
+  </div>
+      </div>
+
+
+      <div class="col-12 mt-5">
+ <div class="chart-card ">
+    <canvasjs-chart [options]="columnChartOptions"></canvasjs-chart>
+  </div>
+      </div>
+
+
+
+      <div class="col-12 mt-5">
+<div class="chart-card ">
+    <canvasjs-chart [options]="columnChartOptions"></canvasjs-chart>
+  </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="table-container mt-4">
+  <table class="custom-table">
+    <thead>
+      <tr>
+        <th>الرقم</th>
+        <th>الاسم</th>
+        <th>البريد</th>
+        <th>الهاتف</th>
+        <th>الدولة</th>
+        <th>المدينة</th>
+        <th>اسم الشركة</th>
+        <th>مجال الشركة</th>
+        <th>الصناعة</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of tableData; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ row.name }}</td>
+        <td>{{ row.email }}</td>
+        <td>{{ row.phone }}</td>
+        <td>{{ row.country }}</td>
+        <td>{{ row.city }}</td>
+        <td>{{ row.company }}</td>
+        <td>{{ row.field }}</td>
+        <td>{{ row.industry }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+</section> 
+
+
+
+
+
+
+
+
+
+
+
+
+ <div class="age-slider">
+  <label for="age">العمر: </label>
+  <input type="range" id="age" [(ngModel)]="age" min="18" max="70">
+  <span>{{ age }}</span>
+</div>
+
+ -->
+
+
+
+
+
+
+
+
+
+ <!-- <section class="info-about">
+
+ 
+  <div class="progress-bar" id="progressBar"></div>
+
+
+  <form class="form">
+
+
+    <div class="form-info">
+      <label for="name">الاسم <span>*</span></label>
+      <input type="text" id="name" class="form-control"  placeholder="اخل الاسم">
+    </div>
+
+
+
+  <div class="form-info">
+  <label for="phone">رقم الموبايل  <span>*</span></label>
+  <input type="tel" id="phone" class="form-control" placeholder="ادخل رقم الموبايل">
+</div>
+
+<div class="form-about w-50 d-flex">
+  <div class="form-info w-50">
+  <label for="age"> العمر <span>*</span></label>
+  <input type="number" id="age" class="form-control"  placeholder="ادخل العمر">
+</div>
+
+
+<div class="form-info w-50">
+  <label for="birthday">تاريخ الميلاد  <span>*</span></label>
+  <input type="date" id="birthday" class="form-control" placeholder="تاريخ العمر">
+</div>
+</div>
+
+
+
+
+<div class="form-info">
+  <label for="customer-type"> نوع العميل  <span>*</span></label>
+  <select id="customer-type" name="customer_type" class="form-control">
+  <option value=""> اختر نوع العميل </option>
+  <option value="individual">فرد</option>
+  <option value="corporate">شركة</option>
+  <option value="vip">VIP</option>
+</select>
+</div>
+
+
+
+
+   <div class="form-info">
+    <label for="country"> الدولة <span>*</span></label>
+
+ <select id="country" name="country" class="form-control">
+  <option value="">-- اختر الدولة --</option>
+  <option value="EG">مصر</option>
+  <option value="SA">السعودية</option>
+  <option value="AE">الإمارات</option>
+  <option value="US">الولايات المتحدة</option>
+  <option value="UK">المملكة المتحدة</option>
+  
+</select>
+    
+   </div>
+
+
+
+
+   <div class="form-info">
+<label for="city">المدينة:</label>
+<select id="city" name="city" class="form-control">
+  <option value="">-- اختر المدينة --</option>
+  <option value="cairo">القاهرة</option>
+  <option value="giza">الجيزة</option>
+  <option value="alexandria">الإسكندرية</option>
+  <option value="riyadh">الرياض</option>
+  <option value="jeddah">جدة</option>
+</select>
+
+   </div>
+
+
+
+
+     <div class="btn-group">
+    <button class="btn btn-danger"> السابق </button>
+    <button class="btn btn-success"> التالي</button>
+    
+
+   </div>
+
+  </form>
+
+
+
+
+ </section> -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="info-about">
+
+  <!-- Progress Bar -->
+  <div class="progress-bars">
+    <div class="step">1</div>
+    <div class="line"></div>
+    <div class="step">2</div>
+    <div class="line"></div>
+    <div class="step">3</div>
+    <div class="line"></div>
+    <div class="step">4</div>
+    <div class="line"></div>
+    <div class="step">5</div>
+    <div class="line"></div>
+    <div class="step">6</div>
+    <div class="line"></div>
+    <div class="step">7</div>
+  </div>
+
+  <!-- البطة -->
+  <img id="duck" src="./assets/img/Image_fx (26) 1.svg" class="img-fluid" alt="Duck">
+
+  <!-- الفورم -->
+  <form class="form" [formGroup]="dasBoardForm">
+    <div class="form-info">
+      <label for="name">الاسم <span>*</span></label>
+      <input type="text" id="name" class="form-control" formControlName="name" placeholder="ادخل الاسم">
+    </div>
+
+    <div class="form-info">
+      <label for="phone">رقم الموبايل <span>*</span></label>
+      <input type="tel" id="phone" class="form-control" formControlName="mobilePhone" placeholder="ادخل رقم الموبايل">
+    </div>
+
+    <div class="form-about w-50 d-flex">
+      <div class="form-info w-50">
+        <label for="age">العمر <span>*</span></label>
+        <input type="number" id="age" class="form-control" formControlName="age" placeholder="ادخل العمر">
+      </div>
+
+      <div class="form-info w-50">
+        <label for="birthday">تاريخ الميلاد <span>*</span></label>
+        <input type="date" id="birthday" class="form-control" formControlName="birthday" placeholder="تاريخ الميلاد">
+      </div>
+    </div>
+
+    <div class="form-info">
+      <label for="customer-type">نوع العميل <span>*</span></label>
+      <select id="customer-type" class="form-control" formControlName="customerType">
+        <option value="">اختر نوع العميل</option>
+        <option value="individual">فرد</option>
+        <option value="corporate">شركة</option>
+        <option value="vip">VIP</option>
+      </select>
+    </div>
+
+    <div class="form-info">
+      <label for="country">الدولة <span>*</span></label>
+      <select id="country" class="form-control" formControlName="country">
+        <option value="">-- اختر الدولة --</option>
+        <option value="EG">مصر</option>
+        <option value="SA">السعودية</option>
+        <option value="AE">الإمارات</option>
+      </select>
+    </div>
+
+    <div class="form-info">
+      <label for="city">المدينة:</label>
+      <select id="city" class="form-control" formControlName="city">
+        <option value="">-- اختر المدينة --</option>
+        <option value="cairo">القاهرة</option>
+        <option value="giza">الجيزة</option>
+        <option value="alexandria">الإسكندرية</option>
+      </select>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn btn-danger" type="button">السابق</button>
+      <button class="btn btn-success" type="button">التالي</button>
+    </div>
+  </form>
+</section>

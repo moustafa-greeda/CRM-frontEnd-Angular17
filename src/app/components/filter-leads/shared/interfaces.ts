@@ -1,4 +1,4 @@
-y
+
 export interface PersonalData {
   id: string;
   personality: string;

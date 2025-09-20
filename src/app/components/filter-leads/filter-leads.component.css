@@ -1,18 +1,8 @@
-/* Filter Leads Component Styles
-.filter-leads-container {
-  min-height: 85vh;
-  padding: 20px;
-  border: 1px solid #46E3FF;
-  border-radius: 12px;
-  background-image: url('../../../assets/bg-filter.svg');
-} */
 
 .filter-leads-container {
   position: relative;
   min-height: 85vh;
   padding: 20px;
-  /* border: 1px solid #46E3FF; */
-  /* border-radius: 12px; */
   background-image: url('../../../assets/bg-filter.svg');
   background-size: cover;
   background-position: center;
@@ -27,8 +17,7 @@
   left: 0;
   right: 0;
   bottom: 0;
-  /* background:#11181F; gray overlay */
-  background: rgba(17, 24, 31, 0.7); /* رمادي شفاف 70% */
+  background: rgba(17, 24, 31, 0.7); 
 
   z-index: 0;
 }
@@ -44,7 +33,7 @@
   display: flex;
   gap: 10px;
   margin-bottom: 30px;
-  background: #04080B;
+  background: #11181F;
   padding: 12px;
   border-radius: 15px;
   box-shadow: 

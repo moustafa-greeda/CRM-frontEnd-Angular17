@@ -69,7 +69,8 @@ export class FilterLeadsComponent implements OnInit {
         city: 'المنصورة',
         country: 'مصر',
         age: 55,
-        jobTitle: 'IT_MGR'
+        jobTitle: 'IT_MGR',
+        jobLevel: 'Senior' // Add this field
       },
       {
         id: '2',
@@ -81,7 +82,8 @@ export class FilterLeadsComponent implements OnInit {
         city: 'القاهرة',
         country: 'مصر',
         age: 32,
-        jobTitle: 'HR_MGR'
+        jobTitle: 'HR_MGR',
+        jobLevel: 'Manager' // Add this field
       },
       {
         id: '3',
@@ -93,7 +95,8 @@ export class FilterLeadsComponent implements OnInit {
         city: 'الرياض',
         country: 'السعودية',
         age: 45,
-        jobTitle: 'FINANCE_DIR'
+        jobTitle: 'FINANCE_DIR',
+        jobLevel: 'Director' // Add this field
       }
     ];
 

@@ -33,4 +33,20 @@ export class PersonalServiceService {
   getAllCountries(): Observable<any> {
     return this.http.get(`${this.BASE_API_URL}/Filter/GetAllCountries`);
   }
+
+  GetJobTitle(): Observable<any>{
+    return this.http.get(`${this.BASE_API_URL}/Filter/GetJobTitle`);
+  }
+
+  GetJobLevel(): Observable<any>{
+    return this.http.get(`${this.BASE_API_URL}/Filter/GetJobLevel`);
+  }
+
+  GetIndustry(): Observable<any>{
+    return this.http.get(`${this.BASE_API_URL}/Filter/GetIndustry`);
+  }
+
+  GetComapnySize(): Observable<any>{
+    return this.http.get(`${this.BASE_API_URL}/Filter/GetComapnySize`);
+  }
 }

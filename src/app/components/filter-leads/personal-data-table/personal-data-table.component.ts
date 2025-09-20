@@ -25,6 +25,11 @@ export class PersonalDataTableComponent implements OnInit {
   cities: any[] = [];
   countries: any[] = [];
   countryId!: number;
+  jobTitles: any[] = [];
+  jobLevels: any[] = [];
+  industries: any[] = [];
+  comapnySize: any[] = [];
+
 
   // Filter button functionality
   showFilterButtons = true;
@@ -33,19 +38,23 @@ export class PersonalDataTableComponent implements OnInit {
   // Location dropdown visibility
   showCountryDropdown = false;
   showCityDropdown = false;
+  showJobTitleDropdown = false;
+  showJobLevelDropdown = false;
+  showIndustryDropdown = false;
+  showComapnySizeDropdown = false;
+  
   availableFilters = [
     { id: 'personality', name: 'الشخصية', type: 'select', options: ['USER', 'ADMIN', 'MANAGER', 'EMPLOYEE'] },
-    { id: 'customerLevel', name: 'مستوى العميل', type: 'select', options: ['NEW', 'EXISTING', 'VIP', 'PREMIUM'] },
+    // { id: 'customerLevel', name: 'مستوى العميل', type: 'select', options: ['NEW', 'EXISTING', 'VIP', 'PREMIUM'] },
     { id: 'customerType', name: 'نوع العميل', type: 'select', options: ['B2B', 'B2C', 'ENTERPRISE'] },
     { id: 'language', name: 'اللغة', type: 'select', options: ['العربية', 'English', 'Français'] },
     { id: 'department', name: 'القسم', type: 'select', options: ['IT', 'HR', 'Finance', 'Marketing', 'Sales'] },
-    { id: 'age', name: 'العمر', type: 'select', options: ['18-25', '26-35', '36-45', '46-55', '55+'] },
-    { id: 'jobTitle', name: 'المسمى الوظيفي', type: 'text', placeholder: 'أدخل المسمى الوظيفي' }
+    { id: 'age', name: 'العمر', type: 'select', options: ['18-25', '26-35', '36-45', '46-55', '55+'] }
   ];
 
   // Filter options
   personalityOptions = ['USER', 'ADMIN', 'MANAGER', 'EMPLOYEE'];
-  customerLevelOptions = ['NEW', 'EXISTING', 'VIP', 'PREMIUM'];
+  // customerLevelOptions = ['NEW', 'EXISTING', 'VIP', 'PREMIUM'];
   customerTypeOptions = ['B2B', 'B2C', 'ENTERPRISE'];
   languageOptions = ['العربية', 'English', 'Français'];
   departmentOptions = ['IT', 'HR', 'Finance', 'Marketing', 'Sales'];
@@ -67,6 +76,18 @@ export class PersonalDataTableComponent implements OnInit {
   ngOnInit() {
     this.setupFiltering();
     this.getCountries();
+    this.getJobTitle();
+    this.getJobLevel();
+    this.getIndustry();
+    this.getComapnySize();
+    this.initializeSteps();
+    this.initializeAudio();
+    
+    // Listen for window resize to recalculate step width
+    window.addEventListener('resize', () => {
+      this.calculateStepWidth();
+      this.moveNinjaToStep(this.currentStep); // Recalculate current position
+    });
   }
 
   private initializeForm(): void {
@@ -78,7 +99,10 @@ export class PersonalDataTableComponent implements OnInit {
       language: [''],
       department: [''],
       ageRange: [''],
-      jobTitle: ['']
+      jobTitle: [''],
+      jobLevel: [''],
+      industry: [''],
+      comapnySize: [''],
     });
   }
 
@@ -107,7 +131,10 @@ export class PersonalDataTableComponent implements OnInit {
           item.customerType,
           item.language,
           item.department,
-          item.jobTitle
+          item.jobTitle,
+          item.jobLevel,
+          item.industry,
+          item.comapnySize,
         ];
         
         if (!searchableFields.some(field => 
@@ -123,13 +150,12 @@ export class PersonalDataTableComponent implements OnInit {
       if (filters.customerType && item.customerType !== filters.customerType) return false;
       if (filters.language && item.language !== filters.language) return false;
       if (filters.department && item.department !== filters.department) return false;
-      if (filters.jobTitle && !item.jobTitle.toLowerCase().includes(filters.jobTitle.toLowerCase())) return false;
-
+      if (filters.jobTitle && !item.jobTitle?.toLowerCase().includes(filters.jobTitle.toLowerCase())) return false;
+      if (filters.jobLevel && item.jobLevel !== filters.jobLevel) return false;
       // Age range filter
       if (filters.ageRange) {
         const ageRange = this.ageRanges.find(range => range.label === filters.ageRange);
-        if (ageRange && (item.age < ageRange.min || item.age > ageRange.max)) return false;
-      }
+        if (ageRange && item.age && (item.age < ageRange.min || item.age > ageRange.max)) return false;      }
 
       return true;
     });
@@ -180,12 +206,16 @@ export class PersonalDataTableComponent implements OnInit {
         value: '',
         isActive: true
       });
+      // Update steps and recalculate width when filters change
+      this.updateSteps();
     }
     // this.showFilterButtons = false;
   }
 
   removeFilter(filterId: string) {
     this.selectedFilters = this.selectedFilters.filter(f => f.id !== filterId);
+    // Update steps and recalculate width when filters change
+    this.updateSteps();
   }
 
   isFilterSelected(filterId: string): boolean {
@@ -213,13 +243,32 @@ export class PersonalDataTableComponent implements OnInit {
     this.selectedFilters = [];
     this.showCountryDropdown = false;
     this.showCityDropdown = false;
+    this.showJobTitleDropdown = false;
+    this.showJobLevelDropdown = false;
+    this.showIndustryDropdown = false;
+    this.showComapnySizeDropdown = false;
     this.countryId = 0;
     this.cities = [];
     this.filterForm.reset();
+    this.updateSteps();
+    // إعادة النينجا للموضع الافتراضي (الخطوة 1)
+    this.moveNinjaToStep(0);
+  }
+
+  // Toggle audio on/off
+  toggleAudio(): void {
+    this.isAudioEnabled = !this.isAudioEnabled;
+    console.log('Audio enabled:', this.isAudioEnabled);
   }
 
   hasActiveFilters(): boolean {
-    return this.selectedFilters.length > 0 || this.showCountryDropdown || this.showCityDropdown;
+    return this.selectedFilters.length > 0 || 
+           this.showCountryDropdown || 
+           this.showCityDropdown || 
+           this.showJobTitleDropdown || 
+           this.showJobLevelDropdown||
+           this.showIndustryDropdown||
+           this.showComapnySizeDropdown;
   }
 
   executeFilters() {
@@ -242,6 +291,38 @@ export class PersonalDataTableComponent implements OnInit {
       }
     }
 
+    // Apply job title filter
+    if (this.showJobTitleDropdown) {
+      const jobTitleSelect = document.querySelector('.job-title-dropdown') as HTMLSelectElement;
+      if (jobTitleSelect && jobTitleSelect.value) {
+        const selectedJobTitle = this.jobTitles.find(jt => jt.id == jobTitleSelect.value);
+        if (selectedJobTitle) {
+          this.filterForm.patchValue({ jobTitle: selectedJobTitle.name });
+        }
+      }
+    }
+
+    // Apply job level filter
+    if (this.showJobLevelDropdown) {
+      const jobLevelSelect = document.querySelector('.job-level-dropdown') as HTMLSelectElement;
+      if (jobLevelSelect && jobLevelSelect.value) {
+        const selectedJobLevel = this.jobLevels.find(jl => jl.id == jobLevelSelect.value);
+        if (selectedJobLevel) {
+          this.filterForm.patchValue({ jobLevel: selectedJobLevel.name });
+        }
+      }
+    }
+    // Apply industry filter
+      if (this.showIndustryDropdown) {
+        const industrySelect = document.querySelector('.industry-dropdown') as HTMLSelectElement;
+        if (industrySelect && industrySelect.value) {
+          const selectedIndustry = this.industries.find(i => i.id == industrySelect.value);
+          if (selectedIndustry) {
+            this.filterForm.patchValue({ industry: selectedIndustry.name });
+          }
+        }
+      }
+
     // Apply other selected filters
     this.selectedFilters.forEach(filter => {
       if (filter.value) {
@@ -253,7 +334,7 @@ export class PersonalDataTableComponent implements OnInit {
     this.setupFiltering();
   }
 
-  // Country and City methods
+  // ================================= Country  methods ===============================
   getCountries() {
     this.personalService.getAllCountries().subscribe({
       next: (res) => {
@@ -268,7 +349,7 @@ export class PersonalDataTableComponent implements OnInit {
       }
     });
   }
-
+  // ==================================== City methods ===================================
   onCountryChange(event: any) {
     this.countryId = event.target.value;
     if (this.countryId) {
@@ -287,10 +368,57 @@ export class PersonalDataTableComponent implements OnInit {
     }
   }
 
-  onCityChange(event: any) {
-    const cityId = event.target.value;
-    console.log('Selected city ID:', cityId);
-    // You can add city filtering logic here if needed
+  // ==================================== Job Title methods ===================================
+  getJobTitle() {
+    this.personalService.GetJobTitle().subscribe({
+      next: (res) => {
+        this.jobTitles = res.data || [];
+        console.log('Job titles loaded in personal table:', this.jobTitles);
+      },
+      error: (error) => {
+        console.error('Error loading job titles:', error);
+        this.jobTitles = [];
+      }
+    });
+  }
+
+  // ==================================== Job Level methods ===================================
+  getJobLevel() {
+    this.personalService.GetJobLevel().subscribe({
+      next: (res) => {
+        this.jobLevels = res.data || [];
+        console.log('Job levels loaded in personal table:', this.jobLevels);
+      },
+      error: (error) => {
+        console.error('Error loading job levels:', error);
+        this.jobLevels = [];
+      }
+    });
+  }
+    // ==================================== GetIndustry methods ===================================
+  getIndustry() {
+    this.personalService.GetIndustry().subscribe({
+      next: (res) => {
+        this.industries = res.data || [];
+        console.log('Industries loaded in personal table:', this.industries);
+      },
+      error: (error)=>{
+        console.error('Error loading industries:', error);
+        this.industries = [];
+      }
+    });
+  }
+    // ==================================== GetIndustry methods ===================================
+  getComapnySize() {
+    this.personalService.GetComapnySize().subscribe({
+      next: (res) => {
+        this.comapnySize = res.data || [];
+        console.log('Comapny sizes loaded in personal table:', this.comapnySize);
+      },      error: (error)=>{
+        console.error('Error loading comapny sizes:', error);
+        this.comapnySize = [];
+      }
+    });
   }
 
   // Toggle methods for location dropdowns
@@ -305,4 +433,191 @@ export class PersonalDataTableComponent implements OnInit {
       // Keep both dropdowns open - don't close country dropdown
     }
   }
+
+  // Toggle methods for job dropdowns
+  toggleJobTitleDropdown() {
+    this.showJobTitleDropdown = !this.showJobTitleDropdown;
+  }
+
+  toggleJobLevelDropdown() {
+    this.showJobLevelDropdown = !this.showJobLevelDropdown;
+  }
+  toggleIndustryDropdown() {
+    this.showIndustryDropdown = !this.showIndustryDropdown;
+  }
+  toggleComapnySizeDropdown() {
+    this.showComapnySizeDropdown = !this.showComapnySizeDropdown;
+  }
+
+  // Job Title change handler
+onJobTitleChange(event: any) {
+  const selectedIndex = event.target.value;
+  if (selectedIndex !== '') {
+    const jobTitle = this.jobTitles[selectedIndex];
+    if (jobTitle) {
+      this.filterForm.patchValue({ jobTitle: jobTitle });
+    }
+  }
 }
+
+// Job Level change handler
+onJobLevelChange(event: any) {
+  const selectedJobLevel = event.target.value;
+  if (selectedJobLevel) {
+    const jobLevel = this.jobLevels.find(jl => jl.id == selectedJobLevel);
+    if (jobLevel) {
+      this.filterForm.patchValue({ jobLevel: jobLevel.name });
+    }
+  }
+}
+
+// Industry change handler
+onIndustryChange(event: any) {
+  const selectedIndustry = event.target.value;
+  if (selectedIndustry) {
+    const industry = this.industries.find(i => i.id == selectedIndustry);
+    if (industry) {
+      this.filterForm.patchValue({ industry: industry.name });
+    }
+  }
+}
+
+// Comapny Size change handler
+onComapnySizeChange(event: any) {
+  const selectedComapnySize = event.target.value;
+  if (selectedComapnySize) {
+    const comapnySize = this.comapnySize.find(cs => cs.id == selectedComapnySize);
+    if (comapnySize) {
+      this.filterForm.patchValue({ comapnySize: comapnySize.name });
+    }
+  }
+}
+
+
+
+// ========================= status bar code =============================
+// Add these properties after the existing properties
+steps: string[] = [];
+currentStep = 0;
+  markerLeft = 0;
+  showFilters = false;
+  stepWidth = 150; // Dynamic step width based on container
+  
+  // Audio properties
+  private jumpSound: HTMLAudioElement | null = null;
+  public isAudioEnabled = true;
+
+// Initialize steps dynamically based on available filters
+private initializeSteps(): void {
+  this.updateSteps();
+  // Initialize ninja position to step 1 (rightmost)
+  setTimeout(() => {
+    this.moveNinjaToStep(0);
+  }, 100);
+}
+
+// Update steps array when filters change
+private updateSteps(): void {
+  // Create steps array from availableFilters and additional dropdown filters
+  this.steps = [
+    ...this.availableFilters.map(filter => filter.name),
+    'الدولة',
+    'المدينة', 
+    'المسمى الوظيفي',
+    'مستوى الوظيفة',
+    'الصناعة',
+    'حجم الشركة'
+  ];
+  
+  // Calculate dynamic step width based on container and number of steps
+  this.calculateStepWidth();
+}
+
+// Calculate step width dynamically
+private calculateStepWidth(): void {
+  const screenWidth = window.innerWidth;
+  const containerWidth = (screenWidth * 0.8) - 40; // 80% width minus padding
+  const minStepWidth = 80; // Minimum width per step
+  const maxStepWidth = 150; // Maximum width per step
+  
+  // Calculate step width based on number of steps
+  const calculatedWidth = containerWidth / this.steps.length;
+  
+  // Ensure step width is within reasonable bounds
+  this.stepWidth = Math.max(minStepWidth, Math.min(maxStepWidth, calculatedWidth));
+}
+
+// Initialize audio
+private initializeAudio(): void {
+  try {
+    this.jumpSound = new Audio('assets/sound/notification-jump.wav');
+    this.jumpSound.preload = 'auto';
+    this.jumpSound.volume = 0.3; // Set volume to 30%
+  } catch (error) {
+    console.warn('Could not initialize jump sound:', error);
+    this.isAudioEnabled = false;
+  }
+}
+
+// Play jump sound
+private playJumpSound(): void {
+  if (this.isAudioEnabled && this.jumpSound) {
+    try {
+      this.jumpSound.currentTime = 0; // Reset to beginning
+      this.jumpSound.play().catch(error => {
+        console.warn('Could not play jump sound:', error);
+      });
+    } catch (error) {
+      console.warn('Error playing jump sound:', error);
+    }
+  }
+}
+
+// Add method to move ninja
+moveNinjaToStep(stepIndex: number) {
+  this.currentStep = stepIndex;
+  
+  // Calculate marker position from right to left
+  const containerWidth = window.innerWidth * 0.8; // 80% width like container-steps
+  const stepWidth = containerWidth / this.steps.length;
+  
+  // Move from right to left: start from right side and move left
+  const totalSteps = this.steps.length - 1;
+  const rightToLeftIndex = totalSteps - stepIndex;
+  this.markerLeft = (rightToLeftIndex * stepWidth) + (stepWidth / 2) - 55; // Center the marker
+  
+  console.log('Moving ninja to step:', stepIndex, 'rightToLeftIndex:', rightToLeftIndex, 'markerLeft:', this.markerLeft, 'currentStep:', this.currentStep);
+  
+  // Play jump sound
+  this.playJumpSound();
+  
+  // Update active connector width
+  this.updateActiveConnector(stepIndex);
+}
+
+// Update active connector width
+private updateActiveConnector(stepIndex: number): void {
+  const containerWidth = window.innerWidth - 40;
+  const stepWidth = containerWidth / this.steps.length;
+  const activeWidth = (stepIndex + 1) * stepWidth;
+  const percentage = (activeWidth / containerWidth) * 100;
+  
+  
+  // Apply the width to the active connector
+  const stepsElement = document.querySelector('.steps') as HTMLElement;
+  if (stepsElement) {
+    stepsElement.style.setProperty('--active-width', `${percentage}%`);
+  }
+}
+
+// Add method to toggle filters
+toggleFilters() {
+  this.showFilters = !this.showFilters;
+}
+
+// Add method to select option
+selectOption(index: number) {
+  this.moveNinjaToStep(index);
+  this.showFilters = false;
+}
+} 

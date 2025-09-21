@@ -4,6 +4,7 @@
   padding: 12px;
   margin-bottom: 15px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  width: 100%;
 }
 /* =========================================  Table title ================================== */
 
@@ -276,13 +277,13 @@
     padding: 15px;
     background: rgba(17, 24, 31, 0.7);
     box-shadow: 0 0 10px rgba(70, 227, 255, 0.3);
-
   }
   
   /* Filter card */
   .filter-dropdown-item {
     display: flex;
     flex-direction: column;
+    justify-content: center;
     gap: 8px;
     padding: 14px;
     background: rgba(10, 15, 20, 0.9);
@@ -454,6 +455,114 @@
     border-radius: 12px;
     border: 1px solid rgba(70, 227, 255, 0.3);
   }
+
+  /* Age Slider Button Width */
+  .age-slider-btn {
+    width: 100%;
+    min-width: 120px;
+  }
+
+/* Age Range Selector */
+.age-range-selector {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+}
+
+/* No Data Message */
+.no-data-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 300px;
+  padding: 40px 20px;
+  width: 100%;
+}
+
+.no-data-content {
+  text-align: center;
+  color: #46E3FF;
+  max-width: 400px;
+}
+
+.no-data-icon {
+  font-size: 64px;
+  width: 64px;
+  height: 64px;
+  color: #46E3FF;
+  margin-bottom: 20px;
+  opacity: 0.7;
+}
+
+.no-data-content h3 {
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0 0 10px 0;
+  color: #46E3FF;
+}
+
+.no-data-content p {
+  font-size: 16px;
+  color: #8B9DC3;
+  margin: 0;
+  line-height: 1.5;
+}
+
+  .age-range-input {
+    flex: 1;
+    padding: 6px 10px;
+    border: 1px solid #46E3FF;
+    border-radius: 6px;
+    background: rgba(17, 24, 31, 0.9);
+    color: #fff;
+    font-size: 12px;
+    text-align: center;
+  }
+
+  .age-range-input:focus {
+    outline: none;
+    border-color: #FF5F00;
+    box-shadow: 0 0 8px rgba(255, 95, 0, 0.4);
+  }
+
+  .age-range-separator {
+    color: #46E3FF;
+    font-weight: bold;
+    font-size: 14px;
+  }
+
+  /* Age Mode Toggle */
+  .age-mode-toggle {
+    display: flex;
+    gap: 5px;
+    margin-bottom: 10px;
+  }
+
+  .age-mode-btn {
+    flex: 1;
+    padding: 6px 12px;
+    border: 1px solid #46E3FF;
+    border-radius: 6px;
+    background: rgba(17, 24, 31, 0.9);
+    color: #46E3FF;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-align: center;
+  }
+
+  .age-mode-btn:hover {
+    background: rgba(70, 227, 255, 0.1);
+    transform: translateY(-1px);
+  }
+
+  .age-mode-btn.active {
+    background: linear-gradient(135deg, #46E3FF, #023047);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(70, 227, 255, 0.3);
+  }
   
   /* =============================
      Animations (Add / Remove)
@@ -555,19 +664,31 @@
 .table-container {
   position: relative;
   width: 100%;
-  min-height: 400px;
+  height: 100vh;           /* ارتفاع ثابت 100vh */
+  overflow: auto;          /* تمرير في كلا الاتجاهين */
+  display: flex;
+  flex-direction: column;
 }
 
 .data-table {
   width: 100%;
   border-collapse: collapse;
   border-radius: 20px; 
-  min-width: 900px; 
+  min-width: 800px;
   table-layout: fixed; 
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   position: relative;
   transition: all 0.5s ease;
   animation: fadeInTable 0.5s ease forwards;
+  flex: 1;                 /* يأخذ المساحة المتبقية */
+  display: flex;
+  flex-direction: column;
+}
+
+/* Allow table rows to expand for multi-line content */
+.data-table tr {
+  height: auto;
+  min-height: 40px;
 }
 
 @keyframes fadeInTable {
@@ -580,39 +701,11 @@
     transform: translateY(0);
   }
 }
-
-/* .table-container.no-filters-applied {
-  box-shadow: 0 8px 25px rgba(70, 227, 255, 0.3);
-  min-height: 400px;
-  border-radius: 20px;
-  overflow: hidden;
-  position: relative;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@keyframes searchAroundZoom {
-  0%   { transform: scaleX(-1) translateX(0)    translateY(0)    rotate(0deg)   scale(1); }
-  20%  { transform: scaleX(-1) translateX(30px) translateY(-6px) rotate(-6deg)  scale(1.05); }
-  50%  { transform: scaleX(-1) translateX(60px) translateY(0)    rotate(0deg)   scale(1); }
-  70%  { transform: scaleX(-1) translateX(30px) translateY(-6px) rotate(6deg)   scale(1.08); }
-  100% { transform: scaleX(-1) translateX(0)    translateY(0)    rotate(0deg)   scale(1); }
-}
-
-.runner {
-  position: absolute;
-  bottom: 20px;
-  left: 20px;
-  width: 80px;
-  animation: searchAroundZoom 5s ease-in-out infinite;
-} */
+/* ========================== no-filters-applied  ====================== */
 
 .table-container.no-filters-applied {
   box-shadow: 0 8px 25px rgba(70, 227, 255, 0.3);
-  min-height: 400px;
+  height: 300px;              /* ارتفاع ثابت 200px عند عدم وجود جدول */
   border-radius: 20px;
   overflow: hidden;
   position: relative;
@@ -674,18 +767,14 @@
 
 .runner {
   position: absolute;
-  width: 200px; /* كبرنا حجم الصورة */
+  width: 200px; 
   height: auto;
   animation: randomMove 6s ease-in-out infinite;
-  object-fit: contain; /* للحفاظ على نسب الصورة */
+  object-fit: contain;
   z-index: 1;
-  pointer-events: none; /* منع التفاعل مع الصورة */
+  pointer-events: none;
   border-radius: 10px; 
 }
-
-
-
-
 
 
 .table-container.no-filters-applied:hover {
@@ -699,31 +788,97 @@
   z-index: 2;
 }
 
+.data-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #1a1a1a;
+  display: table;
+  width: 100%;
+  table-layout: fixed;
+}
+
 .data-table th {
   background: #11181F;
   color: #fff;
-  padding: 4px 6px;
+  padding: 8px 12px;
   text-align: center;
   font-weight: 600;
   font-size: 12px;
   border-bottom: 1px solid #555;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  white-space: wrap;      
+  overflow: visible;
+  vertical-align: middle; 
+  text-align: center;
+}
+
+/* Fixed widths for each column */
+.data-table th:nth-child(1),
+.data-table td:nth-child(1) {
+  width: 60px; 
+  white-space: nowrap;
+}
+
+.data-table th:nth-child(2),
+.data-table td:nth-child(2) {
+  width: 150px; /* الاسم */
+}
+
+.data-table th:nth-child(3),
+.data-table td:nth-child(3) {
+  width: 120px; /* المسمى الوظيفي */
+}
+
+.data-table th:nth-child(4),
+.data-table td:nth-child(4) {
+  width: 100px; /* اللغة المفضلة */
+}
+
+.data-table th:nth-child(5),
+.data-table td:nth-child(5) {
+  width: 150px; /* البريد الإلكتروني */
+  white-space: wrap;
+
+}
+
+.data-table th:nth-child(6),
+.data-table td:nth-child(6) {
+  width: 150px; /* رقم الهاتف */
+}
+
+.data-table th:nth-child(7),
+.data-table td:nth-child(7) {
+  width: 150px; /* المعرف */
+  white-space: wrap;
+}
+.data-table th:nth-child(10),
+.data-table td:nth-child(10) {
+  width: 100px; /* المعرف */
+  white-space: wrap;
+}
+.data-table tbody {
+  flex: 1;
+  overflow-y: auto;
+  display: block;
+}
+
+.data-table tbody tr {
+  display: table;
+  width: 100%;
+  table-layout: fixed;
 }
 
 
 .data-table td {
-  padding: 6px 4px;
+  padding: 8px 12px;
   color: #ccc;
   border-bottom: 1px solid #333;
   font-size: 11px;
   text-align: center;
-  word-wrap: break-word;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  white-space: normal;        /* يخلي النص يكسر السطر */
+  overflow-wrap: break-word;
   vertical-align: middle;
+  line-height: 1.4;
 }
 
 .data-table tr:nth-child(even) {
@@ -737,11 +892,9 @@
 
 .data-table tr:hover {
   background: #292f36;
-  transform: scale(1.01);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   transition: all 0.2s ease;
   outline: 1px solid #46E3FF;
-
 }
 
 .data-table tr.selected {
@@ -764,12 +917,12 @@
 /* Medium screens */
 @media (max-width: 1024px) and (min-width: 769px) {
   .data-table {
-    min-width: 700px;
+    min-width: 800px;
   }
 
   .data-table th,
   .data-table td {
-    padding: 10px 8px;
+    padding: 8px 10px;
     font-size: 12px;
   }
 
@@ -811,26 +964,26 @@
 
   /* Table responsive adjustments */
   .data-table {
-    min-width: 600px; 
+    min-width: 800px; 
     font-size: 12px;
   }
 
   .data-table th,
   .data-table td {
-    padding: 8px 6px;
+    padding: 6px 8px;
   }
 }
 
 /* Small screens */
 @media (max-width: 600px) {
   .data-table {
-    min-width: 550px;
+    min-width: 800px;
     font-size: 11px;
   }
 
   .data-table th,
   .data-table td {
-    padding: 7px 5px;
+    padding: 6px 8px;
   }
 
   .table-header h3 {
@@ -845,13 +998,13 @@
   }
 
   .data-table {
-    min-width: 500px;
+    min-width: 800px;
     font-size: 11px;
   }
 
   .data-table th,
   .data-table td {
-    padding: 6px 4px;
+    padding: 6px 8px;
   }
 
   .table-header h3 {
@@ -875,13 +1028,13 @@
   }
 
   .data-table {
-    min-width: 450px;
+    min-width: 800px;
     font-size: 10px;
   }
 
   .data-table th,
   .data-table td {
-    padding: 4px 2px;
+    padding: 6px 8px;
   }
 
   .table-header h3 {
@@ -901,12 +1054,12 @@
 /* Large screens */
 @media (min-width: 1200px) {
   .data-table {
-    min-width: 1000px;
+    min-width: 800px;
   }
 
   .data-table th,
   .data-table td {
-    padding: 16px 14px;
+    padding: 12px 16px;
     font-size: 14px;
   }
 
@@ -918,15 +1071,103 @@
 /* Extra large screens */
 @media (min-width: 1600px) {
   .data-table {
-    min-width: 1200px;
+    min-width: 800px;
   }
 
   .data-table th,
   .data-table td {
-    padding: 18px 16px;
+    padding: 5px 16px;
     font-size: 15px;
   }
 }
+
+
+
+
+/* ================================= Custom Paginator Styling ================================ */
+.custom-paginator {
+  width: 100%;
+  background: #023047 !important;
+  border: 1px solid #46E3FF !important;
+  border-radius: 10px !important;
+  box-shadow: none !important;
+  margin-top: 8px;
+  padding: 0;
+}
+
+.custom-paginator ::ng-deep .mat-mdc-paginator-container {
+  /* background: transparent !important; */
+  border: none !important;
+  padding: 8px 0;
+  justify-content: center;
+}
+
+.custom-paginator ::ng-deep .mat-mdc-paginator-page-size {
+  color: #ccc !important;
+  /* background: red !important; */
+  font-size: 12px;
+}
+
+.custom-paginator ::ng-deep .mat-mdc-paginator-range-label {
+  color: #ccc !important;
+  font-size: 12px;
+  margin: 0 16px;
+}
+
+.custom-paginator ::ng-deep .mat-mdc-paginator-navigation-previous,
+.custom-paginator ::ng-deep .mat-mdc-paginator-navigation-next {
+  color: #46E3FF !important;
+  background: transparent !important;
+  border: 1px solid #46E3FF !important;
+  border-radius: 4px !important;
+  margin: 0 4px;
+}
+
+.custom-paginator ::ng-deep .mat-mdc-paginator-navigation-previous:hover,
+.custom-paginator ::ng-deep .mat-mdc-paginator-navigation-next:hover {
+  background: rgba(70, 227, 255, 0.1) !important;
+  color: #fff !important;
+}
+
+.custom-paginator ::ng-deep .mat-mdc-paginator-navigation-previous:disabled,
+.custom-paginator ::ng-deep .mat-mdc-paginator-navigation-next:disabled {
+  color: #666 !important;
+  border-color: #666 !important;
+  background: transparent !important;
+}
+
+.custom-paginator ::ng-deep .mat-mdc-paginator-page-size-select {
+  background: transparent !important;
+  border: 1px solid #023047 !important;
+  border-radius: 4px !important;
+  color: #ccc !important;
+  padding: 2px ;
+  margin: 0 8px;
+}
+
+.custom-paginator ::ng-deep .mat-mdc-paginator-page-size-select .mat-mdc-select-value {
+  color: #ccc !important;
+}
+
+.custom-paginator ::ng-deep .mat-mdc-paginator-page-size-select .mat-mdc-select-arrow {
+  color: #46E3FF !important;
+}
+
+.custom-paginator ::ng-deep .mat-mdc-paginator-page-size-select .mat-mdc-select-trigger {
+  background: transparent !important;
+  border: none !important;
+}
+
+/* Paginator buttons styling */
+.custom-paginator ::ng-deep .mat-mdc-paginator-navigation-previous .mat-icon,
+.custom-paginator ::ng-deep .mat-mdc-paginator-navigation-next .mat-icon {
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+
+
 
 
 /*/* ============================ STATUS BAR (UPDATED COLORS) ============================ */

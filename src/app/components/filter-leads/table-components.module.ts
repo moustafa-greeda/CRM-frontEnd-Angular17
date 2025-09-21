@@ -5,6 +5,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { PersonalDataTableComponent } from './personal-data-table/personal-data-table.component';
 import { CompanyTableComponent } from './company-table/company-table.component';
 import { MatIconModule } from '@angular/material/icon';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @NgModule({
   declarations: [
@@ -13,6 +14,7 @@ import { MatIconModule } from '@angular/material/icon';
   ],
   imports: [
     MatIconModule,
+    MatPaginatorModule,
     CommonModule,
     ReactiveFormsModule,
     FormsModule

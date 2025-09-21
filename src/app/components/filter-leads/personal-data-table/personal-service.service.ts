@@ -1,7 +1,20 @@
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
+
+export interface ContactFilterParams {
+  ageFrom?: number;
+  ageTo?: number;
+  country?: string;
+  city?: string;  // تغيير من number إلى string لإرسال اسم المدينة
+  jobTitle?: string;
+  jobLevel?: string;
+  industryId?: number;
+  companyId?: number;
+  pageIndex?: number;
+  pageSize?: number;
+}
 
 @Injectable({
   providedIn: 'root'
@@ -50,7 +63,45 @@ export class PersonalServiceService {
     return this.http.get(`${this.BASE_API_URL}/Filter/GetComapnySize`);
   }
 
-  GetAllEntryChanel(): Observable<any>{
-    return this.http.get(`${this.BASE_API_URL}/Filter/GetAllEntryChanel`);
+  GetContacts(params?: ContactFilterParams): Observable<any>{
+    let httpParams = new HttpParams();
+    
+    if (params) {
+      if (params.ageFrom !== undefined) {
+        httpParams = httpParams.set('ageFrom', params.ageFrom.toString());
+      }
+      if (params.ageTo !== undefined) {
+        httpParams = httpParams.set('ageTo', params.ageTo.toString());
+      }
+      if (params.country) {
+        httpParams = httpParams.set('country', params.country);
+      }
+      if (params.city !== undefined) {
+        httpParams = httpParams.set('city', params.city.toString());
+      }
+      if (params.jobTitle) {
+        httpParams = httpParams.set('jobTitle', params.jobTitle);
+      }
+      if (params.jobLevel) {
+        httpParams = httpParams.set('jobLevel', params.jobLevel);
+      }
+      if (params.industryId !== undefined) {
+        httpParams = httpParams.set('industryId', params.industryId.toString());
+      }
+      if (params.companyId !== undefined) {
+        httpParams = httpParams.set('companyId', params.companyId.toString());
+      }
+      if (params.pageIndex !== undefined) {
+        httpParams = httpParams.set('pageIndex', params.pageIndex.toString());
+      }
+      if (params.pageSize !== undefined) {
+        httpParams = httpParams.set('pageSize', params.pageSize.toString());
+      }
+    }
+    
+    return this.http.get(`${this.BASE_API_URL}/Filter/GetContacts`, { 
+      params: httpParams,
+      headers: this.getHeaders()
+    });
   }
 }

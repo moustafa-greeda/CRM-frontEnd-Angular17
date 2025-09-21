@@ -75,7 +75,7 @@
         
         <!-- Age Slider Button -->
         <button 
-          class="filter-option-btn age-slider-btn"
+          class="filter-option-btn job-btn"
           (click)="toggleAgeSlider()"
           [class.active]="showAgeSlider">
           <mat-icon class="filter-icon">cake</mat-icon>
@@ -258,9 +258,27 @@
         </div>
 
         <!-- Age Slider -->
-        <div class="filter-dropdown-item add-anim age-slider-container" *ngIf="showAgeSlider">
+        <div class="filter-dropdown-item add-anim " *ngIf="showAgeSlider">
           <label class="filter-label">{{ getAgeDisplayText() }}</label>
-          <div class="age-slider-wrapper">
+          
+          <!-- Toggle between single age and range -->
+          <div class="age-mode-toggle" style="margin-bottom: 10px;">
+            <button 
+              class="age-mode-btn" 
+              [class.active]="!useAgeRange"
+              (click)="toggleAgeRangeMode()">
+              عمر واحد
+            </button>
+            <button 
+              class="age-mode-btn" 
+              [class.active]="useAgeRange"
+              (click)="toggleAgeRangeMode()">
+              نطاق عمري
+            </button>
+          </div>
+
+          <!-- Single Age Slider -->
+          <div class="age-slider-wrapper" *ngIf="!useAgeRange">
             <input 
               type="range" 
               [min]="minAge" 
@@ -273,6 +291,28 @@
               <span class="age-max">{{ maxAge }}</span>
             </div>
           </div>
+
+          <!-- Age Range Selector -->
+          <div class="age-range-selector" *ngIf="useAgeRange">
+            <input 
+              type="number" 
+              [min]="minAge" 
+              [max]="maxAge" 
+              [value]="ageFrom"
+              (input)="onAgeFromChange($event)"
+              class="age-range-input"
+              placeholder="من">
+            <span class="age-range-separator">-</span>
+            <input 
+              type="number" 
+              [min]="minAge" 
+              [max]="maxAge" 
+              [value]="ageTo"
+              (input)="onAgeToChange($event)"
+              class="age-range-input"
+              placeholder="إلى">
+          </div>
+
           <button 
             class="remove-filter-btn"
             (click)="toggleAgeSlider()"
@@ -316,37 +356,49 @@
   <!-- Data Table -->
   <!-- <div class="table-wrapper"> -->
     <div class="table-container" [class.no-filters-applied]="!filtersExecuted">
-      <img src="/assets/search-man.gif" alt="runner" class="runner">
+      <img src="/assets/search-man.gif" alt="runner" class="runner" *ngIf="!filtersExecuted">
 
-      <table class="data-table" [class.no-filters-applied]="!filtersExecuted" *ngIf="filtersExecuted">
+      <!-- No Data Message -->
+      <div class="no-data-message" *ngIf="showDataTable && hasNoData">
+        <div class="no-data-content">
+          <mat-icon class="no-data-icon">search_off</mat-icon>
+          <h3>لايوجد بيانات متاحه لهذا البحث</h3>
+          <p>جرب تغيير معايير البحث للحصول على نتائج أفضل</p>
+        </div>
+      </div>
+
+      <!-- Data Table -->
+      <table class="data-table" [class.no-filters-applied]="!filtersExecuted" *ngIf="showDataTable && !hasNoData">
       <thead>
         <tr>
           <th>#</th>
-          <th>الشخصية</th>
-          <!-- <th>مستوى العميل</th> -->
-          <th>نوع العميل</th>
-          <th>اللغة</th>
-          <th>القسم</th>
+          <th>الاسم</th>
+          <th>المسمى الوظيفي</th>
+          <th>اللغة المفضلة</th>
+          <th>البريد الإلكتروني</th>
+          <th>رقم الهاتف</th>
+          <th>مستوي العميل </th>
+          <th>العمر</th>
           <th>المدينة</th>
           <th>الدولة</th>
-          <th>العمر</th>
-          <th>المسمى الوظيفي</th>
-          <th>مستوى الوظيفة</th>
+          <th>الصناعه</th>
+          <th>حجم الشركة</th>
         </tr>
       </thead>
-      <tbody>
-        <tr *ngFor="let row of filteredData$ | async; let i = index" [class.selected]="isRowSelected(row)">
+       <tbody>
+         <tr *ngFor="let row of (isUsingApi ? (apiData$ | async) : (filteredData$ | async)); let i = index" [class.selected]="isRowSelected(row)">
           <td>{{ i + 1 }}</td>
-          <td>{{ row.personality }}</td>
-          <!-- <td>{{ row.customerLevel }}</td> -->
-          <td>{{ row.customerType }}</td>
-          <td>{{ row.language }}</td>
-          <td>{{ row.department }}</td>
-          <td>{{ row.city }}</td>
-          <td>{{ row.country }}</td>
-          <td>{{ row.age }}</td>
-          <td>{{ row.jobTitle }}</td>
-          <td>{{ row.jobLevel }}</td>
+          <td>{{ row.name || '-' }}</td>
+          <td>{{ row.jobTitle || '-' }}</td>
+          <td>{{ row.prefaredLanguage || '-' }}</td>
+          <td>{{ row.email || '-' }}</td>
+          <td>{{ row.phone || '-' }}</td>
+          <td>{{ row.customerLevel || '-' }}</td>
+          <td>{{ row.age || '-' }}</td>
+          <td>{{ row.city || '-' }}</td>
+          <td>{{ row.country || '-' }}</td>  
+          <td>{{ row.industry || '-'}}</td>
+          <td>{{ row.comapnySize || '-'}}</td>
         </tr>
       </tbody>
     </table>
@@ -357,13 +409,14 @@
   <!-- <div class="pagination">
     <span>عرض من 1 إلى 10 من أصل {{ (filteredData$ | async)?.length || 0 }}</span>
   </div> -->
-  <!-- <mat-paginator
+  <mat-paginator
+  *ngIf="showDataTable && !hasNoData"
   [length]="(totalCount$ | async) ?? 0"
-  [pageIndex]="0"
-  [pageSize]="10"
+  [pageIndex]="currentPage"
+  [pageSize]="pageSize"
   [pageSizeOptions]="[10, 20, 50, 100, 500, 1000]"
   (page)="onPageChange($event)"
-  style="margin-top: 8px"
+  class="custom-paginator"
 >
-</mat-paginator> -->
-<!-- </div> -->
+</mat-paginator>
+ <!-- </div> -->

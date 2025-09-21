@@ -3,7 +3,7 @@ import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, startWith, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { PersonalData } from '../shared/interfaces';
-import { PersonalServiceService } from './personal-service.service';
+import { PersonalServiceService, ContactFilterParams } from './personal-service.service';
 
 @Component({
   selector: 'app-personal-data-table',
@@ -35,12 +35,19 @@ export class PersonalDataTableComponent implements OnInit {
   showFilterButtons = true;
   selectedFilters: any[] = [];
   filtersExecuted = false; // Track if filters have been executed - starts as false to show background image
+  showDataTable = false; // Control whether to show data table
+  hasNoData = false; // Track if there are no results
   
   // Age slider properties
   ageSliderValue = 18;
   minAge = 18;
   maxAge = 70;
   showAgeSlider = false;
+  
+  // Age range properties
+  ageFrom = 18;
+  ageTo = 70;
+  useAgeRange = false;
   
   // Location dropdown visibility
   showCountryDropdown = false;
@@ -49,6 +56,15 @@ export class PersonalDataTableComponent implements OnInit {
   showJobLevelDropdown = false;
   showIndustryDropdown = false;
   showComapnySizeDropdown = false;
+  
+  // Paginator properties
+  totalCount$ = new BehaviorSubject<number>(0);
+  currentPage = 0;
+  pageSize = 10;
+  
+  // API data properties
+  apiData$ = new BehaviorSubject<PersonalData[]>([]);
+  isUsingApi = false;
   
   availableFilters = [
     { id: 'personality', name: 'الشخصية', type: 'select', options: ['USER', 'ADMIN', 'MANAGER', 'EMPLOYEE'] },
@@ -136,6 +152,13 @@ export class PersonalDataTableComponent implements OnInit {
     this.initializeSteps();
     this.initializeAudio();
     
+    // التأكد من إخفاء الجدول في البداية
+    this.showDataTable = false;
+    this.filtersExecuted = false;
+    
+    // البيانات ستأتي من API عند تطبيق الفلاتر فقط
+    this.data = [];
+    
     // Listen for window resize to recalculate step width
     window.addEventListener('resize', () => {
       this.calculateStepWidth();
@@ -171,6 +194,7 @@ export class PersonalDataTableComponent implements OnInit {
     this.filteredData$.subscribe(filteredData => {
       this.filteredDataChange.emit(filteredData);
     });
+  
   }
 
   private applyFilters(data: PersonalData[], filters: any): PersonalData[] {
@@ -179,12 +203,17 @@ export class PersonalDataTableComponent implements OnInit {
       if (filters.search) {
         const searchTerm = filters.search.toLowerCase();
         const searchableFields = [
+          item.name,
+          item.jobTitle,
+          item.prefaredLanguage,
+          item.email,
+          item.phone,
+          // Backward compatibility fields
           item.personality,
           item.customerLevel,
           item.customerType,
           item.language,
           item.department,
-          item.jobTitle,
           item.jobLevel,
           item.industry,
           item.comapnySize,
@@ -300,6 +329,7 @@ export class PersonalDataTableComponent implements OnInit {
     this.showJobLevelDropdown = false;
     this.showIndustryDropdown = false;
     this.showComapnySizeDropdown = false;
+    this.showAgeSlider = false;
     this.countryId = 0;
     this.cities = [];
     this.filterForm.reset();
@@ -308,6 +338,13 @@ export class PersonalDataTableComponent implements OnInit {
     this.moveNinjaToStep(0);
     // Reset filters executed flag
     this.filtersExecuted = false;
+    this.showDataTable = false; // إخفاء الجدول
+    this.hasNoData = false; // إعادة تعيين حالة عدم وجود البيانات
+    // Reset API state
+    this.isUsingApi = false;
+    this.apiData$.next([]);
+    this.totalCount$.next(0);
+    this.currentPage = 0;
   }
 
   // Toggle audio on/off
@@ -327,80 +364,144 @@ export class PersonalDataTableComponent implements OnInit {
   }
 
   executeFilters() {
-    // Apply country filter
+    // بناء معاملات البحث
+    const filterParams: ContactFilterParams = {
+      pageIndex: this.currentPage + 1, // API يستخدم 1-based indexing
+      pageSize: this.pageSize
+    };
+
+    // إضافة فلتر العمر
+    if (this.showAgeSlider) {
+      if (this.useAgeRange) {
+        filterParams.ageFrom = this.ageFrom;
+        filterParams.ageTo = this.ageTo;
+      } else {
+        filterParams.ageFrom = this.ageSliderValue;
+        filterParams.ageTo = this.ageSliderValue;
+      }
+    }
+
+    // إضافة فلتر الدولة
     if (this.showCountryDropdown && this.countryId) {
       const selectedCountry = this.countries.find(c => c.id == this.countryId);
       if (selectedCountry) {
+        filterParams.country = selectedCountry.name;
         this.filterForm.patchValue({ country: selectedCountry.name });
       }
     }
 
-    // Apply city filter
+    // إضافة فلتر المدينة
     if (this.showCityDropdown && this.cities.length > 0) {
       const citySelect = document.querySelector('.city-dropdown') as HTMLSelectElement;
       if (citySelect && citySelect.value) {
         const selectedCity = this.cities.find(c => c.id == citySelect.value);
         if (selectedCity) {
+          filterParams.city = selectedCity.name; // إرسال اسم المدينة بدلاً من ID
           this.filterForm.patchValue({ city: selectedCity.name });
         }
       }
     }
 
-    // Apply job title filter
+    // إضافة فلتر المسمى الوظيفي
     if (this.showJobTitleDropdown) {
       const jobTitleSelect = document.querySelector('.job-title-dropdown') as HTMLSelectElement;
       if (jobTitleSelect && jobTitleSelect.value) {
-        const selectedJobTitle = this.jobTitles.find(jt => jt.id == jobTitleSelect.value);
+        const selectedJobTitle = this.jobTitles[parseInt(jobTitleSelect.value)];
         if (selectedJobTitle) {
-          this.filterForm.patchValue({ jobTitle: selectedJobTitle.name });
+          filterParams.jobTitle = selectedJobTitle;
+          this.filterForm.patchValue({ jobTitle: selectedJobTitle });
         }
       }
     }
 
-    // Apply job level filter
+    // إضافة فلتر مستوى الوظيفة
     if (this.showJobLevelDropdown) {
       const jobLevelSelect = document.querySelector('.job-level-dropdown') as HTMLSelectElement;
       if (jobLevelSelect && jobLevelSelect.value) {
         const selectedJobLevel = this.jobLevels.find(jl => jl.id == jobLevelSelect.value);
         if (selectedJobLevel) {
+          filterParams.jobLevel = selectedJobLevel.name;
           this.filterForm.patchValue({ jobLevel: selectedJobLevel.name });
         }
       }
     }
-    // Apply industry filter
-      if (this.showIndustryDropdown) {
-        const industrySelect = document.querySelector('.industry-dropdown') as HTMLSelectElement;
-        if (industrySelect && industrySelect.value) {
-          const selectedIndustry = this.industries.find(i => i.id == industrySelect.value);
-          if (selectedIndustry) {
-            this.filterForm.patchValue({ industry: selectedIndustry.name });
-          }
+
+    // إضافة فلتر الصناعة
+    if (this.showIndustryDropdown) {
+      const industrySelect = document.querySelector('.industry-dropdown') as HTMLSelectElement;
+      if (industrySelect && industrySelect.value) {
+        const selectedIndustry = this.industries.find(i => i.id == industrySelect.value);
+        if (selectedIndustry) {
+          filterParams.industryId = selectedIndustry.id;
+          this.filterForm.patchValue({ industry: selectedIndustry.name });
         }
       }
+    }
 
-    // Apply company size filter
+    // إضافة فلتر حجم الشركة
     if (this.showComapnySizeDropdown) {
       const companySizeSelect = document.querySelector('.comapny-size-dropdown') as HTMLSelectElement;
       if (companySizeSelect && companySizeSelect.value) {
         const selectedCompanySize = this.comapnySize.find(cs => cs.id == companySizeSelect.value);
         if (selectedCompanySize) {
+          filterParams.companyId = selectedCompanySize.id;
           this.filterForm.patchValue({ comapnySize: selectedCompanySize.sizeName });
         }
       }
     }
 
-    // Apply other selected filters
+    // إضافة الفلاتر الأخرى
     this.selectedFilters.forEach(filter => {
       if (filter.value) {
         this.filterForm.patchValue({ [filter.id]: filter.value });
       }
     });
 
-    // Trigger filtering
-    this.setupFiltering();
+    // طباعة المعاملات للتأكد
+    console.log('Filter Parameters:', filterParams);
     
-    // Mark filters as executed
-    this.filtersExecuted = true;
+    // استدعاء API مع المعاملات
+    this.personalService.GetContacts(filterParams).subscribe({
+      next: (response) => {
+        console.log('API Response:', response);
+        if (response && response.succeeded && response.data && response.data.items && response.data.items.length > 0) {
+          // تحديث البيانات من API
+          this.data = response.data.items;
+          this.apiData$.next(response.data.items);
+          this.isUsingApi = true;
+          this.setupFiltering();
+          this.filtersExecuted = true;
+          this.showDataTable = true; // إظهار الجدول
+          this.hasNoData = false; // يوجد بيانات
+          this.totalCount$.next(response.data.totalCount); // تحديث العدد الإجمالي
+        } else {
+          // لا توجد بيانات
+          this.data = [];
+          this.filtersExecuted = true;
+          this.showDataTable = true; // إظهار الجدول لإظهار رسالة عدم وجود بيانات
+          this.hasNoData = true; // لا يوجد بيانات
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching contacts:', error);
+        // في حالة الخطأ، استخدم الفلترة المحلية
+        this.setupFiltering();
+        this.filtersExecuted = true;
+        this.showDataTable = true; // إظهار الجدول حتى في حالة الخطأ
+        this.hasNoData = true; // لا يوجد بيانات في حالة الخطأ
+      }
+    });
+  }
+
+  // ================================= Paginator methods ===============================
+  onPageChange(event: any): void {
+    this.currentPage = event.pageIndex;
+    this.pageSize = event.pageSize;
+    
+    // إعادة استدعاء API مع الصفحة الجديدة فقط إذا كنا نستخدم API
+    if (this.isUsingApi) {
+      this.executeFilters();
+    }
   }
 
   // ================================= Country  methods ===============================
@@ -655,7 +756,6 @@ moveNinjaToStep(stepIndex: number) {
   const rightToLeftIndex = totalSteps - stepIndex;
   this.markerLeft = (rightToLeftIndex * stepWidth) + (stepWidth / 2) - 55; // Center the marker
   
-  console.log('Moving ninja to step:', stepIndex, 'rightToLeftIndex:', rightToLeftIndex, 'markerLeft:', this.markerLeft, 'currentStep:', this.currentStep);
   
   // Play jump sound
   this.playJumpSound();
@@ -700,7 +800,42 @@ toggleAgeSlider() {
 
 onAgeSliderChange(event: any) {
   this.ageSliderValue = event.target.value;
+  // تحديث قيم الـ inputs لتطابق الـ slider
+  this.ageFrom = this.ageSliderValue;
+  this.ageTo = this.ageSliderValue;
   this.updateAgeFilter();
+}
+
+onAgeFromChange(event: any) {
+  this.ageFrom = parseInt(event.target.value);
+  this.validateAgeRange();
+  // تحديث الـ slider إذا كان في وضع العمر الواحد
+  if (!this.useAgeRange) {
+    this.ageSliderValue = this.ageFrom;
+  }
+  this.updateAgeRangeFilter();
+}
+
+onAgeToChange(event: any) {
+  this.ageTo = parseInt(event.target.value);
+  this.validateAgeRange();
+  // تحديث الـ slider إذا كان في وضع العمر الواحد
+  if (!this.useAgeRange) {
+    this.ageSliderValue = this.ageTo;
+  }
+  this.updateAgeRangeFilter();
+}
+
+validateAgeRange() {
+  if (this.ageFrom > this.ageTo) {
+    this.ageTo = this.ageFrom;
+  }
+  if (this.ageFrom < this.minAge) {
+    this.ageFrom = this.minAge;
+  }
+  if (this.ageTo > this.maxAge) {
+    this.ageTo = this.maxAge;
+  }
 }
 
 updateAgeFilter() {
@@ -711,7 +846,30 @@ updateAgeFilter() {
   this.executeFilters();
 }
 
+updateAgeRangeFilter() {
+  // Update the form with the selected age range
+  this.filterForm.patchValue({
+    ageRange: `${this.ageFrom}-${this.ageTo}`
+  });
+  this.executeFilters();
+}
+
 getAgeDisplayText(): string {
+  if (this.useAgeRange) {
+    return `العمر: ${this.ageFrom} - ${this.ageTo} سنة`;
+  }
   return `العمر: ${this.ageSliderValue} سنة`;
+}
+
+toggleAgeRangeMode() {
+  this.useAgeRange = !this.useAgeRange;
+  if (this.useAgeRange) {
+    // عند التبديل إلى وضع النطاق، اجعل القيم متساوية مع الـ slider
+    this.ageFrom = this.ageSliderValue;
+    this.ageTo = this.ageSliderValue;
+  } else {
+    // عند التبديل إلى وضع العمر الواحد، اجعل الـ slider يطابق الـ from
+    this.ageSliderValue = this.ageFrom;
+  }
 }
 } 

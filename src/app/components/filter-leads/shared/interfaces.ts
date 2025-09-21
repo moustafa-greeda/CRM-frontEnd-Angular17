@@ -1,6 +1,12 @@
 
 export interface PersonalData {
-  id?: string;
+  id?: number;
+  name?: string;
+  jobTitle?: string;
+  prefaredLanguage?: string;
+  email?: string;
+  phone?: string;
+  // Fields for backward compatibility
   personality?: string;
   customerLevel?: string;
   customerType?: string;
@@ -9,7 +15,6 @@ export interface PersonalData {
   city?: string;
   country?: string;
   age?: number;
-  jobTitle?: string;
   jobLevel?: string; 
   industry?: string;
   comapnySize?: string;

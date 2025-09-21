@@ -28,7 +28,7 @@ export class FilterLeadsComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loadMockData();
+    // البيانات ستأتي من API في personal-data-table component
   }
   
 
@@ -56,84 +56,4 @@ export class FilterLeadsComponent implements OnInit {
   }
 
 
-  // Load mock data for demonstration
-  private loadMockData() {
-    this.personalData = [
-      {
-        id: '1',
-        personality: 'USER',
-        customerLevel: 'NEW',
-        customerType: 'B2B',
-        language: 'العربية',
-        department: 'IT',
-        city: 'المنصورة',
-        country: 'مصر',
-        age: 55,
-        jobTitle: 'IT_MGR',
-        jobLevel: 'Senior' // Add this field
-      },
-      {
-        id: '2',
-        personality: 'ADMIN',
-        customerLevel: 'EXISTING',
-        customerType: 'B2C',
-        language: 'English',
-        department: 'HR',
-        city: 'القاهرة',
-        country: 'مصر',
-        age: 32,
-        jobTitle: 'HR_MGR',
-        jobLevel: 'Manager' // Add this field
-      },
-      {
-        id: '3',
-        personality: 'MANAGER',
-        customerLevel: 'VIP',
-        customerType: 'ENTERPRISE',
-        language: 'العربية',
-        department: 'Finance',
-        city: 'الرياض',
-        country: 'السعودية',
-        age: 45,
-        jobTitle: 'FINANCE_DIR',
-        jobLevel: 'Director' // Add this field
-      }
-    ];
-
-    this.companyData = [
-      {
-        id: '1',
-        digitalTransactions: 'متوسط',
-        branches: 7,
-        ownership: 'عامة',
-        location: 'قطر - الدوحة',
-        companyStage: 'مستقرة',
-        size: 'متوسطة (51-200)',
-        industry: 'تجزئة',
-        companyName: 'خدمات المدى للتجارة'
-      },
-      {
-        id: '2',
-        digitalTransactions: 'عالي',
-        branches: 15,
-        ownership: 'خاصة',
-        location: 'الإمارات - دبي',
-        companyStage: 'متقدمة',
-        size: 'كبيرة (201-1000)',
-        industry: 'تقنية',
-        companyName: 'شركة التقنية المتقدمة'
-      },
-      {
-        id: '3',
-        digitalTransactions: 'منخفض',
-        branches: 3,
-        ownership: 'حكومية',
-        location: 'الكويت - الكويت',
-        companyStage: 'نامية',
-        size: 'صغيرة (1-10)',
-        industry: 'تعليم',
-        companyName: 'مؤسسة التعليم الحديث'
-      }
-    ];
-  }
 }

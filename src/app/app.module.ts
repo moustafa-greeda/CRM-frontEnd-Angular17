@@ -188,6 +188,7 @@ import { WizardComponent } from './components/wizard/wizard.component';
 import { StepsModule } from './components/wizard/steps/steps.module';
 import { FilterLeadsModule } from './components/filter-leads/filter-leads.module';
 import { AuthTokenInterceptor } from './core/auth-token.interceptor';
+import { DashboardnewComponent } from './components/dashboardnew/dashboardnew.component';
 
 @NgModule({
   declarations: [
@@ -218,6 +219,7 @@ import { AuthTokenInterceptor } from './core/auth-token.interceptor';
     CitiesComponent,
     CountriesComponent,
     WizardComponent,
+    DashboardnewComponent,
   ],
   imports: [
     BrowserModule,

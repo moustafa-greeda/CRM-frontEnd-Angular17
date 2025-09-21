@@ -32,7 +32,7 @@
 .nav-tabs {
   display: flex;
   gap: 10px;
-  margin-bottom: 30px;
+  margin-bottom: 50px; /* زيادة المسافة من 30px إلى 50px */
   background: #11181F;
   padding: 12px;
   border-radius: 15px;
@@ -226,6 +226,70 @@
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
+/* Tab Arrow Styling */
+.tab-arrow {
+  position: absolute;
+  bottom: -12px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  animation: arrowBounce 2s ease-in-out infinite;
+  pointer-events: none;
+}
+
+.tab-arrow mat-icon {
+  color: #fff;
+  font-size: 28px;
+  width: 28px;
+  height: 28px;
+  filter: drop-shadow(0 3px 6px rgba(0, 0, 0, 0.4));
+  text-shadow: 0 0 12px rgba(255, 107, 53, 0.8);
+  background: linear-gradient(145deg, rgba(255, 107, 53, 0.1), rgba(255, 107, 53, 0.05));
+  border-radius: 50%;
+  padding: 2px;
+  transition: all 0.3s ease;
+}
+
+/* Arrow glow effect */
+.tab-arrow::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 40px;
+  background: radial-gradient(circle, rgba(255, 107, 53, 0.3) 0%, transparent 70%);
+  border-radius: 50%;
+  z-index: -1;
+  animation: arrowGlow 2s ease-in-out infinite;
+}
+
+/* Arrow bounce animation */
+@keyframes arrowBounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateX(-50%) translateY(0);
+  }
+  40% {
+    transform: translateX(-50%) translateY(-3px);
+  }
+  60% {
+    transform: translateX(-50%) translateY(-2px);
+  }
+}
+
+/* Arrow glow animation */
+@keyframes arrowGlow {
+  0%, 100% {
+    opacity: 0.6;
+    transform: translate(-50%, -50%) scale(1);
+  }
+  50% {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1.2);
+  }
+}
+
 .global-filters {
   background: #2a2a2a;
   padding: 20px;
@@ -274,7 +338,8 @@
   /* background-color: red; */
   border: 1px solid #46E3FF;
   border-radius: 12px;
-
+  margin-top: 20px; /* إضافة مسافة من الأعلى */
+  padding-top: 10px; /* إضافة padding داخلي */
 }
 
 .summary-section {
@@ -335,11 +400,27 @@
   .nav-tabs {
     flex-direction: column;
     gap: 5px;
+    margin-bottom: 40px; /* تقليل المسافة قليلاً على الموبايل */
   }
   
   .nav-tab {
     justify-content: center;
     padding: 15px 20px;
+  }
+  
+  /* Adjust arrow for mobile */
+  .tab-arrow {
+    bottom: -12px;
+  }
+  
+  .tab-arrow mat-icon {
+    font-size: 24px;
+    width: 24px;
+    height: 24px;
+  }
+  
+  .tables-container {
+    margin-top: 15px; /* تقليل المسافة على الموبايل */
   }
   
   .global-filters {

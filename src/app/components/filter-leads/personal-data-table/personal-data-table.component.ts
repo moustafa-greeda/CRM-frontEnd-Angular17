@@ -36,6 +36,12 @@ export class PersonalDataTableComponent implements OnInit {
   selectedFilters: any[] = [];
   filtersExecuted = false; // Track if filters have been executed - starts as false to show background image
   
+  // Age slider properties
+  ageSliderValue = 18;
+  minAge = 18;
+  maxAge = 70;
+  showAgeSlider = false;
+  
   // Location dropdown visibility
   showCountryDropdown = false;
   showCityDropdown = false;
@@ -682,5 +688,30 @@ toggleFilters() {
 selectOption(index: number) {
   this.moveNinjaToStep(index);
   this.showFilters = false;
+}
+
+// Age slider methods
+toggleAgeSlider() {
+  this.showAgeSlider = !this.showAgeSlider;
+  if (this.showAgeSlider) {
+    this.moveNinjaToStep(4); // Move ninja to age step
+  }
+}
+
+onAgeSliderChange(event: any) {
+  this.ageSliderValue = event.target.value;
+  this.updateAgeFilter();
+}
+
+updateAgeFilter() {
+  // Update the form with the selected age
+  this.filterForm.patchValue({
+    ageRange: this.ageSliderValue.toString()
+  });
+  this.executeFilters();
+}
+
+getAgeDisplayText(): string {
+  return `العمر: ${this.ageSliderValue} سنة`;
 }
 } 

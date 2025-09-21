@@ -67,9 +67,19 @@
           *ngFor="let filter of availableFilters; let i = index" 
           class="filter-option-btn"
           (click)="addFilter(filter.id); (i === 0 ? null : moveNinjaToStep(i))"
-          [disabled]="isFilterSelected(filter.id)">
+          [disabled]="isFilterSelected(filter.id)"
+          [style.display]="filter.id === 'age' ? 'none' : 'flex'">
           <mat-icon class="filter-icon">{{ getFilterIcon(filter.id) }}</mat-icon>
           {{ filter.name }}
+        </button>
+        
+        <!-- Age Slider Button -->
+        <button 
+          class="filter-option-btn age-slider-btn"
+          (click)="toggleAgeSlider()"
+          [class.active]="showAgeSlider">
+          <mat-icon class="filter-icon">cake</mat-icon>
+          العمر
         </button>
         
         <!-- Country and City Buttons -->
@@ -133,22 +143,27 @@
           <mat-icon class="filter-icon">groups</mat-icon>
           حجم الشركة
         </button> 
+
+
       </div>
     </div>  
 
     <!-- Selected Filters Container -->
-    <div class="selected-filters-container" *ngIf="selectedFilters.length > 0 || showCountryDropdown || showCityDropdown || showJobTitleDropdown || showJobLevelDropdown || showIndustryDropdown || showComapnySizeDropdown">
+    <div class="selected-filters-container" *ngIf="selectedFilters.length > 0 || showCountryDropdown || showCityDropdown || showJobTitleDropdown || showJobLevelDropdown || showIndustryDropdown || showComapnySizeDropdown || showAgeSlider">
       <!-- Selected Filters -->
       <div class="selected-filters">
         <!-- Country Dropdown -->
         <div class="filter-dropdown-item add-anim" *ngIf="showCountryDropdown">
           <label class="filter-label">الدولة:</label>
-          <select (change)="onCountryChange($event)" class="filter-select">
-            <option value="">اختر الدولة</option>
-            <option *ngFor="let country of countries" [value]="country.id">
-              {{ country.name }}
-            </option>
-          </select>
+          <div class="select-wrapper">
+            <select (change)="onCountryChange($event)" class="filter-select">
+              <option value="">اختر الدولة</option>
+              <option *ngFor="let country of countries" [value]="country.id">
+                {{ country.name }}
+              </option>
+            </select>
+            <mat-icon class="select-arrow">keyboard_arrow_down</mat-icon>
+          </div>
           <button 
             class="remove-filter-btn"
             (click)="toggleCountryDropdown()"
@@ -242,6 +257,30 @@
           </button>
         </div>
 
+        <!-- Age Slider -->
+        <div class="filter-dropdown-item add-anim age-slider-container" *ngIf="showAgeSlider">
+          <label class="filter-label">{{ getAgeDisplayText() }}</label>
+          <div class="age-slider-wrapper">
+            <input 
+              type="range" 
+              [min]="minAge" 
+              [max]="maxAge" 
+              [value]="ageSliderValue"
+              (input)="onAgeSliderChange($event)"
+              class="age-slider">
+            <div class="age-slider-labels">
+              <span class="age-min">{{ minAge }}</span>
+              <span class="age-max">{{ maxAge }}</span>
+            </div>
+          </div>
+          <button 
+            class="remove-filter-btn"
+            (click)="toggleAgeSlider()"
+            title="إزالة فلتر العمر">
+            ✕
+          </button>
+        </div>
+
         
         <!-- Other Selected Filters -->
         <div 
@@ -263,16 +302,12 @@
               {{ filter.isDynamic ? option.label : option }}
             </option>
           </select>
-          
-          <!-- Text Input -->
-          <input 
-            *ngIf="filter.type === 'text'" 
-            type="text"
-            [placeholder]="filter.placeholder"
-            [value]="filter.value"
-            (input)="onInputChange(filter.id, $event)"
-            class="filter-input">
-          
+          <button 
+            class="remove-filter-btn"
+            (click)="removeFilter(filter.id)"
+            title="إزالة الفلتر">
+            ✕
+          </button>
         </div>
       </div>
     </div>
@@ -281,7 +316,7 @@
   <!-- Data Table -->
   <!-- <div class="table-wrapper"> -->
     <div class="table-container" [class.no-filters-applied]="!filtersExecuted">
-      <img src="/assets/search-man.jpg" alt="runner" class="runner">
+      <img src="/assets/search-man.gif" alt="runner" class="runner">
 
       <table class="data-table" [class.no-filters-applied]="!filtersExecuted" *ngIf="filtersExecuted">
       <thead>

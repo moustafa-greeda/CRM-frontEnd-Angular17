@@ -13,6 +13,7 @@ export interface PersonalData {
   jobLevel?: string; 
   industry?: string;
   comapnySize?: string;
+  entryChanel?: string;
 }
 
 export interface CompanyData {

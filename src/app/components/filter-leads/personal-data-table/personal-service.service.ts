@@ -49,4 +49,8 @@ export class PersonalServiceService {
   GetComapnySize(): Observable<any>{
     return this.http.get(`${this.BASE_API_URL}/Filter/GetComapnySize`);
   }
+
+  GetAllEntryChanel(): Observable<any>{
+    return this.http.get(`${this.BASE_API_URL}/Filter/GetAllEntryChanel`);
+  }
 }

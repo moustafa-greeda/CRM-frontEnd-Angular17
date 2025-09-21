@@ -9,6 +9,10 @@
       <!-- <span class="tab-icon">👤</span> -->
       <span class="tab-label">البيانات الشخصية</span>
       <!-- <span class="tab-count">{{ personalDataFiltered.length }}</span> -->
+      <!-- Arrow for active tab -->
+      <div class="tab-arrow" *ngIf="activeTab === 'personal'">
+        <mat-icon>keyboard_arrow_down</mat-icon>
+      </div>
     </button>
     
     <button 
@@ -18,6 +22,10 @@
       <!-- <span class="tab-icon">🏢</span> -->
       <span class="tab-label">بيانات الشركة</span>
       <!-- <span class="tab-count">{{ companyDataFiltered.length }}</span> -->
+      <!-- Arrow for active tab -->
+      <div class="tab-arrow" *ngIf="activeTab === 'company'">
+        <mat-icon>keyboard_arrow_down</mat-icon>
+      </div>
     </button>
     
     <button 
@@ -27,6 +35,10 @@
       <!-- <span class="tab-icon">📊</span> -->
       <span class="tab-label">جميع البيانات</span>
       <!-- <span class="tab-count">{{ personalDataFiltered.length + companyDataFiltered.length }}</span> -->
+      <!-- Arrow for active tab -->
+      <div class="tab-arrow" *ngIf="activeTab === 'all'">
+        <mat-icon>keyboard_arrow_down</mat-icon>
+      </div>
     </button>
   </div>
   

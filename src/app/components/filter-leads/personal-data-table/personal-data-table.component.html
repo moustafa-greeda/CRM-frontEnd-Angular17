@@ -1,6 +1,6 @@
 <div class="personal-data-table-container" [formGroup]="filterForm">
   <div class="container-steps ">
-    <!-- البروجريس بار -->
+    <!--------------------------------------- progress bar --------------------------------------->
     <div class="steps">
       <div
         class="step"
@@ -20,7 +20,6 @@
             class="current-step-shield" 
           />
         </div>
-        <!-- <div class="step-label" [class.active]="i <= currentStep">{{ step }}</div> -->
   
         <div
           *ngIf="i < steps.length - 1"
@@ -37,15 +36,10 @@
       />
     </div>   
   </div>
-  <!-- Table Header with Search and Filter -->
-  <div class="table-header">
+  <!----------------------------------- Table Header with Search and Filter -------------------------->
+  <div class="table-title">
     <h3>البيانات الشخصية</h3>
     <div class="search-and-filter-container">
-      <div class="search-box">
-        <input type="text" placeholder="ابحث في البيانات الشخصية...." formControlName="search" />
-        <mat-icon class="search-icon">search</mat-icon>
-      </div>
-      
       <button class="filter-btn" (click)="toggleFilterButtons()">
         فلتر
         <img src="assets/icon-filter.svg" alt="filter">
@@ -55,244 +49,241 @@
       <button class="apply-filters-btn" (click)="executeFilters()" *ngIf="hasActiveFilters()">
         <span class="btn-icon"></span>
         تطبيق الفلاتر
+        <mat-icon>check</mat-icon>
       </button>
       <button class="clear-filters-btn" (click)="clearAllFilters()" *ngIf="selectedFilters.length > 0 || showCountryDropdown || showCityDropdown || showJobTitleDropdown || showJobLevelDropdown">
         مسح جميع الفلاتر
+        <mat-icon class="icon-delete">delete</mat-icon>
       </button>
     </div>
   </div>
 
-      <!-- Available Filter Buttons -->
-      <div class="filter-system">
-      <!-- Available Filter Buttons -->
-      <div class="available-filters" *ngIf="showFilterButtons">
-        <div class="filter-buttons-grid">
-          <button 
-            *ngFor="let filter of availableFilters; let i = index" 
-            class="filter-option-btn"
-            (click)="addFilter(filter.id); (i === 0 ? null : moveNinjaToStep(i))"
-            [disabled]="isFilterSelected(filter.id)">
-            {{ filter.name }}
-            <img src="assets/icon/icon-plus.svg" alt="icon plus"/>
-          </button>
-          
-          <!-- Country and City Buttons -->
-          <button 
-            class="filter-option-btn job-btn"
-            (click)="toggleCountryDropdown(); moveNinjaToStep(5)"
-            [class.active]="showCountryDropdown"
-            [class.disabled]="showCountryDropdown"
-            [disabled]="showCountryDropdown">
-            الدولة
-            <img src="assets/icon/icon-plus.svg" alt="icon plus"/>
-          </button>
-          
-          <button 
-            class="filter-option-btn job-btn"
-            (click)="toggleCityDropdown(); moveNinjaToStep(6)"
-            [class.active]="showCityDropdown"
-            [class.disabled]="showCityDropdown"
-            [disabled]="showCityDropdown">
-            المدينة
-            <img src="assets/icon/icon-plus.svg" alt="icon plus"/>
-          </button>
+  <!----------------------------------- Available Filter Buttons ------------------------------------->
+  <div class="filter-system">
+    <!-- Available Filter Buttons -->
+    <div class="available-filters" [class.show]="showFilterButtons" *ngIf="showFilterButtons">
+      <div class="filter-buttons-grid">
+        <button 
+          *ngFor="let filter of availableFilters; let i = index" 
+          class="filter-option-btn"
+          (click)="addFilter(filter.id); (i === 0 ? null : moveNinjaToStep(i))"
+          [disabled]="isFilterSelected(filter.id)">
+          <mat-icon class="filter-icon">{{ getFilterIcon(filter.id) }}</mat-icon>
+          {{ filter.name }}
+        </button>
+        
+        <!-- Country and City Buttons -->
+        <button 
+          class="filter-option-btn job-btn"
+          (click)="toggleCountryDropdown(); moveNinjaToStep(5)"
+          [class.active]="showCountryDropdown"
+          [class.disabled]="showCountryDropdown"
+          [disabled]="showCountryDropdown">
+          <mat-icon class="filter-icon">public</mat-icon>
+          الدولة
+        </button>
+        
+        <button 
+          class="filter-option-btn job-btn"
+          (click)="toggleCityDropdown(); moveNinjaToStep(6)"
+          [class.active]="showCityDropdown"
+          [class.disabled]="showCityDropdown"
+          [disabled]="showCityDropdown">
+          <mat-icon class="filter-icon">location_city</mat-icon>
+          المدينة
+        </button>
 
-          <!-- Job Title and Job Level Buttons -->
+        <!-- Job Title and Job Level Buttons -->
+        <button 
+          class="filter-option-btn job-btn"
+          (click)="toggleJobTitleDropdown(); moveNinjaToStep(7)"
+          [class.active]="showJobTitleDropdown"
+          [class.disabled]="showJobTitleDropdown"
+          [disabled]="showJobTitleDropdown">
+          <mat-icon class="filter-icon">work</mat-icon>
+          المسمى الوظيفي
+        </button>
+        
+        <button 
+          class="filter-option-btn job-btn"
+          (click)="toggleJobLevelDropdown(); moveNinjaToStep(8)"
+          [class.active]="showJobLevelDropdown"
+          [class.disabled]="showJobLevelDropdown"
+          [disabled]="showJobLevelDropdown">
+          <mat-icon class="filter-icon">trending_up</mat-icon>
+          مستوى الوظيفة
+        </button>
+        
+        <button 
+          class="filter-option-btn job-btn"
+          (click)="toggleIndustryDropdown(); moveNinjaToStep(9)"
+          [class.active]="showIndustryDropdown"
+          [class.disabled]="showIndustryDropdown"
+          [disabled]="showIndustryDropdown">
+          <mat-icon class="filter-icon">business</mat-icon>
+          الصناعة
+        </button> 
+        
+        <button 
+          class="filter-option-btn job-btn"
+          (click)="toggleComapnySizeDropdown(); moveNinjaToStep(10)"
+          [class.active]="showComapnySizeDropdown"
+          [class.disabled]="showComapnySizeDropdown"
+          [disabled]="showComapnySizeDropdown">
+          <mat-icon class="filter-icon">groups</mat-icon>
+          حجم الشركة
+        </button> 
+      </div>
+    </div>  
+
+    <!-- Selected Filters Container -->
+    <div class="selected-filters-container" *ngIf="selectedFilters.length > 0 || showCountryDropdown || showCityDropdown || showJobTitleDropdown || showJobLevelDropdown || showIndustryDropdown || showComapnySizeDropdown">
+      <!-- Selected Filters -->
+      <div class="selected-filters">
+        <!-- Country Dropdown -->
+        <div class="filter-dropdown-item add-anim" *ngIf="showCountryDropdown">
+          <label class="filter-label">الدولة:</label>
+          <select (change)="onCountryChange($event)" class="filter-select">
+            <option value="">اختر الدولة</option>
+            <option *ngFor="let country of countries" [value]="country.id">
+              {{ country.name }}
+            </option>
+          </select>
           <button 
-            class="filter-option-btn job-btn"
-            (click)="toggleJobTitleDropdown(); moveNinjaToStep(7)"
-            [class.active]="showJobTitleDropdown"
-            [class.disabled]="showJobTitleDropdown"
-            [disabled]="showJobTitleDropdown">
-            المسمى الوظيفي
-            <img src="assets/icon/icon-plus.svg" alt="icon plus"/>
+            class="remove-filter-btn"
+            (click)="toggleCountryDropdown()"
+            title="إزالة فلتر الدولة">
+            ✕
           </button>
-          
-          <button 
-            class="filter-option-btn job-btn"
-            (click)="toggleJobLevelDropdown(); moveNinjaToStep(8)"
-            [class.active]="showJobLevelDropdown"
-            [class.disabled]="showJobLevelDropdown"
-            [disabled]="showJobLevelDropdown">
-            مستوى الوظيفة
-            <img src="assets/icon/icon-plus.svg" alt="icon plus"/>
-          </button>
-          
-          <button 
-            class="filter-option-btn job-btn"
-            (click)="toggleIndustryDropdown(); moveNinjaToStep(9)"
-            [class.active]="showIndustryDropdown"
-            [class.disabled]="showIndustryDropdown"
-            [disabled]="showIndustryDropdown">
-            الصناعة
-            <img src="assets/icon/icon-plus.svg" alt="icon plus"/>
-          </button> 
-          
-          <button 
-            class="filter-option-btn job-btn"
-            (click)="toggleComapnySizeDropdown(); moveNinjaToStep(10)"
-            [class.active]="showComapnySizeDropdown"
-            [class.disabled]="showComapnySizeDropdown"
-            [disabled]="showComapnySizeDropdown">
-            حجم الشركة
-            <img src="assets/icon/icon-plus.svg" alt="icon plus"/>
-          </button> 
         </div>
-      </div>  
 
-      <!-- Selected Filters Container -->
-      <div class="selected-filters-container" *ngIf="selectedFilters.length > 0 || showCountryDropdown || showCityDropdown || showJobTitleDropdown || showJobLevelDropdown || showIndustryDropdown || showComapnySizeDropdown">
-        <!-- Selected Filters -->
-        <div class="selected-filters">
-          <!-- Country Dropdown -->
-          <div class="filter-dropdown-item" *ngIf="showCountryDropdown">
-            <label class="filter-label">الدولة:</label>
-            <select (change)="onCountryChange($event)" class="filter-select">
-              <option value="">اختر الدولة</option>
-              <option *ngFor="let country of countries" [value]="country.id">
-                {{ country.name }}
-              </option>
-            </select>
-            <button 
-              class="remove-filter-btn"
-              (click)="toggleCountryDropdown()"
-              title="إزالة فلتر الدولة">
-              ✕
-            </button>
-          </div>
+        <!-- City Dropdown -->
+        <div class="filter-dropdown-item add-anim" *ngIf="showCityDropdown && countryId">
+          <label class="filter-label">المدينة:</label>
+          <select class="filter-select city-dropdown" [disabled]="cities.length === 0">
+            <option value="">
+              {{ cities.length === 0 ? 'جاري تحميل المدن...' : 'اختر المدينة' }}
+            </option>
+            <option *ngFor="let city of cities" [value]="city.id">
+              {{ city.name }}
+            </option>
+          </select>
+          <button 
+            class="remove-filter-btn"
+            (click)="toggleCityDropdown()"
+            title="إزالة فلتر المدينة">
+            ✕
+          </button>
+        </div>
 
-          <!-- City Dropdown -->
-          <div class="filter-dropdown-item" *ngIf="showCityDropdown && countryId">
-            <label class="filter-label">المدينة:</label>
-            <select class="filter-select city-dropdown" [disabled]="cities.length === 0">
-              <option value="">
-                {{ cities.length === 0 ? 'جاري تحميل المدن...' : 'اختر المدينة' }}
-              </option>
-              <option *ngFor="let city of cities" [value]="city.id">
-                {{ city.name }}
-              </option>
-            </select>
-            <button 
-              class="remove-filter-btn"
-              (click)="toggleCityDropdown()"
-              title="إزالة فلتر المدينة">
-              ✕
-            </button>
-          </div>
+        <!-- Job Title Dropdown -->
+        <div class="filter-dropdown-item add-anim" *ngIf="showJobTitleDropdown">
+          <label class="filter-label">المسمى الوظيفي:</label>
+          <select (change)="onJobTitleChange($event)" class="filter-select job-title-dropdown">
+            <option value="">اختر المسمى الوظيفي</option>
+            <option *ngFor="let jobTitle of jobTitles; let i = index" [value]="i">
+              {{ jobTitle }}
+            </option>
+          </select>
+          <button 
+            class="remove-filter-btn"
+            (click)="toggleJobTitleDropdown()"
+            title="إزالة فلتر المسمى الوظيفي">
+            ✕
+          </button>
+        </div>
 
-          <!-- Job Title Dropdown -->
-          <div class="filter-dropdown-item" *ngIf="showJobTitleDropdown">
-            <label class="filter-label">المسمى الوظيفي:</label>
-            <select (change)="onJobTitleChange($event)" class="filter-select job-title-dropdown">
-              <option value="">اختر المسمى الوظيفي</option>
-              <option *ngFor="let jobTitle of jobTitles; let i = index" [value]="i">
-                {{ jobTitle }}
-              </option>
-            </select>
-            <button 
-              class="remove-filter-btn"
-              (click)="toggleJobTitleDropdown()"
-              title="إزالة فلتر المسمى الوظيفي">
-              ✕
-            </button>
-          </div>
-
-          <!-- Job Level Dropdown -->
-          <div class="filter-dropdown-item" *ngIf="showJobLevelDropdown">
-            <label class="filter-label">مستوى الوظيفة:</label>
-            <select (change)="onJobLevelChange($event)" class="filter-select job-level-dropdown">
-              <option value="">اختر مستوى الوظيفة</option>
-              <option *ngFor="let jobLevel of jobLevels" [value]="jobLevel.id">
-                {{ jobLevel.name }}
-              </option>
-            </select>
-            <button 
-              class="remove-filter-btn"
-              (click)="toggleJobLevelDropdown()"
-              title="إزالة فلتر مستوى الوظيفة">
-              ✕
-            </button>
-          </div>
-          <!-- Industry Dropdown -->
-          <div class="filter-dropdown-item" *ngIf="showIndustryDropdown">
-            <label class="filter-label">الصناعة :</label> 
-            <select (change)="onIndustryChange($event)" class="filter-select industry-dropdown">
-              <option value="">اختر الصناعة</option>
-              <option *ngFor="let industry of industries" [value]="industry.id">
-                {{ industry.name }}
-              </option>
-            </select>
-            <button 
-              class="remove-filter-btn"
-              (click)="toggleIndustryDropdown()"
-              title="إزالة فلتر الصناعة">
-              ✕
-            </button>
-          </div>
-          <!-- Comapny Size Dropdown -->
-          <div class="filter-dropdown-item" *ngIf="showComapnySizeDropdown">
-            <label class="filter-label">حجم الشركة :</label>
-            <select (change)="onComapnySizeChange($event)" class="filter-select comapny-size-dropdown">
-              <option value="">اختر حجم الشركة</option>
-              <option *ngFor="let comapnySize of comapnySize" [value]="comapnySize.id">
-                {{ comapnySize.sizeName }}
-              </option>
-            </select>
-            <button 
+        <!-- Job Level Dropdown -->
+        <div class="filter-dropdown-item add-anim" *ngIf="showJobLevelDropdown">
+          <label class="filter-label">مستوى الوظيفة:</label>
+          <select (change)="onJobLevelChange($event)" class="filter-select job-level-dropdown">
+            <option value="">اختر مستوى الوظيفة</option>
+            <option *ngFor="let jobLevel of jobLevels" [value]="jobLevel.id">
+              {{ jobLevel.name }}
+            </option>
+          </select>
+          <button 
+            class="remove-filter-btn"
+            (click)="toggleJobLevelDropdown()"
+            title="إزالة فلتر مستوى الوظيفة">
+            ✕
+          </button>
+        </div>
+        <!-- Industry Dropdown -->
+        <div class="filter-dropdown-item add-anim" *ngIf="showIndustryDropdown">
+          <label class="filter-label">الصناعة :</label> 
+          <select (change)="onIndustryChange($event)" class="filter-select industry-dropdown">
+            <option value="">اختر الصناعة</option>
+            <option *ngFor="let industry of industries" [value]="industry.id">
+              {{ industry.name }}
+            </option>
+          </select>
+          <button 
             class="remove-filter-btn"
             (click)="toggleIndustryDropdown()"
             title="إزالة فلتر الصناعة">
             ✕
           </button>
-          </div>
-          <!-- Other Selected Filters -->
-          <div 
-            *ngFor="let filter of selectedFilters" 
-            class="filter-dropdown-item">
-            
-            <label class="filter-label">{{ filter.name }}</label>
-            
-            <!-- Select Dropdown -->
-            <select 
-              *ngIf="filter.type === 'select'" 
-              [value]="filter.value"
-              (change)="onSelectChange(filter.id, $event)"
-              class="filter-select">
-              <option value="">{{ 'اختر ' + filter.name }}</option>
-              <option 
-                *ngFor="let option of filter.options" 
-                [value]="filter.isDynamic ? option.value : option">
-                {{ filter.isDynamic ? option.label : option }}
-              </option>
-            </select>
-            
-            <!-- Text Input -->
-            <input 
-              *ngIf="filter.type === 'text'" 
-              type="text"
-              [placeholder]="filter.placeholder"
-              [value]="filter.value"
-              (input)="onInputChange(filter.id, $event)"
-              class="filter-input">
-            
-            <!-- Remove Button -->
-            <button 
-              class="remove-filter-btn"
-              (click)="removeFilter(filter.id)"
-              title="إزالة الفلتر">
-              ✕
-            </button>
-          </div>
+        </div>
+        <!-- Comapny Size Dropdown -->
+        <div class="filter-dropdown-item add-anim" *ngIf="showComapnySizeDropdown">
+          <label class="filter-label">حجم الشركة :</label>
+          <select (change)="onComapnySizeChange($event)" class="filter-select comapny-size-dropdown">
+            <option value="">اختر حجم الشركة</option>
+            <option *ngFor="let comapnySize of comapnySize" [value]="comapnySize.id">
+              {{ comapnySize.sizeName }}
+            </option>
+          </select>
+          <button 
+            class="remove-filter-btn"
+            (click)="toggleComapnySizeDropdown()"
+            title="إزالة فلتر حجم الشركة">
+            ✕
+          </button>
+        </div>
+
+        
+        <!-- Other Selected Filters -->
+        <div 
+          *ngFor="let filter of selectedFilters" 
+          class="filter-dropdown-item add-anim">
+          
+          <label class="filter-label">{{ filter.name }}</label>
+          
+          <!-- Select Dropdown -->
+          <select 
+            *ngIf="filter.type === 'select'" 
+            [value]="filter.value"
+            (change)="onSelectChange(filter.id, $event)"
+            class="filter-select">
+            <option value="">{{ 'اختر ' + filter.name }}</option>
+            <option 
+              *ngFor="let option of filter.options" 
+              [value]="filter.isDynamic ? option.value : option">
+              {{ filter.isDynamic ? option.label : option }}
+            </option>
+          </select>
+          
+          <!-- Text Input -->
+          <input 
+            *ngIf="filter.type === 'text'" 
+            type="text"
+            [placeholder]="filter.placeholder"
+            [value]="filter.value"
+            (input)="onInputChange(filter.id, $event)"
+            class="filter-input">
+          
         </div>
       </div>
     </div>
-
-    
-
+  </div>
 
   <!-- Data Table -->
   <!-- <div class="table-wrapper"> -->
-    <table class="data-table">
+    <div class="table-container" [class.no-filters-applied]="!filtersExecuted">
+      <img src="/assets/search-man.jpg" alt="runner" class="runner">
+
+      <table class="data-table" [class.no-filters-applied]="!filtersExecuted" *ngIf="filtersExecuted">
       <thead>
         <tr>
           <th>#</th>
@@ -324,6 +315,7 @@
         </tr>
       </tbody>
     </table>
+    </div>
   </div>
 
   <!-- Pagination -->

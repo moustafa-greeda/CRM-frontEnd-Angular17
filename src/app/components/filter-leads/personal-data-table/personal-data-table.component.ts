@@ -34,6 +34,7 @@ export class PersonalDataTableComponent implements OnInit {
   // Filter button functionality
   showFilterButtons = true;
   selectedFilters: any[] = [];
+  filtersExecuted = false; // Track if filters have been executed - starts as false to show background image
   
   // Location dropdown visibility
   showCountryDropdown = false;
@@ -51,6 +52,52 @@ export class PersonalDataTableComponent implements OnInit {
     { id: 'department', name: 'القسم', type: 'select', options: ['IT', 'HR', 'Finance', 'Marketing', 'Sales'] },
     { id: 'age', name: 'العمر', type: 'select', options: ['18-25', '26-35', '36-45', '46-55', '55+'] }
   ];
+
+  // Icon mapping for filter buttons
+  getFilterIcon(filterId: string): string {
+    const iconMap: { [key: string]: string } = {
+      'personality': 'person',
+      'customerType': 'category',
+      'language': 'language',
+      'department': 'business_center',
+      'age': 'cake'
+    };
+    return iconMap[filterId] || 'filter_list';
+  }
+
+  // Animation state management
+  animationStates: { [key: string]: string } = {};
+
+  // Get animation class for dropdown
+  getDropdownAnimationClass(dropdownType: string, isVisible: boolean): string {
+    if (isVisible) {
+      this.animationStates[dropdownType] = 'add-anim';
+      return 'add-anim';
+    } else {
+      this.animationStates[dropdownType] = 'remove-anim';
+      return 'remove-anim';
+    }
+  }
+
+  // Toggle dropdown with animation
+  toggleDropdownWithAnimation(dropdownType: string) {
+    const currentState = this.animationStates[dropdownType];
+    
+    if (currentState === 'add-anim' || !currentState) {
+      // Start remove animation
+      this.animationStates[dropdownType] = 'remove-anim';
+      
+      // After animation completes, hide the dropdown
+      setTimeout(() => {
+        (this as any)[`show${dropdownType}Dropdown`] = false;
+        this.animationStates[dropdownType] = '';
+      }, 300); // Match the remove-anim duration
+    } else {
+      // Show dropdown and start add animation
+      (this as any)[`show${dropdownType}Dropdown`] = true;
+      this.animationStates[dropdownType] = 'add-anim';
+    }
+  }
 
   // Filter options
   personalityOptions = ['USER', 'ADMIN', 'MANAGER', 'EMPLOYEE'];
@@ -253,6 +300,8 @@ export class PersonalDataTableComponent implements OnInit {
     this.updateSteps();
     // إعادة النينجا للموضع الافتراضي (الخطوة 1)
     this.moveNinjaToStep(0);
+    // Reset filters executed flag
+    this.filtersExecuted = false;
   }
 
   // Toggle audio on/off
@@ -323,6 +372,17 @@ export class PersonalDataTableComponent implements OnInit {
         }
       }
 
+    // Apply company size filter
+    if (this.showComapnySizeDropdown) {
+      const companySizeSelect = document.querySelector('.comapny-size-dropdown') as HTMLSelectElement;
+      if (companySizeSelect && companySizeSelect.value) {
+        const selectedCompanySize = this.comapnySize.find(cs => cs.id == companySizeSelect.value);
+        if (selectedCompanySize) {
+          this.filterForm.patchValue({ comapnySize: selectedCompanySize.sizeName });
+        }
+      }
+    }
+
     // Apply other selected filters
     this.selectedFilters.forEach(filter => {
       if (filter.value) {
@@ -332,6 +392,9 @@ export class PersonalDataTableComponent implements OnInit {
 
     // Trigger filtering
     this.setupFiltering();
+    
+    // Mark filters as executed
+    this.filtersExecuted = true;
   }
 
   // ================================= Country  methods ===============================

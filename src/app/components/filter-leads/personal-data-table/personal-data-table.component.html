@@ -51,7 +51,7 @@
         تطبيق الفلاتر
         <mat-icon>check</mat-icon>
       </button>
-      <button class="clear-filters-btn" (click)="clearAllFilters()" *ngIf="selectedFilters.length > 0 || showCountryDropdown || showCityDropdown || showJobTitleDropdown || showJobLevelDropdown">
+      <button class="clear-filters-btn" (click)="clearAllFilters()" *ngIf="hasActiveFilters()">
         مسح جميع الفلاتر
         <mat-icon class="icon-delete">delete</mat-icon>
       </button>
@@ -406,9 +406,6 @@
   </div>
 
   <!-- Pagination -->
-  <!-- <div class="pagination">
-    <span>عرض من 1 إلى 10 من أصل {{ (filteredData$ | async)?.length || 0 }}</span>
-  </div> -->
   <mat-paginator
   *ngIf="showDataTable && !hasNoData"
   [length]="(totalCount$ | async) ?? 0"
@@ -419,4 +416,3 @@
   class="custom-paginator"
 >
 </mat-paginator>
- <!-- </div> -->

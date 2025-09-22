@@ -360,7 +360,8 @@ export class PersonalDataTableComponent implements OnInit {
            this.showJobTitleDropdown || 
            this.showJobLevelDropdown||
            this.showIndustryDropdown||
-           this.showComapnySizeDropdown;
+           this.showComapnySizeDropdown ||
+           this.showAgeSlider;
   }
 
   executeFilters() {
@@ -372,12 +373,28 @@ export class PersonalDataTableComponent implements OnInit {
 
     // إضافة فلتر العمر
     if (this.showAgeSlider) {
+      console.log('Age filter is active:', {
+        showAgeSlider: this.showAgeSlider,
+        useAgeRange: this.useAgeRange,
+        ageFrom: this.ageFrom,
+        ageTo: this.ageTo,
+        ageSliderValue: this.ageSliderValue
+      });
+      
       if (this.useAgeRange) {
-        filterParams.ageFrom = this.ageFrom;
-        filterParams.ageTo = this.ageTo;
+        // استخدام نطاق العمر
+        if (this.ageFrom !== undefined && this.ageTo !== undefined) {
+          filterParams.ageFrom = this.ageFrom;
+          filterParams.ageTo = this.ageTo;
+          console.log('Age range filter applied:', { ageFrom: this.ageFrom, ageTo: this.ageTo });
+        }
       } else {
-        filterParams.ageFrom = this.ageSliderValue;
-        filterParams.ageTo = this.ageSliderValue;
+        // استخدام عمر واحد
+        if (this.ageSliderValue !== undefined) {
+          filterParams.ageFrom = this.ageSliderValue;
+          filterParams.ageTo = this.ageSliderValue;
+          console.log('Single age filter applied:', { age: this.ageSliderValue });
+        }
       }
     }
 
@@ -457,8 +474,8 @@ export class PersonalDataTableComponent implements OnInit {
       }
     });
 
-    // طباعة المعاملات للتأكد
-    console.log('Filter Parameters:', filterParams);
+    // طباعة المعاملات النهائية
+    console.log('Final Filter Parameters:', filterParams);
     
     // استدعاء API مع المعاملات
     this.personalService.GetContacts(filterParams).subscribe({
@@ -843,7 +860,6 @@ updateAgeFilter() {
   this.filterForm.patchValue({
     ageRange: this.ageSliderValue.toString()
   });
-  this.executeFilters();
 }
 
 updateAgeRangeFilter() {
@@ -851,7 +867,6 @@ updateAgeRangeFilter() {
   this.filterForm.patchValue({
     ageRange: `${this.ageFrom}-${this.ageTo}`
   });
-  this.executeFilters();
 }
 
 getAgeDisplayText(): string {

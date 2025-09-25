@@ -29,10 +29,6 @@ export class AuthTokenInterceptor implements HttpInterceptor {
       return next.handle(req);
     }
 
-    // اطبع التوكن والـ url قبل ما تبعت
-    console.log('[INTERCEPTOR] Attaching token to request:', req.url);
-    console.log('[INTERCEPTOR] Token:', token);
-
     const authedReq = req.clone({
       setHeaders: { 
         Authorization: `Bearer ${token}`,

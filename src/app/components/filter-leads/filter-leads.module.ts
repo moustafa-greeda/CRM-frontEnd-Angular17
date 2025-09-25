@@ -1,4 +1,4 @@
-import { NgModule } from '@angular/core';
+import { NgModule, NO_ERRORS_SCHEMA } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
@@ -12,6 +12,7 @@ import { MatDialogModule } from '@angular/material/dialog';
 
 import { FilterLeadsComponent } from './filter-leads.component';
 import { TableComponentsModule } from './table-components.module';
+import { CompanyService } from './company-table/company.service';
 
 @NgModule({
   declarations: [
@@ -24,7 +25,6 @@ import { TableComponentsModule } from './table-components.module';
     MatButtonModule,
     MatButtonToggleModule,
     MatCheckboxModule,
-    MatIconModule,
     MatTableModule,
     MatSortModule,
     MatIconModule,
@@ -34,6 +34,10 @@ import { TableComponentsModule } from './table-components.module';
   ],
   exports: [
     FilterLeadsComponent
-  ]
+  ],
+  providers: [
+    CompanyService
+  ],
+  schemas: [NO_ERRORS_SCHEMA]
 })
 export class FilterLeadsModule { }

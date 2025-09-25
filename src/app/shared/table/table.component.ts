@@ -53,7 +53,6 @@ export class TableComponent<T = any> {
   }
 
   onRowClick(row: T) {
-    // ✅ دالة وسيطة للـ template
     this.rowClick.emit(row);
   }
 

@@ -1,5 +1,5 @@
-<div class="personal-data-table-container" [formGroup]="filterForm">
-  <div class="container-steps ">
+<form class="personal-data-table-container" [formGroup]="filterForm">
+  <div class="container-steps">
     <!--------------------------------------- progress bar --------------------------------------->
     <div class="steps">
       <div
@@ -31,7 +31,7 @@
       <img
         src="assets/charcter-ninja.svg"
         class="marker"
-        [style.left.px]="markerLeft"
+        [style.left.%]="markerLeft"
         [style.display]="currentStep >= 0 ? 'block' : 'none'"
       />
     </div>   
@@ -49,7 +49,7 @@
       <button class="apply-filters-btn" (click)="executeFilters()" *ngIf="hasActiveFilters()">
         <span class="btn-icon"></span>
         تطبيق الفلاتر
-        <mat-icon>check</mat-icon>
+        <span class="icon-check">✓</span>
       </button>
       <button class="clear-filters-btn" (click)="clearAllFilters()" *ngIf="hasActiveFilters()">
         مسح جميع الفلاتر
@@ -66,7 +66,7 @@
         <button 
           *ngFor="let filter of availableFilters; let i = index" 
           class="filter-option-btn"
-          (click)="addFilter(filter.id); (i === 0 ? null : moveNinjaToStep(i))"
+          (click)="addFilter(filter.id); moveNinjaToStep(i)"
           [disabled]="isFilterSelected(filter.id)"
           [style.display]="filter.id === 'age' ? 'none' : 'flex'">
           <mat-icon class="filter-icon">{{ getFilterIcon(filter.id) }}</mat-icon>
@@ -134,22 +134,14 @@
           الصناعة
         </button> 
         
-        <button 
-          class="filter-option-btn job-btn"
-          (click)="toggleComapnySizeDropdown(); moveNinjaToStep(10)"
-          [class.active]="showComapnySizeDropdown"
-          [class.disabled]="showComapnySizeDropdown"
-          [disabled]="showComapnySizeDropdown">
-          <mat-icon class="filter-icon">groups</mat-icon>
-          حجم الشركة
-        </button> 
+
 
 
       </div>
     </div>  
 
     <!-- Selected Filters Container -->
-    <div class="selected-filters-container" *ngIf="selectedFilters.length > 0 || showCountryDropdown || showCityDropdown || showJobTitleDropdown || showJobLevelDropdown || showIndustryDropdown || showComapnySizeDropdown || showAgeSlider">
+    <div class="selected-filters-container" *ngIf="selectedFilters.length > 0 || showCountryDropdown || showCityDropdown || showJobTitleDropdown || showJobLevelDropdown || showIndustryDropdown || showAgeSlider">
       <!-- Selected Filters -->
       <div class="selected-filters">
         <!-- Country Dropdown -->
@@ -177,7 +169,7 @@
           <label class="filter-label">المدينة:</label>
           <select class="filter-select city-dropdown" [disabled]="cities.length === 0">
             <option value="">
-              {{ cities.length === 0 ? 'جاري تحميل المدن...' : 'اختر المدينة' }}
+              {{ cities.length === 0 ? 'لا يوجد مدن متاحه...' : 'اختر المدينة' }}
             </option>
             <option *ngFor="let city of cities" [value]="city.id">
               {{ city.name }}
@@ -240,23 +232,6 @@
             ✕
           </button>
         </div>
-        <!-- Comapny Size Dropdown -->
-        <div class="filter-dropdown-item add-anim" *ngIf="showComapnySizeDropdown">
-          <label class="filter-label">حجم الشركة :</label>
-          <select (change)="onComapnySizeChange($event)" class="filter-select comapny-size-dropdown">
-            <option value="">اختر حجم الشركة</option>
-            <option *ngFor="let comapnySize of comapnySize" [value]="comapnySize.id">
-              {{ comapnySize.sizeName }}
-            </option>
-          </select>
-          <button 
-            class="remove-filter-btn"
-            (click)="toggleComapnySizeDropdown()"
-            title="إزالة فلتر حجم الشركة">
-            ✕
-          </button>
-        </div>
-
         <!-- Age Slider -->
         <div class="filter-dropdown-item add-anim " *ngIf="showAgeSlider">
           <label class="filter-label">{{ getAgeDisplayText() }}</label>
@@ -382,7 +357,6 @@
           <th>المدينة</th>
           <th>الدولة</th>
           <th>الصناعه</th>
-          <th>حجم الشركة</th>
         </tr>
       </thead>
        <tbody>
@@ -393,18 +367,15 @@
           <td>{{ row.prefaredLanguage || '-' }}</td>
           <td>{{ row.email || '-' }}</td>
           <td>{{ row.phone || '-' }}</td>
-          <td>{{ row.customerLevel || '-' }}</td>
+          <td>{{ row.jobLevel || '-' }}</td>
           <td>{{ row.age || '-' }}</td>
           <td>{{ row.city || '-' }}</td>
           <td>{{ row.country || '-' }}</td>  
-          <td>{{ row.industry || '-'}}</td>
-          <td>{{ row.comapnySize || '-'}}</td>
+          <td>{{ row.industryName || '-'}}</td>
         </tr>
       </tbody>
     </table>
     </div>
-  </div>
-
   <!-- Pagination -->
   <mat-paginator
   *ngIf="showDataTable && !hasNoData"
@@ -416,3 +387,5 @@
   class="custom-paginator"
 >
 </mat-paginator>
+
+</form>

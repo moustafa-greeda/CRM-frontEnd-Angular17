@@ -1,6 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FilterLeadsService } from './filter-leads.service';
-import { PersonalData, CompanyData } from './shared/interfaces';
+import { PersonalData, CompanyData } from './model/interfaces';
 
 
 @Component({
@@ -29,6 +29,68 @@ export class FilterLeadsComponent implements OnInit {
 
   ngOnInit() {
     // البيانات ستأتي من API في personal-data-table component
+    this.initializeCompanyData();
+  }
+
+  private initializeCompanyData() {
+    // Initialize with sample company data matching the design
+    this.companyData = [
+      {
+        id: '1',
+        digitalTransactions: 'تعتمد على التقنية',
+        branches: 3,
+        ownership: 'عامة',
+        location: 'قطر - الدوحة',
+        companyStage: 'مستقرة',
+        size: 'متوسطة',
+        industry: 'تجزئة',
+        companyName: 'خدمات المدى للتجارة'
+      },
+      {
+        id: '2',
+        digitalTransactions: 'متقدمة تقنيا',
+        branches: 1,
+        ownership: 'خاصة',
+        location: 'السعودية - جدة',
+        companyStage: 'مستقرة',
+        size: 'صغيرة',
+        industry: 'نقل لوجستيات',
+        companyName: 'شركة سنك للخدمات نقل لوجستيات'
+      },
+      {
+        id: '3',
+        digitalTransactions: 'بنية تحتية قوية',
+        branches: 5,
+        ownership: 'خاصة',
+        location: 'السعودية - جدة',
+        companyStage: 'مستقرة',
+        size: 'كبيرة',
+        industry: 'عقارات',
+        companyName: 'شركة الدرع للتجزئة'
+      },
+      {
+        id: '4',
+        digitalTransactions: 'متوسط',
+        branches: 2,
+        ownership: 'خاصة',
+        location: 'الكويت - الكويت',
+        companyStage: 'مستقرة',
+        size: 'صغيرة-متوسطة',
+        industry: 'عقارات',
+        companyName: 'شركة الرؤية للتسويق'
+      },
+      {
+        id: '5',
+        digitalTransactions: 'متوسط',
+        branches: 1,
+        ownership: 'خاصة',
+        location: 'مصر - الإسكندرية',
+        companyStage: 'مستقرة',
+        size: 'صغيرة',
+        industry: 'صحة طبي',
+        companyName: 'خدمات المدى للعقارات صحة طبي'
+      }
+    ];
   }
   
 

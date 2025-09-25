@@ -1,12 +1,10 @@
-
 export interface PersonalData {
-  id?: number;
+  id?: string | number;
   name?: string;
   jobTitle?: string;
   prefaredLanguage?: string;
   email?: string;
   phone?: string;
-  // Fields for backward compatibility
   personality?: string;
   customerLevel?: string;
   customerType?: string;
@@ -17,18 +15,23 @@ export interface PersonalData {
   age?: number;
   jobLevel?: string; 
   industry?: string;
+  industryName?: string;
   comapnySize?: string;
   entryChanel?: string;
 }
 
 export interface CompanyData {
-  id: string;
-  digitalTransactions: string;
-  branches: number;
-  ownership: string;
-  location: string;
-  companyStage: string;
-  size: string;
-  industry: string;
-  companyName: string;
+  id: string | number;
+  name?: string;
+  companyName?: string;
+  digitalTransactions?: string;
+  branches?: number;
+  ownership?: string;
+  location?: string;
+  companyStage?: string;
+  size?: string;
+  industry?: string;
+  country?: string;
+  city?: string;
+  [key: string]: any;
 }

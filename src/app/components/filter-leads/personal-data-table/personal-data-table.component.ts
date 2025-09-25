@@ -1,8 +1,8 @@
 import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
-import { map, startWith, debounceTime, distinctUntilChanged } from 'rxjs/operators';
-import { PersonalData } from '../shared/interfaces';
+import { map, startWith, debounceTime } from 'rxjs/operators';
+import { PersonalData } from '../model/interfaces';
 import { PersonalServiceService, ContactFilterParams } from './personal-service.service';
 
 @Component({
@@ -28,7 +28,6 @@ export class PersonalDataTableComponent implements OnInit {
   jobTitles: any[] = [];
   jobLevels: any[] = [];
   industries: any[] = [];
-  comapnySize: any[] = [];
 
 
   // Filter button functionality
@@ -55,7 +54,6 @@ export class PersonalDataTableComponent implements OnInit {
   showJobTitleDropdown = false;
   showJobLevelDropdown = false;
   showIndustryDropdown = false;
-  showComapnySizeDropdown = false;
   
   // Paginator properties
   totalCount$ = new BehaviorSubject<number>(0);
@@ -68,11 +66,9 @@ export class PersonalDataTableComponent implements OnInit {
   
   availableFilters = [
     { id: 'personality', name: 'الشخصية', type: 'select', options: ['USER', 'ADMIN', 'MANAGER', 'EMPLOYEE'] },
-    // { id: 'customerLevel', name: 'مستوى العميل', type: 'select', options: ['NEW', 'EXISTING', 'VIP', 'PREMIUM'] },
     { id: 'customerType', name: 'نوع العميل', type: 'select', options: ['B2B', 'B2C', 'ENTERPRISE'] },
     { id: 'language', name: 'اللغة', type: 'select', options: ['العربية', 'English', 'Français'] },
     { id: 'department', name: 'القسم', type: 'select', options: ['IT', 'HR', 'Finance', 'Marketing', 'Sales'] },
-    { id: 'age', name: 'العمر', type: 'select', options: ['18-25', '26-35', '36-45', '46-55', '55+'] }
   ];
 
   // Icon mapping for filter buttons
@@ -148,7 +144,6 @@ export class PersonalDataTableComponent implements OnInit {
     this.getJobTitle();
     this.getJobLevel();
     this.getIndustry();
-    this.getComapnySize();
     this.initializeSteps();
     this.initializeAudio();
     
@@ -162,8 +157,44 @@ export class PersonalDataTableComponent implements OnInit {
     // Listen for window resize to recalculate step width
     window.addEventListener('resize', () => {
       this.calculateStepWidth();
-      this.moveNinjaToStep(this.currentStep); // Recalculate current position
+      this.moveNinjaToStep(this.currentStep, false); // Recalculate current position without sound
     });
+    
+    // Listen for sidebar toggle or any layout changes
+    setTimeout(() => {
+      this.calculateStepWidth();
+      this.moveNinjaToStep(this.currentStep, false);
+    }, 100);
+    
+    // Additional listener for sidebar toggle with longer delay
+    setTimeout(() => {
+      this.calculateStepWidth();
+      this.moveNinjaToStep(this.currentStep, false);
+    }, 500);
+    
+    // Listen for any DOM changes that might affect the container width
+    const observer = new MutationObserver(() => {
+      this.calculateStepWidth();
+      this.moveNinjaToStep(this.currentStep, false);
+    });
+    
+    // Observe changes to the steps container
+    const stepsContainer = document.querySelector('.steps');
+    if (stepsContainer) {
+      observer.observe(stepsContainer, { 
+        attributes: true, 
+        childList: true, 
+        subtree: true 
+      });
+    }
+    
+    // Listen for transition events on the steps container
+    if (stepsContainer) {
+      stepsContainer.addEventListener('transitionend', () => {
+        this.calculateStepWidth();
+        this.moveNinjaToStep(this.currentStep, false);
+      });
+    }
   }
 
   private initializeForm(): void {
@@ -178,7 +209,6 @@ export class PersonalDataTableComponent implements OnInit {
       jobTitle: [''],
       jobLevel: [''],
       industry: [''],
-      comapnySize: [''],
     });
   }
 
@@ -216,7 +246,6 @@ export class PersonalDataTableComponent implements OnInit {
           item.department,
           item.jobLevel,
           item.industry,
-          item.comapnySize,
         ];
         
         if (!searchableFields.some(field => 
@@ -272,8 +301,20 @@ export class PersonalDataTableComponent implements OnInit {
   }
 
   getActiveFiltersCount(): number {
-    const formValue = this.filterForm.value;
-    return Object.values(formValue).filter(value => value && value !== '').length;
+    let count = 0;
+    
+    // Count selected filters
+    count += this.selectedFilters.length;
+    
+    // Count active dropdown filters
+    if (this.showCountryDropdown) count++;
+    if (this.showCityDropdown) count++;
+    if (this.showJobTitleDropdown) count++;
+    if (this.showJobLevelDropdown) count++;
+    if (this.showIndustryDropdown) count++;
+    if (this.showAgeSlider) count++;
+      
+    return count;
   }
 
   toggleFilterButtons(): void {
@@ -328,7 +369,6 @@ export class PersonalDataTableComponent implements OnInit {
     this.showJobTitleDropdown = false;
     this.showJobLevelDropdown = false;
     this.showIndustryDropdown = false;
-    this.showComapnySizeDropdown = false;
     this.showAgeSlider = false;
     this.countryId = 0;
     this.cities = [];
@@ -350,7 +390,6 @@ export class PersonalDataTableComponent implements OnInit {
   // Toggle audio on/off
   toggleAudio(): void {
     this.isAudioEnabled = !this.isAudioEnabled;
-    console.log('Audio enabled:', this.isAudioEnabled);
   }
 
   hasActiveFilters(): boolean {
@@ -360,7 +399,6 @@ export class PersonalDataTableComponent implements OnInit {
            this.showJobTitleDropdown || 
            this.showJobLevelDropdown||
            this.showIndustryDropdown||
-           this.showComapnySizeDropdown ||
            this.showAgeSlider;
   }
 
@@ -373,27 +411,18 @@ export class PersonalDataTableComponent implements OnInit {
 
     // إضافة فلتر العمر
     if (this.showAgeSlider) {
-      console.log('Age filter is active:', {
-        showAgeSlider: this.showAgeSlider,
-        useAgeRange: this.useAgeRange,
-        ageFrom: this.ageFrom,
-        ageTo: this.ageTo,
-        ageSliderValue: this.ageSliderValue
-      });
       
       if (this.useAgeRange) {
         // استخدام نطاق العمر
         if (this.ageFrom !== undefined && this.ageTo !== undefined) {
           filterParams.ageFrom = this.ageFrom;
           filterParams.ageTo = this.ageTo;
-          console.log('Age range filter applied:', { ageFrom: this.ageFrom, ageTo: this.ageTo });
         }
       } else {
         // استخدام عمر واحد
         if (this.ageSliderValue !== undefined) {
           filterParams.ageFrom = this.ageSliderValue;
           filterParams.ageTo = this.ageSliderValue;
-          console.log('Single age filter applied:', { age: this.ageSliderValue });
         }
       }
     }
@@ -455,17 +484,6 @@ export class PersonalDataTableComponent implements OnInit {
       }
     }
 
-    // إضافة فلتر حجم الشركة
-    if (this.showComapnySizeDropdown) {
-      const companySizeSelect = document.querySelector('.comapny-size-dropdown') as HTMLSelectElement;
-      if (companySizeSelect && companySizeSelect.value) {
-        const selectedCompanySize = this.comapnySize.find(cs => cs.id == companySizeSelect.value);
-        if (selectedCompanySize) {
-          filterParams.companyId = selectedCompanySize.id;
-          this.filterForm.patchValue({ comapnySize: selectedCompanySize.sizeName });
-        }
-      }
-    }
 
     // إضافة الفلاتر الأخرى
     this.selectedFilters.forEach(filter => {
@@ -475,12 +493,10 @@ export class PersonalDataTableComponent implements OnInit {
     });
 
     // طباعة المعاملات النهائية
-    console.log('Final Filter Parameters:', filterParams);
     
     // استدعاء API مع المعاملات
     this.personalService.GetContacts(filterParams).subscribe({
       next: (response) => {
-        console.log('API Response:', response);
         if (response && response.succeeded && response.data && response.data.items && response.data.items.length > 0) {
           // تحديث البيانات من API
           this.data = response.data.items;
@@ -527,7 +543,6 @@ export class PersonalDataTableComponent implements OnInit {
       next: (res) => {
         if (res.data) {
           this.countries = res.data;
-          console.log('Countries loaded in personal table:', this.countries);
         }   
       },
       error: (error) => {
@@ -543,7 +558,6 @@ export class PersonalDataTableComponent implements OnInit {
       this.personalService.getCitiesByCountryId(this.countryId).subscribe({
         next: (res) => {
           this.cities = res.data || [];
-          console.log('Cities loaded in personal table:', this.cities);
         },
         error: (error) => {
           console.error('Error loading cities:', error);
@@ -560,7 +574,6 @@ export class PersonalDataTableComponent implements OnInit {
     this.personalService.GetJobTitle().subscribe({
       next: (res) => {
         this.jobTitles = res.data || [];
-        console.log('Job titles loaded in personal table:', this.jobTitles);
       },
       error: (error) => {
         console.error('Error loading job titles:', error);
@@ -574,7 +587,6 @@ export class PersonalDataTableComponent implements OnInit {
     this.personalService.GetJobLevel().subscribe({
       next: (res) => {
         this.jobLevels = res.data || [];
-        console.log('Job levels loaded in personal table:', this.jobLevels);
       },
       error: (error) => {
         console.error('Error loading job levels:', error);
@@ -587,23 +599,10 @@ export class PersonalDataTableComponent implements OnInit {
     this.personalService.GetIndustry().subscribe({
       next: (res) => {
         this.industries = res.data || [];
-        console.log('Industries loaded in personal table:', this.industries);
       },
       error: (error)=>{
         console.error('Error loading industries:', error);
         this.industries = [];
-      }
-    });
-  }
-    // ==================================== GetIndustry methods ===================================
-  getComapnySize() {
-    this.personalService.GetComapnySize().subscribe({
-      next: (res) => {
-        this.comapnySize = res.data || [];
-        console.log('Comapny sizes loaded in personal table:', this.comapnySize);
-      },      error: (error)=>{
-        console.error('Error loading comapny sizes:', error);
-        this.comapnySize = [];
       }
     });
   }
@@ -631,9 +630,6 @@ export class PersonalDataTableComponent implements OnInit {
   }
   toggleIndustryDropdown() {
     this.showIndustryDropdown = !this.showIndustryDropdown;
-  }
-  toggleComapnySizeDropdown() {
-    this.showComapnySizeDropdown = !this.showComapnySizeDropdown;
   }
 
   // Job Title change handler
@@ -669,16 +665,6 @@ onIndustryChange(event: any) {
   }
 }
 
-// Comapny Size change handler
-onComapnySizeChange(event: any) {
-  const selectedComapnySize = event.target.value;
-  if (selectedComapnySize) {
-    const comapnySize = this.comapnySize.find(cs => cs.id == selectedComapnySize);
-    if (comapnySize) {
-      this.filterForm.patchValue({ comapnySize: comapnySize.name });
-    }
-  }
-}
 
 
 
@@ -693,13 +679,15 @@ currentStep = 0;
   // Audio properties
   private jumpSound: HTMLAudioElement | null = null;
   public isAudioEnabled = true;
+  private lastSoundTime = 0;
+  private soundDebounceTime = 200; // 200ms debounce
 
 // Initialize steps dynamically based on available filters
 private initializeSteps(): void {
   this.updateSteps();
   // Initialize ninja position to step 1 (rightmost)
   setTimeout(() => {
-    this.moveNinjaToStep(0);
+    this.moveNinjaToStep(0, false);
   }, 100);
 }
 
@@ -707,13 +695,16 @@ private initializeSteps(): void {
 private updateSteps(): void {
   // Create steps array from availableFilters and additional dropdown filters
   this.steps = [
-    ...this.availableFilters.map(filter => filter.name),
-    'الدولة',
-    'المدينة', 
-    'المسمى الوظيفي',
-    'مستوى الوظيفة',
-    'الصناعة',
-    'حجم الشركة'
+    'الشخصية',           // 1
+    'نوع العميل',        // 2
+    'اللغة',             // 3
+    'القسم',             // 4
+    'العمر',             // 5
+    'الدولة',            // 6
+    'المدينة',           // 7
+    'المسمى الوظيفي',     // 8
+    'مستوى الوظيفة',      // 9
+    'الصناعة'            // 10
   ];
   
   // Calculate dynamic step width based on container and number of steps
@@ -722,16 +713,27 @@ private updateSteps(): void {
 
 // Calculate step width dynamically
 private calculateStepWidth(): void {
-  const screenWidth = window.innerWidth;
-  const containerWidth = (screenWidth * 0.8) - 40; // 80% width minus padding
-  const minStepWidth = 80; // Minimum width per step
-  const maxStepWidth = 150; // Maximum width per step
-  
-  // Calculate step width based on number of steps
-  const calculatedWidth = containerWidth / this.steps.length;
-  
-  // Ensure step width is within reasonable bounds
-  this.stepWidth = Math.max(minStepWidth, Math.min(maxStepWidth, calculatedWidth));
+  // Get the actual container width instead of window width
+  const containerElement = document.querySelector('.steps');
+  if (containerElement) {
+    const containerWidth = containerElement.clientWidth;
+    const minStepWidth = 80; // Minimum width per step
+    const maxStepWidth = 150; // Maximum width per step
+    
+    // Calculate step width based on number of steps
+    const calculatedWidth = containerWidth / this.steps.length;
+    
+    // Ensure step width is within reasonable bounds
+    this.stepWidth = Math.max(minStepWidth, Math.min(maxStepWidth, calculatedWidth));
+  } else {
+    // Fallback to window width if container not found
+    const screenWidth = window.innerWidth;
+    const containerWidth = (screenWidth * 0.8) - 40;
+    const minStepWidth = 80;
+    const maxStepWidth = 150;
+    const calculatedWidth = containerWidth / this.steps.length;
+    this.stepWidth = Math.max(minStepWidth, Math.min(maxStepWidth, calculatedWidth));
+  }
 }
 
 // Initialize audio
@@ -746,9 +748,18 @@ private initializeAudio(): void {
   }
 }
 
-// Play jump sound
+// Play jump sound with debounce
 private playJumpSound(): void {
   if (this.isAudioEnabled && this.jumpSound) {
+    const currentTime = Date.now();
+    
+    // Check if enough time has passed since last sound
+    if (currentTime - this.lastSoundTime < this.soundDebounceTime) {
+      return; // Skip playing sound if too soon
+    }
+    
+    this.lastSoundTime = currentTime;
+    
     try {
       this.jumpSound.currentTime = 0; // Reset to beginning
       this.jumpSound.play().catch(error => {
@@ -761,21 +772,36 @@ private playJumpSound(): void {
 }
 
 // Add method to move ninja
-moveNinjaToStep(stepIndex: number) {
+moveNinjaToStep(stepIndex: number, playSound: boolean = true) {
   this.currentStep = stepIndex;
   
-  // Calculate marker position from right to left
-  const containerWidth = window.innerWidth * 0.8; // 80% width like container-steps
+  // Get the actual container width instead of window width
+  const containerElement = document.querySelector('.steps');
+  let containerWidth: number;
+  
+  if (containerElement) {
+    containerWidth = containerElement.clientWidth;
+  } else {
+    // Fallback to window width if container not found
+    containerWidth = window.innerWidth * 0.8;
+  }
+  
   const stepWidth = containerWidth / this.steps.length;
   
-  // Move from right to left: start from right side and move left
+  // Move from right to left: start from right side and move left (like progress bar)
   const totalSteps = this.steps.length - 1;
   const rightToLeftIndex = totalSteps - stepIndex;
-  this.markerLeft = (rightToLeftIndex * stepWidth) + (stepWidth / 2) - 55; // Center the marker
   
+  // Calculate position as percentage to center the ninja on the circle
+  // Each step takes up (100 / totalSteps) % of the container width
+  const stepPercentage = (100 / this.steps.length);
+  // Position the ninja at the center of the target step
+  this.markerLeft = (rightToLeftIndex * stepPercentage) + (stepPercentage / 2);
   
-  // Play jump sound
-  this.playJumpSound();
+  // Play jump sound only if requested
+  if (playSound) {
+    this.playJumpSound();
+  }
   
   // Update active connector width
   this.updateActiveConnector(stepIndex);
@@ -783,7 +809,17 @@ moveNinjaToStep(stepIndex: number) {
 
 // Update active connector width
 private updateActiveConnector(stepIndex: number): void {
-  const containerWidth = window.innerWidth - 40;
+  // Get the actual container width instead of window width
+  const containerElement = document.querySelector('.steps');
+  let containerWidth: number;
+  
+  if (containerElement) {
+    containerWidth = containerElement.clientWidth;
+  } else {
+    // Fallback to window width if container not found
+    containerWidth = window.innerWidth - 100;
+  }
+  
   const stepWidth = containerWidth / this.steps.length;
   const activeWidth = (stepIndex + 1) * stepWidth;
   const percentage = (activeWidth / containerWidth) * 100;
@@ -811,7 +847,7 @@ selectOption(index: number) {
 toggleAgeSlider() {
   this.showAgeSlider = !this.showAgeSlider;
   if (this.showAgeSlider) {
-    this.moveNinjaToStep(4); // Move ninja to age step
+    this.moveNinjaToStep(4); // Move ninja to age step (5th step, index 4)
   }
 }
 
@@ -887,4 +923,4 @@ toggleAgeRangeMode() {
     this.ageSliderValue = this.ageFrom;
   }
 }
-} 
+}

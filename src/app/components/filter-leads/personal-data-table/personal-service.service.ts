@@ -7,7 +7,7 @@ export interface ContactFilterParams {
   ageFrom?: number;
   ageTo?: number;
   country?: string;
-  city?: string;  // تغيير من number إلى string لإرسال اسم المدينة
+  city?: string;  
   jobTitle?: string;
   jobLevel?: string;
   industryId?: number;
@@ -56,11 +56,11 @@ export class PersonalServiceService {
   }
 
   GetIndustry(): Observable<any>{
-    return this.http.get(`${this.BASE_API_URL}/Filter/GetIndustry`);
+    return this.http.get(`${this.BASE_API_URL}/Filter/Company/GetIndustry`);
   }
 
   GetComapnySize(): Observable<any>{
-    return this.http.get(`${this.BASE_API_URL}/Filter/GetComapnySize`);
+    return this.http.get(`${this.BASE_API_URL}/Filter/Company/GetComapnySize`);
   }
 
   GetContacts(params?: ContactFilterParams): Observable<any>{
@@ -69,11 +69,9 @@ export class PersonalServiceService {
     if (params) {
       if (params.ageFrom !== undefined) {
         httpParams = httpParams.set('ageFrom', params.ageFrom.toString());
-        console.log('Age From parameter added:', params.ageFrom);
       }
       if (params.ageTo !== undefined) {
         httpParams = httpParams.set('ageTo', params.ageTo.toString());
-        console.log('Age To parameter added:', params.ageTo);
       }
       if (params.country) {
         httpParams = httpParams.set('country', params.country);
@@ -101,9 +99,8 @@ export class PersonalServiceService {
       }
     }
     
-    // طباعة الـ URL النهائي مع الـ parameters
+    
     const finalUrl = `${this.BASE_API_URL}/Filter/GetContacts?${httpParams.toString()}`;
-    console.log('Final API URL with parameters:', finalUrl);
     
     return this.http.get(`${this.BASE_API_URL}/Filter/GetContacts`, { 
       params: httpParams,

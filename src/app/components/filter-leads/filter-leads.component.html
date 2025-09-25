@@ -6,9 +6,7 @@
       class="nav-tab" 
       [class.active]="activeTab === 'personal'"
       (click)="setActiveTab('personal')">
-      <!-- <span class="tab-icon">👤</span> -->
       <span class="tab-label">البيانات الشخصية</span>
-      <!-- <span class="tab-count">{{ personalDataFiltered.length }}</span> -->
       <!-- Arrow for active tab -->
       <div class="tab-arrow" *ngIf="activeTab === 'personal'">
         <mat-icon>keyboard_arrow_down</mat-icon>
@@ -19,34 +17,20 @@
       class="nav-tab" 
       [class.active]="activeTab === 'company'"
       (click)="setActiveTab('company')">
-      <!-- <span class="tab-icon">🏢</span> -->
       <span class="tab-label">بيانات الشركة</span>
-      <!-- <span class="tab-count">{{ companyDataFiltered.length }}</span> -->
       <!-- Arrow for active tab -->
       <div class="tab-arrow" *ngIf="activeTab === 'company'">
         <mat-icon>keyboard_arrow_down</mat-icon>
       </div>
     </button>
     
-    <button 
-      class="nav-tab" 
-      [class.active]="activeTab === 'all'"
-      (click)="setActiveTab('all')">
-      <!-- <span class="tab-icon">📊</span> -->
-      <span class="tab-label">جميع البيانات</span>
-      <!-- <span class="tab-count">{{ personalDataFiltered.length + companyDataFiltered.length }}</span> -->
-      <!-- Arrow for active tab -->
-      <div class="tab-arrow" *ngIf="activeTab === 'all'">
-        <mat-icon>keyboard_arrow_down</mat-icon>
-      </div>
-    </button>
   </div>
   
 
   <!-- Table Components -->
   <div class="tables-container">
     <!-- Personal Data Table -->
-    <div *ngIf="activeTab === 'personal' || activeTab === 'all'" class="">
+    <div *ngIf="activeTab === 'personal'" class="">
       <app-personal-data-table 
         [data]="personalData"
         (filteredDataChange)="onPersonalDataFiltered($event)"
@@ -55,7 +39,7 @@
     </div>
 
     <!-- Company Table -->
-    <div *ngIf="activeTab === 'company' || activeTab === 'all'" class="">
+    <div *ngIf="activeTab === 'company' " class="">
       <app-company-table 
         [data]="companyData"
         (filteredDataChange)="onCompanyDataFiltered($event)"
@@ -63,24 +47,4 @@
       </app-company-table>
     </div>
   </div>
-<!-- 
-  <div class="summary-section">
-    <div class="summary-card">
-      <h3>ملخص التصفية</h3>
-      <div class="summary-stats">
-        <div class="stat">
-          <span class="label">البيانات الشخصية:</span>
-          <span class="value">{{ personalDataFiltered.length }}</span>
-        </div>
-        <div class="stat">
-          <span class="label">بيانات الشركة:</span>
-          <span class="value">{{ companyDataFiltered.length }}</span>
-        </div>
-        <div class="stat">
-          <span class="label">المحدد:</span>
-          <span class="value">{{ selectedPersonalData.length + selectedCompanyData.length }}</span>
-        </div>
-      </div>
-    </div>
-  </div> -->
 </div>

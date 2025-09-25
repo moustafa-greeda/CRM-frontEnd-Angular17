@@ -1,179 +1,218 @@
-<div class="company-table-container">
-  <!-- Table Header with Search and Filter -->
-  <div class="table-header">
-    <h3>الشركة</h3>
-    <div class="search-and-filter-container">
-      <div class="search-box">
-        <input 
-          type="text" 
-          formControlName="search"
-          placeholder="ابحث في بيانات الشركة..."
-          class="search-input"
+<form class="company-table-container" [formGroup]="filterForm">
+  <div class="container-steps ">
+    <!--------------------------------------- progress bar --------------------------------------->
+    <div class="steps">
+      <div
+        class="step"
+        *ngFor="let step of steps; let i = index"
+        #stepRef
+      >
+        <img 
+          *ngIf="i !== currentStep"
+          [src]="i < currentStep ? 'assets/Sword.svg' : 'assets/gift.svg'" 
+          class="swords" 
         />
-        <span class="search-icon">🔍</span>
+        <div class="circle" [class.active]="i <= currentStep">
+          {{i + 1}}
+          <img 
+            *ngIf="i === currentStep" 
+            src="assets/shield.svg" 
+            class="current-step-shield" 
+          />
+        </div>
+  
+        <div
+          *ngIf="i < steps.length - 1"
+          class="connector"
+          [class.active]="i < currentStep"
+        ></div>
       </div>
       
+      <img
+        src="assets/charcter-ninja.svg"
+        class="marker"
+        [style.left.%]="markerLeft"
+        [style.display]="currentStep >= 0 ? 'block' : 'none'"
+      />
+    </div>   
+  </div>
+  <!----------------------------------- Table Header with Search and Filter -------------------------->
+  <div class="table-title">
+    <h3>بيانات الشركة</h3>
+    <div class="search-and-filter-container">
       <button class="filter-btn" (click)="toggleFilterButtons()">
-        <span class="filter-icon">🔍</span>
         فلتر
+        <img src="assets/icon-filter.svg" alt="filter">
+
         <span class="filter-count" *ngIf="getActiveFiltersCount() > 0">({{ getActiveFiltersCount() }})</span>
       </button>
-      
-      <button class="clear-filters-btn" (click)="clearFilters()" *ngIf="getActiveFiltersCount() > 0">
-        مسح الفلاتر ({{ getActiveFiltersCount() }})
+      <button class="apply-filters-btn" (click)="executeFilters()" *ngIf="hasActiveFilters()">
+        <span class="btn-icon"></span>
+        تطبيق الفلاتر
+        <span class="icon-check">✓</span>
+      </button>
+      <button class="clear-filters-btn" (click)="clearAllFilters()" *ngIf="hasActiveFilters()">
+        مسح جميع الفلاتر
+        <mat-icon class="icon-delete">delete</mat-icon>
       </button>
     </div>
   </div>
 
-  <!-- Filter Dropdown (shown when filter button is clicked) -->
-  <div class="filter-dropdown" *ngIf="showFilterButtons">
-    <div class="filter-dropdown-content">
-      <h4>اختر الفلاتر المطلوبة</h4>
-      <div class="filter-options-grid">
-        <button class="filter-option-btn" (click)="showFilterButtons = false">
-          <span>التعاملات الرقمية</span>
+  <!----------------------------------- Available Filter Buttons ------------------------------------->
+  <div class="filter-system">
+    <!-- Available Filter Buttons -->
+    <div class="available-filters" [class.show]="showFilterButtons" *ngIf="showFilterButtons">
+      <div class="filter-buttons-grid">
+        <button 
+          *ngFor="let filter of availableFilters; let i = index" 
+          class="filter-option-btn"
+          (click)="addFilter(filter.id); (i === 0 ? null : moveNinjaToStep(i))"
+          [disabled]="isFilterSelected(filter.id)"
+          [style.display]="filter.id === 'age' ? 'none' : 'flex'">
+          <mat-icon class="filter-icon">{{ getFilterIcon(filter.id) }}</mat-icon>
+          {{ filter.name }}
         </button>
-        <button class="filter-option-btn" (click)="showFilterButtons = false">
-          <span>عدد الفروع</span>
-        </button>
-        <button class="filter-option-btn" (click)="showFilterButtons = false">
-          <span>نوع الملكية</span>
-        </button>
-        <button class="filter-option-btn" (click)="showFilterButtons = false">
-          <span>الموقع</span>
-        </button>
-        <button class="filter-option-btn" (click)="showFilterButtons = false">
-          <span>مرحلة الشركة</span>
-        </button>
-        <button class="filter-option-btn" (click)="showFilterButtons = false">
-          <span>الحجم</span>
-        </button>
-        <button class="filter-option-btn" (click)="showFilterButtons = false">
-          <span>الصناعة</span>
-        </button>
-        <button class="filter-option-btn" (click)="showFilterButtons = false">
-          <span>اسم الشركة</span>
-        </button>
-      </div>
     </div>
   </div>
 
-  <!-- Filter Chips -->
-  <form [formGroup]="filterForm">
-    <div class="filter-chips">
-    <div class="filter-chip" [class.active]="filterForm.get('digitalTransactions')?.value">
-      <span>التعاملات الرقمية</span>
-      <select formControlName="digitalTransactions">
-        <option value="">جميع المستويات</option>
-        <option *ngFor="let option of digitalTransactionOptions" [value]="option">
-          {{ option }}
+    <!-- Selected Filters Container -->
+    <div class="selected-filters-container" *ngIf="selectedFilters.length > 0 || showCountryDropdown || showCityDropdown">
+      <!-- Selected Filters -->
+      <div class="selected-filters">
+        
+        <!-- Country Dropdown -->
+        <div class="filter-dropdown-item add-anim" *ngIf="showCountryDropdown">
+          <label class="filter-label">الدولة:</label>
+          <div class="select-wrapper">
+            <select (change)="onCountryChange($event)" class="filter-select">
+              <option value="">اختر الدولة</option>
+              <option *ngFor="let country of countries" [value]="country.id">
+                {{ country.name }}
         </option>
       </select>
+            <mat-icon class="select-arrow">keyboard_arrow_down</mat-icon>
+    </div>
+          <button 
+            class="remove-filter-btn"
+            (click)="toggleCountryDropdown()"
+            title="إزالة فلتر الدولة">
+            ✕
+          </button>
     </div>
 
-    <div class="filter-chip" [class.active]="filterForm.get('branches')?.value">
-      <span>الفروع</span>
-      <input type="number" formControlName="branches" placeholder="عدد الفروع">
-    </div>
-
-    <div class="filter-chip" [class.active]="filterForm.get('ownership')?.value">
-      <span>الملكية</span>
-      <select formControlName="ownership">
-        <option value="">جميع أنواع الملكية</option>
-        <option *ngFor="let option of ownershipOptions" [value]="option">
-          {{ option }}
+        <!-- City Dropdown -->
+        <div class="filter-dropdown-item add-anim" *ngIf="showCityDropdown && countryId">
+          <label class="filter-label">المدينة:</label>
+          <select class="filter-select city-dropdown" [disabled]="cities.length === 0" (change)="onCityChange($event)">
+            <option value="">
+              {{ cities.length === 0 ? '..لا يوجد مدن متاحة' : 'اختر المدينة' }}
+            </option>
+            <option *ngFor="let city of cities" [value]="city.id">
+              {{ city.name }}
         </option>
       </select>
+          <button 
+            class="remove-filter-btn"
+            (click)="toggleCityDropdown()"
+            title="إزالة فلتر المدينة">
+            ✕
+          </button>
     </div>
 
-    <div class="filter-chip" [class.active]="filterForm.get('location')?.value">
-      <span>الموقع</span>
-      <input type="text" formControlName="location" placeholder="أدخل الموقع">
-    </div>
-
-    <div class="filter-chip" [class.active]="filterForm.get('companyStage')?.value">
-      <span>مرحلة الشركة</span>
-      <select formControlName="companyStage">
-        <option value="">جميع المراحل</option>
-        <option *ngFor="let option of companyStageOptions" [value]="option">
-          {{ option }}
+        <!-- Other Selected Filters -->
+        <div 
+          *ngFor="let filter of selectedFilters" 
+          class="filter-dropdown-item add-anim">
+          
+          <label class="filter-label">{{ filter.name }}</label>
+          
+          <!-- Input Text for Company Name -->
+          <input 
+            *ngIf="filter.id === 'companyName'" 
+            type="text"
+            [value]="filter.value"
+            (input)="onInputChange(filter.id, $event)"
+            class="filter-input"
+            [placeholder]="'أدخل ' + filter.name">
+          
+          <!-- Select Dropdown for other filters -->
+          <select 
+            *ngIf="filter.type === 'select' && filter.id !== 'companyName'" 
+            [value]="filter.value"
+            (change)="onSelectChange(filter.id, $event)"
+            class="filter-select">
+            <option value="">{{ 'اختر ' + filter.name }}</option>
+            <option 
+              *ngFor="let option of filter.options" 
+              [value]="filter.isDynamic ? option.value : option">
+              {{ filter.isDynamic ? option.label : option }}
         </option>
       </select>
-    </div>
-
-    <div class="filter-chip" [class.active]="filterForm.get('size')?.value">
-      <span>الحجم</span>
-      <select formControlName="size">
-        <option value="">جميع الأحجام</option>
-        <option *ngFor="let option of sizeOptions" [value]="option">
-          {{ option }}
-        </option>
-      </select>
-    </div>
-
-    <div class="filter-chip" [class.active]="filterForm.get('industry')?.value">
-      <span>الصناعة</span>
-      <select formControlName="industry">
-        <option value="">جميع الصناعات</option>
-        <option *ngFor="let option of industryOptions" [value]="option">
-          {{ option }}
-        </option>
-      </select>
-    </div>
-
-    <div class="filter-chip" [class.active]="filterForm.get('companyName')?.value">
-      <span>اسم الشركة</span>
-      <input type="text" formControlName="companyName" placeholder="أدخل اسم الشركة">
+          <button 
+            class="remove-filter-btn"
+            (click)="removeFilter(filter.id)"
+            title="إزالة الفلتر">
+            ✕
+          </button>
+        </div>
+      </div>
     </div>
     </div>
-  </form>
 
   <!-- Data Table -->
-  <div class="table-wrapper">
-    <table class="data-table">
+  <!-- <div class="table-wrapper"> -->
+    <div class="table-container" [class.no-filters-applied]="!filtersExecuted">
+      <img src="/assets/search-man.gif" alt="runner" class="runner" *ngIf="!filtersExecuted">
+
+      <!-- No Data Message -->
+      <div class="no-data-message" *ngIf="showDataTable && hasNoData">
+        <div class="no-data-content">
+          <mat-icon class="no-data-icon">search_off</mat-icon>
+          <h3>لايوجد بيانات متاحه لهذا البحث</h3>
+          <p>جرب تغيير معايير البحث للحصول على نتائج أفضل</p>
+    </div>
+    </div>
+
+  <!-- Data Table -->
+      <table class="data-table" [class.no-filters-applied]="!filtersExecuted" *ngIf="showDataTable && !hasNoData">
       <thead>
         <tr>
-          <th>
-            <input 
-              type="checkbox" 
-              [checked]="isAllSelected"
-              (change)="onSelectAll($event)"
-            />
-          </th>
-          <th>التعاملات الرقمية</th>
-          <th>الفروع</th>
-          <th>الملكية</th>
-          <th>الموقع</th>
-          <th>مرحلة الشركة</th>
-          <th>الحجم</th>
+          <th>#</th>
+          <th>إسم الشركة</th>
           <th>الصناعة</th>
-          <th>اسم الشركة</th>
+          <th>الحجم</th>
+          <th>مرحلة الشركة</th>
+          <th>الدولة</th>
+          <th>المدينة</th>
+          <th>نوع الملكية</th>
+          <th>التعاملات الرقمية</th>
         </tr>
       </thead>
       <tbody>
-        <tr *ngFor="let row of filteredData$ | async" [class.selected]="isRowSelected(row)">
-          <td>
-            <input 
-              type="checkbox" 
-              [checked]="isRowSelected(row)"
-              (change)="onSelectRow(row, $event)"
-            />
-          </td>
-          <td>{{ row.digitalTransactions }}</td>
-          <td>{{ row.branches }}</td>
-          <td>{{ row.ownership }}</td>
-          <td>{{ row.location }}</td>
-          <td>{{ row.companyStage }}</td>
-          <td>{{ row.size }}</td>
-          <td>{{ row.industry }}</td>
-          <td>{{ row.companyName }}</td>
+         <tr *ngFor="let row of (isUsingApi ? (apiData$ | async) : (filteredData$ | async)); let i = index" [class.selected]="isRowSelected(row)">
+          <td>{{ i + 1 }}</td>
+          <td>{{ row.name || row.companyName || '-' }}</td>
+          <td>{{ row['industryName'] || '-' }}</td>
+          <td>{{ row['companySize'] || '-' }}</td>
+          <td>{{ row.companyStage || '-' }}</td>
+          <td>{{ row.country || '-' }}</td>
+          <td>{{ row.city || '-' }}</td>
+          <td>{{ row['ownerShip'] || '-' }}</td>
+          <td>{{ row['digitalTransformation'] || '-' }}</td>
         </tr>
       </tbody>
     </table>
   </div>
-
   <!-- Pagination -->
-  <div class="pagination">
-    <span>عرض من 1 إلى 10 من أصل {{ (filteredData$ | async)?.length || 0 }}</span>
-  </div>
-</div>
+  <mat-paginator
+  *ngIf="showDataTable && !hasNoData"
+  [length]="(totalCount$ | async) ?? 0"
+  [pageIndex]="currentPage"
+  [pageSize]="pageSize"
+  [pageSizeOptions]="[10, 20, 50, 100, 500, 1000]"
+  (page)="onPageChange($event)"
+  class="custom-paginator"
+>
+</mat-paginator>
+
+</form>

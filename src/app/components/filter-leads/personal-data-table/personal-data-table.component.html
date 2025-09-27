@@ -2,39 +2,35 @@
   <div class="container-steps">
     <!--------------------------------------- progress bar --------------------------------------->
     <div class="steps">
-      <div
-        class="step"
-        *ngFor="let step of steps; let i = index"
-        #stepRef
-      >
-        <img 
+      <div class="step" *ngFor="let step of steps; let i = index" #stepRef>
+        <img
           *ngIf="i !== currentStep"
-          [src]="i < currentStep ? 'assets/Sword.svg' : 'assets/gift.svg'" 
-          class="swords" 
+          [src]="i < currentStep ? 'assets/Sword.svg' : 'assets/gift.svg'"
+          class="swords"
         />
         <div class="circle" [class.active]="i <= currentStep">
-          {{i + 1}}
-          <img 
-            *ngIf="i === currentStep" 
-            src="assets/shield.svg" 
-            class="current-step-shield" 
+          {{ i + 1 }}
+          <img
+            *ngIf="i === currentStep"
+            src="assets/shield.svg"
+            class="current-step-shield"
           />
         </div>
-  
+
         <div
           *ngIf="i < steps.length - 1"
           class="connector"
           [class.active]="i < currentStep"
         ></div>
       </div>
-  
+
       <img
         src="assets/charcter-ninja.svg"
         class="marker"
         [style.left.%]="markerLeft"
         [style.display]="currentStep >= 0 ? 'block' : 'none'"
       />
-    </div>   
+    </div>
   </div>
   <!----------------------------------- Table Header with Search and Filter -------------------------->
   <div class="table-title">
@@ -42,16 +38,26 @@
     <div class="search-and-filter-container">
       <button class="filter-btn" (click)="toggleFilterButtons()">
         فلتر
-        <img src="assets/icon-filter.svg" alt="filter">
+        <img src="assets/icon-filter.svg" alt="filter" />
 
-        <span class="filter-count" *ngIf="getActiveFiltersCount() > 0">({{ getActiveFiltersCount() }})</span>
+        <span class="filter-count" *ngIf="getActiveFiltersCount() > 0"
+          >({{ getActiveFiltersCount() }})</span
+        >
       </button>
-      <button class="apply-filters-btn" (click)="executeFilters()" *ngIf="hasActiveFilters()">
+      <button
+        class="apply-filters-btn"
+        (click)="executeFilters()"
+        *ngIf="hasActiveFilters()"
+      >
         <span class="btn-icon"></span>
         تطبيق الفلاتر
         <span class="icon-check">✓</span>
       </button>
-      <button class="clear-filters-btn" (click)="clearAllFilters()" *ngIf="hasActiveFilters()">
+      <button
+        class="clear-filters-btn"
+        (click)="clearAllFilters()"
+        *ngIf="hasActiveFilters()"
+      >
         مسح جميع الفلاتر
         <mat-icon class="icon-delete">delete</mat-icon>
       </button>
@@ -61,87 +67,107 @@
   <!----------------------------------- Available Filter Buttons ------------------------------------->
   <div class="filter-system">
     <!-- Available Filter Buttons -->
-    <div class="available-filters" [class.show]="showFilterButtons" *ngIf="showFilterButtons">
+    <div
+      class="available-filters"
+      [class.show]="showFilterButtons"
+      *ngIf="showFilterButtons"
+    >
       <div class="filter-buttons-grid">
-        <button 
-          *ngFor="let filter of availableFilters; let i = index" 
+        <button
+          *ngFor="let filter of availableFilters; let i = index"
           class="filter-option-btn"
           (click)="addFilter(filter.id); moveNinjaToStep(i)"
           [disabled]="isFilterSelected(filter.id)"
-          [style.display]="filter.id === 'age' ? 'none' : 'flex'">
-          <mat-icon class="filter-icon">{{ getFilterIcon(filter.id) }}</mat-icon>
+          [style.display]="filter.id === 'age' ? 'none' : 'flex'"
+        >
+          <mat-icon class="filter-icon">{{
+            getFilterIcon(filter.id)
+          }}</mat-icon>
           {{ filter.name }}
         </button>
-        
+
         <!-- Age Slider Button -->
-        <button 
+        <button
           class="filter-option-btn job-btn"
           (click)="toggleAgeSlider()"
-          [class.active]="showAgeSlider">
+          [class.active]="showAgeSlider"
+        >
           <mat-icon class="filter-icon">cake</mat-icon>
           العمر
         </button>
-        
+
         <!-- Country and City Buttons -->
-        <button 
+        <button
           class="filter-option-btn job-btn"
           (click)="toggleCountryDropdown(); moveNinjaToStep(5)"
           [class.active]="showCountryDropdown"
           [class.disabled]="showCountryDropdown"
-          [disabled]="showCountryDropdown">
+          [disabled]="showCountryDropdown"
+        >
           <mat-icon class="filter-icon">public</mat-icon>
           الدولة
         </button>
-        
-        <button 
+
+        <button
           class="filter-option-btn job-btn"
           (click)="toggleCityDropdown(); moveNinjaToStep(6)"
           [class.active]="showCityDropdown"
           [class.disabled]="showCityDropdown"
-          [disabled]="showCityDropdown">
+          [disabled]="showCityDropdown"
+        >
           <mat-icon class="filter-icon">location_city</mat-icon>
           المدينة
         </button>
 
         <!-- Job Title and Job Level Buttons -->
-        <button 
+        <button
           class="filter-option-btn job-btn"
           (click)="toggleJobTitleDropdown(); moveNinjaToStep(7)"
           [class.active]="showJobTitleDropdown"
           [class.disabled]="showJobTitleDropdown"
-          [disabled]="showJobTitleDropdown">
+          [disabled]="showJobTitleDropdown"
+        >
           <mat-icon class="filter-icon">work</mat-icon>
           المسمى الوظيفي
         </button>
-        
-        <button 
+
+        <button
           class="filter-option-btn job-btn"
           (click)="toggleJobLevelDropdown(); moveNinjaToStep(8)"
           [class.active]="showJobLevelDropdown"
           [class.disabled]="showJobLevelDropdown"
-          [disabled]="showJobLevelDropdown">
+          [disabled]="showJobLevelDropdown"
+        >
           <mat-icon class="filter-icon">trending_up</mat-icon>
           مستوى الوظيفة
         </button>
-        
-        <button 
+
+        <button
           class="filter-option-btn job-btn"
           (click)="toggleIndustryDropdown(); moveNinjaToStep(9)"
           [class.active]="showIndustryDropdown"
           [class.disabled]="showIndustryDropdown"
-          [disabled]="showIndustryDropdown">
+          [disabled]="showIndustryDropdown"
+        >
           <mat-icon class="filter-icon">business</mat-icon>
           الصناعة
-        </button> 
-        
-
-
-
+        </button>
       </div>
-    </div>  
+    </div>
 
     <!-- Selected Filters Container -->
-    <div class="selected-filters-container" *ngIf="selectedFilters.length > 0 || showCountryDropdown || showCityDropdown || showJobTitleDropdown || showJobLevelDropdown || showIndustryDropdown || showAgeSlider">
+    <div
+      class="selected-filters-container"
+      *ngIf="
+        selectedFilters.length > 0 ||
+        showCountryDropdown ||
+        showCityDropdown ||
+        showJobTitleDropdown ||
+        showJobLevelDropdown ||
+        showIndustryDropdown ||
+        showAgeSlider
+      "
+    >
       <!-- Selected Filters -->
       <div class="selected-filters">
         <!-- Country Dropdown -->
@@ -154,31 +180,40 @@
                 {{ country.name }}
               </option>
             </select>
-            <mat-icon class="select-arrow">keyboard_arrow_down</mat-icon>
           </div>
-          <button 
+          <button
             class="remove-filter-btn"
             (click)="toggleCountryDropdown()"
-            title="إزالة فلتر الدولة">
+            title="إزالة فلتر الدولة"
+          >
             ✕
           </button>
         </div>
 
         <!-- City Dropdown -->
-        <div class="filter-dropdown-item add-anim" *ngIf="showCityDropdown && countryId">
+        <div
+          class="filter-dropdown-item add-anim"
+          *ngIf="showCityDropdown && countryId"
+        >
           <label class="filter-label">المدينة:</label>
-          <select class="filter-select city-dropdown" [disabled]="cities.length === 0">
+          <select
+            class="filter-select city-dropdown"
+            [disabled]="cities.length === 0"
+          >
             <option value="">
-              {{ cities.length === 0 ? 'لا يوجد مدن متاحه...' : 'اختر المدينة' }}
+              {{
+                cities.length === 0 ? "لا يوجد مدن متاحه..." : "اختر المدينة"
+              }}
             </option>
             <option *ngFor="let city of cities" [value]="city.id">
               {{ city.name }}
             </option>
           </select>
-          <button 
+          <button
             class="remove-filter-btn"
             (click)="toggleCityDropdown()"
-            title="إزالة فلتر المدينة">
+            title="إزالة فلتر المدينة"
+          >
             ✕
           </button>
         </div>
@@ -186,16 +221,23 @@
         <!-- Job Title Dropdown -->
         <div class="filter-dropdown-item add-anim" *ngIf="showJobTitleDropdown">
           <label class="filter-label">المسمى الوظيفي:</label>
-          <select (change)="onJobTitleChange($event)" class="filter-select job-title-dropdown">
+          <select
+            (change)="onJobTitleChange($event)"
+            class="filter-select job-title-dropdown"
+          >
             <option value="">اختر المسمى الوظيفي</option>
-            <option *ngFor="let jobTitle of jobTitles; let i = index" [value]="i">
+            <option
+              *ngFor="let jobTitle of jobTitles; let i = index"
+              [value]="i"
+            >
               {{ jobTitle }}
             </option>
           </select>
-          <button 
+          <button
             class="remove-filter-btn"
             (click)="toggleJobTitleDropdown()"
-            title="إزالة فلتر المسمى الوظيفي">
+            title="إزالة فلتر المسمى الوظيفي"
+          >
             ✕
           </button>
         </div>
@@ -203,64 +245,75 @@
         <!-- Job Level Dropdown -->
         <div class="filter-dropdown-item add-anim" *ngIf="showJobLevelDropdown">
           <label class="filter-label">مستوى الوظيفة:</label>
-          <select (change)="onJobLevelChange($event)" class="filter-select job-level-dropdown">
+          <select
+            (change)="onJobLevelChange($event)"
+            class="filter-select job-level-dropdown"
+          >
             <option value="">اختر مستوى الوظيفة</option>
             <option *ngFor="let jobLevel of jobLevels" [value]="jobLevel.id">
               {{ jobLevel.name }}
             </option>
           </select>
-          <button 
+          <button
             class="remove-filter-btn"
             (click)="toggleJobLevelDropdown()"
-            title="إزالة فلتر مستوى الوظيفة">
+            title="إزالة فلتر مستوى الوظيفة"
+          >
             ✕
           </button>
         </div>
         <!-- Industry Dropdown -->
         <div class="filter-dropdown-item add-anim" *ngIf="showIndustryDropdown">
-          <label class="filter-label">الصناعة :</label> 
-          <select (change)="onIndustryChange($event)" class="filter-select industry-dropdown">
+          <label class="filter-label">الصناعة :</label>
+          <select
+            (change)="onIndustryChange($event)"
+            class="filter-select industry-dropdown"
+          >
             <option value="">اختر الصناعة</option>
             <option *ngFor="let industry of industries" [value]="industry.id">
               {{ industry.name }}
             </option>
           </select>
-          <button 
+          <button
             class="remove-filter-btn"
             (click)="toggleIndustryDropdown()"
-            title="إزالة فلتر الصناعة">
+            title="إزالة فلتر الصناعة"
+          >
             ✕
           </button>
         </div>
         <!-- Age Slider -->
-        <div class="filter-dropdown-item add-anim " *ngIf="showAgeSlider">
+        <div class="filter-dropdown-item add-anim" *ngIf="showAgeSlider">
           <label class="filter-label">{{ getAgeDisplayText() }}</label>
-          
+
           <!-- Toggle between single age and range -->
-          <div class="age-mode-toggle" style="margin-bottom: 10px;">
-            <button 
-              class="age-mode-btn" 
+          <div class="age-mode-toggle" style="margin-bottom: 10px">
+            <button
+              class="age-mode-btn"
               [class.active]="!useAgeRange"
-              (click)="toggleAgeRangeMode()">
+              (click)="toggleAgeRangeMode()"
+            >
               عمر واحد
             </button>
-            <button 
-              class="age-mode-btn" 
+            <button
+              class="age-mode-btn"
               [class.active]="useAgeRange"
-              (click)="toggleAgeRangeMode()">
+              (click)="toggleAgeRangeMode()"
+            >
               نطاق عمري
             </button>
           </div>
 
           <!-- Single Age Slider -->
           <div class="age-slider-wrapper" *ngIf="!useAgeRange">
-            <input 
-              type="range" 
-              [min]="minAge" 
-              [max]="maxAge" 
+            <input
+              type="range"
+              [min]="minAge"
+              [max]="maxAge"
               [value]="ageSliderValue"
               (input)="onAgeSliderChange($event)"
-              class="age-slider">
+              class="age-slider"
+            />
             <div class="age-slider-labels">
               <span class="age-min">{{ minAge }}</span>
               <span class="age-max">{{ maxAge }}</span>
@@ -269,58 +322,63 @@
 
           <!-- Age Range Selector -->
           <div class="age-range-selector" *ngIf="useAgeRange">
-            <input 
-              type="number" 
-              [min]="minAge" 
-              [max]="maxAge" 
+            <input
+              type="number"
+              [min]="minAge"
+              [max]="maxAge"
               [value]="ageFrom"
               (input)="onAgeFromChange($event)"
               class="age-range-input"
-              placeholder="من">
+              placeholder="من"
+            />
             <span class="age-range-separator">-</span>
-            <input 
-              type="number" 
-              [min]="minAge" 
-              [max]="maxAge" 
+            <input
+              type="number"
+              [min]="minAge"
+              [max]="maxAge"
               [value]="ageTo"
               (input)="onAgeToChange($event)"
               class="age-range-input"
-              placeholder="إلى">
+              placeholder="إلى"
+            />
           </div>
 
-          <button 
+          <button
             class="remove-filter-btn"
             (click)="toggleAgeSlider()"
-            title="إزالة فلتر العمر">
+            title="إزالة فلتر العمر"
+          >
             ✕
           </button>
         </div>
 
-        
         <!-- Other Selected Filters -->
-        <div 
-          *ngFor="let filter of selectedFilters" 
-          class="filter-dropdown-item add-anim">
-          
+        <div
+          *ngFor="let filter of selectedFilters"
+          class="filter-dropdown-item add-anim"
+        >
           <label class="filter-label">{{ filter.name }}</label>
-          
+
           <!-- Select Dropdown -->
-          <select 
-            *ngIf="filter.type === 'select'" 
+          <select
+            *ngIf="filter.type === 'select'"
             [value]="filter.value"
             (change)="onSelectChange(filter.id, $event)"
-            class="filter-select">
-            <option value="">{{ 'اختر ' + filter.name }}</option>
-            <option 
-              *ngFor="let option of filter.options" 
-              [value]="filter.isDynamic ? option.value : option">
+            class="filter-select"
+          >
+            <option value="">{{ "اختر " + filter.name }}</option>
+            <option
+              *ngFor="let option of filter.options"
+              [value]="filter.isDynamic ? option.value : option"
+            >
               {{ filter.isDynamic ? option.label : option }}
             </option>
           </select>
-          <button 
+          <button
             class="remove-filter-btn"
             (click)="removeFilter(filter.id)"
-            title="إزالة الفلتر">
+            title="إزالة الفلتر"
+          >
             ✕
           </button>
         </div>
@@ -330,20 +388,29 @@
 
   <!-- Data Table -->
   <!-- <div class="table-wrapper"> -->
-    <div class="table-container" [class.no-filters-applied]="!filtersExecuted">
-      <img src="/assets/search-man.gif" alt="runner" class="runner" *ngIf="!filtersExecuted">
+  <div class="table-container" [class.no-filters-applied]="!filtersExecuted">
+    <img
+      src="/assets/search-man.gif"
+      alt="runner"
+      class="runner"
+      *ngIf="!filtersExecuted"
+    />
 
-      <!-- No Data Message -->
-      <div class="no-data-message" *ngIf="showDataTable && hasNoData">
-        <div class="no-data-content">
-          <mat-icon class="no-data-icon">search_off</mat-icon>
-          <h3>لايوجد بيانات متاحه لهذا البحث</h3>
-          <p>جرب تغيير معايير البحث للحصول على نتائج أفضل</p>
-        </div>
+    <!-- No Data Message -->
+    <div class="no-data-message" *ngIf="showDataTable && hasNoData">
+      <div class="no-data-content">
+        <mat-icon class="no-data-icon">search_off</mat-icon>
+        <h3>لايوجد بيانات متاحه لهذا البحث</h3>
+        <p>جرب تغيير معايير البحث للحصول على نتائج أفضل</p>
       </div>
+    </div>
 
-      <!-- Data Table -->
-      <table class="data-table" [class.no-filters-applied]="!filtersExecuted" *ngIf="showDataTable && !hasNoData">
+    <!-- Data Table -->
+    <table
+      class="data-table"
+      [class.no-filters-applied]="!filtersExecuted"
+      *ngIf="showDataTable && !hasNoData"
+    >
       <thead>
         <tr>
           <th>#</th>
@@ -352,40 +419,47 @@
           <th>اللغة المفضلة</th>
           <th>البريد الإلكتروني</th>
           <th>رقم الهاتف</th>
-          <th>مستوي العميل </th>
+          <th>مستوي العميل</th>
           <th>العمر</th>
           <th>المدينة</th>
           <th>الدولة</th>
           <th>الصناعه</th>
         </tr>
       </thead>
-       <tbody>
-         <tr *ngFor="let row of (isUsingApi ? (apiData$ | async) : (filteredData$ | async)); let i = index" [class.selected]="isRowSelected(row)">
+      <tbody>
+        <tr
+          *ngFor="
+            let row of isUsingApi
+              ? (apiData$ | async)
+              : (filteredData$ | async);
+            let i = index
+          "
+          [class.selected]="isRowSelected(row)"
+        >
           <td>{{ i + 1 }}</td>
-          <td>{{ row.name || '-' }}</td>
-          <td>{{ row.jobTitle || '-' }}</td>
-          <td>{{ row.prefaredLanguage || '-' }}</td>
-          <td>{{ row.email || '-' }}</td>
-          <td>{{ row.phone || '-' }}</td>
-          <td>{{ row.jobLevel || '-' }}</td>
-          <td>{{ row.age || '-' }}</td>
-          <td>{{ row.city || '-' }}</td>
-          <td>{{ row.country || '-' }}</td>  
-          <td>{{ row.industryName || '-'}}</td>
+          <td>{{ row.name || "-" }}</td>
+          <td>{{ row.jobTitle || "-" }}</td>
+          <td>{{ row.prefaredLanguage || "-" }}</td>
+          <td>{{ row.email || "-" }}</td>
+          <td>{{ row.phone || "-" }}</td>
+          <td>{{ row.jobLevel || "-" }}</td>
+          <td>{{ row.age || "-" }}</td>
+          <td>{{ row.city || "-" }}</td>
+          <td>{{ row.country || "-" }}</td>
+          <td>{{ row.industryName || "-" }}</td>
         </tr>
       </tbody>
     </table>
-    </div>
+  </div>
   <!-- Pagination -->
   <mat-paginator
-  *ngIf="showDataTable && !hasNoData"
-  [length]="(totalCount$ | async) ?? 0"
-  [pageIndex]="currentPage"
-  [pageSize]="pageSize"
-  [pageSizeOptions]="[10, 20, 50, 100, 500, 1000]"
-  (page)="onPageChange($event)"
-  class="custom-paginator"
->
-</mat-paginator>
-
+    *ngIf="showDataTable && !hasNoData"
+    [length]="(totalCount$ | async) ?? 0"
+    [pageIndex]="currentPage"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[10, 20, 50, 100, 500, 1000]"
+    (page)="onPageChange($event)"
+    class="custom-paginator"
+  >
+  </mat-paginator>
 </form>

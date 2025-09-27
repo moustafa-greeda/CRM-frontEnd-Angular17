@@ -12,56 +12,108 @@
   border-color: rgba(70, 227, 255, 0.6);
 }
 
-.chart-card canvasjs-chart {
-  display: block;
-  width: 100% !important;
-  height: auto;
-  cursor: pointer;
+/* CanvasJS Chart Styling */
+canvasjs-chart {
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
+  color-scheme: normal !important;
+  color-adjust: exact !important;
 }
 
-/* CanvasJS Chart Styling */
 canvasjs-chart .canvasjs-chart-title {
   font-family: "Cairo", sans-serif !important;
   font-size: 18px !important;
-  font-weight: 700 !important;
+  font-weight: bold !important;
   fill: #ffffff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* Fix color rendering for Chrome */
+canvasjs-chart svg {
+  color-rendering: optimizeSpeed !important;
+  shape-rendering: geometricPrecision !important;
   text-rendering: optimizeLegibility !important;
-  -webkit-font-smoothing: antialiased !important;
-  -moz-osx-font-smoothing: grayscale !important;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.1) !important;
-  font-feature-settings: "kern" 1 !important;
-  font-kerning: normal !important;
+}
+
+canvasjs-chart .canvasjs-chart-canvas {
+  image-rendering: -webkit-optimize-contrast !important;
+  image-rendering: crisp-edges !important;
 }
 
 canvasjs-chart .canvasjs-axis-label,
 canvasjs-chart .canvasjs-chart-label {
   font-family: "Cairo", sans-serif !important;
   fill: #cbd5e1 !important;
-  text-rendering: optimizeLegibility !important;
-  -webkit-font-smoothing: antialiased !important;
-  -moz-osx-font-smoothing: grayscale !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  filter: none !important;
 }
 
-/* Axis Title Styling */
 canvasjs-chart .canvasjs-axis-title {
   font-family: "Cairo", sans-serif !important;
   fill: #ffffff !important;
-  text-rendering: optimizeLegibility !important;
-  -webkit-font-smoothing: antialiased !important;
-  -moz-osx-font-smoothing: grayscale !important;
-  text-shadow: 0 0 1px rgba(255, 255, 255, 0.1) !important;
-  font-feature-settings: "kern" 1 !important;
-  font-kerning: normal !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  filter: none !important;
 }
 
-.chart-card .canvasjs-chart-container {
-  width: 100% !important;
-  height: auto !important;
+/* Chrome-specific fixes for color rendering */
+@supports (-webkit-appearance: none) {
+  canvasjs-chart {
+    -webkit-transform: translateZ(0) !important;
+    transform: translateZ(0) !important;
+    will-change: auto !important;
+    -webkit-font-smoothing: subpixel-antialiased !important;
+    -moz-osx-font-smoothing: auto !important;
+  }
+
+  canvasjs-chart svg {
+    -webkit-backface-visibility: hidden !important;
+    backface-visibility: hidden !important;
+    -webkit-transform: translateZ(0) !important;
+    transform: translateZ(0) !important;
+  }
+
+  canvasjs-chart .canvasjs-chart-title,
+  canvasjs-chart .canvasjs-axis-label,
+  canvasjs-chart .canvasjs-chart-label,
+  canvasjs-chart .canvasjs-axis-title {
+    -webkit-font-smoothing: subpixel-antialiased !important;
+    -moz-osx-font-smoothing: auto !important;
+    text-rendering: geometricPrecision !important;
+  }
 }
 
-.chart-card canvas {
-  width: 100% !important;
-  height: auto !important;
+/* Force hardware acceleration for better color rendering */
+canvasjs-chart {
+  transform: translateZ(0) !important;
+  -webkit-transform: translateZ(0) !important;
+}
+
+/* Additional Chrome fixes for text clarity */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  canvasjs-chart {
+    -webkit-text-stroke: 0.01em transparent !important;
+    text-stroke: 0.01em transparent !important;
+  }
+
+  canvasjs-chart .canvasjs-chart-title,
+  canvasjs-chart .canvasjs-axis-label,
+  canvasjs-chart .canvasjs-chart-label,
+  canvasjs-chart .canvasjs-axis-title {
+    -webkit-text-stroke: 0.01em transparent !important;
+    text-stroke: 0.01em transparent !important;
+    font-weight: 600 !important;
+  }
+}
+
+/* Chrome color space fixes */
+canvasjs-chart svg {
+  color-interpolation: sRGB !important;
+  color-interpolation-filters: sRGB !important;
 }
 
 /* Top Charts Grid */
@@ -104,7 +156,36 @@ canvasjs-chart .canvasjs-axis-title {
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  overflow: hidden;
+  position: relative;
+  /* z-index: 1; */
 }
+/* 
+.chart-card::after {
+  content: "";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  transform: rotate(90deg);
+
+  z-index: -1;
+  background-image: conic-gradient(
+    transparent,
+    transparent,
+    transparent,
+    #00ccff
+  );
+  animation: animate 5s linear infinite;
+}
+
+@keyframes animate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+} */
 
 /****************************** Industry Legend ****************************/
 .industry-legend {

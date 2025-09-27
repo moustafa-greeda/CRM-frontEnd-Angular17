@@ -106,7 +106,11 @@ export class FirstChartsComponent implements AfterViewInit {
       text: 'Which locations have the highest number of clients?',
       fontColor: '#FFF',
       fontSize: 18,
-      padding: '20',
+      padding: '5',
+      // textShadow: 'none !important',
+      // opacity: 1,
+      // filter: 'none',
+      // letterSpacing: '2px',
     },
     axisX: {
       title: 'عدد العملاء',
@@ -135,45 +139,6 @@ export class FirstChartsComponent implements AfterViewInit {
     ],
   };
 
-  // columnChartOptions = {
-  //   animationEnabled: true,
-  //   backgroundColor: 'transparent',
-  //   title: {
-  //     text: 'Which Job title have the largest number of clients?',
-  //     fontColor: '#FFF',
-  //     fontSize: 18,
-  //   },
-  //   axisY: {
-  //     title: 'عدد العملاء',
-  //     titleFontColor: '#FFF',
-  //     labelFontColor: '#FFF',
-  //     gridThickness: 0,
-  //   },
-  //   axisX: { labelFontColor: '#FFF', gridThickness: 0, interval: 1 },
-  //   data: [
-  //     {
-  //       type: 'column',
-  //       color: '#FF5F00',
-  //       dataPointWidth: 5,
-  //       dataPoints: [
-  //         { label: 'تجارة', y: 50, color: '#FF5F00' },
-  //         { label: 'صناعة', y: 30, color: 'rgba(156, 240, 255, 1)' },
-  //         { label: 'صناعة', y: 30, color: 'rgba(156, 240, 255, 1)' },
-  //         { label: 'خدمات', y: 40, color: 'rgba(70, 227, 255, 1)' },
-  //         { label: 'زراعة', y: 20, color: 'rgba(255, 156, 97, 1)' },
-  //         { label: 'زراعة', y: 20, color: 'rgba(255, 156, 97, 1)' },
-  //         { label: 'زراعة', y: 20, color: 'rgba(255, 156, 97, 1)' },
-  //         { label: 'زراعة', y: 20, color: 'rgba(255, 156, 97, 1)' },
-  //         { label: 'نقل', y: 28 },
-  //         { label: 'نقل', y: 28 },
-  //         { label: 'صيانة', y: 18 },
-  //         { label: 'مطاعم', y: 35 },
-  //         { label: 'تعليم', y: 22 },
-  //       ],
-  //     },
-  //   ],
-  // };
-
   columnChartOptions = {
     animationEnabled: true,
     backgroundColor: 'transparent',
@@ -187,7 +152,7 @@ export class FirstChartsComponent implements AfterViewInit {
       titleFontColor: '#FFF',
       labelFontColor: '#FFF',
       gridThickness: 0,
-      interval: 5, // optional for spacing
+      interval: 5,
     },
     axisY: {
       labelFontColor: '#FFF',
@@ -195,7 +160,7 @@ export class FirstChartsComponent implements AfterViewInit {
     },
     data: [
       {
-        type: 'bar', // ✅ change from "column" to "bar"
+        type: 'bar', // change from "column" to "bar"
         color: '#FF5F00',
         dataPointWidth: 20,
         dataPoints: [
@@ -219,6 +184,7 @@ export class FirstChartsComponent implements AfterViewInit {
     data: [
       {
         type: 'pie',
+        indexLabelFontColor: '#FFF',
         indexLabel: '{label}: {y}%',
         toolTipContent: '{label}: {y}%',
         dataPoints: [
@@ -232,36 +198,36 @@ export class FirstChartsComponent implements AfterViewInit {
     ],
   };
 
-  extraChartOptions2 = {
-    animationEnabled: true,
-    backgroundColor: 'transparent',
-    title: {
-      text: 'Count of Clients by Year, Quarter, Month and Day',
-      fontColor: '#FFF',
-      fontSize: 18,
-    },
-    axisY: {
-      title: 'الأرباح',
-      titleFontColor: '#FFF',
-      labelFontColor: '#FFF',
-      gridThickness: 0,
-    },
-    axisX: { labelFontColor: '#FFF', gridThickness: 0 },
-    data: [
-      {
-        type: 'splineArea',
-        color: '#058197',
-        markerSize: 6,
-        dataPoints: [
-          { x: new Date(2025, 0, 1), y: 100 },
-          { x: new Date(2025, 1, 1), y: 300 },
-          { x: new Date(2025, 2, 1), y: 200 },
-          { x: new Date(2025, 3, 1), y: 500 },
-          { x: new Date(2025, 4, 1), y: 700 },
-        ],
-      },
-    ],
-  };
+  // extraChartOptions2 = {
+  //   animationEnabled: true,
+  //   backgroundColor: 'transparent',
+  //   title: {
+  //     text: 'Count of Clients by Year, Quarter, Month and Day',
+  //     fontColor: '#FFF',
+  //     fontSize: 18,
+  //   },
+  //   axisY: {
+  //     title: 'الأرباح',
+  //     titleFontColor: '#FFF',
+  //     labelFontColor: '#FFF',
+  //     gridThickness: 0,
+  //   },
+  //   axisX: { labelFontColor: '#FFF', gridThickness: 0 },
+  //   data: [
+  //     {
+  //       type: 'splineArea',
+  //       color: '#058197',
+  //       markerSize: 6,
+  //       dataPoints: [
+  //         { x: new Date(2025, 0, 1), y: 100 },
+  //         { x: new Date(2025, 1, 1), y: 300 },
+  //         { x: new Date(2025, 2, 1), y: 200 },
+  //         { x: new Date(2025, 3, 1), y: 500 },
+  //         { x: new Date(2025, 4, 1), y: 700 },
+  //       ],
+  //     },
+  //   ],
+  // };
 
   // ===== Charts configs =====
   lineChartOptions = {
@@ -271,7 +237,7 @@ export class FirstChartsComponent implements AfterViewInit {
       text: 'Count of Clients by Year, Quarter, Month and Day',
       fontColor: '#FFF',
       fontSize: 18,
-      horizontalAlign: 'right',
+      horizontalAlign: 'center',
       padding: '20',
     },
     axisY: {

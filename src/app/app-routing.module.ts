@@ -40,8 +40,8 @@ const routes: Routes = [
         path: 'admin',
         component: DashboardAdminComponent,
         children: [
-          { path: '', redirectTo: 'countries', pathMatch: 'full' },
-          // { path: 'home', component: HomeAdminComponent },
+          { path: '', redirectTo: 'home', pathMatch: 'full' },
+          { path: 'home', component: HomeAdminComponent },
           // { path: 'leads', component: LeadsComponent },
           // { path: 'distribution', component: DistributionComponent },
           {path: 'countries' , component: CountriesComponent},

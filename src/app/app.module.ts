@@ -169,8 +169,6 @@ import { SidebarComponent } from './layout/sidebar/sidebar.component';
 import { DashboardAdminComponent } from './dashboard/dashboard-admin/dashboard-admin.component';
 import { DashboardCustomerComponent } from './dashboard/dashboard-customer/dashboard-customer.component';
 import { DashboardEmployeeComponent } from './dashboard/dashboard-employee/dashboard-employee.component';
-import { MorningShiftComponent } from './components/home-admin/morning-shift/morning-shift.component';
-import { NightShiftComponent } from './components/home-admin/night-shift/night-shift.component';
 import { FirstChartsComponent } from './components/home-admin/first-charts/first-charts.component';
 import { CanvasJSAngularChartsModule } from '@canvasjs/angular-charts';
 import { HomeAdminComponent } from './components/home-admin/home-admin.component';
@@ -189,6 +187,7 @@ import { StepsModule } from './components/wizard/steps/steps.module';
 import { FilterLeadsModule } from './components/filter-leads/filter-leads.module';
 import { AuthTokenInterceptor } from './core/auth-token.interceptor';
 import { DashboardnewComponent } from './components/dashboardnew/dashboardnew.component';
+import { CountCardsComponent } from './components/home-admin/count-cards/count-cards.component';
 
 @NgModule({
   declarations: [
@@ -205,8 +204,6 @@ import { DashboardnewComponent } from './components/dashboardnew/dashboardnew.co
     DashboardAdminComponent,
     DashboardCustomerComponent,
     DashboardEmployeeComponent,
-    MorningShiftComponent,
-    NightShiftComponent,
     FirstChartsComponent,
     HomeAdminComponent,
     NotifyDialogHostComponent,
@@ -220,6 +217,7 @@ import { DashboardnewComponent } from './components/dashboardnew/dashboardnew.co
     CountriesComponent,
     WizardComponent,
     DashboardnewComponent,
+    CountCardsComponent,
   ],
   imports: [
     BrowserModule,

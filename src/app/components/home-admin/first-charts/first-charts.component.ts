@@ -76,7 +76,7 @@ export class FirstChartsComponent implements AfterViewInit {
 
   doughnutOptions = {
     animationEnabled: true,
-    backgroundColor: 'transparent',
+    backgroundColor: '#11181F',
     title: {
       text: 'Distribution Of Industries',
       fontColor: '#FFF',
@@ -101,16 +101,12 @@ export class FirstChartsComponent implements AfterViewInit {
 
   lineOptions = {
     animationEnabled: true,
-    backgroundColor: 'transparent',
+    backgroundColor: '#11181F',
     title: {
       text: 'Which locations have the highest number of clients?',
       fontColor: '#FFF',
       fontSize: 18,
       padding: '5',
-      // textShadow: 'none !important',
-      // opacity: 1,
-      // filter: 'none',
-      // letterSpacing: '2px',
     },
     axisX: {
       title: 'عدد العملاء',
@@ -141,7 +137,7 @@ export class FirstChartsComponent implements AfterViewInit {
 
   columnChartOptions = {
     animationEnabled: true,
-    backgroundColor: 'transparent',
+    backgroundColor: '#11181F',
     title: {
       text: 'Which Job title have the largest number of clients?',
       fontColor: '#FFF',
@@ -179,7 +175,7 @@ export class FirstChartsComponent implements AfterViewInit {
 
   extraChartOptions1 = {
     animationEnabled: true,
-    backgroundColor: 'transparent',
+    backgroundColor: '#11181F',
     title: { text: 'Distribution Of Clients', fontColor: '#FFF', fontSize: 18 },
     data: [
       {
@@ -197,42 +193,10 @@ export class FirstChartsComponent implements AfterViewInit {
       },
     ],
   };
-
-  // extraChartOptions2 = {
-  //   animationEnabled: true,
-  //   backgroundColor: 'transparent',
-  //   title: {
-  //     text: 'Count of Clients by Year, Quarter, Month and Day',
-  //     fontColor: '#FFF',
-  //     fontSize: 18,
-  //   },
-  //   axisY: {
-  //     title: 'الأرباح',
-  //     titleFontColor: '#FFF',
-  //     labelFontColor: '#FFF',
-  //     gridThickness: 0,
-  //   },
-  //   axisX: { labelFontColor: '#FFF', gridThickness: 0 },
-  //   data: [
-  //     {
-  //       type: 'splineArea',
-  //       color: '#058197',
-  //       markerSize: 6,
-  //       dataPoints: [
-  //         { x: new Date(2025, 0, 1), y: 100 },
-  //         { x: new Date(2025, 1, 1), y: 300 },
-  //         { x: new Date(2025, 2, 1), y: 200 },
-  //         { x: new Date(2025, 3, 1), y: 500 },
-  //         { x: new Date(2025, 4, 1), y: 700 },
-  //       ],
-  //     },
-  //   ],
-  // };
-
   // ===== Charts configs =====
   lineChartOptions = {
     animationEnabled: true,
-    backgroundColor: 'transparent',
+    backgroundColor: '#11181F',
     title: {
       text: 'Count of Clients by Year, Quarter, Month and Day',
       fontColor: '#FFF',
@@ -264,9 +228,6 @@ export class FirstChartsComponent implements AfterViewInit {
   };
 
   ngAfterViewInit() {
-    // Charts are handled by canvasjs-chart components in template
-    // No need to manually create charts here
-
     // Initialize map only in browser
     if (isPlatformBrowser(this.platformId)) {
       setTimeout(() => {

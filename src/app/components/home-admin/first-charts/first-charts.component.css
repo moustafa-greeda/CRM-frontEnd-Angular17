@@ -143,7 +143,7 @@ canvasjs-chart svg {
 }
 
 /* Chart Cards */
-.chart-card {
+/* .chart-card {
   padding: 20px;
   min-height: 300px;
   border-radius: 12px;
@@ -158,35 +158,57 @@ canvasjs-chart svg {
   -moz-osx-font-smoothing: grayscale;
   overflow: hidden;
   position: relative;
-  /* z-index: 1; */
+} */
+.chart-card {
+  padding: 3px;
+  min-height: 300px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  background: rgba(17, 24, 31, 0.8);
+  overflow: hidden;
+  position: relative;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
-/* .chart-card::after {
-  content: "";
-  position: absolute;
-  inset: 5px;
-  background-color: #29303f;
-  border-radius: 20px;
-}
-
+/* Neon border */
 .chart-card::before {
   content: "";
   position: absolute;
-  background: linear-gradient(#005eff, #b400fb);
-  width: 100%;
-  height: 100%;
-  left: 75px;
-  animation: animate 7s linear infinite;
+  top: -0px; /* move outside */
+  left: -0px;
+  right: 0px;
+  bottom: 0px;
+  border-radius: inherit;
+  background: conic-gradient(
+    from 0deg at center,
+    #46e3ff,
+    #e25400,
+    #e25400,
+    #46e3ff
+  );
+  animation: rotateBorder 3s linear infinite;
+  z-index: 1;
+  box-shadow: 0 0 15px #46e3ff, 0 0 25px #e25400; /* glow */
 }
 
-@keyframes animate {
-  0% {
+/* Ensure content sits above */
+.chart-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes rotateBorder {
+  from {
     transform: rotate(0deg);
   }
-  100% {
+  to {
     transform: rotate(360deg);
   }
-} */
+}
 
 /****************************** Industry Legend ****************************/
 .industry-legend {

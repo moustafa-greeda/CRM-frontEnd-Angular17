@@ -1,0 +1,13 @@
+<div class="dashboard-header">
+  <h5>{{ title }}</h5>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card" *ngFor="let stat of stats">
+    <div class="stat-card-content">
+      <h3>{{ stat.title }}</h3>
+      <p>{{ stat.count }}</p>
+    </div>
+    <i class="bi {{ stat.icon }}"></i>
+  </div>
+</div>

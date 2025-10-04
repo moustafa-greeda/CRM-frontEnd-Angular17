@@ -142,30 +142,14 @@ canvasjs-chart svg {
   gap: 20px;
 }
 
-/* Chart Cards */
-/* .chart-card {
-  padding: 20px;
-  min-height: 300px;
-  border-radius: 12px;
-  transition: all 0.3s ease;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  border: 1px solid #46e3ff;
-  background: rgba(17, 24, 31, 0.8);
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  overflow: hidden;
-  position: relative;
-} */
 .chart-card {
   padding: 3px;
-  min-height: 300px;
+  min-height: 400px;
   border-radius: 12px;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  /* background: transparent !important; */
   background: rgba(17, 24, 31, 0.8);
   overflow: hidden;
   position: relative;
@@ -174,11 +158,11 @@ canvasjs-chart svg {
   -moz-osx-font-smoothing: grayscale;
 }
 
-/* Neon border */
-.chart-card::before {
+/*============================================== Neon border =========================*/
+/* .chart-card::before {
   content: "";
   position: absolute;
-  top: -0px; /* move outside */
+  top: -0px; 
   left: -0px;
   right: 0px;
   bottom: 0px;
@@ -190,12 +174,11 @@ canvasjs-chart svg {
     #e25400,
     #46e3ff
   );
-  animation: rotateBorder 3s linear infinite;
+  animation: rotateBorder 6s linear infinite;
   z-index: 1;
-  box-shadow: 0 0 15px #46e3ff, 0 0 25px #e25400; /* glow */
+  box-shadow: 0 0 15px #46e3ff, 0 0 25px #e25400;
 }
 
-/* Ensure content sits above */
 .chart-card > * {
   position: relative;
   z-index: 2;
@@ -208,7 +191,7 @@ canvasjs-chart svg {
   to {
     transform: rotate(360deg);
   }
-}
+} */
 
 /****************************** Industry Legend ****************************/
 .industry-legend {
@@ -481,7 +464,7 @@ canvasjs-chart svg {
   font-size: 18px;
   font-weight: 700;
   text-align: center;
-  margin: 0 0 15px 0;
+  /* margin: 0 0 15px 0; */
   text-shadow: 0 0 1px rgba(255, 255, 255, 0.1);
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;

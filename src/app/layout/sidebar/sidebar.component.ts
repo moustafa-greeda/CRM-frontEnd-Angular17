@@ -147,8 +147,8 @@ export class SidebarComponent {
   employeeOpen = false;
 
   constructor() {
-    // this.roles = JSON.parse(localStorage.getItem('roles') || '[]');
-    this.roles = JSON.parse(localStorage.getItem('roles') || '[]');
+    // this.roles = JSON.parse(sessionStorage.getItem('roles') || '[]');
+    this.roles = JSON.parse(sessionStorage.getItem('roles') || '[]');
   }
 
   // Check if the user is an Admin

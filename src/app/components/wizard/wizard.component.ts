@@ -11,21 +11,24 @@ import { ErrorHandlerService } from '../../core/services/error-handler.service';
     trigger('slideAnimation', [
       transition('* => *', [
         style({ transform: 'translateX(100%)', opacity: 0 }),
-        animate('300ms ease-in-out', style({ transform: 'translateX(0)', opacity: 1 }))
-      ])
+        animate(
+          '300ms ease-in-out',
+          style({ transform: 'translateX(0)', opacity: 1 })
+        ),
+      ]),
     ]),
     trigger('levelCompleteAnimation', [
       transition(':enter', [
         style({ transform: 'scale(0)', opacity: 0 }),
-        animate('500ms ease-out', style({ transform: 'scale(1)', opacity: 1 }))
-      ])
-    ])
-  ]
+        animate('500ms ease-out', style({ transform: 'scale(1)', opacity: 1 })),
+      ]),
+    ]),
+  ],
 })
 export class WizardComponent implements OnInit {
   currentStep = 0;
   totalSteps = 11;
-  
+
   // Form groups for each step
   step1Form!: FormGroup;
   step1Form2!: FormGroup; // Second personal form
@@ -42,7 +45,7 @@ export class WizardComponent implements OnInit {
   // Step titles in Arabic
   stepTitles = [
     'بيانات الأشخاص 1',
-    'بيانات الأشخاص 2', 
+    'بيانات الأشخاص 2',
     'بيانات الشركة',
     'بيانات تقنية',
     'السلوك',
@@ -51,27 +54,51 @@ export class WizardComponent implements OnInit {
     'البعد النفسي',
     'بيانات المعاملات',
     'الحملات',
-    'العلاقات'
+    'العلاقات',
   ];
 
   // Track completed steps
   completedSteps: boolean[] = new Array(this.totalSteps).fill(false);
-  
+
   // Pac-Man animation properties
   pacmanPosition = 0;
   pacmanSound = new Audio('assets/sound/duck.mp3');
   isPacmanMoving = false;
   currentFocusedField = '';
   completedFields: string[] = [];
-  
+
   // Field tracking properties
   fieldStates: { [key: string]: 'pending' | 'in-progress' | 'completed' } = {};
-  
+
   // Form field configurations
   formFields = {
-    0: ['jobTitle', 'customerLevel', 'personalityType', 'email', 'department', 'language'], // بيانات الأشخاص - Form 1
-    1: ['mobileNumber', 'customerType', 'city', 'name', 'birthDate', 'age', 'country'], // بيانات الأشخاص - Form 2
-    2: ['companyName', 'industry', 'companyStage', 'companySize', 'location', 'digitalTransformation', 'ownership', 'branches'], // بيانات الشركة
+    0: [
+      'jobTitle',
+      'customerLevel',
+      'personalityType',
+      'email',
+      'department',
+      'language',
+    ], // بيانات الأشخاص - Form 1
+    1: [
+      'mobileNumber',
+      'customerType',
+      'city',
+      'name',
+      'birthDate',
+      'age',
+      'country',
+    ], // بيانات الأشخاص - Form 2
+    2: [
+      'companyName',
+      'industry',
+      'companyStage',
+      'companySize',
+      'location',
+      'digitalTransformation',
+      'ownership',
+      'branches',
+    ], // بيانات الشركة
     3: ['cloudProvider', 'companyName', 'techSpending', 'saasTools'], // بيانات تقنية
     4: ['consumptionPattern', 'interests', 'dailyActivities'], // السلوك
     5: ['monthlyIncome', 'averageSpending', 'preferredProducts'], // القدرة الشرائية
@@ -79,7 +106,7 @@ export class WizardComponent implements OnInit {
     7: ['personality', 'motivation', 'decisionPattern'], // البعد النفسي
     8: ['paymentMethods', 'monthlyTransactions', 'averageTransactionValue'], // بيانات المعاملات
     9: ['previousCampaigns', 'campaignResults', 'budget'], // الحملات
-    10: ['partners', 'customers', 'professionalRelations'] // العلاقات
+    10: ['partners', 'customers', 'professionalRelations'], // العلاقات
   };
 
   constructor(
@@ -110,7 +137,7 @@ export class WizardComponent implements OnInit {
     // Initialize field states for all forms
     for (let step = 0; step < this.totalSteps; step++) {
       const fields = this.formFields[step as keyof typeof this.formFields];
-      fields.forEach(field => {
+      fields.forEach((field) => {
         this.fieldStates[`${step}_${field}`] = 'pending';
       });
     }
@@ -124,7 +151,7 @@ export class WizardComponent implements OnInit {
       personalityType: [''],
       email: ['', Validators.email],
       department: [''],
-      language: ['']
+      language: [''],
     });
 
     // Step 1.5: بيانات الأشخاص - Form 2
@@ -135,7 +162,7 @@ export class WizardComponent implements OnInit {
       name: [''],
       birthDate: [''],
       age: ['', [Validators.min(1), Validators.max(120)]],
-      country: ['']
+      country: [''],
     });
 
     // Step 2: بيانات الشركة
@@ -147,7 +174,7 @@ export class WizardComponent implements OnInit {
       location: [''],
       digitalTransformation: [''],
       ownership: [''],
-      branches: ['']
+      branches: [''],
     });
 
     // Step 3: بيانات تقنية
@@ -155,7 +182,7 @@ export class WizardComponent implements OnInit {
       cloudProvider: [''],
       companyName: ['', Validators.minLength(2)],
       techSpending: [''],
-      saasTools: ['']
+      saasTools: [''],
     });
 
     // Step 4: السلوك
@@ -167,28 +194,28 @@ export class WizardComponent implements OnInit {
       music: [false],
       reading: [false],
       gaming: [false],
-      dailyActivities: ['', Validators.minLength(20)]
+      dailyActivities: ['', Validators.minLength(20)],
     });
 
     // Step 5: القدرة الشرائية
     this.step6Form = this.fb.group({
       monthlyIncome: [''],
       averageSpending: [''],
-      preferredProducts: ['', Validators.minLength(10)]
+      preferredProducts: ['', Validators.minLength(10)],
     });
 
     // Step 6: نوايا الشراء
     this.step7Form = this.fb.group({
       purchaseIntention: [''],
       timeFrame: [''],
-      priority: ['']
+      priority: [''],
     });
 
     // Step 7: البعد النفسي
     this.step8Form = this.fb.group({
       personality: [''],
       motivation: [''],
-      decisionPattern: ['']
+      decisionPattern: [''],
     });
 
     // Step 8: بيانات المعاملات
@@ -199,27 +226,26 @@ export class WizardComponent implements OnInit {
       bank_transfer: [false],
       digital_wallet: [false],
       monthlyTransactions: [''],
-      averageTransactionValue: ['']
+      averageTransactionValue: [''],
     });
 
     // Step 9: الحملات
     this.step10Form = this.fb.group({
       previousCampaigns: [''],
       campaignResults: [''],
-      budget: ['']
+      budget: [''],
     });
 
     // Step 10: العلاقات
     this.step11Form = this.fb.group({
       partners: [''],
       customers: [''],
-      professionalRelations: ['']
+      professionalRelations: [''],
     });
 
     // Initialize field states for all forms
     this.initializeFieldStates();
   }
-
 
   nextStep(): void {
     if (this.getCurrentForm().valid) {
@@ -240,7 +266,6 @@ export class WizardComponent implements OnInit {
   submitForm(): void {
     if (this.getCurrentForm().valid) {
       const allData = this.collectAllData();
-      console.log('جميع البيانات:', allData);
       alert('تم إرسال البيانات بنجاح! تحقق من وحدة التحكم لرؤية البيانات.');
     } else {
       this.markFormGroupTouched(this.getCurrentForm());
@@ -259,14 +284,13 @@ export class WizardComponent implements OnInit {
       step8: this.step8Form.value,
       step9: this.step9Form.value,
       step10: this.step10Form.value,
-      step11: this.step11Form.value
+      step11: this.step11Form.value,
     };
   }
 
   markFormGroupTouched(formGroup: FormGroup): void {
     this.errorHandler.markFormGroupTouched(formGroup);
   }
-
 
   isCurrentStep(stepIndex: number): boolean {
     return stepIndex === this.currentStep;
@@ -295,24 +319,39 @@ export class WizardComponent implements OnInit {
 
   private getFormByStep(stepIndex: number): FormGroup | null {
     switch (stepIndex) {
-      case 0: return this.step1Form;
-      case 1: return this.step1Form2;
-      case 2: return this.step3Form;
-      case 3: return this.step4Form;
-      case 4: return this.step5Form;
-      case 5: return this.step6Form;
-      case 6: return this.step7Form;
-      case 7: return this.step8Form;
-      case 8: return this.step9Form;
-      case 9: return this.step10Form;
-      case 10: return this.step11Form;
-      default: return null;
+      case 0:
+        return this.step1Form;
+      case 1:
+        return this.step1Form2;
+      case 2:
+        return this.step3Form;
+      case 3:
+        return this.step4Form;
+      case 4:
+        return this.step5Form;
+      case 5:
+        return this.step6Form;
+      case 6:
+        return this.step7Form;
+      case 7:
+        return this.step8Form;
+      case 8:
+        return this.step9Form;
+      case 9:
+        return this.step10Form;
+      case 10:
+        return this.step11Form;
+      default:
+        return null;
     }
   }
 
   // Global Error Message Handler for Wizard
   getErrorMessage(controlName: string): string {
-    return this.errorHandler.getErrorMessage(controlName, this.getCurrentForm());
+    return this.errorHandler.getErrorMessage(
+      controlName,
+      this.getCurrentForm()
+    );
   }
 
   // Centralized Error Message Handler
@@ -354,12 +393,18 @@ export class WizardComponent implements OnInit {
   }
 
   // Validate current form and return validation status
-  validateCurrentForm(): { isValid: boolean; errors: { [key: string]: string } } {
+  validateCurrentForm(): {
+    isValid: boolean;
+    errors: { [key: string]: string };
+  } {
     return this.errorHandler.validateCurrentForm(this.getCurrentForm());
   }
 
   // Validate specific form by step index
-  validateFormByStep(stepIndex: number): { isValid: boolean; errors: { [key: string]: string } } {
+  validateFormByStep(stepIndex: number): {
+    isValid: boolean;
+    errors: { [key: string]: string };
+  } {
     const form = this.getFormByStep(stepIndex);
     if (!form) {
       return { isValid: false, errors: {} };
@@ -368,13 +413,23 @@ export class WizardComponent implements OnInit {
   }
 
   // Get validation summary for all forms
-  getValidationSummary(): { [stepIndex: number]: { isValid: boolean; errors: { [key: string]: string } } } {
-    const summary: { [stepIndex: number]: { isValid: boolean; errors: { [key: string]: string } } } = {};
-    
+  getValidationSummary(): {
+    [stepIndex: number]: {
+      isValid: boolean;
+      errors: { [key: string]: string };
+    };
+  } {
+    const summary: {
+      [stepIndex: number]: {
+        isValid: boolean;
+        errors: { [key: string]: string };
+      };
+    } = {};
+
     for (let i = 0; i < this.totalSteps; i++) {
       summary[i] = this.validateFormByStep(i);
     }
-    
+
     return summary;
   }
 
@@ -407,15 +462,16 @@ export class WizardComponent implements OnInit {
   // Pac-Man animation methods
   checkFormProgress(): void {
     const form = this.getCurrentForm();
-    const fields = this.formFields[this.currentStep as keyof typeof this.formFields];
+    const fields =
+      this.formFields[this.currentStep as keyof typeof this.formFields];
     let hasNewSequentialCompletion = false;
-    
+
     // Check fields in order from left to right
     for (let i = 0; i < fields.length; i++) {
       const field = fields[i];
       const fieldKey = `${this.currentStep}_${field}`;
       const control = form.get(field);
-      
+
       if (control?.value && control.valid) {
         if (this.fieldStates[fieldKey] !== 'completed') {
           this.fieldStates[fieldKey] = 'completed';
@@ -436,23 +492,22 @@ export class WizardComponent implements OnInit {
         }
       }
     }
-    
+
     // Trigger Pac-Man movement only if a sequential field was completed
     if (hasNewSequentialCompletion) {
       this.triggerPacmanMove('sequential_field');
     }
   }
 
-
   getFieldState(fieldKey: string): 'pending' | 'in-progress' | 'completed' {
     return this.fieldStates[fieldKey] || 'pending';
   }
 
-
   getCurrentFields(): string[] {
-    return this.formFields[this.currentStep as keyof typeof this.formFields] || [];
+    return (
+      this.formFields[this.currentStep as keyof typeof this.formFields] || []
+    );
   }
-
 
   // Handle field focus - Pac-Man moves to the focused field
   onFieldFocus(fieldKey: string) {
@@ -464,18 +519,17 @@ export class WizardComponent implements OnInit {
   onFieldInput(fieldKey: string) {
     const form = this.getCurrentForm();
     const control = form.get(fieldKey);
-    
+
     if (control?.value && control.valid) {
       const fullFieldKey = `${this.currentStep}_${fieldKey}`;
       const currentFormFields = this.getCurrentFields();
       const fieldIndex = currentFormFields.indexOf(fieldKey);
-      
+
       // Allow completion of any field without order restriction
       if (!this.completedFields.includes(fullFieldKey)) {
         this.completedFields.push(fullFieldKey);
         this.fieldStates[fullFieldKey] = 'completed';
         this.triggerPacmanMove(fieldKey);
-        console.log(`Pac-Man ate duck at position ${fieldIndex + 1}: ${fieldKey}`);
       }
     }
   }
@@ -488,7 +542,7 @@ export class WizardComponent implements OnInit {
   // Trigger Pac-Man movement animation
   triggerPacmanMove(fieldKey: string) {
     this.isPacmanMoving = true;
-    
+
     // Play Pac-Man sound
     this.pacmanSound.play().catch(() => {
       // Ignore audio play errors
@@ -496,7 +550,6 @@ export class WizardComponent implements OnInit {
 
     // Calculate new position based on current progress
     const newPosition = this.getPacmanPosition();
-    console.log(`Pac-Man moving to position: ${newPosition}%`);
 
     // Stop animation after 1 second
     setTimeout(() => {
@@ -507,20 +560,22 @@ export class WizardComponent implements OnInit {
   // Get Pac-Man position based on any field completion (left to right)
   getPacmanPosition(): number {
     const currentFields = this.getCurrentFields();
-    const completedCount = currentFields.filter(field => 
+    const completedCount = currentFields.filter((field) =>
       this.isFieldCompleted(this.currentStep + '_' + field)
     ).length;
-    
+
     // Calculate position from left to right
-    const position = completedCount === 0 ? 5 : Math.min((completedCount / currentFields.length) * 90, 90);
-    console.log(`Pac-Man position: ${position}% (${completedCount}/${currentFields.length} completed)`);
+    const position =
+      completedCount === 0
+        ? 5
+        : Math.min((completedCount / currentFields.length) * 90, 90);
     return position;
   }
 
   // Progress calculation methods for different trackers
   getBuildingProgress(): number {
     const currentFields = this.getCurrentFields();
-    const completedCount = currentFields.filter(field => 
+    const completedCount = currentFields.filter((field) =>
       this.isFieldCompleted(this.currentStep + '_' + field)
     ).length;
     return (completedCount / currentFields.length) * 100;
@@ -528,7 +583,7 @@ export class WizardComponent implements OnInit {
 
   getCircuitProgress(): number {
     const currentFields = this.getCurrentFields();
-    const completedCount = currentFields.filter(field => 
+    const completedCount = currentFields.filter((field) =>
       this.isFieldCompleted(this.currentStep + '_' + field)
     ).length;
     return (completedCount / currentFields.length) * 100;
@@ -536,7 +591,7 @@ export class WizardComponent implements OnInit {
 
   getHeartbeatProgress(): number {
     const currentFields = this.getCurrentFields();
-    const completedCount = currentFields.filter(field => 
+    const completedCount = currentFields.filter((field) =>
       this.isFieldCompleted(this.currentStep + '_' + field)
     ).length;
     return (completedCount / currentFields.length) * 100;
@@ -544,7 +599,7 @@ export class WizardComponent implements OnInit {
 
   getMoneyProgress(): number {
     const currentFields = this.getCurrentFields();
-    const completedCount = currentFields.filter(field => 
+    const completedCount = currentFields.filter((field) =>
       this.isFieldCompleted(this.currentStep + '_' + field)
     ).length;
     return (completedCount / currentFields.length) * 100;
@@ -552,7 +607,7 @@ export class WizardComponent implements OnInit {
 
   getShoppingProgress(): number {
     const currentFields = this.getCurrentFields();
-    const completedCount = currentFields.filter(field => 
+    const completedCount = currentFields.filter((field) =>
       this.isFieldCompleted(this.currentStep + '_' + field)
     ).length;
     return (completedCount / currentFields.length) * 100;
@@ -560,7 +615,7 @@ export class WizardComponent implements OnInit {
 
   getBrainProgress(): number {
     const currentFields = this.getCurrentFields();
-    const completedCount = currentFields.filter(field => 
+    const completedCount = currentFields.filter((field) =>
       this.isFieldCompleted(this.currentStep + '_' + field)
     ).length;
     return (completedCount / currentFields.length) * 100;
@@ -568,7 +623,7 @@ export class WizardComponent implements OnInit {
 
   getDatabaseProgress(): number {
     const currentFields = this.getCurrentFields();
-    const completedCount = currentFields.filter(field => 
+    const completedCount = currentFields.filter((field) =>
       this.isFieldCompleted(this.currentStep + '_' + field)
     ).length;
     return (completedCount / currentFields.length) * 100;
@@ -576,7 +631,7 @@ export class WizardComponent implements OnInit {
 
   getRocketProgress(): number {
     const currentFields = this.getCurrentFields();
-    const completedCount = currentFields.filter(field => 
+    const completedCount = currentFields.filter((field) =>
       this.isFieldCompleted(this.currentStep + '_' + field)
     ).length;
     return (completedCount / currentFields.length) * 100;
@@ -584,7 +639,7 @@ export class WizardComponent implements OnInit {
 
   getNetworkProgress(): number {
     const currentFields = this.getCurrentFields();
-    const completedCount = currentFields.filter(field => 
+    const completedCount = currentFields.filter((field) =>
       this.isFieldCompleted(this.currentStep + '_' + field)
     ).length;
     return (completedCount / currentFields.length) * 100;
@@ -604,7 +659,7 @@ export class WizardComponent implements OnInit {
   // Check if current level is complete
   isLevelComplete(): boolean {
     const currentFields = this.getCurrentFields();
-    return currentFields.every(field => 
+    return currentFields.every((field) =>
       this.isFieldCompleted(this.currentStep + '_' + field)
     );
   }
@@ -614,10 +669,7 @@ export class WizardComponent implements OnInit {
     console.error(`Failed to load ${type} image:`, event.target.src);
   }
 
-  onImageLoad(event: any, type: string) {
-    console.log(`Successfully loaded ${type} image:`, event.target.src);
-  }
-
+  onImageLoad(event: any, type: string) {}
 
   // Override getCurrentForm to handle split forms
   getCurrentForm(): FormGroup {
@@ -626,10 +678,19 @@ export class WizardComponent implements OnInit {
     } else if (this.currentStep === 1) {
       return this.step1Form2;
     }
-    
+
     const forms = [
-      this.step1Form, this.step1Form2, this.step3Form, this.step4Form, this.step5Form,
-      this.step6Form, this.step7Form, this.step8Form, this.step9Form, this.step10Form, this.step11Form
+      this.step1Form,
+      this.step1Form2,
+      this.step3Form,
+      this.step4Form,
+      this.step5Form,
+      this.step6Form,
+      this.step7Form,
+      this.step8Form,
+      this.step9Form,
+      this.step10Form,
+      this.step11Form,
     ];
     return forms[this.currentStep];
   }

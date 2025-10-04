@@ -18,7 +18,7 @@ export class AuthTokenInterceptor implements HttpInterceptor {
       return next.handle(req);
     }
 
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
 
     // لو مفيش توكن اطبع warning
     if (!token) {
@@ -30,9 +30,9 @@ export class AuthTokenInterceptor implements HttpInterceptor {
     }
 
     const authedReq = req.clone({
-      setHeaders: { 
+      setHeaders: {
         Authorization: `Bearer ${token}`,
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
       },
     });
 

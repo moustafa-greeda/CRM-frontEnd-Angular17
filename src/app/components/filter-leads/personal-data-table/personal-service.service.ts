@@ -7,65 +7,69 @@ export interface ContactFilterParams {
   ageFrom?: number;
   ageTo?: number;
   country?: string;
-  city?: string;  
+  city?: string;
   jobTitle?: string;
   jobLevel?: string;
   industryId?: number;
   companyId?: number;
   pageIndex?: number;
   pageSize?: number;
+  personality?: string;
+  customerType?: string;
+  language?: string;
+  department?: string;
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class PersonalServiceService {
-
   private BASE_API_URL = environment.apiUrl;
 
   constructor(private http: HttpClient) {}
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     let headers = new HttpHeaders({
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     });
-    
+
     if (token) {
       headers = headers.set('Authorization', `Bearer ${token}`);
     }
-    
+
     return headers;
   }
 
   getCitiesByCountryId(id: number): Observable<any> {
-    return this.http.get(`${this.BASE_API_URL}/Filter/GetCitiesByCountryId/${id}`);
+    return this.http.get(
+      `${this.BASE_API_URL}/Filter/GetCitiesByCountryId/${id}`
+    );
   }
-
 
   // Get all countries from the correct API endpoint
   getAllCountries(): Observable<any> {
     return this.http.get(`${this.BASE_API_URL}/Filter/GetAllCountries`);
   }
 
-  GetJobTitle(): Observable<any>{
+  GetJobTitle(): Observable<any> {
     return this.http.get(`${this.BASE_API_URL}/Filter/GetJobTitle`);
   }
 
-  GetJobLevel(): Observable<any>{
+  GetJobLevel(): Observable<any> {
     return this.http.get(`${this.BASE_API_URL}/Filter/GetJobLevel`);
   }
 
-  GetIndustry(): Observable<any>{
+  GetIndustry(): Observable<any> {
     return this.http.get(`${this.BASE_API_URL}/Filter/Company/GetIndustry`);
   }
 
-  GetComapnySize(): Observable<any>{
+  GetComapnySize(): Observable<any> {
     return this.http.get(`${this.BASE_API_URL}/Filter/Company/GetComapnySize`);
   }
 
-  GetContacts(params?: ContactFilterParams): Observable<any>{
+  GetContacts(params?: ContactFilterParams): Observable<any> {
     let httpParams = new HttpParams();
-    
+
     if (params) {
       if (params.ageFrom !== undefined) {
         httpParams = httpParams.set('ageFrom', params.ageFrom.toString());
@@ -97,14 +101,27 @@ export class PersonalServiceService {
       if (params.pageSize !== undefined) {
         httpParams = httpParams.set('pageSize', params.pageSize.toString());
       }
+      if (params.personality) {
+        httpParams = httpParams.set('personality', params.personality);
+      }
+      if (params.customerType) {
+        httpParams = httpParams.set('customerType', params.customerType);
+      }
+      if (params.language) {
+        httpParams = httpParams.set('language', params.language);
+      }
+      if (params.department) {
+        httpParams = httpParams.set('department', params.department);
+      }
     }
-    
-    
-    const finalUrl = `${this.BASE_API_URL}/Filter/GetContacts?${httpParams.toString()}`;
-    
-    return this.http.get(`${this.BASE_API_URL}/Filter/GetContacts`, { 
+
+    const finalUrl = `${
+      this.BASE_API_URL
+    }/Filter/GetContacts?${httpParams.toString()}`;
+
+    return this.http.get(`${this.BASE_API_URL}/Filter/GetContacts`, {
       params: httpParams,
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
     });
   }
 }

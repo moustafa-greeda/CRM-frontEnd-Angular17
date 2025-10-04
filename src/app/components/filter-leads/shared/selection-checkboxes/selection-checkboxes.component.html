@@ -1,0 +1,21 @@
+<!-- Select All Checkbox -->
+<th *ngIf="showSelectAll" class="checkbox-column checkbox-all">
+  <input
+    #selectAllCheckbox
+    type="checkbox"
+    class="select-all-checkbox"
+    [checked]="isAllSelected"
+    [indeterminate]="isSomeSelected"
+    (change)="onSelectAllChange($event)"
+  />
+</th>
+
+<!-- Row Checkbox -->
+<td *ngIf="showRowCheckbox" class="checkbox-column">
+  <input
+    type="checkbox"
+    class="row-checkbox"
+    [checked]="isRowSelected"
+    (change)="onRowChange($event)"
+  />
+</td>

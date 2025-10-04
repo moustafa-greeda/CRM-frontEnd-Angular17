@@ -5,26 +5,26 @@ import { IApiResponse, ICountry } from '../../core/Models/icountry';
 import { environment } from '../../../environments/environment';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CountriesService {
   private BASE_API_URL = environment.apiUrl;
 
-  constructor(private http: HttpClient) { }
+  constructor(private http: HttpClient) {}
 
   /**
    * Get headers with authorization token
    */
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     let headers = new HttpHeaders({
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     });
-    
+
     if (token) {
       headers = headers.set('Authorization', `Bearer ${token}`);
     }
-    
+
     return headers;
   }
 
@@ -40,7 +40,7 @@ export class CountriesService {
    */
   getCountriesFromAPI(): Observable<IApiResponse> {
     return this.http.get<IApiResponse>(`${this.BASE_API_URL}/Country`, {
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
     });
   }
 
@@ -49,7 +49,7 @@ export class CountriesService {
    */
   addCountry(country: ICountry): Observable<any> {
     return this.http.post(`${this.BASE_API_URL}/Country/save`, country, {
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
     });
   }
 
@@ -58,7 +58,7 @@ export class CountriesService {
    */
   updateCountry(country: ICountry): Observable<any> {
     return this.http.post(`${this.BASE_API_URL}/Country/save`, country, {
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
     });
   }
 
@@ -67,54 +67,47 @@ export class CountriesService {
    */
   deleteCountry(id: number): Observable<any> {
     return this.http.delete(`${this.BASE_API_URL}/Country/${id}`, {
-      headers: this.getHeaders()
+      headers: this.getHeaders(),
     });
   }
 
-
   //  Merge data from JSON and API (optional, can be extended)
-getCountries(): Observable<ICountry[]> {
-  return new Observable<ICountry[]>((observer) => {
-    this.getCountriesFromJSON().subscribe({
-      next: (jsonData) => {
-        console.log('JSON Data loaded:', jsonData);
-        this.getCountriesFromAPI().subscribe({
-          next: (apiResponse: IApiResponse) => {
-            console.log('API Response:', apiResponse);
-            const apiData = apiResponse.data?.items || [];
-            console.log('API Data:', apiData);
-            // دمج الـ jsonData مع apiData
-            const combinedData = [...jsonData, ...apiData];
-            console.log('Combined Data:', combinedData);
-            observer.next(combinedData);
-            observer.complete();
-          },
-          error: (apiError) => {
-            console.error('API Error, using JSON data only:', apiError);
-            observer.next(jsonData);
-            observer.complete();
-          }
-        });
-      },
-      error: (jsonError) => {
-        console.error('JSON Error:', jsonError);
-        // Try to get data from API only
-        this.getCountriesFromAPI().subscribe({
-          next: (apiResponse: IApiResponse) => {
-            const apiData = apiResponse.data?.items || [];
-            observer.next(apiData);
-            observer.complete();
-          },
-          error: (apiError) => {
-            console.error('Both JSON and API failed:', apiError);
-            observer.next([]);
-            observer.complete();
-          }
-        });
-      }
+  getCountries(): Observable<ICountry[]> {
+    return new Observable<ICountry[]>((observer) => {
+      this.getCountriesFromJSON().subscribe({
+        next: (jsonData) => {
+          this.getCountriesFromAPI().subscribe({
+            next: (apiResponse: IApiResponse) => {
+              const apiData = apiResponse.data?.items || [];
+              // دمج الـ jsonData مع apiData
+              const combinedData = [...jsonData, ...apiData];
+              observer.next(combinedData);
+              observer.complete();
+            },
+            error: (apiError) => {
+              console.error('API Error, using JSON data only:', apiError);
+              observer.next(jsonData);
+              observer.complete();
+            },
+          });
+        },
+        error: (jsonError) => {
+          console.error('JSON Error:', jsonError);
+          // Try to get data from API only
+          this.getCountriesFromAPI().subscribe({
+            next: (apiResponse: IApiResponse) => {
+              const apiData = apiResponse.data?.items || [];
+              observer.next(apiData);
+              observer.complete();
+            },
+            error: (apiError) => {
+              console.error('Both JSON and API failed:', apiError);
+              observer.next([]);
+              observer.complete();
+            },
+          });
+        },
+      });
     });
-  });
-}
-
-
+  }
 }

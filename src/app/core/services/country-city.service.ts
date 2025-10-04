@@ -2,10 +2,16 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../../environments/environment';
-import { ICountry, ICity, IApiResponse, ICountryCityFilter, ICountryCitySearchResult } from '../models/country-city.models';
+import {
+  ICountry,
+  ICity,
+  IApiResponse,
+  ICountryCityFilter,
+  ICountryCitySearchResult,
+} from '../models/country-city.models';
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class CountryCityService {
   private BASE_API_URL = environment.apiUrl;
@@ -13,9 +19,9 @@ export class CountryCityService {
   constructor(private http: HttpClient) {}
 
   private getHeaders(): HttpHeaders {
-    const token = localStorage.getItem('token');
+    const token = sessionStorage.getItem('token');
     let headers = new HttpHeaders({
-      'Content-Type': 'application/json'
+      'Content-Type': 'application/json',
     });
 
     if (token) {
@@ -31,14 +37,13 @@ export class CountryCityService {
    * @returns Observable of countries response
    */
   getAllCountries(pageSize: number = 500): Observable<IApiResponse<ICountry>> {
-    const params = new HttpParams()
-      .set('pageSize', pageSize.toString());
-    
+    const params = new HttpParams().set('pageSize', pageSize.toString());
+
     return this.http.get<IApiResponse<ICountry>>(
-      `${this.BASE_API_URL}/Filter/GetAllCountries`, 
-      { 
-        params, 
-        headers: this.getHeaders() 
+      `${this.BASE_API_URL}/Filter/GetAllCountries`,
+      {
+        params,
+        headers: this.getHeaders(),
       }
     );
   }
@@ -61,14 +66,13 @@ export class CountryCityService {
    * @returns Observable of cities response
    */
   getAllCities(pageSize: number = 500): Observable<IApiResponse<ICity>> {
-    const params = new HttpParams()
-      .set('pageSize', pageSize.toString());
-    
+    const params = new HttpParams().set('pageSize', pageSize.toString());
+
     return this.http.get<IApiResponse<ICity>>(
-      `${this.BASE_API_URL}/Filter/GetAllCities`, 
-      { 
-        params, 
-        headers: this.getHeaders() 
+      `${this.BASE_API_URL}/Filter/GetAllCities`,
+      {
+        params,
+        headers: this.getHeaders(),
       }
     );
   }
@@ -82,12 +86,12 @@ export class CountryCityService {
     const params = new HttpParams()
       .set('search', searchTerm)
       .set('pageSize', '100');
-    
+
     return this.http.get<IApiResponse<ICountry>>(
-      `${this.BASE_API_URL}/Filter/SearchCountries`, 
-      { 
-        params, 
-        headers: this.getHeaders() 
+      `${this.BASE_API_URL}/Filter/SearchCountries`,
+      {
+        params,
+        headers: this.getHeaders(),
       }
     );
   }
@@ -98,20 +102,23 @@ export class CountryCityService {
    * @param countryId Optional country ID to filter by
    * @returns Observable of filtered cities
    */
-  searchCities(searchTerm: string, countryId?: number): Observable<IApiResponse<ICity>> {
+  searchCities(
+    searchTerm: string,
+    countryId?: number
+  ): Observable<IApiResponse<ICity>> {
     let params = new HttpParams()
       .set('search', searchTerm)
       .set('pageSize', '100');
-    
+
     if (countryId) {
       params = params.set('countryId', countryId.toString());
     }
-    
+
     return this.http.get<IApiResponse<ICity>>(
-      `${this.BASE_API_URL}/Filter/SearchCities`, 
-      { 
-        params, 
-        headers: this.getHeaders() 
+      `${this.BASE_API_URL}/Filter/SearchCities`,
+      {
+        params,
+        headers: this.getHeaders(),
       }
     );
   }

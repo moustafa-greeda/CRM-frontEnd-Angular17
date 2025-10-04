@@ -7,26 +7,20 @@ import { CompanyTableComponent } from './company-table/company-table.component';
 import { MatIconModule } from '@angular/material/icon';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { CompanyService } from './company-table/company.service';
+import { SharedTableModule } from './shared/shared-table.module';
 
 @NgModule({
-  declarations: [
-    PersonalDataTableComponent,
-    CompanyTableComponent
-  ],
+  declarations: [PersonalDataTableComponent, CompanyTableComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
     FormsModule,
     MatIconModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    SharedTableModule,
   ],
-  exports: [
-    PersonalDataTableComponent,
-    CompanyTableComponent
-  ],
-  providers: [
-    CompanyService
-  ],
-  schemas: [NO_ERRORS_SCHEMA]
+  exports: [PersonalDataTableComponent, CompanyTableComponent],
+  providers: [CompanyService],
+  schemas: [NO_ERRORS_SCHEMA],
 })
-export class TableComponentsModule { }
+export class TableComponentsModule {}

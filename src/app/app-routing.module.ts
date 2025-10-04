@@ -2,8 +2,6 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { LoginComponent } from './Auth/login/login.component';
 import { LayoutComponent } from './layout/layout.component';
-import { TasksComponent } from './dashboard/tasks/tasks.component';
-import { DepartmentsComponent } from './components/departments/departments.component';
 import { DashboardAdminComponent } from './dashboard/dashboard-admin/dashboard-admin.component';
 import { DashboardCustomerComponent } from './dashboard/dashboard-customer/dashboard-customer.component';
 import { DashboardEmployeeComponent } from './dashboard/dashboard-employee/dashboard-employee.component';
@@ -11,58 +9,114 @@ import { HomeAdminComponent } from './components/home-admin/home-admin.component
 import { ResetPasswordComponent } from './Auth/reset-password/reset-password.component';
 import { ForgetPasswordComponent } from './Auth/forget-password/forget-password.component';
 import { OtpComponent } from './Auth/otp/otp.component';
-import { LeadsComponent } from './components/leads/leads.component';
-import { DistributionComponent } from './components/distribution/distribution.component';
 import { CitiesComponent } from './components/cities/cities.component';
 import { CountriesComponent } from './components/countries/countries.component';
 import { WizardComponent } from './components/wizard/wizard.component';
 import { FilterLeadsComponent } from './components/filter-leads/filter-leads.component';
-import { DashboardnewComponent } from './components/dashboardnew/dashboardnew.component';
+// Guards
+import { AuthGuard } from './core/guards/auth.guard';
+import { RoleGuard } from './core/guards/role.guard';
+import { LoginGuard } from './core/guards/login.guard';
+import { FeedbackLeadsComponent } from './components/feedback-leads/feedback-leads.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: 'login', component: LoginComponent },
-  { path: 'forget-password', component: ForgetPasswordComponent },
-  { path: 'otp-password', component: OtpComponent },
-  { path: 'reset-password', component: ResetPasswordComponent },
-  // { path: '', redirectTo: 'dashboard/admin', pathMatch: 'full' },
-  //
+  {
+    path: 'login',
+    component: LoginComponent,
+    canActivate: [LoginGuard],
+  },
+  {
+    path: 'forget-password',
+    component: ForgetPasswordComponent,
+    canActivate: [LoginGuard],
+  },
+  {
+    path: 'otp-password',
+    component: OtpComponent,
+    canActivate: [LoginGuard],
+  },
+  {
+    path: 'reset-password',
+    component: ResetPasswordComponent,
+    canActivate: [LoginGuard],
+  },
+
+  // Protected dashboard routes
   {
     path: 'dashboard',
     component: LayoutComponent,
+    canActivate: [AuthGuard],
     children: [
-      { path: '', redirectTo: 'leads', pathMatch: 'full' },
+      { path: '', redirectTo: 'admin', pathMatch: 'full' },
 
-      // Common routes
-      { path: 'tasks', component: TasksComponent },
-      // Role-based dashboards
+      // Admin routes
       {
         path: 'admin',
         component: DashboardAdminComponent,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { roles: ['Admin', 'Customer'] },
         children: [
           { path: '', redirectTo: 'home', pathMatch: 'full' },
-          { path: 'home', component: HomeAdminComponent },
-          // { path: 'leads', component: LeadsComponent },
-          // { path: 'distribution', component: DistributionComponent },
-          {path: 'countries' , component: CountriesComponent},
-          {path: 'cities' , component: CitiesComponent},
-          {path: 'addLead' , component: WizardComponent},
-          {path: 'filterLeads' , component: FilterLeadsComponent},
-          {path:"dashboardnew" , component: DashboardnewComponent}
-
+          {
+            path: 'home',
+            component: HomeAdminComponent,
+            canActivate: [AuthGuard, RoleGuard],
+            data: { roles: ['Admin', 'Customer'] },
+          },
+          {
+            path: 'feedbackLeads',
+            component: FeedbackLeadsComponent,
+            canActivate: [AuthGuard, RoleGuard],
+            data: { roles: ['Admin', 'Customer'] },
+          },
+          {
+            path: 'countries',
+            component: CountriesComponent,
+            canActivate: [AuthGuard, RoleGuard],
+            data: { roles: ['Admin', 'Customer'] },
+          },
+          {
+            path: 'cities',
+            component: CitiesComponent,
+            canActivate: [AuthGuard, RoleGuard],
+            data: { roles: ['Admin', 'Customer'] },
+          },
+          {
+            path: 'addLead',
+            component: WizardComponent,
+            canActivate: [AuthGuard, RoleGuard],
+            data: { roles: ['Admin', 'Customer'] },
+          },
+          {
+            path: 'filterLeads',
+            component: FilterLeadsComponent,
+            canActivate: [AuthGuard, RoleGuard],
+            data: { roles: ['Admin', 'Customer'] },
+          },
         ],
       },
+
+      // Customer routes
       {
         path: 'customer',
         component: DashboardCustomerComponent,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { roles: ['Customer'] },
       },
-      { path: 'employee', component: DashboardEmployeeComponent },
-      //
+
+      // Employee routes
+      {
+        path: 'employee',
+        component: DashboardEmployeeComponent,
+        canActivate: [AuthGuard, RoleGuard],
+        data: { roles: ['Employee'] },
+      },
     ],
   },
 
-  // { path: '**', redirectTo: 'login' },
-  { path: '**', component: LoginComponent },
+  // Wildcard route - redirect to login
+  { path: '**', redirectTo: 'login' },
 ];
 
 @NgModule({

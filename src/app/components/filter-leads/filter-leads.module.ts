@@ -13,11 +13,10 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { FilterLeadsComponent } from './filter-leads.component';
 import { TableComponentsModule } from './table-components.module';
 import { CompanyService } from './company-table/company.service';
+import { SharedTableModule } from './shared/shared-table.module';
 
 @NgModule({
-  declarations: [
-    FilterLeadsComponent
-  ],
+  declarations: [FilterLeadsComponent],
   imports: [
     CommonModule,
     ReactiveFormsModule,
@@ -30,14 +29,11 @@ import { CompanyService } from './company-table/company.service';
     MatIconModule,
     MatPaginatorModule,
     MatDialogModule,
-    TableComponentsModule
+    TableComponentsModule,
+    SharedTableModule,
   ],
-  exports: [
-    FilterLeadsComponent
-  ],
-  providers: [
-    CompanyService
-  ],
-  schemas: [NO_ERRORS_SCHEMA]
+  exports: [FilterLeadsComponent],
+  providers: [CompanyService],
+  schemas: [NO_ERRORS_SCHEMA],
 })
-export class FilterLeadsModule { }
+export class FilterLeadsModule {}

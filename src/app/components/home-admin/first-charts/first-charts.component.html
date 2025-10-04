@@ -2,29 +2,29 @@
 <div class="charts-container">
   <div class="charts-grid-2">
     <div class="chart-card">
-      <canvasjs-chart [options]="doughnutOptions"></canvasjs-chart>
+      <canvasjs-chart [options]="topIndustryChartOption"></canvasjs-chart>
     </div>
     <div class="chart-card">
-      <canvasjs-chart [options]="lineOptions"></canvasjs-chart>
+      <canvasjs-chart [options]="countryClientChartOption"></canvasjs-chart>
     </div>
   </div>
 
   <div class="charts-grid-3">
     <div class="chart-card">
-      <canvasjs-chart [options]="columnChartOptions"></canvasjs-chart>
+      <canvasjs-chart [options]="jobTitleChartOptions"></canvasjs-chart>
     </div>
     <div class="chart-card">
-      <canvasjs-chart [options]="extraChartOptions1"></canvasjs-chart>
+      <canvasjs-chart [options]="companyStageChart"></canvasjs-chart>
     </div>
   </div>
 
   <div class="charts-grid-4">
     <div class="chart-card">
-      <canvasjs-chart [options]="lineChartOptions"></canvasjs-chart>
+      <canvasjs-chart [options]="dateAddOption"></canvasjs-chart>
     </div>
     <div class="chart-card">
       <div class="map-container">
-        <h3 class="map-title">توزيع العملاء على الخريطة</h3>
+        <!-- <h3 class="map-title">توزيع العملاء على الخريطة</h3> -->
         <div #mapContainer class="leaflet-map">
           <div class="map-loading" *ngIf="!map && !mapError">
             <div class="loading-spinner"></div>
@@ -37,6 +37,15 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+
+  <div class="charts-grid-2">
+    <div class="chart-card">
+      <canvasjs-chart [options]="OwnerShipOption"></canvasjs-chart>
+    </div>
+    <div class="chart-card">
+      <canvasjs-chart [options]="ageRangeOptions"></canvasjs-chart>
     </div>
   </div>
 </div>

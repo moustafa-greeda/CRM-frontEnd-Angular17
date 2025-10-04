@@ -1,6 +1,7 @@
 import { Component, Inject } from '@angular/core';
 import { Router } from '@angular/router';
 import { ThemeService } from '../../core/services/theme.service';
+import { AuthService } from '../../Auth/login/auth.service';
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID } from '@angular/core';
 
@@ -13,6 +14,7 @@ export class HeaderComponent {
   constructor(
     private router: Router,
     public themeService: ThemeService,
+    private authService: AuthService,
     @Inject(PLATFORM_ID) private readonly platformId: Object
   ) {}
 
@@ -32,10 +34,7 @@ export class HeaderComponent {
     }
   }
   isLoggedIn(): boolean {
-    if (isPlatformBrowser(this.platformId)) {
-      return !!localStorage.getItem('token');
-    }
-    return false;
+    return this.authService.isAuthenticated();
   }
 
   toggleTheme(): void {
@@ -43,11 +42,6 @@ export class HeaderComponent {
   }
 
   logout() {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('roles');
-    }
-
-    this.router.navigate(['/login']);
+    this.authService.logout();
   }
 }

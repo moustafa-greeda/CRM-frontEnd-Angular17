@@ -5,6 +5,10 @@ import { map, startWith, debounceTime } from 'rxjs/operators';
 import { CompanyData } from '../model/interfaces';
 import { PersonalServiceService } from '../personal-data-table/personal-service.service';
 import { CompanyService, CompanyFilterParams } from './company.service';
+import { TableExportService } from '../shared/table-export.service';
+import { TableSelectionService } from '../shared/table-selection.service';
+import { NotifyDialogService } from '../../../shared/notify-dialog/notify-dialog.service';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({
   selector: 'app-company-table',
@@ -60,6 +64,18 @@ export class CompanyTableComponent implements OnInit {
   // API data properties
   apiData$ = new BehaviorSubject<CompanyData[]>([]);
   isUsingApi = false;
+
+  // Export configuration
+  exportConfig = {
+    showSelectedExport: true,
+    showCurrentPageExport: true,
+    showAllDataExport: true,
+    selectedFileName: 'الشركات المحددة',
+    currentPageFileName: 'صفحة الشركات الحالية',
+    allDataFileName: 'جميع الشركات',
+    showSpinner: true,
+    spinnerMessage: 'جاري التصدير...',
+  };
 
   availableFilters = [
     {
@@ -177,13 +193,18 @@ export class CompanyTableComponent implements OnInit {
   constructor(
     private fb: FormBuilder,
     private personalService: PersonalServiceService,
-    private companyService: CompanyService
+    private companyService: CompanyService,
+    private exportService: TableExportService,
+    private selectionService: TableSelectionService<CompanyData>,
+    private notifyDialog: NotifyDialogService,
+    private spinner: NgxSpinnerService
   ) {
     this.initializeForm();
   }
 
   ngOnInit() {
     this.setupFiltering();
+    this.setupSelectionService();
     this.getCountries();
     this.getCompanySizes();
     this.getIndustry();
@@ -268,6 +289,14 @@ export class CompanyTableComponent implements OnInit {
 
     this.filteredData$.subscribe((filteredData) => {
       this.filteredDataChange.emit(filteredData);
+    });
+  }
+
+  private setupSelectionService(): void {
+    // Subscribe to selection changes
+    this.selectionService.selectedRows$.subscribe((selectedRows) => {
+      this.selectedRows = selectedRows;
+      this.selectedRowsChange.emit(this.selectedRows);
     });
   }
 
@@ -367,10 +396,6 @@ export class CompanyTableComponent implements OnInit {
     }
     this.isAllSelected = this.selectedRows.length === this.data.length;
     this.selectedRowsChange.emit(this.selectedRows);
-  }
-
-  isRowSelected(row: CompanyData): boolean {
-    return this.selectedRows.some((item) => item.id === row.id);
   }
 
   clearFilters(): void {
@@ -494,7 +519,10 @@ export class CompanyTableComponent implements OnInit {
 
   executeFilters() {
     // جمع جميع المعاملات من الفلاتر المختارة
-    const filterParams: CompanyFilterParams = {};
+    const filterParams: CompanyFilterParams = {
+      pageIndex: this.currentPage + 1, // API uses 1-based indexing
+      pageSize: this.pageSize,
+    };
 
     // إضافة معاملات الفلاتر المختارة
     this.selectedFilters.forEach((filter) => {
@@ -584,12 +612,22 @@ export class CompanyTableComponent implements OnInit {
       next: (res) => {
         if (res.data && res.data.items) {
           // API يعيد البيانات في res.data.items
-          this.apiData$.next(res.data.items);
+
+          // إضافة id إذا لم يكن موجوداً
+          const processedData = res.data.items.map(
+            (item: any, index: number) => ({
+              ...item,
+              id: item.id || item.companyId || item.CompanyId || index + 1,
+            })
+          );
+
+          this.data = processedData; // تحديث البيانات المحلية
+          this.apiData$.next(processedData);
           this.isUsingApi = true;
           this.filtersExecuted = true;
           this.showDataTable = true;
-          this.hasNoData = res.data.items.length === 0;
-          this.totalCount$.next(res.data.totalCount || res.data.items.length);
+          this.hasNoData = processedData.length === 0;
+          this.totalCount$.next(res.data.totalCount || processedData.length);
         } else {
           this.apiData$.next([]);
           this.hasNoData = true;
@@ -624,7 +662,11 @@ export class CompanyTableComponent implements OnInit {
     this.pageSize = event.pageSize;
 
     // إعادة تطبيق الفلاتر مع الصفحة الجديدة
-    this.executeFilters();
+    if (this.isUsingApi) {
+      // إذا كنا نستخدم API، نعيد تحميل البيانات مع الصفحة الجديدة
+      this.executeFilters();
+    }
+    // إذا كنا نستخدم البيانات المحلية، لا نحتاج لفعل شيء لأن getCurrentPageData() سيتولى الأمر
   }
 
   // ================================= Country methods ===============================
@@ -957,5 +999,181 @@ export class CompanyTableComponent implements OnInit {
   selectOption(index: number) {
     this.moveNinjaToStep(index);
     this.showFilters = false;
+  }
+
+  // Export methods
+  exportSelectedRowsToExcel(): void {
+    this.exportService.exportSelectedRows(this.selectedRows, {
+      fileName: this.exportConfig.selectedFileName,
+      showSpinner: this.exportConfig.showSpinner,
+      spinnerMessage: this.exportConfig.spinnerMessage,
+    });
+  }
+
+  exportCurrentPageToExcel(): void {
+    const currentPageData = this.getCurrentPageData();
+    this.exportService.exportCurrentPage(currentPageData, {
+      fileName: this.exportConfig.currentPageFileName,
+      showSpinner: this.exportConfig.showSpinner,
+      spinnerMessage: this.exportConfig.spinnerMessage,
+    });
+  }
+
+  exportAllDataToExcel(): void {
+    // Always use API to get the latest data and better performance
+    this.spinner.show();
+    this.exportAllDataFromAPI();
+  }
+
+  // Selection event handlers for shared components
+  onSelectAllChange(isChecked: boolean): void {
+    if (isChecked) {
+      // Select all data (not just current page)
+      this.selectionService.selectAll(this.data);
+    } else {
+      this.selectionService.deselectAll();
+    }
+  }
+
+  onRowSelectionChange(event: { row: CompanyData; selected: boolean }): void {
+    if (event.selected) {
+      this.selectionService.selectRow(event.row);
+    } else {
+      this.selectionService.deselectRow(event.row);
+    }
+  }
+
+  // Helper method to get current page data
+  getCurrentPageData(): CompanyData[] {
+    if (this.isUsingApi) {
+      // إذا كنا نستخدم API، البيانات المعروضة هي البيانات الحالية
+      return this.data;
+    } else {
+      // إذا كنا نستخدم البيانات المحلية، نحتاج لتقطيع البيانات
+      const startIndex = this.currentPage * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      return this.data.slice(startIndex, endIndex);
+    }
+  }
+
+  // Check if row is selected
+  isRowSelected(row: CompanyData): boolean {
+    return this.selectionService.isRowSelected(row);
+  }
+
+  // Fetch all data from API for export - Optimized for better performance
+  private exportAllDataFromAPI(): void {
+    // Build filter parameters (same as current filters) - Optimized for export
+    const baseParams: CompanyFilterParams = {
+      pageIndex: 1,
+      pageSize: 10000, // Maximum page size for fastest API calls
+    };
+
+    // Add current filters to the export request
+    this.addCurrentFiltersToParams(baseParams);
+
+    // Fetch all data by making multiple API calls
+    this.fetchAllDataRecursively(baseParams, [], 1);
+  }
+
+  // Add current filters to export parameters
+  private addCurrentFiltersToParams(params: CompanyFilterParams): void {
+    const formValue = this.filterForm.value;
+
+    if (formValue.country) {
+      params.country = formValue.country;
+    }
+    if (formValue.city) {
+      params.city = formValue.city;
+    }
+    if (formValue.industry) {
+      params.industryName = formValue.industry;
+    }
+    if (formValue.companyName) {
+      params.name = formValue.companyName;
+    }
+    // Add other filters as needed
+  }
+
+  // Recursively fetch all data by making multiple API calls
+  private fetchAllDataRecursively(
+    baseParams: CompanyFilterParams,
+    allData: CompanyData[],
+    currentPage: number
+  ): void {
+    const params = { ...baseParams, pageIndex: currentPage };
+
+    this.companyService.GetCompanies(params).subscribe({
+      next: (response) => {
+        if (
+          response &&
+          response.succeeded &&
+          response.data &&
+          response.data.items
+        ) {
+          const pageData = response.data.items;
+          const totalCount = response.data.totalCount || 0;
+
+          // Add current page data to all data
+          allData.push(...pageData);
+
+          // Calculate total pages
+          const totalPages = Math.ceil(
+            totalCount / (baseParams.pageSize || 10000)
+          );
+
+          if (currentPage < totalPages) {
+            // Continue fetching next page
+            this.fetchAllDataRecursively(baseParams, allData, currentPage + 1);
+          } else {
+            // All data fetched, now export
+            this.spinner.hide();
+            if (allData.length === 0) {
+              this.notifyDialog.error({
+                title: 'خطأ في التصدير',
+                description: 'لا توجد بيانات للتصدير',
+                autoCloseMs: 3000,
+              });
+            } else {
+              this.exportService.exportAllData(allData, {
+                fileName: this.exportConfig.allDataFileName,
+                showSpinner: false, // Already showing spinner
+              });
+            }
+          }
+        } else {
+          this.spinner.hide();
+          if (allData.length === 0) {
+            this.notifyDialog.error({
+              title: 'خطأ في التصدير',
+              description: 'لا توجد بيانات للتصدير',
+              autoCloseMs: 3000,
+            });
+          } else {
+            this.exportService.exportAllData(allData, {
+              fileName: this.exportConfig.allDataFileName,
+              showSpinner: false, // Already showing spinner
+            });
+          }
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching data for export:', error);
+        if (allData.length > 0) {
+          // Export what we have so far
+          this.exportService.exportAllData(allData, {
+            fileName: this.exportConfig.allDataFileName,
+            showSpinner: false, // Already showing spinner
+          });
+        } else {
+          this.spinner.hide();
+          this.notifyDialog.error({
+            title: 'خطأ في التحميل',
+            description: 'حدث خطأ أثناء تحميل البيانات للتصدير',
+            autoCloseMs: 5000,
+          });
+        }
+      },
+    });
   }
 }

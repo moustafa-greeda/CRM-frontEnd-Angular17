@@ -1,4 +1,11 @@
-import { Component, Input, Output, EventEmitter, OnInit } from '@angular/core';
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnInit,
+  AfterViewInit,
+} from '@angular/core';
 import { FormBuilder, FormGroup } from '@angular/forms';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
 import { map, startWith, debounceTime } from 'rxjs/operators';
@@ -7,13 +14,17 @@ import {
   PersonalServiceService,
   ContactFilterParams,
 } from './personal-service.service';
+import { NotifyDialogService } from '../../../shared/notify-dialog/notify-dialog.service';
+import { NgxSpinnerService } from 'ngx-spinner';
+import { TableExportService } from '../shared/table-export.service';
+import { TableSelectionService } from '../shared/table-selection.service';
 
 @Component({
   selector: 'app-personal-data-table',
   templateUrl: './personal-data-table.component.html',
   styleUrls: ['./personal-data-table.component.css'],
 })
-export class PersonalDataTableComponent implements OnInit {
+export class PersonalDataTableComponent implements OnInit, AfterViewInit {
   @Input() data: PersonalData[] = [];
   @Output() filteredDataChange = new EventEmitter<PersonalData[]>();
   @Output() selectedRowsChange = new EventEmitter<PersonalData[]>();
@@ -65,6 +76,18 @@ export class PersonalDataTableComponent implements OnInit {
   // API data properties
   apiData$ = new BehaviorSubject<PersonalData[]>([]);
   isUsingApi = false;
+
+  // Export configuration
+  exportConfig = {
+    showSelectedExport: true,
+    showCurrentPageExport: true,
+    showAllDataExport: true,
+    selectedFileName: 'البيانات المحددة',
+    currentPageFileName: 'صفحة البيانات الحالية',
+    allDataFileName: 'جميع البيانات',
+    showSpinner: true,
+    spinnerMessage: 'جاري التصدير...',
+  };
 
   availableFilters = [
     {
@@ -155,13 +178,18 @@ export class PersonalDataTableComponent implements OnInit {
 
   constructor(
     private fb: FormBuilder,
-    private personalService: PersonalServiceService
+    private personalService: PersonalServiceService,
+    private notifyDialog: NotifyDialogService,
+    private spinner: NgxSpinnerService,
+    private exportService: TableExportService,
+    private selectionService: TableSelectionService<PersonalData>
   ) {
     this.initializeForm();
   }
 
   ngOnInit() {
     this.setupFiltering();
+    this.setupSelectionService();
     this.getCountries();
     this.getJobTitle();
     this.getJobLevel();
@@ -217,7 +245,6 @@ export class PersonalDataTableComponent implements OnInit {
         this.moveNinjaToStep(this.currentStep, false);
       });
     }
-
   }
 
   private initializeForm(): void {
@@ -246,6 +273,14 @@ export class PersonalDataTableComponent implements OnInit {
 
     this.filteredData$.subscribe((filteredData) => {
       this.filteredDataChange.emit(filteredData);
+    });
+  }
+
+  private setupSelectionService(): void {
+    // Subscribe to selection changes
+    this.selectionService.selectedRows$.subscribe((selectedRows) => {
+      this.selectedRows = selectedRows;
+      this.selectedRowsChange.emit(this.selectedRows);
     });
   }
 
@@ -310,32 +345,6 @@ export class PersonalDataTableComponent implements OnInit {
 
       return true;
     });
-  }
-
-  onSelectAll(event: any): void {
-    this.isAllSelected = event.checked;
-    if (this.isAllSelected) {
-      this.selectedRows = [...this.data];
-    } else {
-      this.selectedRows = [];
-    }
-    this.selectedRowsChange.emit(this.selectedRows);
-  }
-
-  onSelectRow(row: PersonalData, event: any): void {
-    if (event.checked) {
-      this.selectedRows.push(row);
-    } else {
-      this.selectedRows = this.selectedRows.filter(
-        (item) => item.id !== row.id
-      );
-    }
-    this.isAllSelected = this.selectedRows.length === this.data.length;
-    this.selectedRowsChange.emit(this.selectedRows);
-  }
-
-  isRowSelected(row: PersonalData): boolean {
-    return this.selectedRows.some((item) => item.id === row.id);
   }
 
   clearFilters(): void {
@@ -617,7 +626,6 @@ export class PersonalDataTableComponent implements OnInit {
       },
     });
   }
-
 
   // ==================================== City methods ===================================
   onCountryChange(event: any) {
@@ -994,5 +1002,376 @@ export class PersonalDataTableComponent implements OnInit {
       // عند التبديل إلى وضع العمر الواحد، اجعل الـ slider يطابق الـ from
       this.ageSliderValue = this.ageFrom;
     }
+  }
+
+  // ================================= Excel Export Methods =================================
+  // ========== Select All methods ==================
+  onSelectAll(event: any): void {
+    this.isAllSelected = event.checked;
+    if (this.isAllSelected) {
+      // Select all data (not just current page)
+      this.selectedRows = [...this.data];
+    } else {
+      this.selectedRows = [];
+    }
+    this.selectedRowsChange.emit(this.selectedRows);
+  }
+
+  onSelectRow(row: PersonalData, event: any): void {
+    // For HTML checkboxes, use event.target.checked instead of event.checked
+    const isChecked = event.target?.checked || event.checked;
+
+    if (isChecked) {
+      this.selectionService.selectRow(row);
+    } else {
+      this.selectionService.deselectRow(row);
+    }
+
+    this.isAllSelected = this.selectedRows.length === this.data.length;
+    this.selectedRowsChange.emit(this.selectedRows);
+    this.updateSelectAllCheckboxState();
+  }
+
+  isRowSelected(row: PersonalData): boolean {
+    return this.selectionService.isRowSelected(row);
+  }
+
+  // Get current page data
+  getCurrentPageData(): PersonalData[] {
+    if (this.isUsingApi) {
+      return this.apiData$.value || [];
+    } else {
+      // For non-API data, we need to get the current data from the component
+      const allData = this.data || [];
+      const startIndex = this.currentPage * this.pageSize;
+      const endIndex = startIndex + this.pageSize;
+      return allData.slice(startIndex, endIndex);
+    }
+  }
+
+  // Export selected rows to Excel
+  exportSelectedRowsToExcel(): void {
+    this.exportService.exportSelectedRows(this.selectedRows, {
+      fileName: this.exportConfig.selectedFileName,
+      showSpinner: this.exportConfig.showSpinner,
+      spinnerMessage: this.exportConfig.spinnerMessage,
+    });
+  }
+
+  // Export current page to Excel
+  exportCurrentPageToExcel(): void {
+    const currentPageData = this.getCurrentPageData();
+    this.exportService.exportCurrentPage(currentPageData, {
+      fileName: this.exportConfig.currentPageFileName,
+      showSpinner: this.exportConfig.showSpinner,
+      spinnerMessage: this.exportConfig.spinnerMessage,
+    });
+  }
+
+  // Export all data to Excel - Always use API for better performance and latest data
+  exportAllDataToExcel(): void {
+    // Always use API to get the latest data and better performance
+    this.spinner.show();
+    this.exportAllDataFromAPI();
+  }
+
+  // Selection event handlers for shared components
+  onSelectAllChange(isChecked: boolean): void {
+    if (isChecked) {
+      // Select all data (not just current page)
+      this.selectionService.selectAll(this.data);
+    } else {
+      this.selectionService.deselectAll();
+    }
+  }
+
+  onRowSelectionChange(event: { row: PersonalData; selected: boolean }): void {
+    if (event.selected) {
+      this.selectionService.selectRow(event.row);
+    } else {
+      this.selectionService.deselectRow(event.row);
+    }
+  }
+
+  // Fetch all data from API for export - Optimized for better performance
+  private exportAllDataFromAPI(): void {
+    // Show loading message
+    console.log('جاري تحميل جميع البيانات من الخادم...');
+
+    // Build filter parameters (same as current filters) - Optimized for export
+    const baseParams: ContactFilterParams = {
+      pageIndex: 1,
+      pageSize: 10000, // Maximum page size for fastest API calls
+    };
+
+    // Add current filters to the export request
+    this.addCurrentFiltersToParams(baseParams);
+
+    // Fetch all data by making multiple API calls
+    this.fetchAllDataRecursively(baseParams, [], 1);
+  }
+
+  // Recursively fetch all data by making multiple API calls
+  private fetchAllDataRecursively(
+    baseParams: ContactFilterParams,
+    allData: PersonalData[],
+    currentPage: number
+  ): void {
+    const params = { ...baseParams, pageIndex: currentPage };
+
+    console.log(`جاري تحميل الصفحة ${currentPage}...`);
+
+    this.personalService.GetContacts(params).subscribe({
+      next: (response) => {
+        if (
+          response &&
+          response.succeeded &&
+          response.data &&
+          response.data.items
+        ) {
+          const pageData = response.data.items;
+          const totalCount = response.data.totalCount || 0;
+
+          // Add current page data to all data
+          allData.push(...pageData);
+
+          console.log(
+            `تم تحميل ${pageData.length} سجل من الصفحة ${currentPage}`
+          );
+          console.log(
+            `إجمالي البيانات المحملة: ${allData.length} من ${totalCount}`
+          );
+
+          // Show progress percentage
+          const progress = Math.round((allData.length / totalCount) * 100);
+          console.log(`تقدم التحميل: ${progress}%`);
+
+          // Check if we need to fetch more pages
+          const totalPages = Math.ceil(
+            totalCount / (baseParams.pageSize || 10000)
+          );
+
+          if (currentPage < totalPages) {
+            // Fetch next page
+            this.fetchAllDataRecursively(baseParams, allData, currentPage + 1);
+          } else {
+            // All data fetched, now export
+            if (allData.length === 0) {
+              this.spinner.hide();
+              this.notifyDialog.error({
+                title: 'خطأ في التصدير',
+                description: 'لا توجد بيانات للتصدير',
+                autoCloseMs: 3000,
+              });
+              return;
+            }
+
+            console.log(`تم تحميل جميع البيانات: ${allData.length} سجل`);
+            this.exportService.exportAllData(allData, {
+              fileName: this.exportConfig.allDataFileName,
+              showSpinner: false, // Already showing spinner
+            });
+          }
+        } else {
+          if (allData.length === 0) {
+            this.spinner.hide();
+            this.notifyDialog.error({
+              title: 'خطأ في التصدير',
+              description: 'لا توجد بيانات للتصدير',
+              autoCloseMs: 3000,
+            });
+          } else {
+            // Export what we have so far
+            console.log(`تم تحميل ${allData.length} سجل - جاري التصدير...`);
+            this.exportService.exportAllData(allData, {
+              fileName: this.exportConfig.allDataFileName,
+              showSpinner: false, // Already showing spinner
+            });
+          }
+        }
+      },
+      error: (error) => {
+        console.error('Error fetching data for export:', error);
+        if (allData.length > 0) {
+          // Export what we have so far
+          console.log(
+            `حدث خطأ أثناء التحميل - جاري تصدير ${allData.length} سجل...`
+          );
+          this.exportService.exportAllData(allData, {
+            fileName: this.exportConfig.allDataFileName,
+            showSpinner: false, // Already showing spinner
+          });
+        } else {
+          this.spinner.hide();
+          this.notifyDialog.error({
+            title: 'خطأ في التحميل',
+            description: 'حدث خطأ أثناء تحميل البيانات للتصدير',
+            autoCloseMs: 5000,
+          });
+        }
+      },
+    });
+  }
+
+  // Add current filter parameters to export request
+  private addCurrentFiltersToParams(filterParams: ContactFilterParams): void {
+    // Add age filter
+    if (this.showAgeSlider) {
+      if (this.useAgeRange) {
+        if (this.ageFrom !== undefined && this.ageTo !== undefined) {
+          filterParams.ageFrom = this.ageFrom;
+          filterParams.ageTo = this.ageTo;
+        }
+      } else {
+        if (this.ageSliderValue !== undefined) {
+          filterParams.ageFrom = this.ageSliderValue;
+          filterParams.ageTo = this.ageSliderValue;
+        }
+      }
+    }
+
+    // Add country filter
+    if (this.showCountryDropdown && this.countryId) {
+      const selectedCountry = this.countries.find(
+        (c) => c.id == this.countryId
+      );
+      if (selectedCountry) {
+        filterParams.country = selectedCountry.name;
+      }
+    }
+
+    // Add city filter
+    if (this.showCityDropdown && this.cities.length > 0) {
+      const citySelect = document.querySelector(
+        '.city-dropdown'
+      ) as HTMLSelectElement;
+      if (citySelect && citySelect.value) {
+        const selectedCity = this.cities.find((c) => c.id == citySelect.value);
+        if (selectedCity) {
+          filterParams.city = selectedCity.name;
+        }
+      }
+    }
+
+    // Add job title filter
+    if (this.showJobTitleDropdown) {
+      const jobTitleSelect = document.querySelector(
+        '.job-title-dropdown'
+      ) as HTMLSelectElement;
+      if (jobTitleSelect && jobTitleSelect.value) {
+        const selectedJobTitle = this.jobTitles[parseInt(jobTitleSelect.value)];
+        if (selectedJobTitle) {
+          filterParams.jobTitle = selectedJobTitle;
+        }
+      }
+    }
+
+    // Add job level filter
+    if (this.showJobLevelDropdown) {
+      const jobLevelSelect = document.querySelector(
+        '.job-level-dropdown'
+      ) as HTMLSelectElement;
+      if (jobLevelSelect && jobLevelSelect.value) {
+        const selectedJobLevel = this.jobLevels.find(
+          (jl) => jl.id == jobLevelSelect.value
+        );
+        if (selectedJobLevel) {
+          filterParams.jobLevel = selectedJobLevel.name;
+        }
+      }
+    }
+
+    // Add industry filter
+    if (this.showIndustryDropdown) {
+      const industrySelect = document.querySelector(
+        '.industry-dropdown'
+      ) as HTMLSelectElement;
+      if (industrySelect && industrySelect.value) {
+        const selectedIndustry = this.industries.find(
+          (i) => i.id == industrySelect.value
+        );
+        if (selectedIndustry) {
+          filterParams.industryId = selectedIndustry.id;
+        }
+      }
+    }
+
+    // Add other filters from selectedFilters
+    this.selectedFilters.forEach((filter) => {
+      if (filter.value) {
+        switch (filter.id) {
+          case 'personality':
+            filterParams.personality = filter.value;
+            break;
+          case 'customerType':
+            filterParams.customerType = filter.value;
+            break;
+          case 'language':
+            filterParams.language = filter.value;
+            break;
+          case 'department':
+            filterParams.department = filter.value;
+            break;
+        }
+      }
+    });
+  }
+
+  // Update select all functionality for current page
+  onSelectAllCurrentPage(event: any): void {
+    // For HTML checkboxes, use event.target.checked instead of event.checked
+    const isChecked = event.target?.checked || event.checked;
+    console.log('Final checked state for select all:', isChecked);
+
+    this.isAllSelected = isChecked;
+    const currentPageData = this.getCurrentPageData();
+
+    if (this.isAllSelected) {
+      this.selectionService.selectAllCurrentPage(currentPageData);
+    } else {
+      this.selectionService.deselectAllCurrentPage(currentPageData);
+    }
+
+    this.selectedRowsChange.emit(this.selectedRows);
+    this.updateSelectAllCheckboxState();
+  }
+
+  // Check if all current page rows are selected
+  isAllCurrentPageSelected(): boolean {
+    const currentPageData = this.getCurrentPageData();
+    if (currentPageData.length === 0) return false;
+
+    return currentPageData.every((row) =>
+      this.selectedRows.some((selected) => selected.id === row.id)
+    );
+  }
+
+  // Check if some (but not all) current page rows are selected
+  isSomeCurrentPageSelected(): boolean {
+    const currentPageData = this.getCurrentPageData();
+    if (currentPageData.length === 0) return false;
+
+    const selectedCount = currentPageData.filter((row) =>
+      this.selectedRows.some((selected) => selected.id === row.id)
+    ).length;
+
+    return selectedCount > 0 && selectedCount < currentPageData.length;
+  }
+
+  // Set indeterminate state for select all checkbox
+  ngAfterViewInit() {
+    // Set up indeterminate state for select all checkbox
+    this.updateSelectAllCheckboxState();
+  }
+
+  private updateSelectAllCheckboxState() {
+    setTimeout(() => {
+      const selectAllCheckbox = document.querySelector(
+        '.select-all-checkbox'
+      ) as HTMLInputElement;
+      if (selectAllCheckbox) {
+        selectAllCheckbox.indeterminate = this.isSomeCurrentPageSelected();
+      }
+    }, 0);
   }
 }

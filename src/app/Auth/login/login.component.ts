@@ -37,7 +37,7 @@ export class LoginComponent {
       password: this.password,
     };
 
-    this.spinner.show();
+    // this.spinner.show();
 
     this.service.login(model).subscribe({
       next: (res) => {
@@ -47,7 +47,7 @@ export class LoginComponent {
           description: 'أهلاً بك!',
           imageUrl: 'assets/logo_elbatt.png',
           soundUrl: 'assets/sound/duck.mp3',
-          autoCloseMs: 3000,
+          autoCloseMs: 2000,
         });
 
         if (isPlatformBrowser(this.platformId)) {
@@ -57,9 +57,14 @@ export class LoginComponent {
             res?.token ||
             res?.accessToken ||
             '';
-          console.log('[LOGIN] extracted token:', token ? 'present' : 'missing');
           if (token) {
-            localStorage.setItem('token', token);
+            const roles =
+              Array.isArray(res.data.roles) && res.data.roles.length > 0
+                ? res.data.roles
+                : ['Customer'];
+
+            // Use the enhanced auth service method
+            this.service.setAuthData(token, roles);
           } else {
             console.warn('[LOGIN] token key not found in response shape', res);
           }
@@ -68,8 +73,6 @@ export class LoginComponent {
             Array.isArray(res.data.roles) && res.data.roles.length > 0
               ? res.data.roles
               : ['Customer'];
-
-          localStorage.setItem('roles', JSON.stringify(roles));
 
           const role = roles[0];
           let redirectUrl = '';
@@ -131,10 +134,6 @@ export class LoginComponent {
   }
 
   logout() {
-    if (isPlatformBrowser(this.platformId)) {
-      localStorage.removeItem('token');
-      localStorage.removeItem('roles');
-    }
-    this.router.navigate(['/login']);
+    this.service.logout();
   }
 }

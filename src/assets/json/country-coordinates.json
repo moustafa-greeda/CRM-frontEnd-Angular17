@@ -1,0 +1,934 @@
+{
+  "countries": {
+    "مصر": {
+      "name": "Egypt",
+      "coordinates": [26.8206, 30.8025],
+      "region": "Africa"
+    },
+    "المملكة العربية السعودية": {
+      "name": "Saudi Arabia",
+      "coordinates": [23.8859, 45.0792],
+      "region": "Asia"
+    },
+    "الإمارات العربية المتحدة": {
+      "name": "United Arab Emirates",
+      "coordinates": [23.4241, 53.8478],
+      "region": "Asia"
+    },
+    "قطر": {
+      "name": "Qatar",
+      "coordinates": [25.3548, 51.1839],
+      "region": "Asia"
+    },
+    "الكويت": {
+      "name": "Kuwait",
+      "coordinates": [29.3117, 47.4818],
+      "region": "Asia"
+    },
+    "الأردن": {
+      "name": "Jordan",
+      "coordinates": [30.5852, 36.2384],
+      "region": "Asia"
+    },
+    "البحرين": {
+      "name": "Bahrain",
+      "coordinates": [25.9304, 50.6378],
+      "region": "Asia"
+    },
+    "عمان": {
+      "name": "Oman",
+      "coordinates": [21.4735, 55.9754],
+      "region": "Asia"
+    },
+    "لبنان": {
+      "name": "Lebanon",
+      "coordinates": [33.8547, 35.8623],
+      "region": "Asia"
+    },
+    "سوريا": {
+      "name": "Syria",
+      "coordinates": [34.8021, 38.9968],
+      "region": "Asia"
+    },
+    "العراق": {
+      "name": "Iraq",
+      "coordinates": [33.2232, 43.6793],
+      "region": "Asia"
+    },
+    "اليمن": {
+      "name": "Yemen",
+      "coordinates": [15.5527, 48.5164],
+      "region": "Asia"
+    },
+    "فلسطين": {
+      "name": "Palestine",
+      "coordinates": [31.9522, 35.2332],
+      "region": "Asia"
+    },
+    "المغرب": {
+      "name": "Morocco",
+      "coordinates": [31.6295, -7.9811],
+      "region": "Africa"
+    },
+    "الجزائر": {
+      "name": "Algeria",
+      "coordinates": [28.0339, 1.6596],
+      "region": "Africa"
+    },
+    "تونس": {
+      "name": "Tunisia",
+      "coordinates": [33.8869, 9.5375],
+      "region": "Africa"
+    },
+    "ليبيا": {
+      "name": "Libya",
+      "coordinates": [26.3351, 17.2283],
+      "region": "Africa"
+    },
+    "السودان": {
+      "name": "Sudan",
+      "coordinates": [12.8628, 30.2176],
+      "region": "Africa"
+    },
+    "إيران": {
+      "name": "Iran",
+      "coordinates": [32.4279, 53.688],
+      "region": "Asia"
+    },
+    "تركيا": {
+      "name": "Turkey",
+      "coordinates": [38.9637, 35.2433],
+      "region": "Asia"
+    },
+    "أفغانستان": {
+      "name": "Afghanistan",
+      "coordinates": [33.9391, 67.71],
+      "region": "Asia"
+    },
+    "باكستان": {
+      "name": "Pakistan",
+      "coordinates": [30.3753, 69.3451],
+      "region": "Asia"
+    },
+    "الهند": {
+      "name": "India",
+      "coordinates": [20.5937, 78.9629],
+      "region": "Asia"
+    },
+    "بنغلاديش": {
+      "name": "Bangladesh",
+      "coordinates": [23.685, 90.3563],
+      "region": "Asia"
+    },
+    "سريلانكا": {
+      "name": "Sri Lanka",
+      "coordinates": [7.8731, 80.7718],
+      "region": "Asia"
+    },
+    "نيبال": {
+      "name": "Nepal",
+      "coordinates": [28.3949, 84.124],
+      "region": "Asia"
+    },
+    "بوتان": {
+      "name": "Bhutan",
+      "coordinates": [27.5142, 90.4336],
+      "region": "Asia"
+    },
+    "جزر المالديف": {
+      "name": "Maldives",
+      "coordinates": [3.2028, 73.2207],
+      "region": "Asia"
+    },
+    "كازاخستان": {
+      "name": "Kazakhstan",
+      "coordinates": [48.0196, 66.9237],
+      "region": "Asia"
+    },
+    "أوزبكستان": {
+      "name": "Uzbekistan",
+      "coordinates": [41.3775, 64.5853],
+      "region": "Asia"
+    },
+    "تركمانستان": {
+      "name": "Turkmenistan",
+      "coordinates": [38.9697, 59.5563],
+      "region": "Asia"
+    },
+    "طاجيكستان": {
+      "name": "Tajikistan",
+      "coordinates": [38.861, 71.2761],
+      "region": "Asia"
+    },
+    "قيرغيزستان": {
+      "name": "Kyrgyzstan",
+      "coordinates": [41.2044, 74.7661],
+      "region": "Asia"
+    },
+    "أذربيجان": {
+      "name": "Azerbaijan",
+      "coordinates": [40.0691, 47.5769],
+      "region": "Asia"
+    },
+    "أرمينيا": {
+      "name": "Armenia",
+      "coordinates": [40.0691, 45.0382],
+      "region": "Asia"
+    },
+    "جورجيا": {
+      "name": "Georgia",
+      "coordinates": [42.3154, 43.3569],
+      "region": "Asia"
+    },
+    "أذربيجان": {
+      "name": "Azerbaijan",
+      "coordinates": [40.0691, 47.5769],
+      "region": "Asia"
+    },
+    "أرمينيا": {
+      "name": "Armenia",
+      "coordinates": [40.0691, 45.0382],
+      "region": "Asia"
+    },
+    "جورجيا": {
+      "name": "Georgia",
+      "coordinates": [42.3154, 43.3569],
+      "region": "Asia"
+    },
+    "روسيا": {
+      "name": "Russia",
+      "coordinates": [61.524, 105.3188],
+      "region": "Europe"
+    },
+    "الصين": {
+      "name": "China",
+      "coordinates": [35.8617, 104.1954],
+      "region": "Asia"
+    },
+    "اليابان": {
+      "name": "Japan",
+      "coordinates": [36.2048, 138.2529],
+      "region": "Asia"
+    },
+    "كوريا الجنوبية": {
+      "name": "South Korea",
+      "coordinates": [35.9078, 127.7669],
+      "region": "Asia"
+    },
+    "كوريا الشمالية": {
+      "name": "North Korea",
+      "coordinates": [40.3399, 127.5101],
+      "region": "Asia"
+    },
+    "منغوليا": {
+      "name": "Mongolia",
+      "coordinates": [46.8625, 103.8467],
+      "region": "Asia"
+    },
+    "تايلاند": {
+      "name": "Thailand",
+      "coordinates": [15.87, 100.9925],
+      "region": "Asia"
+    },
+    "فيتنام": {
+      "name": "Vietnam",
+      "coordinates": [14.0583, 108.2772],
+      "region": "Asia"
+    },
+    "كمبوديا": {
+      "name": "Cambodia",
+      "coordinates": [12.5657, 104.991],
+      "region": "Asia"
+    },
+    "لاوس": {
+      "name": "Laos",
+      "coordinates": [19.8563, 102.4955],
+      "region": "Asia"
+    },
+    "ميانمار": {
+      "name": "Myanmar",
+      "coordinates": [21.9162, 95.956],
+      "region": "Asia"
+    },
+    "ماليزيا": {
+      "name": "Malaysia",
+      "coordinates": [4.2105, 101.9758],
+      "region": "Asia"
+    },
+    "سنغافورة": {
+      "name": "Singapore",
+      "coordinates": [1.3521, 103.8198],
+      "region": "Asia"
+    },
+    "إندونيسيا": {
+      "name": "Indonesia",
+      "coordinates": [-0.7893, 113.9213],
+      "region": "Asia"
+    },
+    "الفلبين": {
+      "name": "Philippines",
+      "coordinates": [12.8797, 121.774],
+      "region": "Asia"
+    },
+    "بروناي": {
+      "name": "Brunei",
+      "coordinates": [4.5353, 114.7277],
+      "region": "Asia"
+    },
+    "تيمور الشرقية": {
+      "name": "East Timor",
+      "coordinates": [-8.8742, 125.7275],
+      "region": "Asia"
+    },
+    "أستراليا": {
+      "name": "Australia",
+      "coordinates": [-25.2744, 133.7751],
+      "region": "Oceania"
+    },
+    "نيوزيلندا": {
+      "name": "New Zealand",
+      "coordinates": [-40.9006, 174.886],
+      "region": "Oceania"
+    },
+    "بابوا غينيا الجديدة": {
+      "name": "Papua New Guinea",
+      "coordinates": [-6.315, 143.9555],
+      "region": "Oceania"
+    },
+    "فيجي": {
+      "name": "Fiji",
+      "coordinates": [-16.5785, 179.4144],
+      "region": "Oceania"
+    },
+    "ساموا": {
+      "name": "Samoa",
+      "coordinates": [-13.759, -172.1046],
+      "region": "Oceania"
+    },
+    "تونغا": {
+      "name": "Tonga",
+      "coordinates": [-21.1789, -175.1982],
+      "region": "Oceania"
+    },
+    "كيريباتي": {
+      "name": "Kiribati",
+      "coordinates": [-3.3704, -168.734],
+      "region": "Oceania"
+    },
+    "فانواتو": {
+      "name": "Vanuatu",
+      "coordinates": [-15.3767, 166.9592],
+      "region": "Oceania"
+    },
+    "سولومون": {
+      "name": "Solomon Islands",
+      "coordinates": [-9.6457, 160.1562],
+      "region": "Oceania"
+    },
+    "بالاو": {
+      "name": "Palau",
+      "coordinates": [7.515, 134.5825],
+      "region": "Oceania"
+    },
+    "ميكرونيزيا": {
+      "name": "Micronesia",
+      "coordinates": [7.4256, 150.5508],
+      "region": "Oceania"
+    },
+    "مارشال": {
+      "name": "Marshall Islands",
+      "coordinates": [7.1315, 171.1845],
+      "region": "Oceania"
+    },
+    "ناورو": {
+      "name": "Nauru",
+      "coordinates": [-0.5228, 166.9315],
+      "region": "Oceania"
+    },
+    "توفالو": {
+      "name": "Tuvalu",
+      "coordinates": [-7.1095, 177.6493],
+      "region": "Oceania"
+    },
+    "الولايات المتحدة": {
+      "name": "United States",
+      "coordinates": [39.8283, -98.5795],
+      "region": "North America"
+    },
+    "كندا": {
+      "name": "Canada",
+      "coordinates": [56.1304, -106.3468],
+      "region": "North America"
+    },
+    "المكسيك": {
+      "name": "Mexico",
+      "coordinates": [23.6345, -102.5528],
+      "region": "North America"
+    },
+    "غواتيمالا": {
+      "name": "Guatemala",
+      "coordinates": [15.7835, -90.2308],
+      "region": "North America"
+    },
+    "بليز": {
+      "name": "Belize",
+      "coordinates": [17.1899, -88.4976],
+      "region": "North America"
+    },
+    "السلفادور": {
+      "name": "El Salvador",
+      "coordinates": [13.7942, -88.8965],
+      "region": "North America"
+    },
+    "هندوراس": {
+      "name": "Honduras",
+      "coordinates": [15.2, -86.2419],
+      "region": "North America"
+    },
+    "نيكاراغوا": {
+      "name": "Nicaragua",
+      "coordinates": [12.265, -85.2072],
+      "region": "North America"
+    },
+    "كوستاريكا": {
+      "name": "Costa Rica",
+      "coordinates": [9.7489, -83.7534],
+      "region": "North America"
+    },
+    "بنما": {
+      "name": "Panama",
+      "coordinates": [8.538, -80.7821],
+      "region": "North America"
+    },
+    "كوبا": {
+      "name": "Cuba",
+      "coordinates": [21.5218, -77.7812],
+      "region": "North America"
+    },
+    "جامايكا": {
+      "name": "Jamaica",
+      "coordinates": [18.1096, -77.2975],
+      "region": "North America"
+    },
+    "هايتي": {
+      "name": "Haiti",
+      "coordinates": [18.9712, -72.2852],
+      "region": "North America"
+    },
+    "جمهورية الدومينيكان": {
+      "name": "Dominican Republic",
+      "coordinates": [18.7357, -70.1627],
+      "region": "North America"
+    },
+    "بورتوريكو": {
+      "name": "Puerto Rico",
+      "coordinates": [18.2208, -66.5901],
+      "region": "North America"
+    },
+    "ترينيداد وتوباغو": {
+      "name": "Trinidad and Tobago",
+      "coordinates": [10.6918, -61.2225],
+      "region": "North America"
+    },
+    "بربادوس": {
+      "name": "Barbados",
+      "coordinates": [13.1939, -59.5432],
+      "region": "North America"
+    },
+    "سانت لوسيا": {
+      "name": "Saint Lucia",
+      "coordinates": [13.9094, -60.9789],
+      "region": "North America"
+    },
+    "غرينادا": {
+      "name": "Grenada",
+      "coordinates": [12.2622, -61.6047],
+      "region": "North America"
+    },
+    "سانت فنسنت والغرينادين": {
+      "name": "Saint Vincent and the Grenadines",
+      "coordinates": [12.9843, -61.2872],
+      "region": "North America"
+    },
+    "أنتيغوا وباربودا": {
+      "name": "Antigua and Barbuda",
+      "coordinates": [17.0608, -61.7964],
+      "region": "North America"
+    },
+    "دومينيكا": {
+      "name": "Dominica",
+      "coordinates": [15.415, -61.371],
+      "region": "North America"
+    },
+    "سانت كيتس ونيفيس": {
+      "name": "Saint Kitts and Nevis",
+      "coordinates": [17.3578, -62.783],
+      "region": "North America"
+    },
+    "البرازيل": {
+      "name": "Brazil",
+      "coordinates": [-14.235, -51.9253],
+      "region": "South America"
+    },
+    "الأرجنتين": {
+      "name": "Argentina",
+      "coordinates": [-38.4161, -63.6167],
+      "region": "South America"
+    },
+    "تشيلي": {
+      "name": "Chile",
+      "coordinates": [-35.6751, -71.543],
+      "region": "South America"
+    },
+    "بيرو": {
+      "name": "Peru",
+      "coordinates": [-9.19, -75.0152],
+      "region": "South America"
+    },
+    "كولومبيا": {
+      "name": "Colombia",
+      "coordinates": [4.5709, -74.2973],
+      "region": "South America"
+    },
+    "فنزويلا": {
+      "name": "Venezuela",
+      "coordinates": [6.4238, -66.5897],
+      "region": "South America"
+    },
+    "الإكوادور": {
+      "name": "Ecuador",
+      "coordinates": [-1.8312, -78.1834],
+      "region": "South America"
+    },
+    "بوليفيا": {
+      "name": "Bolivia",
+      "coordinates": [-16.2902, -63.5887],
+      "region": "South America"
+    },
+    "باراغواي": {
+      "name": "Paraguay",
+      "coordinates": [-23.4425, -58.4438],
+      "region": "South America"
+    },
+    "أوروغواي": {
+      "name": "Uruguay",
+      "coordinates": [-32.5228, -55.7658],
+      "region": "South America"
+    },
+    "غيانا": {
+      "name": "Guyana",
+      "coordinates": [4.8604, -58.9302],
+      "region": "South America"
+    },
+    "سورينام": {
+      "name": "Suriname",
+      "coordinates": [3.9193, -56.0278],
+      "region": "South America"
+    },
+    "غيانا الفرنسية": {
+      "name": "French Guiana",
+      "coordinates": [3.9339, -53.1258],
+      "region": "South America"
+    },
+    "ألمانيا": {
+      "name": "Germany",
+      "coordinates": [51.1657, 10.4515],
+      "region": "Europe"
+    },
+    "فرنسا": {
+      "name": "France",
+      "coordinates": [46.2276, 2.2137],
+      "region": "Europe"
+    },
+    "إيطاليا": {
+      "name": "Italy",
+      "coordinates": [41.8719, 12.5674],
+      "region": "Europe"
+    },
+    "إسبانيا": {
+      "name": "Spain",
+      "coordinates": [40.4637, -3.7492],
+      "region": "Europe"
+    },
+    "المملكة المتحدة": {
+      "name": "United Kingdom",
+      "coordinates": [55.3781, -3.436],
+      "region": "Europe"
+    },
+    "أيرلندا": {
+      "name": "Ireland",
+      "coordinates": [53.4129, -8.2439],
+      "region": "Europe"
+    },
+    "البرتغال": {
+      "name": "Portugal",
+      "coordinates": [39.3999, -8.2245],
+      "region": "Europe"
+    },
+    "هولندا": {
+      "name": "Netherlands",
+      "coordinates": [52.1326, 5.2913],
+      "region": "Europe"
+    },
+    "بلجيكا": {
+      "name": "Belgium",
+      "coordinates": [50.5039, 4.4699],
+      "region": "Europe"
+    },
+    "لوكسمبورغ": {
+      "name": "Luxembourg",
+      "coordinates": [49.8153, 6.1296],
+      "region": "Europe"
+    },
+    "سويسرا": {
+      "name": "Switzerland",
+      "coordinates": [46.8182, 8.2275],
+      "region": "Europe"
+    },
+    "النمسا": {
+      "name": "Austria",
+      "coordinates": [47.5162, 14.5501],
+      "region": "Europe"
+    },
+    "الدنمارك": {
+      "name": "Denmark",
+      "coordinates": [56.2639, 9.5018],
+      "region": "Europe"
+    },
+    "السويد": {
+      "name": "Sweden",
+      "coordinates": [60.1282, 18.6435],
+      "region": "Europe"
+    },
+    "النرويج": {
+      "name": "Norway",
+      "coordinates": [60.472, 8.4689],
+      "region": "Europe"
+    },
+    "فنلندا": {
+      "name": "Finland",
+      "coordinates": [61.9241, 25.7482],
+      "region": "Europe"
+    },
+    "آيسلندا": {
+      "name": "Iceland",
+      "coordinates": [64.9631, -19.0208],
+      "region": "Europe"
+    },
+    "بولندا": {
+      "name": "Poland",
+      "coordinates": [51.9194, 19.1451],
+      "region": "Europe"
+    },
+    "التشيك": {
+      "name": "Czech Republic",
+      "coordinates": [49.8175, 15.473],
+      "region": "Europe"
+    },
+    "سلوفاكيا": {
+      "name": "Slovakia",
+      "coordinates": [48.669, 19.699],
+      "region": "Europe"
+    },
+    "المجر": {
+      "name": "Hungary",
+      "coordinates": [47.1625, 19.5033],
+      "region": "Europe"
+    },
+    "رومانيا": {
+      "name": "Romania",
+      "coordinates": [45.9432, 24.9668],
+      "region": "Europe"
+    },
+    "بلغاريا": {
+      "name": "Bulgaria",
+      "coordinates": [42.7339, 25.4858],
+      "region": "Europe"
+    },
+    "كرواتيا": {
+      "name": "Croatia",
+      "coordinates": [45.1, 15.2],
+      "region": "Europe"
+    },
+    "صربيا": {
+      "name": "Serbia",
+      "coordinates": [44.0165, 21.0059],
+      "region": "Europe"
+    },
+    "البوسنة والهرسك": {
+      "name": "Bosnia and Herzegovina",
+      "coordinates": [43.9159, 17.6791],
+      "region": "Europe"
+    },
+    "الجبل الأسود": {
+      "name": "Montenegro",
+      "coordinates": [42.7087, 19.3744],
+      "region": "Europe"
+    },
+    "ألبانيا": {
+      "name": "Albania",
+      "coordinates": [41.1533, 20.1683],
+      "region": "Europe"
+    },
+    "مقدونيا الشمالية": {
+      "name": "North Macedonia",
+      "coordinates": [41.6086, 21.7453],
+      "region": "Europe"
+    },
+    "كوسوفو": {
+      "name": "Kosovo",
+      "coordinates": [42.6026, 20.903],
+      "region": "Europe"
+    },
+    "سلوفينيا": {
+      "name": "Slovenia",
+      "coordinates": [46.1512, 14.9955],
+      "region": "Europe"
+    },
+    "إستونيا": {
+      "name": "Estonia",
+      "coordinates": [58.5953, 25.0136],
+      "region": "Europe"
+    },
+    "لاتفيا": {
+      "name": "Latvia",
+      "coordinates": [56.8796, 24.6032],
+      "region": "Europe"
+    },
+    "ليتوانيا": {
+      "name": "Lithuania",
+      "coordinates": [55.1694, 23.8813],
+      "region": "Europe"
+    },
+    "بيلاروسيا": {
+      "name": "Belarus",
+      "coordinates": [53.7098, 27.9534],
+      "region": "Europe"
+    },
+    "أوكرانيا": {
+      "name": "Ukraine",
+      "coordinates": [48.3794, 31.1656],
+      "region": "Europe"
+    },
+    "مولدوفا": {
+      "name": "Moldova",
+      "coordinates": [47.4116, 28.3699],
+      "region": "Europe"
+    },
+    "نيجيريا": {
+      "name": "Nigeria",
+      "coordinates": [9.0819, 8.6753],
+      "region": "Africa"
+    },
+    "جنوب أفريقيا": {
+      "name": "South Africa",
+      "coordinates": [-30.5595, 22.9375],
+      "region": "Africa"
+    },
+    "كينيا": {
+      "name": "Kenya",
+      "coordinates": [-0.0236, 37.9062],
+      "region": "Africa"
+    },
+    "إثيوبيا": {
+      "name": "Ethiopia",
+      "coordinates": [9.145, 40.4897],
+      "region": "Africa"
+    },
+    "غانا": {
+      "name": "Ghana",
+      "coordinates": [7.9465, -1.0232],
+      "region": "Africa"
+    },
+    "تنزانيا": {
+      "name": "Tanzania",
+      "coordinates": [-6.369, 34.8888],
+      "region": "Africa"
+    },
+    "أوغندا": {
+      "name": "Uganda",
+      "coordinates": [1.3733, 32.2903],
+      "region": "Africa"
+    },
+    "رواندا": {
+      "name": "Rwanda",
+      "coordinates": [-1.9403, 29.8739],
+      "region": "Africa"
+    },
+    "بوروندي": {
+      "name": "Burundi",
+      "coordinates": [-3.3731, 29.9189],
+      "region": "Africa"
+    },
+    "جمهورية الكونغو الديمقراطية": {
+      "name": "Democratic Republic of the Congo",
+      "coordinates": [-4.0383, 21.7587],
+      "region": "Africa"
+    },
+    "جمهورية الكونغو": {
+      "name": "Republic of the Congo",
+      "coordinates": [-0.228, 15.8277],
+      "region": "Africa"
+    },
+    "جمهورية أفريقيا الوسطى": {
+      "name": "Central African Republic",
+      "coordinates": [6.6111, 20.9394],
+      "region": "Africa"
+    },
+    "تشاد": {
+      "name": "Chad",
+      "coordinates": [15.4542, 18.7322],
+      "region": "Africa"
+    },
+    "الكاميرون": {
+      "name": "Cameroon",
+      "coordinates": [7.3697, 12.3547],
+      "region": "Africa"
+    },
+    "النيجر": {
+      "name": "Niger",
+      "coordinates": [17.6078, 8.0817],
+      "region": "Africa"
+    },
+    "مالي": {
+      "name": "Mali",
+      "coordinates": [17.5707, -3.9962],
+      "region": "Africa"
+    },
+    "بوركينا فاسو": {
+      "name": "Burkina Faso",
+      "coordinates": [12.2383, -1.5616],
+      "region": "Africa"
+    },
+    "ساحل العاج": {
+      "name": "Ivory Coast",
+      "coordinates": [7.54, -5.5471],
+      "region": "Africa"
+    },
+    "غينيا": {
+      "name": "Guinea",
+      "coordinates": [9.6412, -9.6966],
+      "region": "Africa"
+    },
+    "سيراليون": {
+      "name": "Sierra Leone",
+      "coordinates": [8.4606, -11.7799],
+      "region": "Africa"
+    },
+    "ليبيريا": {
+      "name": "Liberia",
+      "coordinates": [6.4281, -9.4295],
+      "region": "Africa"
+    },
+    "غامبيا": {
+      "name": "Gambia",
+      "coordinates": [13.4432, -15.3101],
+      "region": "Africa"
+    },
+    "السنغال": {
+      "name": "Senegal",
+      "coordinates": [14.4974, -14.4524],
+      "region": "Africa"
+    },
+    "موريتانيا": {
+      "name": "Mauritania",
+      "coordinates": [21.0079, -10.9408],
+      "region": "Africa"
+    },
+    "الرأس الأخضر": {
+      "name": "Cape Verde",
+      "coordinates": [16.5388, -24.0132],
+      "region": "Africa"
+    },
+    "غينيا بيساو": {
+      "name": "Guinea-Bissau",
+      "coordinates": [11.8037, -15.1804],
+      "region": "Africa"
+    },
+    "غينيا الاستوائية": {
+      "name": "Equatorial Guinea",
+      "coordinates": [1.6508, 10.2679],
+      "region": "Africa"
+    },
+    "ساو تومي وبرينسيبي": {
+      "name": "São Tomé and Príncipe",
+      "coordinates": [0.1864, 6.6131],
+      "region": "Africa"
+    },
+    "أنغولا": {
+      "name": "Angola",
+      "coordinates": [-11.2027, 17.8739],
+      "region": "Africa"
+    },
+    "زامبيا": {
+      "name": "Zambia",
+      "coordinates": [-13.1339, 27.8493],
+      "region": "Africa"
+    },
+    "زيمبابوي": {
+      "name": "Zimbabwe",
+      "coordinates": [-19.0154, 29.1549],
+      "region": "Africa"
+    },
+    "بوتسوانا": {
+      "name": "Botswana",
+      "coordinates": [-22.3285, 24.6849],
+      "region": "Africa"
+    },
+    "ناميبيا": {
+      "name": "Namibia",
+      "coordinates": [-22.9576, 18.4904],
+      "region": "Africa"
+    },
+    "ليسوتو": {
+      "name": "Lesotho",
+      "coordinates": [-29.61, 28.2336],
+      "region": "Africa"
+    },
+    "إسواتيني": {
+      "name": "Eswatini",
+      "coordinates": [-26.5225, 31.4659],
+      "region": "Africa"
+    },
+    "مدغشقر": {
+      "name": "Madagascar",
+      "coordinates": [-18.7669, 46.8691],
+      "region": "Africa"
+    },
+    "موريشيوس": {
+      "name": "Mauritius",
+      "coordinates": [-20.3484, 57.5522],
+      "region": "Africa"
+    },
+    "سيشل": {
+      "name": "Seychelles",
+      "coordinates": [-4.6796, 55.492],
+      "region": "Africa"
+    },
+    "جزر القمر": {
+      "name": "Comoros",
+      "coordinates": [-11.875, 43.8722],
+      "region": "Africa"
+    },
+    "جيبوتي": {
+      "name": "Djibouti",
+      "coordinates": [11.8251, 42.5903],
+      "region": "Africa"
+    },
+    "إريتريا": {
+      "name": "Eritrea",
+      "coordinates": [15.1794, 39.7823],
+      "region": "Africa"
+    },
+    "الصومال": {
+      "name": "Somalia",
+      "coordinates": [5.1521, 46.1996],
+      "region": "Africa"
+    },
+    "أوغندا": {
+      "name": "Uganda",
+      "coordinates": [1.3733, 32.2903],
+      "region": "Africa"
+    }
+  }
+}

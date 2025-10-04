@@ -64,6 +64,17 @@
     </div>
   </div>
 
+  <!--------------------------------------- Export Buttons ------------------------------------------->
+
+  <app-export-buttons
+    [selectedRows]="selectedRows"
+    [currentPageData]="getCurrentPageData()"
+    [allData]="data"
+    [config]="exportConfig"
+    (exportAllData)="exportAllDataToExcel()"
+  >
+  </app-export-buttons>
+
   <!----------------------------------- Available Filter Buttons ------------------------------------->
   <div class="filter-system">
     <!-- Available Filter Buttons -->
@@ -216,6 +227,16 @@
     >
       <thead>
         <tr>
+          <!-- Select All Checkbox -->
+          <app-selection-checkboxes
+            [showSelectAll]="true"
+            [allData]="data"
+            [currentPageData]="getCurrentPageData()"
+            [selectedRows]="selectedRows"
+            (selectAllChange)="onSelectAllChange($event)"
+          >
+          </app-selection-checkboxes>
+
           <th>#</th>
           <th>إسم الشركة</th>
           <th>الصناعة</th>
@@ -237,6 +258,16 @@
           "
           [class.selected]="isRowSelected(row)"
         >
+          <td class="checkbox-column">
+            <!-- Row Checkbox -->
+            <app-selection-checkboxes
+              [showRowCheckbox]="true"
+              [rowData]="row"
+              [selectedRows]="selectedRows"
+              (rowSelectionChange)="onRowSelectionChange($event)"
+            >
+            </app-selection-checkboxes>
+          </td>
           <td>{{ i + 1 }}</td>
           <td>{{ row.name || row.companyName || "-" }}</td>
           <td>{{ row["industryName"] || "-" }}</td>

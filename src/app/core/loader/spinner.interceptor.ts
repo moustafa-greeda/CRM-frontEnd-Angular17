@@ -27,12 +27,14 @@ export class SpinnerInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     //Skip spinner for specific URLs (assets, auth, etc.)
-    const excludedUrls = ['/assets', '/logout'];
+    const excludedUrls = ['/assets', '/logout', '/Auth/Login'];
+    // Check if the request method is GET
+    const isGet = req.method.toUpperCase() === 'GET';
     // Skip spinner for POST requests
     const isPost = req.method.toUpperCase() === 'POST';
     const shouldSkipUrl = excludedUrls.some((url) => req.url.includes(url));
 
-    const shouldShowSpinner = !shouldSkipUrl && !isPost;
+    const shouldShowSpinner = !shouldSkipUrl && !isPost && isGet;
 
     if (shouldShowSpinner) {
       this.showSpinner();
@@ -45,8 +47,8 @@ export class SpinnerInterceptor implements HttpInterceptor {
         }
       }),
       catchError((error: HttpErrorResponse) => {
-        // Error response
-        if (shouldShowSpinner) {
+        // Error response - only show toast for GET requests (not login/auth)
+        if (shouldShowSpinner && isGet && !req.url.includes('/Auth/')) {
           const msg = error?.error?.message || 'حدث خطأ في الاتصال بالسيرفر.';
           this.toastr.error(msg, 'خطأ');
         }

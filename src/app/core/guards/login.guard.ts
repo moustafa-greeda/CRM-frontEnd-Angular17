@@ -19,24 +19,8 @@ export class LoginGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
     if (this.authService.isAuthenticated()) {
-      // User is already logged in, redirect to appropriate dashboard
-      const userRoles = this.authService.getUserRoles();
-      const userRole =
-        userRoles && userRoles.length > 0 ? userRoles[0] : 'Customer';
-
-      switch (userRole) {
-        case 'Admin':
-          this.router.navigate(['/dashboard/admin']);
-          break;
-        case 'Customer':
-          this.router.navigate(['/dashboard/customer']);
-          break;
-        case 'Employee':
-          this.router.navigate(['/dashboard/employee']);
-          break;
-        default:
-          this.router.navigate(['/dashboard/admin']);
-      }
+      // User is already logged in, redirect to appropriate dashboard based on userType
+      this.authService.redirectToDashboard();
       return false;
     }
 

@@ -1,0 +1,667 @@
+/* Table Container */
+.table-container {
+  position: relative;
+  margin: 0px auto;
+  width: 100%;
+  height: 70vh; /* Fixed height */
+  display: flex;
+  flex-direction: column;
+  overflow: visible; /* Allow overflow to be visible */
+  border-radius: 12px;
+  border: 1px solid #e55a2b;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Data Table */
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  border-radius: 12px;
+  table-layout: fixed;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.5s ease;
+  animation: fadeInTable 0.5s ease forwards;
+}
+
+/* Table scroll wrapper */
+.table-scroll-wrapper {
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: auto;
+  max-height: calc(80vh - 60px); /* Account for paginator height */
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+  background: rgba(17, 24, 31, 0.8);
+}
+
+/* Table wrapper for scrolling */
+.table-container .data-table {
+  width: 100%;
+  margin: 0;
+}
+
+.data-table th,
+.data-table td {
+  padding: 10px;
+  text-align: center;
+  font-size: 12px;
+  color: #ccc;
+  border-bottom: 1px solid #333;
+  vertical-align: middle;
+  white-space: normal;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  max-width: 200px;
+}
+
+/* Status chip */
+.status-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  font-weight: 600;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+}
+.status-chip .dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #db0000;
+}
+.status-chip.active {
+  color: #28c76f;
+  border: none;
+}
+.status-chip.active .dot {
+  background: #28c76f;
+}
+.status-chip.inactive {
+  color: #db0000;
+  border: none;
+}
+
+/* Lead Status Chips with Different Colors */
+.status-chip-lead {
+  padding: 6px 12px;
+  font-size: 12px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+}
+
+/* New Lead Status - Blue */
+.status-new {
+  background: rgba(59, 130, 246, 0.15);
+  color: #3b82f6;
+  border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.status-new:hover {
+  background: rgba(59, 130, 246, 0.25);
+  border-color: rgba(59, 130, 246, 0.5);
+}
+
+/* Qualified Lead Status - Green */
+.status-qualified {
+  background: rgba(34, 197, 94, 0.15);
+  color: #22c55e;
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+
+.status-qualified:hover {
+  background: rgba(34, 197, 94, 0.25);
+  border-color: rgba(34, 197, 94, 0.5);
+}
+
+/* Proposal Sent Status - Orange */
+.status-proposal {
+  background: rgba(251, 146, 60, 0.15);
+  color: #fb923c;
+  border: 1px solid rgba(251, 146, 60, 0.3);
+}
+
+.status-proposal:hover {
+  background: rgba(251, 146, 60, 0.25);
+  border-color: rgba(251, 146, 60, 0.5);
+}
+
+/* Negotiation Status - Purple */
+.status-negotiation {
+  background: rgba(147, 51, 234, 0.15);
+  color: #9333ea;
+  border: 1px solid rgba(147, 51, 234, 0.3);
+}
+
+.status-negotiation:hover {
+  background: rgba(147, 51, 234, 0.25);
+  border-color: rgba(147, 51, 234, 0.5);
+}
+
+/* Closed Status - Emerald */
+.status-closed {
+  background: rgba(16, 185, 129, 0.15);
+  color: #10b981;
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-closed:hover {
+  background: rgba(16, 185, 129, 0.25);
+  border-color: rgba(16, 185, 129, 0.5);
+}
+
+/* Lost Status - Red */
+.status-lost {
+  background: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.status-lost:hover {
+  background: rgba(239, 68, 68, 0.25);
+  border-color: rgba(239, 68, 68, 0.5);
+}
+
+/* Default Status - Gray */
+.status-default {
+  background: rgba(107, 114, 128, 0.15);
+  color: #6b7280;
+  border: 1px solid rgba(107, 114, 128, 0.3);
+}
+
+.status-default:hover {
+  background: rgba(107, 114, 128, 0.25);
+  border-color: rgba(107, 114, 128, 0.5);
+}
+
+/* Assign badge */
+.assign-badge {
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-weight: 600;
+  border: 1px solid #666;
+}
+.assign-badge.assigned {
+  color: #28c76f;
+  border: none;
+}
+.assign-badge.unassigned {
+  color: #bbb;
+  border: none;
+}
+
+/* Sticky Table Header */
+.data-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: #1a1a1a;
+}
+
+.data-table th {
+  background: #11181f;
+  color: #e55a2b;
+  font-weight: 600;
+}
+
+/* Row Styling */
+.data-table tr:nth-child(even) {
+  background-color: #11181f;
+}
+
+.data-table tr:nth-child(odd) {
+  backdrop-filter: blur(10px);
+  background-color: rgba(17, 24, 31, 0.7);
+}
+
+.data-table tr:hover {
+  background: #292f36;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  outline: 1px solid #46e3ff;
+  transform: translateY(-1px);
+  transition: all 0.1s ease-in-out;
+}
+
+.data-table th:first-child,
+.data-table td:first-child {
+  min-width: 50px !important;
+  width: 50px !important;
+  max-width: 50px !important;
+}
+.data-table th:nth-child(2),
+.data-table td:nth-child(2) {
+  min-width: 50px !important;
+  width: 50px !important;
+  max-width: 50px !important;
+}
+
+/* Selected row styling for drag indication */
+.data-table tr.selected {
+  background: rgba(70, 227, 255, 0.5) !important;
+  position: relative;
+}
+
+.data-table tr.selected td {
+  background: rgba(70, 227, 255, 0.1) !important;
+  position: relative;
+}
+
+.data-table tr.selected td:first-child {
+  position: relative;
+}
+
+.data-table tr.selected td:last-child {
+  border-right: 1px solid rgba(70, 227, 255, 0.3);
+}
+
+@keyframes pulse-border {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.6;
+  }
+}
+
+/* Animations */
+@keyframes fadeInTable {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Drag Handle Styling */
+.drag-handle {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  color: #46e3ff;
+  font-size: 16px;
+  transition: all 0.3s ease;
+  padding: 8px;
+  border-radius: 4px;
+}
+
+.drag-handle:hover {
+  color: #fff;
+  background: rgba(70, 227, 255, 0.1);
+  transform: scale(1.1);
+}
+
+.drag-handle:active {
+  cursor: grabbing;
+  transform: scale(0.95);
+}
+
+/* Dragging state */
+.data-table tr[draggable="true"]:active {
+  opacity: 0.7;
+  /* transform: rotate(2deg); */
+  box-shadow: 0 8px 5px rgba(70, 227, 255, 0.4);
+  border: 2px solid #46e3ff;
+}
+
+/* Drag preview styling */
+.data-table tr[draggable="true"]:hover .drag-handle {
+  animation: wiggle 0.5s ease-in-out infinite;
+}
+
+@keyframes wiggle {
+  0%,
+  100% {
+    transform: rotate(0deg);
+  }
+  25% {
+    transform: rotate(-5deg);
+  }
+  75% {
+    transform: rotate(5deg);
+  }
+}
+
+/* No Data Styling */
+.no-data-row {
+  height: 300px;
+}
+
+.no-data-cell {
+  text-align: center;
+  vertical-align: middle;
+  border: none !important;
+  background: transparent !important;
+}
+
+.no-data-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+  color: #9ca3af;
+  padding: 40px 20px;
+}
+
+.no-data-content i {
+  font-size: 48px;
+  color: #6b7280;
+  opacity: 0.6;
+}
+
+.no-data-content h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #d1d5db;
+}
+
+.no-data-content p {
+  margin: 0;
+  font-size: 14px;
+  color: #9ca3af;
+  opacity: 0.8;
+}
+
+/* Action Buttons Styling */
+.action-buttons {
+  display: flex;
+  gap: 8px;
+  justify-content: center;
+  align-items: center;
+}
+
+.action-btn {
+  width: 32px;
+  height: 32px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  font-size: 14px;
+}
+
+.view-btn {
+  border-radius: 6px;
+  border: 1.5px solid #ff5f00;
+  background: rgba(69, 72, 72, 0.38);
+  color: #ff5f00;
+}
+
+.view-btn:hover {
+  color: #fff;
+  background: #ff5f00;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(69, 72, 72, 0.38);
+}
+
+.edit-btn {
+  border-radius: 6px;
+  color: #46e3ff;
+  border: 1.5px solid #46e3ff;
+  background: rgba(69, 72, 72, 0.38);
+}
+
+.edit-btn:hover {
+  color: #fff;
+  background: #46e3ff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(69, 72, 72, 0.38);
+}
+
+.delete-btn {
+  color: #db0000;
+  border-radius: 6px;
+  border: 1.5px solid #db0000;
+  background: rgba(69, 72, 72, 0.38);
+}
+
+.delete-btn:hover {
+  color: white;
+  background: #dc3545;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(220, 53, 69, 0.3);
+}
+
+.chat-btn {
+  color: #9747ff;
+  border-radius: 6px;
+  border: 1.5px solid #9747ff;
+  background: rgba(69, 72, 72, 0.38);
+}
+
+.chat-btn:hover {
+  color: white;
+  background: #9747ff;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(69, 72, 72, 0.38);
+}
+.delete-btn {
+  color: #db0000;
+  border-radius: 6px;
+  border: 1.5px solid #db0000;
+  background: rgba(69, 72, 72, 0.38);
+}
+
+.delete-btn:hover {
+  color: white;
+  background: #db0000;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(69, 72, 72, 0.38);
+}
+
+.email-btn {
+  color: #008299;
+  border-radius: 6px;
+  border: 1.5px solid #008299;
+  background: rgba(69, 72, 72, 0.38);
+}
+
+.email-btn:hover {
+  color: white;
+  background: #008299;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(69, 72, 72, 0.38);
+}
+
+/* Responsive action buttons */
+@media (max-width: 768px) {
+  .action-buttons {
+    gap: 4px;
+  }
+
+  .action-btn {
+    width: 28px;
+    height: 28px;
+    font-size: 12px;
+  }
+}
+
+/* Responsive Table */
+@media (max-width: 768px) {
+  .data-table {
+    font-size: 11px;
+  }
+  .data-table th,
+  .data-table td {
+    padding: 5px 6px;
+    max-width: 120px;
+    min-width: 80px;
+  }
+  .data-table th {
+    font-size: 10px;
+    padding: 15px 6px;
+  }
+}
+
+@media (max-width: 480px) {
+  .data-table {
+    font-size: 10px;
+  }
+  .data-table th,
+  .data-table td {
+    padding: 4px 5px;
+    max-width: 100px;
+  }
+}
+
+/* ========================== Paginator Styling ====================== */
+.custom-paginator {
+  width: 100%;
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  background: rgba(17, 24, 31, 0.95);
+  border: 1px solid rgba(70, 227, 255, 0.2);
+  border-radius: 10px;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+
+  /* Container Layout */
+  ::ng-deep .mat-mdc-paginator-container {
+    padding: 12px 16px;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    background: transparent;
+  }
+
+  /* Text Styling */
+  ::ng-deep .mat-mdc-paginator-range-label,
+  ::ng-deep .mat-mdc-paginator-page-size {
+    color: #46e3ff;
+    font-size: 13px;
+    font-weight: 500;
+    margin: 0 12px;
+  }
+
+  /* Navigation Buttons */
+  ::ng-deep .mat-mdc-paginator-navigation-previous,
+  ::ng-deep .mat-mdc-paginator-navigation-next {
+    color: #46e3ff;
+    background: rgba(70, 227, 255, 0.1);
+    border: 1px solid #46e3ff;
+    border-radius: 6px;
+    margin: 0 6px;
+    min-width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.3s ease;
+  }
+
+  ::ng-deep .mat-mdc-paginator-navigation-previous:hover,
+  ::ng-deep .mat-mdc-paginator-navigation-next:hover {
+    background: rgba(70, 227, 255, 0.2);
+    color: #fff;
+    border-color: #46e3ff;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(70, 227, 255, 0.3);
+  }
+
+  ::ng-deep .mat-mdc-paginator-navigation-previous:disabled,
+  ::ng-deep .mat-mdc-paginator-navigation-next:disabled {
+    color: rgba(70, 227, 255, 0.3) !important;
+    border-color: rgba(70, 227, 255, 0.2) !important;
+    background: rgba(70, 227, 255, 0.05) !important;
+    cursor: not-allowed !important;
+    opacity: 0.5;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  ::ng-deep .mat-mdc-paginator-navigation-previous:disabled:hover,
+  ::ng-deep .mat-mdc-paginator-navigation-next:disabled:hover {
+    background: rgba(70, 227, 255, 0.05) !important;
+    color: rgba(70, 227, 255, 0.3) !important;
+    border-color: rgba(70, 227, 255, 0.2) !important;
+    transform: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Page Size Dropdown */
+  ::ng-deep .mat-mdc-paginator-page-size-select {
+    width: 120px; /* 👈 updated */
+    min-height: 36px;
+    background: rgba(70, 227, 255, 0.1);
+    border: 1px solid #46e3ff;
+    border-radius: 6px;
+    color: #46e3ff;
+    padding: 6px 12px;
+    margin: 0 12px;
+    transition: all 0.3s ease;
+    white-space: nowrap;
+  }
+
+  ::ng-deep .mat-mdc-paginator-page-size-select:hover {
+    background: rgba(70, 227, 255, 0.15);
+    border-color: #46e3ff;
+  }
+
+  /* Page Size Value + Arrow */
+  ::ng-deep .mat-mdc-paginator-page-size-select .mat-mdc-select-trigger {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+  }
+
+  ::ng-deep .mat-mdc-paginator-page-size-select .mat-mdc-select-value {
+    color: #46e3ff !important;
+    font-weight: 500;
+  }
+
+  ::ng-deep .mat-mdc-paginator-page-size-select .mat-mdc-select-value-text {
+    color: #46e3ff !important;
+    white-space: nowrap !important;
+  }
+
+  ::ng-deep .mat-mdc-paginator-page-size-select .mat-mdc-select-arrow {
+    color: #46e3ff !important;
+    margin-left: 8px;
+  }
+
+  /* Dropdown Panel */
+  ::ng-deep .mat-mdc-select-panel {
+    background: rgba(17, 24, 31, 0.95);
+    border: 1px solid #46e3ff;
+    border-radius: 6px;
+    backdrop-filter: blur(10px);
+  }
+
+  ::ng-deep .mat-mdc-option {
+    color: #46e3ff;
+    background: transparent;
+    transition: all 0.3s ease;
+  }
+
+  ::ng-deep .mat-mdc-option:hover {
+    background: rgba(70, 227, 255, 0.1);
+    color: #fff;
+  }
+
+  ::ng-deep .mat-mdc-option.mdc-list-item--selected {
+    background: rgba(70, 227, 255, 0.2);
+    color: #fff;
+  }
+
+  /* Ensure layout consistency */
+  ::ng-deep .mat-mdc-paginator-page-size {
+    min-width: 70px;
+    display: flex;
+    align-items: center;
+  }
+}

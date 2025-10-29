@@ -7,7 +7,7 @@ import { PersonalServiceService } from '../personal-data-table/personal-service.
 import { CompanyService, CompanyFilterParams } from './company.service';
 import { TableExportService } from '../shared/table-export.service';
 import { TableSelectionService } from '../shared/table-selection.service';
-import { NotifyDialogService } from '../../../shared/notify-dialog/notify-dialog.service';
+import { NotifyDialogService } from '../../../shared/notify-dialog-host/notify-dialog.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 @Component({

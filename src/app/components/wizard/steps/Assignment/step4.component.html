@@ -1,0 +1,71 @@
+<div class="step-content company-data-form" [formGroup]="form">
+  <div class="form-row">
+    <div class="form-group">
+      <label for="firstName">الاسم الاول</label>
+      <div class="firstName">
+        <label
+          class="radio-item"
+          *ngFor="let option of firstNameOptions"
+          [class.selected]="form.get('firstName')?.value === option.value"
+        >
+          <input
+            type="radio"
+            name="firstName"
+            [value]="option.value"
+            formControlName="firstName"
+            (change)="onFieldChange('firstName')"
+          />
+          <span>{{ option.label }}</span>
+        </label>
+      </div>
+      <div class="error-message" *ngIf="getErrorMessage('firstName')">
+        {{ getErrorMessage("firstName") }}
+      </div>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <!-- <div class="form-column"> -->
+    <div class="form-group">
+      <label for="choosePerson">اختر الاشخاص</label>
+      <div class="radio-group">
+        <label
+          class="radio-item"
+          *ngFor="let option of choosePersonOptions"
+          [class.selected]="isPersonSelected(option.value)"
+          (click)="togglePersonSelection(option.value)"
+        >
+          <input
+            type="checkbox"
+            [checked]="isPersonSelected(option.value)"
+            (change)="togglePersonSelection(option.value)"
+          />
+          <span>{{ option.label }}</span>
+        </label>
+      </div>
+      <div class="error-message" *ngIf="getErrorMessage('choosePerson')">
+        {{ getErrorMessage("choosePerson") }}
+      </div>
+    </div>
+    <!-- </div> -->
+  </div>
+
+  <!-- Notes field -->
+  <div class="form-row">
+    <div class="form-group">
+      <label for="notes">ملاحظات</label>
+      <textarea
+        id="notes"
+        formControlName="notes"
+        placeholder="أدخل أي ملاحظات إضافية"
+        class="form-input"
+        rows="4"
+        (blur)="onFieldBlur('notes')"
+        (input)="onFieldChange('notes')"
+      ></textarea>
+      <div class="error-message" *ngIf="getErrorMessage('notes')">
+        {{ getErrorMessage("notes") }}
+      </div>
+    </div>
+  </div>
+</div>

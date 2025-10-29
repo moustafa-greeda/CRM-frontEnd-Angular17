@@ -95,9 +95,9 @@ export interface ExportButtonConfig {
         font-size: 25px;
       }
 
-      // selected export
+      /* selected export */
       .selected-export {
-        background-color: #ff5f00 !important; /* change this */
+        background-color: #ff5f00 !important;
         color: #fff;
       }
 
@@ -109,13 +109,13 @@ export interface ExportButtonConfig {
 
       /* Current page button */
       .current-page-export {
-        background-color: #005766; /* blue */
+        background-color: #005766;
         color: #fff;
       }
 
       /* All data button */
       .all-data-export {
-        background-color: #993800; /* green */
+        background-color: #993800;
         color: #fff;
       }
 
@@ -133,10 +133,10 @@ export interface ExportButtonConfig {
     `,
   ],
 })
-export class ExportButtonsComponent<T extends ExportableData> {
-  @Input() selectedRows: T[] = [];
-  @Input() currentPageData: T[] = [];
-  @Input() allData: T[] = [];
+export class ExportButtonsComponent {
+  @Input() selectedRows: ExportableData[] = [];
+  @Input() currentPageData: ExportableData[] = [];
+  @Input() allData: ExportableData[] = [];
   @Input() config: ExportButtonConfig = {
     showSelectedExport: true,
     showCurrentPageExport: true,
@@ -148,9 +148,9 @@ export class ExportButtonsComponent<T extends ExportableData> {
     spinnerMessage: 'جاري التصدير...',
   };
 
-  @Output() exportSelected = new EventEmitter<T[]>();
-  @Output() exportCurrentPage = new EventEmitter<T[]>();
-  @Output() exportAllData = new EventEmitter<T[]>();
+  @Output() exportSelected = new EventEmitter<ExportableData[]>();
+  @Output() exportCurrentPage = new EventEmitter<ExportableData[]>();
+  @Output() exportAllData = new EventEmitter<ExportableData[]>();
 
   constructor(private exportService: TableExportService) {}
 

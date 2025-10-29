@@ -33,6 +33,40 @@
   transition: all 0.3s ease;
   backdrop-filter: blur(30px);
   border: 1px solid #ff5f00;
+  animation: fadeUp 0.8s ease-out both;
+}
+
+/* Staggered animation for each stat card */
+.stat-card:nth-child(1) {
+  animation: fadeUp 0.8s ease-out 0.1s both;
+}
+
+.stat-card:nth-child(2) {
+  animation: fadeUp 0.8s ease-out 0.2s both;
+}
+
+.stat-card:nth-child(3) {
+  animation: fadeUp 0.8s ease-out 0.3s both;
+}
+
+.stat-card:nth-child(4) {
+  animation: fadeUp 0.8s ease-out 0.4s both;
+}
+
+.stat-card:nth-child(5) {
+  animation: fadeUp 0.8s ease-out 0.5s both;
+}
+
+/* Fade Up Animation */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Border gradient */

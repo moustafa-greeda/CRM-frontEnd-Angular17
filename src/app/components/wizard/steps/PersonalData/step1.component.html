@@ -1,0 +1,222 @@
+<div class="step-content personal-data-form" [formGroup]="form">
+  <!-- uploade image -->
+  <div class="parent-image">
+    <div class="container-image">
+      <img src="../../../../../assets/img/avatar.svg" alt="avatar image" />
+      <button class="btn-upload"><i class="bi bi-camera"></i></button>
+    </div>
+  </div>
+
+  <div class="form-row">
+    <div class="form-column">
+      <!-- first name -->
+      <div class="form-group">
+        <label for="firstName">الاسم</label>
+        <input
+          type="text"
+          id="firstName"
+          formControlName="firstName"
+          placeholder="أدخل الاسم"
+          class="form-input"
+          (blur)="onFieldBlur('firstName')"
+          (input)="onFieldChange('firstName')"
+        />
+        <div class="error-message" *ngIf="getErrorMessage('firstName')">
+          {{ getErrorMessage("firstName") }}
+        </div>
+      </div>
+      <!-- phone number -->
+      <div class="form-group">
+        <label for="phone"> رقم الهاتف </label>
+        <input
+          type="text"
+          id="phone"
+          formControlName="phone"
+          placeholder="أدخل رقم التليفون  "
+          class="form-input"
+          (blur)="onFieldBlur('phone')"
+          (input)="onFieldChange('phone')"
+        />
+        <div class="error-message" *ngIf="getErrorMessage('phone')">
+          {{ getErrorMessage("phone") }}
+        </div>
+      </div>
+      <!-- Age -->
+      <div class="form-group">
+        <label for="companyName">العمر</label>
+        <input
+          type="text"
+          id="age"
+          formControlName="age"
+          placeholder="أدخل العمر "
+          class="form-input"
+          (blur)="onFieldBlur('age')"
+          (input)="onFieldChange('age')"
+        />
+        <div class="error-message" *ngIf="getErrorMessage('age')">
+          {{ getErrorMessage("age") }}
+        </div>
+      </div>
+      <!-- email -->
+      <div class="form-group">
+        <label for="email">البريد الإلكتروني *</label>
+        <input
+          type="email"
+          id="email"
+          formControlName="email"
+          placeholder="أدخل البريد الإلكتروني"
+          class="form-input"
+          (blur)="onFieldBlur('email')"
+          (input)="onFieldChange('email')"
+        />
+        <div class="error-message" *ngIf="getErrorMessage('email')">
+          {{ getErrorMessage("email") }}
+        </div>
+      </div>
+    </div>
+
+    <!-- column 2 -->
+    <div class="form-column">
+      <!-- source -->
+      <div class="form-group">
+        <label for="source">المصدر *</label>
+        <select
+          id="source"
+          formControlName="source"
+          class="form-select"
+          (blur)="onFieldBlur('source')"
+          (change)="onFieldChange('source')"
+        >
+          <option value="">إختر المصدر</option>
+          <option
+            *ngFor="let entryChanel of entryChanelList"
+            [value]="entryChanel.id"
+          >
+            {{ entryChanel.name }}
+          </option>
+        </select>
+        <div class="error-message" *ngIf="getErrorMessage('source')">
+          {{ getErrorMessage("source") }}
+        </div>
+      </div>
+
+      <!-- indusry -->
+      <div class="form-group">
+        <label for="industry">الصناعة *</label>
+        <select
+          id="industry"
+          formControlName="industry"
+          class="form-select"
+          (blur)="onFieldBlur('industry')"
+          (change)="onFieldChange('industry')"
+        >
+          <option value="">إختر الصناعة</option>
+          <option *ngFor="let industry of industryList" [value]="industry.id">
+            {{ industry.name }}
+          </option>
+        </select>
+        <div class="error-message" *ngIf="getErrorMessage('industry')">
+          {{ getErrorMessage("industry") }}
+        </div>
+      </div>
+
+      <!-- gender -->
+      <div class="form-group">
+        <label for="gender">الجنس</label>
+        <select
+          id="gender"
+          formControlName="gender"
+          class="form-select"
+          (blur)="onFieldBlur('gender')"
+          (change)="onFieldChange('gender')"
+        >
+          <option value="male">ذكر</option>
+          <option value="female">أنثى</option>
+        </select>
+        <div class="error-message" *ngIf="getErrorMessage('gender')">
+          {{ getErrorMessage("gender") }}
+        </div>
+      </div>
+    </div>
+
+    <!-- column 3 -->
+    <div class="form-column">
+      <!-- company name -->
+      <div class="form-group">
+        <label for="companyName">اسم الشركة</label>
+        <select
+          id="companyName"
+          formControlName="companyName"
+          class="form-select"
+          (blur)="onFieldBlur('companyName')"
+          (change)="onFieldChange('companyName')"
+        >
+          <option value="">إختر الشركة</option>
+          <option *ngFor="let company of companyList" [value]="company.id">
+            {{ company.name }}
+          </option>
+        </select>
+        <div class="error-message" *ngIf="getErrorMessage('companyName')">
+          {{ getErrorMessage("companyName") }}
+        </div>
+      </div>
+      <!-- job title -->
+      <div class="form-group">
+        <label for="jobTitle">المسمى الوظيفي *</label>
+
+        <input
+          type="text"
+          id="jobTitle"
+          formControlName="jobTitle"
+          placeholder="أدخل المسمى الوظيفي"
+          class="form-input"
+          (blur)="onFieldBlur('jobTitle')"
+          (input)="onFieldChange('jobTitle')"
+        />
+        <div class="error-message" *ngIf="getErrorMessage('jobTitle')">
+          {{ getErrorMessage("jobTitle") }}
+        </div>
+      </div>
+
+      <!-- job level -->
+      <div class="form-group">
+        <label for="jobLevel">المستوي الوظيفي *</label>
+        <select
+          id="jobLevel"
+          formControlName="jobLevel"
+          class="form-select"
+          (blur)="onFieldBlur('jobLevel')"
+          (change)="onFieldChange('jobLevel')"
+        >
+          <option value="">إختر المستوي الوظيفي</option>
+          <option *ngFor="let jobLevel of jobLevels" [value]="jobLevel.id">
+            {{ jobLevel.name }}
+          </option>
+        </select>
+        <div class="error-message" *ngIf="getErrorMessage('jobLevel')">
+          {{ getErrorMessage("jobLevel") }}
+        </div>
+      </div>
+
+      <!--language -->
+      <div class="form-group">
+        <label for="language">اللغة المفضلة</label>
+        <select
+          id="language"
+          formControlName="language"
+          class="form-select"
+          (blur)="onFieldBlur('language')"
+          (change)="onFieldChange('language')"
+        >
+          <option value="">اختر اللغة</option>
+          <option value="ar">العربية</option>
+          <option value="en">English</option>
+          <option value="fr">Français</option>
+        </select>
+        <div class="error-message" *ngIf="getErrorMessage('language')">
+          {{ getErrorMessage("language") }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

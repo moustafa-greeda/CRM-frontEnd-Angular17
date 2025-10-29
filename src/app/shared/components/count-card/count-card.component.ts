@@ -7,7 +7,7 @@ import { Component, Input } from '@angular/core';
 })
 export class CountCardComponent {
   // Dynamic page title
-  @Input() title: string = 'Overview';
+  @Input() title: string = '';
 
   // Dynamic stats cards
   @Input() stats: { title: string; count: number; icon: string }[] = [];

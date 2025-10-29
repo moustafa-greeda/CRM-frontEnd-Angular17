@@ -1,9 +1,9 @@
-import { Component, Input, OnInit, Optional, Inject } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
 import { FormGroup, AbstractControl } from '@angular/forms';
 import { ErrorHandlerService } from '../../../core/services/error-handler.service';
 
 @Component({
-  template: ''
+  template: '',
 })
 export abstract class BaseStepComponent implements OnInit {
   @Input() form!: FormGroup;
@@ -42,7 +42,7 @@ export abstract class BaseStepComponent implements OnInit {
       setTimeout(() => {
         this.form.updateValueAndValidity();
       }, 0);
-      
+
       // Trigger Pac-Man movement if wizard component is available
       if (this.wizardComponent && control.value && control.valid) {
         this.wizardComponent.onFieldInput(controlName);

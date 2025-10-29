@@ -1,0 +1,150 @@
+<div class="step-form">
+  <!-- <h3 class="step-title">البيانات الشخصية</h3> -->
+
+  <div class="form-grid">
+    <!-- Left Column -->
+    <div class="form-column">
+      <div class="form-group">
+        <label class="form-label">إسم الشركة *</label>
+        <input
+          type="text"
+          class="form-input"
+          formControlName="companyName"
+          placeholder="ادخل اسم الشركة"
+        />
+        <div
+          *ngIf="
+            form.get('companyName')?.invalid && form.get('companyName')?.touched
+          "
+          class="error-message"
+        >
+          اسم الشركة مطلوب
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">البريد الإلكتروني *</label>
+        <input
+          type="email"
+          class="form-input"
+          formControlName="email"
+          placeholder="ادخل البريد الإلكتروني"
+        />
+        <div
+          *ngIf="form.get('email')?.invalid && form.get('email')?.touched"
+          class="error-message"
+        >
+          البريد الإلكتروني مطلوب وصحيح
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">التقييم *</label>
+        <select class="form-select" formControlName="rating">
+          <option value="">إختر التقييم</option>
+          <option value="1">نجمة واحدة</option>
+          <option value="2">نجمتان</option>
+          <option value="3">ثلاث نجوم</option>
+          <option value="4">أربع نجوم</option>
+          <option value="5">خمس نجوم</option>
+        </select>
+        <div
+          *ngIf="form.get('rating')?.invalid && form.get('rating')?.touched"
+          class="error-message"
+        >
+          التقييم مطلوب
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">الصناعة *</label>
+        <select class="form-select" formControlName="industry">
+          <option value="">إختر الصناعة</option>
+          <option value="technology">التكنولوجيا</option>
+          <option value="construction">البناء والتشييد</option>
+          <option value="commerce">التجارة</option>
+          <option value="healthcare">الرعاية الصحية</option>
+          <option value="education">التعليم</option>
+          <option value="finance">الخدمات المالية</option>
+        </select>
+        <div
+          *ngIf="form.get('industry')?.invalid && form.get('industry')?.touched"
+          class="error-message"
+        >
+          الصناعة مطلوبة
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Column -->
+    <div class="form-column">
+      <div class="form-group">
+        <label class="form-label">رقم التليفون *</label>
+        <input
+          type="text"
+          class="form-input"
+          formControlName="phoneNumber"
+          placeholder="أدخل رقم التليفون"
+        />
+        <div
+          *ngIf="
+            form.get('phoneNumber')?.invalid && form.get('phoneNumber')?.touched
+          "
+          class="error-message"
+        >
+          رقم التليفون مطلوب
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">الموظف المسؤول *</label>
+        <select class="form-select" formControlName="responsibleEmployee">
+          <option value="">إختر الموظف</option>
+          <option value="emp1">أحمد محمد</option>
+          <option value="emp2">فاطمة علي</option>
+          <option value="emp3">محمد حسن</option>
+          <option value="emp4">نور الدين</option>
+        </select>
+        <div
+          *ngIf="
+            form.get('responsibleEmployee')?.invalid &&
+            form.get('responsibleEmployee')?.touched
+          "
+          class="error-message"
+        >
+          الموظف المسؤول مطلوب
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">المصدر *</label>
+        <select class="form-select" formControlName="source">
+          <option value="">إختر المصدر</option>
+          <option value="website">الموقع الإلكتروني</option>
+          <option value="referral">إحالة</option>
+          <option value="social">وسائل التواصل الاجتماعي</option>
+          <option value="advertisement">إعلان</option>
+          <option value="other">أخرى</option>
+        </select>
+        <div
+          *ngIf="form.get('source')?.invalid && form.get('source')?.touched"
+          class="error-message"
+        >
+          المصدر مطلوب
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Full Width Fields -->
+  <div class="form-group full-width">
+    <label class="form-label">ملاحظات</label>
+    <textarea
+      class="form-textarea"
+      formControlName="notes"
+      placeholder="إدخل الملاحظات"
+      rows="3"
+    >
+    </textarea>
+  </div>
+</div>

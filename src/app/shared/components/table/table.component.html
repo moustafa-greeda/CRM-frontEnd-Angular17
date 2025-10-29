@@ -1,0 +1,383 @@
+<div class="table-container" [ngClass]="containerClass">
+  <div class="table-scroll-wrapper">
+    <table class="data-table" [ngClass]="tableClass">
+      <thead>
+        <tr>
+          <th>
+            <input
+              type="checkbox"
+              class="custom-checkbox"
+              [checked]="isAllSelected()"
+              (change)="onSelectAllChange($event)"
+            />
+          </th>
+
+          <th *ngIf="showIndex" style="width: 60px">#</th>
+
+          <th *ngFor="let col of columns" [style.width]="col.width">
+            {{ col.header }}
+          </th>
+        </tr>
+      </thead>
+
+      <tbody>
+        <!-- No data message -->
+        <tr *ngIf="data.length === 0" class="no-data-row">
+          <td
+            [attr.colspan]="columns.length + (showIndex ? 2 : 1)"
+            class="no-data-cell"
+          >
+            <div class="no-data-content">
+              <i class="bi bi-inbox"></i>
+              <h3>لا توجد بيانات</h3>
+              <p>لم يتم العثور على أي عناصر لعرضها</p>
+            </div>
+          </td>
+        </tr>
+
+        <!-- Data rows -->
+        <tr
+          *ngFor="let row of data; let i = index"
+          [class.selected]="isRowSelected(row)"
+          draggable="true"
+          (dragstart)="onDragStartRow(row, $event)"
+          (click)="onRowClick(row, $event)"
+          [style.cursor]="'pointer'"
+        >
+          <td>
+            <input
+              type="checkbox"
+              class="custom-checkbox"
+              [checked]="isRowSelected(row)"
+              (change)="onRowSelectionChange(row, $event)"
+            />
+          </td>
+
+          <td
+            *ngIf="showIndex"
+            style="
+              width: 60px;
+              text-align: center;
+              font-weight: 500;
+              color: #46e3ff;
+            "
+          >
+            {{ getRowIndex(i) }}
+          </td>
+
+          <td *ngFor="let col of columns" [style.width]="col.width">
+            <ng-container [ngSwitch]="col.key">
+              <ng-container *ngSwitchCase="'dragHandle'">
+                <div class="drag-handle" title="اسحب للتخصيص">
+                  <i class="bi bi-grip-vertical"></i>
+                </div>
+              </ng-container>
+              <ng-container *ngSwitchCase="'leadStatus'">
+                <!-- Inline editing for lead status -->
+                <div *ngIf="isEditingLeadStatus(row)" class="lead-status-edit">
+                  <app-table-dropdown
+                    [options]="getLeadStatusOptionsWithCurrent(row)"
+                    [selectedValue]="
+                      row._draftLeadStatus || row.leadStatus || ''
+                    "
+                    placeholder="اختر الحالة"
+                    [optionColors]="leadStatusColorMap"
+                    [autoSave]="true"
+                    (valueChange)="onStatusChange(row, $event)"
+                    (save)="onSaveLeadStatus(row)"
+                  ></app-table-dropdown>
+                </div>
+                <!-- Display current status if not in editing mode -->
+                <span
+                  *ngIf="!isEditingLeadStatus(row)"
+                  class="status-chip status-chip-lead"
+                  [ngClass]="getStatusClass(row.leadStatus)"
+                >
+                  {{ getLeadStatusDisplay(row.leadStatus) }}
+                </span>
+              </ng-container>
+              <ng-container *ngSwitchCase="'actions'">
+                <!-- Dropdown mode -->
+                <ng-container
+                  *ngIf="actionDisplayMode === 'dropdown'; else inlineActions"
+                >
+                  <div class="action-buttons">
+                    <div
+                      class="dropdown"
+                      style="position: relative; display: inline-block"
+                    >
+                      <button
+                        class="action-btn view-btn"
+                        title="إجراءات"
+                        (click)="toggleDropdown(i, $event)"
+                      >
+                        <i class="bi bi-three-dots"></i>
+                      </button>
+                      <div
+                        *ngIf="openDropdownRowIndex === i"
+                        class="dropdown-menu"
+                        [ngStyle]="{
+                          position: 'fixed',
+                          top: dropdownPosition.top + 'px',
+                          left: dropdownPosition.left + 'px'
+                        }"
+                        style="
+                          min-width: 160px;
+                          background: rgba(17, 24, 31, 0.95);
+                          border: 1px solid #46e3ff;
+                          border-radius: 6px;
+                          padding: 6px;
+                          z-index: 2147483647;
+                        "
+                      >
+                        <button
+                          class="action-btn view-btn"
+                          *ngIf="showView"
+                          (click)="onView(row); openDropdownRowIndex = null"
+                          style="width: 100%; margin: 4px 0"
+                        >
+                          <i class="bi bi-eye"></i>
+                        </button>
+                        <button
+                          class="action-btn edit-btn"
+                          *ngIf="showEdit"
+                          (click)="onEdit(row); openDropdownRowIndex = null"
+                          style="width: 100%; margin: 4px 0"
+                        >
+                          <i class="bi bi-pencil"></i>
+                        </button>
+                        <button
+                          class="action-btn delete-btn"
+                          *ngIf="showDelete"
+                          (click)="onDelete(row); openDropdownRowIndex = null"
+                          style="width: 100%; margin: 4px 0"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </button>
+                        <button
+                          class="action-btn chat-btn"
+                          *ngIf="showChat"
+                          (click)="onChat(row); openDropdownRowIndex = null"
+                          style="width: 100%; margin: 4px 0"
+                        >
+                          <i class="bi bi-chat-left-text-fill"></i>
+                        </button>
+                        <button
+                          class="action-btn email-btn"
+                          *ngIf="showEmail"
+                          (click)="onEmail(row); openDropdownRowIndex = null"
+                          style="width: 100%; margin: 4px 0"
+                        >
+                          <i class="bi bi-envelope"></i>
+                        </button>
+                        <button
+                          class="action-btn view-btn"
+                          *ngIf="showNote"
+                          (click)="
+                            onNote(row, $event); openDropdownRowIndex = null
+                          "
+                          style="width: 100%; margin: 4px 0"
+                        >
+                          <i class="bi bi-file-earmark-text"></i>
+                        </button>
+                        <button
+                          class="action-btn email-btn"
+                          *ngIf="showCall"
+                          (click)="
+                            onCall(row, $event); openDropdownRowIndex = null
+                          "
+                          style="width: 100%; margin: 4px 0"
+                        >
+                          <i class="bi bi-telephone"></i>
+                        </button>
+                        <button
+                          class="action-btn chat-btn"
+                          *ngIf="showMeeting"
+                          (click)="
+                            onMeeting(row, $event); openDropdownRowIndex = null
+                          "
+                          style="width: 100%; margin: 4px 0"
+                        >
+                          <i class="bi bi-camera-video"></i>
+                        </button>
+                        <button
+                          class="action-btn view-btn"
+                          *ngIf="showFollowUp"
+                          (click)="
+                            onFollowUp(row, $event); openDropdownRowIndex = null
+                          "
+                          style="width: 100%; margin: 4px 0"
+                        >
+                          <i class="bi bi-arrow-repeat"></i>
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </ng-container>
+                <!-- Inline mode -->
+                <ng-template #inlineActions>
+                  <div class="action-buttons">
+                    <!-- add button -->
+                    <button
+                      class="action-btn edit-btn"
+                      *ngIf="addButton"
+                      (click)="onAddButton(row)"
+                      title="اضافة"
+                    >
+                      <i class="bi bi-person-plus"></i>
+                    </button>
+                    <!-- view button -->
+                    <button
+                      class="action-btn view-btn"
+                      *ngIf="showView"
+                      (click)="onView(row)"
+                      title="عرض"
+                    >
+                      <i class="bi bi-eye"></i>
+                    </button>
+                    <button
+                      class="action-btn edit-btn"
+                      *ngIf="showEdit"
+                      (click)="onEdit(row)"
+                      title="تعديل"
+                    >
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    <button
+                      class="action-btn delete-btn"
+                      *ngIf="showDelete"
+                      (click)="onDelete(row)"
+                      title="حذف"
+                    >
+                      <i class="bi bi-trash"></i>
+                    </button>
+                    <!-- chat button -->
+                    <button
+                      class="action-btn chat-btn"
+                      *ngIf="showChat"
+                      (click)="onChat(row)"
+                      title="رساله"
+                    >
+                      <i class="bi bi-chat-left-text-fill"></i>
+                    </button>
+
+                    <!-- email button -->
+                    <button
+                      class="action-btn email-btn"
+                      (click)="onEmail(row)"
+                      title="اميل"
+                    >
+                      <i class="bi bi-envelope"></i>
+                    </button>
+                    <!-- notes -->
+                    <button
+                      class="action-btn view-btn"
+                      *ngIf="showNote"
+                      (click)="onNote(row, $event)"
+                      title="ملاحظة"
+                    >
+                      <i class="bi bi-file-earmark-text"></i>
+                    </button>
+
+                    <!-- call button -->
+                    <button
+                      class="action-btn email-btn"
+                      *ngIf="showCall"
+                      (click)="onCall(row, $event)"
+                      title="مكالمة"
+                    >
+                      <i class="bi bi-telephone"></i>
+                    </button>
+
+                    <!-- meeting button -->
+                    <button
+                      class="action-btn chat-btn"
+                      *ngIf="showMeeting"
+                      (click)="onMeeting(row, $event)"
+                      title="اجتماع"
+                    >
+                      <i class="bi bi-camera-video"></i>
+                    </button>
+
+                    <!-- follow up button -->
+                    <button
+                      class="action-btn view-btn"
+                      *ngIf="showFollowUp"
+                      (click)="onFollowUp(row, $event)"
+                      title="متابعة"
+                    >
+                      <i class="bi bi-arrow-repeat"></i>
+                    </button>
+                  </div>
+                </ng-template>
+              </ng-container>
+
+              <ng-container *ngSwitchDefault>
+                <ng-container [ngSwitch]="col.key">
+                  <ng-container *ngSwitchCase="'status'">
+                    <span
+                      class="status-chip"
+                      [class.active]="row[col.key] === 'نشط'"
+                      [class.inactive]="row[col.key] !== 'نشط'"
+                    >
+                      {{ row[col.key] || "-" }}
+                    </span>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'leadStatusName'">
+                    <span
+                      class="status-chip status-chip-lead"
+                      [ngClass]="getStatusClass(row[col.key])"
+                    >
+                      {{ getLeadStatusDisplay(row[col.key]) }}
+                    </span>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'assignState'">
+                    <span
+                      class="assign-badge"
+                      [class.assigned]="row[col.key]?.includes('مُخصّص')"
+                      [class.unassigned]="row[col.key]?.includes('غير')"
+                    >
+                      {{ row[col.key] || "-" }}
+                    </span>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'createdAt'">
+                    <span class="date-field">
+                      {{ (row[col.key] | date : "dd/MM/yyyy") || "-" }}
+                    </span>
+                  </ng-container>
+                  <ng-container *ngSwitchDefault>
+                    <!-- Check for formatter -->
+                    <span *ngIf="col.formatter === 'date'" class="date-field">
+                      {{ formatCellValue(row[col.key], "date") }}
+                    </span>
+                    <span
+                      *ngIf="col.formatter === 'datetime'"
+                      class="date-field"
+                    >
+                      {{ formatCellValue(row[col.key], "datetime") }}
+                    </span>
+                    <ng-container *ngIf="!col.formatter">
+                      {{ row[col.key] || "-" }}
+                    </ng-container>
+                  </ng-container>
+                </ng-container>
+              </ng-container>
+            </ng-container>
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <mat-paginator
+    *ngIf="showDataTable && !hasNoData"
+    [length]="totalCount"
+    [pageIndex]="pageIndex"
+    [pageSize]="pageSize"
+    [pageSizeOptions]="[10, 50, 100, 500, 1000]"
+    [disabled]="totalCount === 0"
+    (page)="onPageChange($event)"
+    class="custom-paginator"
+    showFirstLastButtons
+  >
+  </mat-paginator>
+</div>

@@ -1,9 +1,70 @@
+// import { Component, OnDestroy, OnInit } from '@angular/core';
+// import { Subscription, timer } from 'rxjs';
+// import { NotifyDialogData, NotifyDialogService } from './notify-dialog.service';
+
+// @Component({
+//   selector: 'app-notify-dialog-host',
+//   templateUrl: './notify-dialog-host.component.html',
+//   styleUrls: ['./notify-dialog-host.component.css'],
+// })
+// export class NotifyDialogHostComponent implements OnInit, OnDestroy {
+//   data: NotifyDialogData | null = null;
+//   private sub?: Subscription;
+//   private autoCloseSub?: Subscription;
+
+//   constructor(private notify: NotifyDialogService) {}
+
+//   ngOnInit(): void {
+//     this.sub = this.notify.state$.subscribe((d) => {
+//       this.data = d;
+//       this.autoCloseSub?.unsubscribe();
+//       if (d?.autoCloseMs && d.autoCloseMs > 0) {
+//         this.autoCloseSub = timer(d.autoCloseMs).subscribe(() => this.close());
+//       }
+//     });
+//   }
+
+//   ngOnDestroy(): void {
+//     this.sub?.unsubscribe();
+//     this.autoCloseSub?.unsubscribe();
+//   }
+
+//   close() {
+//     this.notify.close();
+//   }
+
+//   backdropClick() {
+//     if (!this.data?.disableBackdropClose) {
+//       this.close();
+//     }
+//   }
+
+//   get displayTitle(): string {
+//     if (!this.data) return '';
+//     if (this.data.type === 'success') {
+//       return this.data.title || 'نجاح';
+//     }
+//     if (this.data.type === 'error') {
+//       return this.data.title || 'خطأ';
+//     }
+//     return this.data.title ?? '';
+//   }
+
+//   get iconName() {
+//     return this.data?.type === 'success'
+//       ? 'bi:check-circle-fill'
+//       : 'bi:x-circle-fill';
+//   }
+
+//   get autoVars() {
+//     const ms = this.data?.autoCloseMs ?? 0;
+//     return ms > 0 ? { '--nd-auto-duration': `${ms}ms` } : {};
+//   }
+// }
+
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription, timer } from 'rxjs';
-import {
-  NotifyDialogData,
-  NotifyDialogService,
-} from '../notify-dialog/notify-dialog.service';
+import { NotifyDialogData, NotifyDialogService } from './notify-dialog.service';
 
 @Component({
   selector: 'app-notify-dialog-host',
@@ -19,10 +80,17 @@ export class NotifyDialogHostComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.sub = this.notify.state$.subscribe((d) => {
-      this.data = d;
+      if (!d) {
+        this.data = null;
+        return;
+      }
+
+      const autoCloseMs = d.autoCloseMs ?? 2000;
+      this.data = { ...d, autoCloseMs };
+
       this.autoCloseSub?.unsubscribe();
-      if (d?.autoCloseMs && d.autoCloseMs > 0) {
-        this.autoCloseSub = timer(d.autoCloseMs).subscribe(() => this.close());
+      if (autoCloseMs && autoCloseMs > 0) {
+        this.autoCloseSub = timer(autoCloseMs).subscribe(() => this.close());
       }
     });
   }

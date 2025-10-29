@@ -73,6 +73,43 @@ export class AuthService {
   }
 
   /**
+   * Get user data from sessionStorage
+   */
+  getUserData(): any {
+    if (!isPlatformBrowser(this.platformId)) {
+      return null;
+    }
+
+    try {
+      const userData = sessionStorage.getItem('userData');
+      return userData ? JSON.parse(userData) : null;
+    } catch (error) {
+      console.error('Error parsing user data:', error);
+      return null;
+    }
+  }
+
+  /**
+   * Get user type from sessionStorage
+   */
+  getUserType(): string | null {
+    if (!isPlatformBrowser(this.platformId)) {
+      return null;
+    }
+
+    try {
+      const userData = this.getUserData();
+      const userType = userData?.userType || userData?.userTypeName || null;
+      console.log('AuthService - getUserType - userData:', userData);
+      console.log('AuthService - getUserType - result:', userType);
+      return userType;
+    } catch (error) {
+      console.error('Error getting user type:', error);
+      return null;
+    }
+  }
+
+  /**
    * Check if token is valid (basic validation)
    */
   private isTokenValid(token: string | null): boolean {
@@ -127,13 +164,78 @@ export class AuthService {
   /**
    * Set authentication data after successful login
    */
-  setAuthData(token: string, roles: string[]): void {
+  setAuthData(token: string, roles: string[], userData?: any): void {
     if (isPlatformBrowser(this.platformId)) {
       sessionStorage.setItem('token', token);
       sessionStorage.setItem('roles', JSON.stringify(roles));
+      if (userData) {
+        sessionStorage.setItem('userData', JSON.stringify(userData));
+        // Store wellcomeMessage in localStorage for easy access
+        if (userData.wellcomeMessage) {
+          localStorage.setItem('username', userData.empName);
+        }
+      }
     }
 
     this.isAuthenticatedSubject.next(true);
+  }
+
+  /**
+   * Get username from localStorage
+   */
+  getUsername(): string | null {
+    if (isPlatformBrowser(this.platformId)) {
+      return localStorage.getItem('username');
+    }
+    return null;
+  }
+
+  /**
+   * Get employee ID from session storage
+   */
+  getEmployeeId(): number | null {
+    if (isPlatformBrowser(this.platformId)) {
+      const userDataString = sessionStorage.getItem('userData');
+      if (userDataString) {
+        try {
+          const userData = JSON.parse(userDataString);
+          return userData?.id || null;
+        } catch (error) {
+          console.error('Error parsing userData:', error);
+          return null;
+        }
+      }
+    }
+    return null;
+  }
+
+  /**
+   * Get redirect URL based on user type
+   */
+  getRedirectUrl(): string {
+    const userType = this.getUserType();
+
+    switch (userType) {
+      case 'TeleSales':
+        return '/dashboard/telesales';
+      case 'Sales':
+        return '/dashboard/sales';
+      case 'Account':
+        return '/dashboard/account';
+      case 'Tech':
+        return '/dashboard/tech';
+      case 'Admin':
+      default:
+        return '/dashboard/admin';
+    }
+  }
+
+  /**
+   * Redirect user to appropriate dashboard based on user type
+   */
+  redirectToDashboard(): void {
+    const redirectUrl = this.getRedirectUrl();
+    this.router.navigate([redirectUrl]);
   }
 
   /**

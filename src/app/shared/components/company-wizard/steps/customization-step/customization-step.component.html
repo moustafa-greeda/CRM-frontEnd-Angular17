@@ -1,0 +1,72 @@
+<div class="step-form">
+  <!-- <h3 class="step-title">التخصيص</h3> -->
+
+  <div class="form-grid">
+    <!-- Right Column -->
+    <div class="form-column">
+      <!-- <div class="form-group">
+        <label class="form-label">الاسم الأول *</label>
+        <input type="text" class="form-input" placeholder="ادخل الاسم الأول" />
+      </div> -->
+
+      <div class="form-group">
+        <label class="form-label">نوع الوصول</label>
+        <div class="radio-group">
+          <label class="radio-option">
+            <input
+              type="radio"
+              name="accessLevel"
+              value="general"
+              formControlName="accessLevel"
+            />
+            <span class="radio-label">عام</span>
+          </label>
+          <label class="radio-option">
+            <input
+              type="radio"
+              name="accessLevel"
+              value="private"
+              formControlName="accessLevel"
+            />
+            <span class="radio-label">خاص</span>
+          </label>
+          <label class="radio-option">
+            <input
+              type="radio"
+              name="accessLevel"
+              value="select"
+              formControlName="accessLevel"
+            />
+            <span class="radio-label">يختار شخص</span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Left Column -->
+    <div class="form-column">
+      <div class="form-group">
+        <label class="form-label">إختر الأشخاص *</label>
+        <div class="people-selection">
+          <div class="people-grid">
+            <div
+              *ngFor="let person of people"
+              class="person-item"
+              [class.selected]="person.selected"
+              (click)="togglePerson(person)"
+            >
+              <input
+                type="checkbox"
+                [checked]="person.selected"
+                (change)="togglePerson(person)"
+                class="person-checkbox"
+              />
+              <span class="person-name">{{ person.name }}</span>
+            </div>
+          </div>
+          <button type="button" class="confirm-btn">تأكيد</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+<div class="parent-container">
+  <!-- page header -->
+  <app-page-header
+    [title]="pageTitle"
+    [breadcrumb]="breadcrumb"
+    [actionButtons]="actionButtons"
+  ></app-page-header>
+
+  <!-- count card -->
+  <app-count-card [stats]="stats"></app-count-card>
+
+  <!-- table -->
+  <app-table
+    [data]="companyData"
+    [columns]="companyColumns"
+    [selectedRows]="selectedRows"
+    [showDataTable]="true"
+    [hasNoData]="companyData.length === 0"
+    [pageSize]="pageSize"
+    [currentPage]="currentPage"
+    [totalCount$]="totalCount"
+    (rowSelectionChange)="onRowSelectionChange($event)"
+    (selectAllChange)="onSelectAllChange($event)"
+    (edit)="onEditDeal($event)"
+    (delete)="onDeleteDeal($event)"
+    (view)="onViewDeal($event)"
+  ></app-table>
+</div>

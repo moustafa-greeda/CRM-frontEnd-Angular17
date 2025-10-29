@@ -4,7 +4,7 @@ import { Component, Inject } from '@angular/core';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID } from '@angular/core';
-import { NotifyDialogService } from '../../shared/notify-dialog/notify-dialog.service';
+import { NotifyDialogService } from '../../shared/notify-dialog-host/notify-dialog.service';
 
 @Component({
   selector: 'app-login',
@@ -61,40 +61,42 @@ export class LoginComponent {
             const roles =
               Array.isArray(res.data.roles) && res.data.roles.length > 0
                 ? res.data.roles
-                : ['Customer'];
+                : ['Admin'];
 
-            // Use the enhanced auth service method
-            this.service.setAuthData(token, roles);
+            // Store user data including userType
+            const userData = {
+              userType: res.data?.userType || res.data?.userTypeName,
+              userTypeName: res.data?.userTypeName,
+              ...res.data,
+            };
+
+            // Store wellcomeMessage in localStorage for easy access
+            if (res.data?.wellcomeMessage) {
+              localStorage.setItem('username', res.data.wellcomeMessage);
+              console.log(
+                'Stored username in localStorage:',
+                res.data.wellcomeMessage
+              );
+            }
+
+            // Use the enhanced auth service method with user data
+            this.service.setAuthData(token, roles, userData);
+
+            // Redirect based on user type
+            this.service.redirectToDashboard();
           } else {
             console.warn('[LOGIN] token key not found in response shape', res);
           }
-
-          const roles =
-            Array.isArray(res.data.roles) && res.data.roles.length > 0
-              ? res.data.roles
-              : ['Customer'];
-
-          const role = roles[0];
-          let redirectUrl = '';
-
-          switch (role) {
-            case 'Admin':
-              redirectUrl = '/dashboard/admin';
-              break;
-            case 'Customer':
-              redirectUrl = '/dashboard/admin';
-              break;
-            default:
-              redirectUrl = '/dashboard/employee';
-          }
-
-          this.router.navigate([redirectUrl]).then(() => {
-            this.spinner.hide();
-          });
         }
       },
       error: (err) => {
         this.spinner.hide();
+
+        // Debug logging
+        console.error('Login error:', err);
+        console.error('Error status:', err.status);
+        console.error('Error message:', err.message);
+        console.error('Error details:', err.error);
 
         if (
           err.status === 400 &&
@@ -112,8 +114,11 @@ export class LoginComponent {
           this.errorMessage = 'غير مصرح - تحقق من بيانات الدخول.';
         } else if (err.status === 403) {
           this.errorMessage = 'لا تملك صلاحية الوصول.';
+        } else if (err.status === 0) {
+          this.errorMessage =
+            'لا يمكن الاتصال بالسيرفر - تحقق من الاتصال بالإنترنت.';
         } else {
-          this.errorMessage = 'حدث خطأ أثناء تسجيل الدخول.';
+          this.errorMessage = `حدث خطأ أثناء تسجيل الدخول (${err.status}).`;
         }
 
         // ✅ إظهار dialog خطأ

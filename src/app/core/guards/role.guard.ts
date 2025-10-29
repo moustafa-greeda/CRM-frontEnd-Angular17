@@ -25,32 +25,39 @@ export class RoleGuard implements CanActivate {
     }
 
     const userRoles = this.authService.getUserRoles();
+    const userType = this.authService.getUserType();
 
     if (!userRoles || userRoles.length === 0) {
       this.router.navigate(['/login']);
       return false;
     }
 
+    // Check both roles and userType
     const hasRequiredRole = expectedRoles.some((role) =>
       userRoles.includes(role)
     );
 
-    if (!hasRequiredRole) {
-      // Redirect to appropriate dashboard based on user's role
-      const userRole = userRoles[0];
-      switch (userRole) {
+    const hasRequiredUserType = expectedRoles.some((role) => {
+      // Map userType to roles for comparison
+      switch (userType) {
+        case 'TeleSales':
+          return role === 'TeleSalse';
+        case 'Sales':
+          return role === 'Sales';
+        case 'Account':
+          return role === 'Account';
+        case 'Tech':
+          return role === 'Tech';
         case 'Admin':
-          this.router.navigate(['/dashboard/admin']);
-          break;
-        case 'Customer':
-          this.router.navigate(['/dashboard/customer']);
-          break;
-        case 'Employee':
-          this.router.navigate(['/dashboard/employee']);
-          break;
+          return role === 'Admin';
         default:
-          this.router.navigate(['/login']);
+          return false;
       }
+    });
+
+    if (!hasRequiredRole && !hasRequiredUserType) {
+      // Redirect to appropriate dashboard based on user's type
+      this.authService.redirectToDashboard();
       return false;
     }
 

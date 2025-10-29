@@ -1,7 +1,50 @@
 /* ========== Reset & Base ========== */
 
-/* Import Leaflet CSS */
-@import url('https://unpkg.com/leaflet@1.7.1/dist/leaflet.css');
+/* Import Bootstrap Icons */
+@import url('https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.css');
+
+/* Wizard Dialog Styles */
+::ng-deep .wizard-dialog .mat-dialog-container {
+  background: transparent;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 0;
+  width: 100vw !important;
+  height: 100vh !important;
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+}
+
+::ng-deep .wizard-dialog .mat-dialog-content {
+  padding: 0;
+  margin: 0;
+  max-height: none;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+::ng-deep .wizard-dialog .mat-dialog-actions {
+  padding: 0;
+  margin: 0;
+}
+
+/* Override Material Dialog backdrop */
+::ng-deep .wizard-dialog + .cdk-overlay-backdrop {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+}
+
+/* Full screen dialog positioning */
+::ng-deep .wizard-dialog .cdk-overlay-pane {
+  max-width: 100vw !important;
+  max-height: 100vh !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  top: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+}
 
 * {
   padding: 0px;
@@ -62,6 +105,9 @@ html {
   padding: 0;
   box-sizing: border-box;
   font-family: "Cairo", sans-serif;
+}
+p{
+  margin: 0 !important;
 }
 
 /* ========== Theme variables ========== */
@@ -241,20 +287,6 @@ button:focus{ outline: 2px solid var(--link-color); outline-offset: 2px; }
   .mdc-text-field--outlined .mdc-notched-outline__leading,
   .mdc-text-field--outlined .mdc-notched-outline__notch,
   .mdc-text-field--outlined .mdc-notched-outline__trailing { border: none !important; }
-
-  .mat-mdc-form-field .mat-mdc-select-trigger,
-  .mat-mdc-form-field .mat-mdc-select-trigger:focus,
-  .mat-mdc-form-field .mat-mdc-select-trigger:focus-visible {
-    padding: 5px 10px;
-    min-width: 70px;
-    outline: none !important;
-    box-shadow: none !important;
-    border: 1.5px solid #e36012 !important;
-    border-radius: 10px;
-    background: rgba(30,30,30,0.8) !important;
-    color: #fff !important;
-    padding-inline: 10px 12px;
-  }
   .mat-mdc-select-value { color: #fff !important; }
 }
 
@@ -262,7 +294,6 @@ button:focus{ outline: 2px solid var(--link-color); outline-offset: 2px; }
   font-size: 18px;
   font-weight: bold;
   color: #ffff !important;
-  background-color: #1e1e1e !important;
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -281,56 +312,15 @@ button:focus{ outline: 2px solid var(--link-color); outline-offset: 2px; }
   box-shadow: 0 12px 28px rgba(0,0,0,.55) !important;
   overflow: hidden !important;
 }
-.cdk-overlay-container .mat-mdc-select-panel .mdc-list-item,
-.mat-mdc-option { color:#eaeaea !important; min-height:40px; padding-inline:14px !important; position:relative; }
-.cdk-overlay-container .mat-mdc-select-panel .mdc-list-item:hover,
-.mat-mdc-option:hover { background:#363636 !important; color:#fff !important; }
-.cdk-overlay-container .mat-mdc-select-panel .mdc-list-item.mdc-list-item--selected,
-.mat-mdc-option.mdc-list-item--selected,
-.cdk-overlay-container .mat-mdc-select-panel .mdc-list-item.mdc-list-item--selected .mdc-list-item__primary-text {
-  color:#fff !important;
-}
-.cdk-overlay-container .mat-mdc-select-panel .mdc-list-item.mdc-list-item--selected::after {
-  content:''; position:absolute; inset-inline-start:0; top:0; bottom:0; width:3px; background:#e36012;
-}
-.cdk-overlay-container .mat-mdc-select-panel .mat-pseudo-checkbox,
-.cdk-overlay-container .mat-mdc-select-panel .mat-icon,
-.cdk-overlay-container .mat-mdc-select-panel .mdc-list-item__graphic svg { color:#fff !important; fill:#fff !important; }
-.mat-mdc-select-panel .mat-mdc-option { color:#fff !important; }
-
 .mat-mdc-paginator-icon { fill:#E36012 !important; }
 .mat-mdc-select-arrow svg { fill:#fff !important; stroke:#fff !important; }
-
-/* ========== Tables transparent so background image shows through ========== */
-.table-wrapper { background: transparent !important; box-shadow: none; border: 1px solid #E36012 !important; border-radius: 50px !important; }
-.mat-mdc-table {
-  border-radius: 50px !important;
-  background-color: transparent !important;
-  animation: tableFadeIn 0.8s cubic-bezier(0.25, 0.8, 0.25, 1) forwards;
-  transform-origin: top center;
+.mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled) .mdc-list-item__primary-text {
+    color: #46E3FF !important;
 }
-
-
-.mat-mdc-header-row,
-.mat-mdc-row { 
-  background: rgba(30,30,30,0.95) !important; 
+.mat-mdc-option .mdc-list-item__primary-text{
+  color: #fff !important;
 }
-
-
-
-.mat-mdc-row:hover { outline: 1px solid #E36012 !important;  transition: ease-in-out .3s; transform: scaleX(1.01);}
-.mat-mdc-row:nth-child(odd) { background: rgba(30,30,30,0.8) !important; }
-
-.mat-mdc-header-cell{ background: transparent !important; color:#E36012; text-align: center !important; padding: 5px 0 !important;}
-.mat-mdc-cell { background: transparent !important; color:#fff; text-align: center !important; }
-.mat-mdc-paginator { background: rgba(30,30,30,0.4) !important; }
-
-.mat-mdc-table .mat-mdc-header-cell { text-align: center !important; }
-.mat-mdc-table .mat-mdc-header-cell .mat-sort-header-container { width:100%; justify-content:center !important; align-items:center;  color: #E36012;}
-.mat-mdc-table .mat-mdc-cell, .mat-mdc-table .mat-mdc-footer-cell { text-align: center; }
-.full-width-table .header-cell, .full-width-table .data-cell { display: table-cell; text-align: center !important; }
-
-/* ========== Notify dialog ========== */
+    /* ============================================================= Notify dialog =============================================== */
 app-notify-dialog-host .nd-overlay {
   position: fixed !important;
   inset: 0 !important;
@@ -366,86 +356,71 @@ app-notify-dialog-host .nd-modal {
 /* grid wrapper used inside your dialog template */
 .form-fields { display: grid; gap: var(--spacing-md); }
 
-/* ===================== EMPLOYEE dialog (dark + orange) ===================== */
+/* ===================== share dialog (dark + orange) ===================== */
 
-.mat-mdc-dialog-container .mdc-dialog__surface {
-  background-image: url("./assets/bg-chat3.svg") !important;
-  background-position: center;
-  background-size: 100% 100% !important; 
-  background-repeat: no-repeat;
-}
-.mat-mdc-dialog-surface {
-  background-position: center;
-  background-size: cover;
-  background: rgba(30,30,30,.5) !important;
-  backdrop-filter: blur(8px);
-  border-radius: 100px !important;
-  position: relative;
-  overflow: hidden;
-  box-shadow: var(--shadow-xl);
-  padding: 30px 40px;
-  
+/* Agreement Dialog Styling */
+.agreement-dialog .mat-mdc-dialog-container {
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
 }
 
-/* glowing border */
-.form-dialog--employee .mat-mdc-dialog-surface::before {
-  content: '';
-  position: absolute; inset: 0;
-  -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  -webkit-mask-composite: xor; 
-  mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
-  mask-composite: exclude;
-  pointer-events: none;
+.agreement-dialog .mat-mdc-dialog-surface {
+  background: transparent !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
 }
 
-/* title & actions */
-.form-dialog--employee [mat-dialog-title] { color: var(--white-color) !important; font-weight: 20px; }
-.form-dialog--employee [mat-dialog-actions] .mat-mdc-unelevated-button {
-  background: var(--button-color); color: #111;
-  display: flex;
-  justify-content: space-between !important;
-}
-.mdc-dialog__actions {
-  justify-content: space-between !important;
-}
-.mdc-dialog__actions button {
-  color: #fff !important;
-}
-.mdc-dialog__actions button[mat-dialog-close] {
-  background-color: #802a2a !important;
-  color: #fff !important;
+.agreement-dialog .mat-mdc-dialog-content {
+  padding: 0 !important;
+  margin: 0 !important;
+  max-height: none !important;
+  overflow: visible !important;
 }
 
-/* Material inputs on dark bg */
-.form-dialog--employee .mat-mdc-form-field { width: 100%; color: var(--white-color);}
-.form-dialog--employee .mdc-text-field--filled {
-  /* background: rgba(30,30,30,.8) !important; */
-color: #fff !important;
+/* Material Dialog Container - Center and Remove White Background */
+.mdc-dialog__container {
 border-radius: 12px;
-border: 1px solid #B7B7B7;
-background: rgba(255, 255, 255, 0.12) !important;
+border: 1px solid #46E3FF;
+background: rgba(17, 24, 31, 0.30);  /* background-color: none; */
+  /* backdrop-filter: blur(5px) !important; */
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
 }
-.form-dialog--employee .mdc-text-field--filled:not(.mdc-text-field--disabled) .mdc-line-ripple::after {
-  border-bottom-color: var(--button-color);
+
+.agreement-dialog .mdc-dialog__container {
+  /* background: rgba(0, 0, 0, 0.8) !important; */
+    background-color: none;
+  backdrop-filter: blur(1px) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  padding: 20px !important;
 }
-.form-dialog--employee .mdc-floating-label,
-.form-dialog--employee .mat-mdc-form-field-subscript-wrapper { color: var(--text-muted); }
-.form-dialog--employee .form-fields { grid-template-columns: 1fr 1fr; }
 
-/* responsive form dialog */
-/* two-column grid on desktop */
-@media (max-width: 768px) { 
-  .form-dialog--employee .form-fields { 
-  grid-template-columns: 1fr;
-  gap: 5px !important;
-  background-image: none !important;
- }
- .mat-mdc-dialog-container .mdc-dialog__surface {
-  background-image: none !important;
-  min-height: 50vh !important;
- }
- }
+.agreement-dialog .mdc-dialog__surface {
+  border-radius: 12px !important;
+  /* border: 1px solid #e55a2b !important; */
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3) !important;
+  max-width: 90vw !important;
+  max-height: 90vh !important;
+  width: 100% !important;
+  height: auto !important;
+  min-height: auto !important;
+  overflow: visible !important;
+}
 
+/* Remove white background from all dialogs */
+.mat-mdc-dialog-surface {
+  color: #fff !important;
+}
+
+.mat-mdc-dialog-container {
+  backdrop-filter: blur(10px) !important;
+}
 /* ===================== DEPARTMENT dialog (light/simple) ==================== */
 .form-dialog--department .mat-mdc-dialog-surface {
   background: var(--card-bg);
@@ -456,19 +431,12 @@ background: rgba(255, 255, 255, 0.12) !important;
 .form-dialog--department [mat-dialog-title] { color: var(--text-color); }
 .form-dialog--department .form-fields { grid-template-columns: 1fr; }
 .form-dialog--department .mdc-text-field--filled {
-  background: #f8fafc;
+  /* background: #f8fafc; */
   border-radius: 8px;
 }
-
-
-
 .mdc-text-field--no-label .mat-mdc-form-field-infix {
   color: #fff
 }
-
-
-
-
 /* TEXT inside inputs & textareas (MDC) */
 .cdk-overlay-container .form-dialog--employee .mat-mdc-input-element,
 .cdk-overlay-container .form-dialog--employee textarea.mat-mdc-input-element,
@@ -518,4 +486,409 @@ background: rgba(255, 255, 255, 0.12) !important;
   }
 }
 
+/* ============================================================== Reusable Border Gradient ====================================================== */
+.border-gradient {
+  position: relative;
+  background: transparent;
+  border-radius: 12px;
+}
 
+.border-gradient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #FF5F00, #46E3FF, #FF5F00);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.border-gradient > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Different gradient directions - 3 colors */
+.border-gradient.horizontal::before {
+  background: linear-gradient(90deg, #FF5F00, #46E3FF, #FF5F00);
+}
+
+.border-gradient.vertical::before {
+  background: linear-gradient(180deg, #FF5F00, #46E3FF, #FF5F00);
+}
+
+.border-gradient.diagonal::before {
+  background: linear-gradient(45deg, #FF5F00, #46E3FF, #FF5F00);
+}
+
+.border-gradient.radial::before {
+  background: radial-gradient(circle, #FF5F00, #46E3FF, #FF5F00);
+}
+
+/* Different border widths */
+.border-gradient.thin::before {
+  padding: 1px;
+}
+
+.border-gradient.medium::before {
+  padding: 2px;
+}
+
+.border-gradient.thick::before {
+  padding: 3px;
+}
+
+/* Different border radius */
+.border-gradient.rounded-sm::before {
+  border-radius: 4px;
+}
+
+.border-gradient.rounded::before {
+  border-radius: 8px;
+}
+
+.border-gradient.rounded-lg::before {
+  border-radius: 12px;
+}
+
+.border-gradient.rounded-xl::before {
+  border-radius: 16px;
+}
+
+.border-gradient.rounded-full::before {
+  border-radius: 50%;
+}
+
+/* Hover effects - 3 colors */
+.border-gradient:hover::before {
+  background: linear-gradient(90deg, #46E3FF, #FF5F00, #FF5F00);
+  transition: background 0.3s ease;
+}
+
+/* Animation effects - 3 colors */
+.border-gradient.animated::before {
+  background: linear-gradient(90deg, #FF5F00, #46E3FF, #FF5F00);
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ============================================================== Reusable Icon Styles ====================================================== */
+
+/* Base icon wrapper for gradient borders */
+.icon-wrapper {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(17, 24, 31, 0.8);
+  position: relative;
+  z-index: 2;
+}
+
+.icon-wrapper i {
+  color: #46e3ff;
+  font-size: 14px;
+  z-index: 3;
+  position: relative;
+}
+
+/* Different icon sizes */
+.icon-wrapper.small {
+  width: 20px;
+  height: 20px;
+}
+
+.icon-wrapper.small i {
+  font-size: 10px;
+}
+
+.icon-wrapper.medium {
+  width: 30px;
+  height: 30px;
+}
+
+.icon-wrapper.medium i {
+  font-size: 14px;
+}
+
+.icon-wrapper.large {
+  width: 40px;
+  height: 40px;
+}
+
+.icon-wrapper.large i {
+  font-size: 18px;
+}
+
+.icon-wrapper.xlarge {
+  width: 50px;
+  height: 50px;
+}
+
+.icon-wrapper.xlarge i {
+  font-size: 22px;
+}
+
+/* Different icon colors */
+.icon-wrapper.blue i {
+  color: #46e3ff;
+}
+
+.icon-wrapper.white i {
+  color: #ffffff;
+}
+.icon-wrapper.yellow i {
+  color: #f59e0b;
+}
+
+
+/* Icon with solid background */
+.icon-wrapper.solid {
+  background: #46e3ff;
+}
+
+.icon-wrapper.solid i {
+  color: #ffffff;
+}
+
+.icon-wrapper.solid.orange {
+  background: #ff5f00;
+}
+
+.icon-wrapper.solid.blue {
+  background: #46e3ff;
+}
+
+/* Icon with shadow */
+.icon-wrapper.shadow {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* RTL support for icons */
+[dir="rtl"] .icon-wrapper {
+  margin-left: 8px;
+  margin-right: 0;
+}
+
+[dir="rtl"] .icon-wrapper:first-child {
+  margin-left: 0;
+}
+
+/* ============================================================== Shared Checkbox Styles ====================================================== */
+
+
+.custom-checkbox{
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  border: 2px solid #ff5f00;
+  border-radius: 3px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  position: relative;
+    z-index: 2; 
+  transition: all 0.3s ease;
+  background-clip: padding-box !important;
+}
+
+.custom-checkbox:checked {
+  background-color: #ff5f00;
+  border-color: #ff5f00;
+}
+
+.custom-checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+
+.custom-checkbox:hover {
+  border-color: #e54d00;
+}
+
+.custom-checkbox:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 95, 0, 0.2);
+}
+
+/* Different sizes for different use cases */
+.custom-checkbox.small {
+  width: 14px;
+  height: 14px;
+  font-size: 10px;
+}
+
+.custom-checkbox.large {
+  width: 22px;
+  height: 22px;
+  font-size: 14px;
+}
+
+/* RTL support for checkboxes */
+[dir="rtl"] .custom-checkbox {
+  margin-left: 8px;
+  margin-right: 0;
+}
+
+[dir="rtl"] .custom-checkbox:first-child {
+  margin-left: 0;
+}
+
+
+
+
+/*************************************************** btn primary ******************************/
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  /* padding: 15px 30px;             */
+  padding: 5px 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: #ff5f00;
+  color: #ffffff;
+}
+
+.btn-primary i{
+  font-size: 25px;
+}
+
+.btn-primary:hover {
+  background: #e54d00;
+  transform: translateY(-2px);
+}
+
+/*************************************************** Custom Dropdown Styles ******************************/
+.custom-dropdown {
+  display: flex;
+  position: relative;
+}
+
+.dropdown-trigger {
+  background: rgba(17, 24, 31, 0.8);
+  color: #ffffff;
+  border: 1px solid #ff5f00;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 14px;
+  cursor: pointer;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  transition: border-color 0.3s ease;
+}
+
+.dropdown-trigger:hover {
+  border-color: #ff5f00;
+}
+
+.dropdown-trigger:focus {
+  outline: none;
+  border-color: #ff5f00;
+}
+
+.selected-option {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dropdown-arrow {
+  transition: transform 0.3s ease;
+  font-size: 12px;
+}
+
+.custom-dropdown.open .dropdown-arrow {
+  transform: rotate(180deg);
+}
+
+.dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  background: rgba(17, 24, 31, 0.9);
+  border: 1px solid #404040;
+  border-radius: 8px;
+  margin-top: 4px;
+  z-index: 9999;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(-10px);
+  transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  /* min-width: 100%; */
+  width: fit-content;
+  display: block;
+}
+
+.custom-dropdown.open .dropdown-menu {
+  opacity: 1;
+  visibility: visible;
+  transform: translateY(0);
+}
+
+.dropdown-item {
+  width: 100%;
+  padding: 12px 16px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  transition: background-color 0.2s ease;
+  color: #ffffff;
+  font-size: 14px;
+}
+
+.dropdown-item:hover {
+  color: #fff;
+  background-color: #ff5f00;
+}
+
+.dropdown-item:first-child {
+  border-radius: 8px 8px 0 0;
+}
+
+.dropdown-item:last-child {
+  border-radius: 0 0 8px 8px;
+}
+
+.dropdown-item i {
+  font-size: 14px;
+  width: 16px;
+  text-align: center;
+}

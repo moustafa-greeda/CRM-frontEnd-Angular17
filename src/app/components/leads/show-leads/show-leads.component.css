@@ -1,0 +1,859 @@
+/* Client Management Container */
+.client-management-container {
+  padding: 24px;
+  min-height: 100vh;
+  color: #ffffff;
+  overflow: visible;
+}
+
+/* Header Section */
+.header-section {
+  margin-bottom: 32px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-title h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  color: #888888;
+}
+
+.breadcrumb-separator {
+  color: #ff5f00;
+}
+
+.breadcrumb-item.active {
+  color: #ff5f00;
+  font-weight: 600;
+}
+
+/* Action Bar */
+.action-bar {
+  margin-bottom: 24px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+/* Primary Button Styling */
+.btn-primary {
+  background: linear-gradient(135deg, #e25400 0%, #ff6b1a 100%);
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 4px 15px rgba(226, 84, 0, 0.3);
+}
+
+.btn-primary:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(226, 84, 0, 0.4);
+  background: linear-gradient(135deg, #ff6b1a 0%, #e25400 100%);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
+  background: #6c757d;
+  border-color: #6c757d;
+}
+
+.btn-primary:disabled:hover {
+  background: #6c757d;
+  border-color: #6c757d;
+  transform: none;
+}
+
+/**************************** Filter and Search Bar **************/
+.filter {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 32px;
+  gap: 24px;
+  border-radius: 12px;
+  border: 1px solid #46e3ff;
+  background: rgba(17, 24, 31, 0.8);
+}
+.filter-search-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+  overflow: visible;
+}
+
+.filter-section {
+  flex: 0 0 auto;
+  overflow: visible;
+}
+/*---------------- search input -----------------*/
+.search-section {
+  flex: 1;
+  max-width: 400px;
+}
+
+.search-input-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 16px;
+  color: #888888;
+  z-index: 1;
+}
+
+.search-input {
+  width: 100%;
+  background: rgba(17, 24, 31, 0.9);
+  color: #ffffff;
+  border: 1px solid #ff5f00;
+  border-radius: 8px;
+  padding: 12px 16px 12px 180px;
+  font-size: 14px;
+}
+
+.search-input:focus {
+  outline: none;
+  border-color: #ff5f00;
+}
+
+.search-input::placeholder {
+  color: #888888;
+}
+
+/* ======================= import and export ==================== */
+.parent-import {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 50px;
+}
+
+.parent-import .import-export {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding: 10px;
+  justify-content: space-between;
+  border-radius: 12px;
+  border: 1px solid #46e3ff;
+  background: rgba(17, 24, 31, 0.8);
+}
+.parent-import .import-export svg:hover {
+  color: #fff;
+  font-size: 18px;
+  transform: translateY(-2px);
+}
+
+.select-all {
+  padding: 15px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-radius: 12px;
+  border: 1px solid #46e3ff;
+  background: rgba(17, 24, 31, 0.8);
+}
+
+.select-all .select-all-text,
+.filter .countLead-text {
+  padding: 0px !important;
+  margin: 0px !important;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.parent-import > i {
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #db0000;
+  border: 1px solid #db0000;
+  background: rgba(17, 24, 31, 0.8);
+}
+
+.parent-import > i:hover {
+  color: #fff;
+  background-color: #db0000;
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 6px #9e2c2c;
+}
+
+.filter .countLead {
+  padding: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-radius: 12px;
+  border: 1px solid #46e3ff;
+  background: rgba(17, 24, 31, 0.8);
+}
+
+.filter .countLead:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 6px #404040;
+}
+/* ================================= Card Style =============================== */
+/* Client Cards Grid */
+.clients-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+  gap: 24px;
+  margin-bottom: 32px;
+}
+
+.client-card {
+  position: relative;
+  padding: 20px;
+  border-radius: 12px;
+  background: rgba(17, 24, 31, 0.8);
+  backdrop-filter: blur(2px);
+  overflow: hidden;
+  transition: all 0.3s ease;
+  z-index: 0;
+}
+
+/* Gradient border is now handled by the reusable .border-gradient class */
+
+.client-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 32px rgba(255, 95, 0, 0.1);
+  border-color: #ff5f00;
+}
+
+.client-avatar {
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.more-options-icon {
+  color: #888888;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+.more-options-icon:hover {
+  color: #ff5f00;
+}
+
+.avatar-placeholder {
+  width: 48px;
+  height: 48px;
+  background: #ff5f00;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 18px;
+  font-weight: 700;
+  color: #ffffff;
+  border: 2px solid #46e3ff;
+}
+
+.checkbox-wrapper {
+  display: inline-block;
+}
+/* ======== Client Name Container=============== */
+.client-name-container {
+  display: flex;
+  gap: 4px;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.client-name-container button {
+  font-size: 12px;
+  padding: 5px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: 1px solid #46e3ff;
+  color: #fff;
+  background: rgba(70, 227, 255, 0.24);
+}
+
+.position button:hover {
+  background: rgba(70, 227, 255, 0.2);
+  border-color: #46e3ff;
+}
+
+/* ========= Client Info ========= */
+.client-info {
+  margin-bottom: 16px;
+  color: #fff;
+}
+
+.client-name {
+  color: #fff;
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 8px 0;
+}
+
+.client-email,
+.client-phone {
+  font-size: 14px;
+  margin: 0 0 4px 0;
+}
+
+.email-container,
+.phone-container {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 5px;
+}
+
+/* ============================ Client Meta ======================== */
+.client-meta {
+  display: flex;
+  gap: 30px;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 8px;
+  font-size: 12px;
+}
+
+.client-source {
+  padding: 5px 10px;
+  border-radius: 4px;
+  text-align: center;
+  background: transparent;
+}
+
+.client-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 16px;
+  padding-top: 16px;
+  border-top: 1px solid #404040;
+}
+
+.client-actions .icon-star {
+  width: 15%;
+  gap: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.client-actions .icon-star i {
+  font-size: 18px;
+  font-weight: 600;
+  color: #ffb012;
+}
+
+.client-actions .container-social {
+  width: 80%;
+  display: flex;
+  gap: 15px;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+/* ======================= Empty State ==================== */
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-state-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .client-management-container {
+    padding: 16px;
+  }
+
+  .page-title h1 {
+    font-size: 24px;
+  }
+
+  .filter-search-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 16px;
+  }
+
+  .search-section {
+    max-width: none;
+  }
+
+  .clients-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  .action-buttons {
+    flex-wrap: wrap;
+  }
+
+  .btn {
+    flex: 1;
+    min-width: 120px;
+  }
+}
+
+@media (max-width: 480px) {
+  .client-card {
+    padding: 16px;
+  }
+
+  .client-name {
+    font-size: 16px;
+  }
+
+  .client-actions {
+    gap: 4px;
+  }
+
+  .action-btn {
+    width: 28px;
+    height: 28px;
+  }
+}
+
+/* Loading State */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.loading-spinner {
+  font-size: 48px;
+  color: #46e3ff;
+  animation: spin 1s linear infinite;
+  margin-bottom: 16px;
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-state p {
+  color: #9ca3af;
+  font-size: 16px;
+  margin: 0;
+}
+
+/* Error State */
+.error-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.error-icon {
+  font-size: 48px;
+  color: #ef4444;
+  margin-bottom: 16px;
+}
+
+.error-state h3 {
+  color: #ef4444;
+  font-size: 20px;
+  margin: 0 0 8px 0;
+}
+
+.error-state p {
+  color: #9ca3af;
+  font-size: 16px;
+  margin: 0 0 20px 0;
+}
+
+.error-state .btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* Website Link */
+.website-link {
+  color: inherit;
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  transition: opacity 0.2s ease;
+}
+
+.website-link:hover {
+  opacity: 0.8;
+}
+
+/* Selected Card Styles */
+.client-card.selected {
+  border: 2px solid #46e3ff;
+  box-shadow: 0 0 20px rgba(70, 227, 255, 0.3);
+  transform: scale(1.02);
+  transition: all 0.3s ease;
+}
+
+.client-card.selected::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    135deg,
+    rgba(70, 227, 255, 0.1),
+    rgba(70, 227, 255, 0.05)
+  );
+  border-radius: inherit;
+  pointer-events: none;
+}
+
+/* Checkbox Styles */
+.custom-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  accent-color: #46e3ff;
+}
+
+.checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Select All Styles */
+.select-all {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.select-all-text {
+  margin: 0;
+  font-size: 14px;
+  color: #fff;
+  user-select: none;
+}
+
+/* =================================== Import/Export Section ================================= */
+.import-export-section {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 20px 0;
+  padding: 20px;
+  background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+  border-radius: 12px;
+  border: 1px solid #dee2e6;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.import-section,
+.export-section {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.import-section .btn {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  border: none;
+  color: white;
+  padding: 10px 20px;
+  border-radius: 8px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  box-shadow: 0 2px 4px rgba(0, 123, 255, 0.3);
+}
+
+.import-section .btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 123, 255, 0.4);
+}
+
+.export-section .btn {
+  padding: 8px 16px;
+  border-radius: 6px;
+  font-weight: 500;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+}
+
+.export-section .btn:not(:disabled):hover {
+  transform: translateY(-1px);
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+.export-section .btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.export-section .btn-outline-success {
+  color: #28a745;
+  border-color: #28a745;
+}
+
+.export-section .btn-outline-success:hover:not(:disabled) {
+  background-color: #28a745;
+  color: white;
+}
+
+.export-section .btn-outline-info {
+  color: #17a2b8;
+  border-color: #17a2b8;
+}
+
+.export-section .btn-outline-info:hover:not(:disabled) {
+  background-color: #17a2b8;
+  color: white;
+}
+
+.export-section .btn-outline-warning {
+  color: #ffc107;
+  border-color: #ffc107;
+}
+
+.export-section .btn-outline-warning:hover:not(:disabled) {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+/* Responsive design for import/export section */
+@media (max-width: 768px) {
+  .import-export-section {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+
+  .import-section,
+  .export-section {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .export-section .btn {
+    flex: 1;
+    min-width: 120px;
+  }
+}
+
+/* Custom Pagination Controls */
+/* Pagination Container */
+.pagination-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  background: rgba(17, 24, 31, 0.85);
+  border-radius: 8px;
+  border: 1px solid #46e3ff;
+}
+
+/* Page Size Selector */
+.page-size-selector {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.page-size-selector label {
+  font-size: 0.9rem;
+  color: #6c757d;
+  margin: 0;
+}
+
+.page-size-selector select {
+  padding: 0.25rem 0.5rem;
+  border: none;
+  border-radius: 4px;
+  color: #fff;
+  background-color: #cc4b00; /* Custom background color for the selector */
+  font-size: 0.9rem;
+}
+
+/* Pagination Information */
+.pagination-info {
+  padding: 15px;
+  font-size: 0.9rem;
+  color: #6c757d;
+}
+
+/* Custom Pagination Navigation */
+.pagination-navigation {
+  display: flex;
+  justify-content: center;
+  margin: 2rem 0;
+  position: relative;
+  z-index: 1;
+}
+
+.pagination-buttons {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.5rem;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  backdrop-filter: blur(6px);
+}
+
+.page-numbers {
+  display: flex;
+  gap: 0.25rem;
+  margin: 0 1rem;
+}
+
+/* Buttons Styling */
+.pagination-buttons .btn {
+  min-width: 44px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.5rem;
+  border-radius: 10px;
+  font-size: 0.95rem;
+  transition: transform 0.15s ease, box-shadow 0.15s ease,
+    background-color 0.15s ease, color 0.15s ease;
+  border-width: 1px;
+  background-color: #cc4b00;
+  color: #fff; /* Text color */
+}
+
+.pagination-buttons .btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.pagination-buttons .btn:not(:disabled):hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.18);
+  background-color: #ff7e33; /* Hover color */
+}
+
+/* Active page (btn-primary) – make it pop */
+.page-numbers .btn.btn-primary {
+  background: linear-gradient(
+    135deg,
+    #ff7e33 0%,
+    #cc4b00 100%
+  ); /* Active state with gradient */
+  color: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15),
+    0 8px 20px rgba(13, 110, 253, 0.35);
+}
+
+/* Outline buttons harmonized with dark backgrounds */
+.pagination-buttons .btn.btn-outline-primary {
+  border-color: rgba(13, 110, 253, 0.5);
+  color: #b9d8ff;
+  background: rgba(13, 110, 253, 0.06);
+}
+
+.pagination-buttons .btn.btn-outline-primary:hover {
+  background: rgba(13, 110, 253, 0.12);
+  color: #e6f1ff;
+}
+
+/* Circular icon buttons at edges */
+.pagination-buttons > .btn:first-child,
+.pagination-buttons > .btn:nth-child(2),
+.pagination-buttons > .btn:nth-last-child(2),
+.pagination-buttons > .btn:last-child {
+  border-radius: 999px;
+  min-width: 42px;
+  height: 42px;
+  background-color: #00adcc; /* Set background for circular buttons */
+  color: #fff;
+}
+
+/* Hover effect for circular buttons */
+.pagination-buttons > .btn:first-child:hover,
+.pagination-buttons > .btn:nth-child(2):hover,
+.pagination-buttons > .btn:nth-last-child(2):hover,
+.pagination-buttons > .btn:last-child:hover {
+  background-color: #ff7e33; /* Hover effect for circular buttons */
+}
+
+/* Responsive pagination */
+@media (max-width: 768px) {
+  .pagination-controls {
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+  }
+
+  .pagination-buttons {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .page-numbers {
+    margin: 0 0.5rem;
+  }
+
+  .pagination-buttons .btn {
+    min-width: 40px;
+    height: 40px;
+    font-size: 0.85rem;
+  }
+}

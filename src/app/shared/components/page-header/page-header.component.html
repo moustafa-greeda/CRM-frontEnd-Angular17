@@ -1,0 +1,33 @@
+<div class="header-section">
+  <!-- Parent Title -->
+  <div class="parent-title">
+    <div class="page-title">
+      <h1>{{ title }}</h1>
+    </div>
+
+    <!-- Breadcrumb -->
+    <div class="breadcrumb" *ngIf="breadcrumb?.length">
+      <ng-container *ngFor="let item of breadcrumb; let last = last">
+        <span class="breadcrumb-item" [class.active]="item.active">{{
+          item.label
+        }}</span>
+        <span class="breadcrumb-separator" *ngIf="!last">></span>
+      </ng-container>
+    </div>
+  </div>
+
+  <!-- Action Bar -->
+  <div class="action-bar" *ngIf="actionButtons?.length">
+    <div class="action-buttons">
+      <button
+        *ngFor="let btn of actionButtons"
+        class="btn btn-primary"
+        [title]="btn.tooltip"
+        (click)="btn.click()"
+      >
+        <span *ngIf="btn.label">{{ btn.label }}</span>
+        <i *ngIf="btn.iconClass" [class]="btn.iconClass"></i>
+      </button>
+    </div>
+  </div>
+</div>

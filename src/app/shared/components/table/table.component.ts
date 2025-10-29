@@ -1,0 +1,408 @@
+import {
+  Component,
+  Input,
+  Output,
+  EventEmitter,
+  OnChanges,
+  SimpleChanges,
+  ViewChild,
+  AfterViewInit,
+} from '@angular/core';
+import { MatPaginator, PageEvent } from '@angular/material/paginator';
+
+@Component({
+  selector: 'app-table',
+  templateUrl: './table.component.html',
+  styleUrl: './table.component.css',
+})
+export class TableComponent implements OnChanges, AfterViewInit {
+  @Input() data: any[] = [];
+  @Input() columns: {
+    key: string;
+    header: string;
+    width?: string;
+    formatter?: 'date' | 'datetime';
+  }[] = [];
+  @Input() selectedRows: any[] = [];
+  @Input() pageSize = 10;
+  @Input() currentPage = 1;
+  @Input() showDataTable = true;
+  @Input() hasNoData = false;
+  @Input() totalCount: number = 0;
+  // Public class names for styling from parent components
+  @Input() tableClass: string = '';
+  @Input() containerClass: string = '';
+  // Action visibility
+  @Input() showView: boolean = true;
+  @Input() showEdit: boolean = true;
+  @Input() showDelete: boolean = true;
+  @Input() showIndex: boolean = false;
+  @Input() showChat: boolean = true;
+  @Input() showEmail: boolean = true;
+  @Input() showNote: boolean = true;
+  @Input() showCall: boolean = true;
+  @Input() showMeeting: boolean = true;
+  @Input() showFollowUp: boolean = true;
+  @Input() addButton: boolean = true;
+  // Actions display mode: 'inline' buttons or single dropdown menu
+  @Input() actionDisplayMode: 'inline' | 'dropdown' = 'inline';
+
+  // Lead status editing properties
+  @Input() leadStatusOptions: string[] = [];
+  @Input() editingLeadId: number | null = null;
+  // Force leadStatus column to render as dropdown by default
+  @Input() alwaysEditLeadStatus: boolean = false;
+  // Optional color map for status options
+  @Input() leadStatusColorMap: Record<string, string> = {};
+
+  // Track last emitted event to prevent duplicates
+  private lastEmittedPageIndex: number = -1;
+  private lastEmittedPageSize: number = -1;
+
+  // Getter for pageIndex (MatPaginator is 0-based); currentPage is 1-based
+  get pageIndex(): number {
+    const totalPages = Math.max(1, Math.ceil(this.totalCount / this.pageSize));
+    const zeroBased = this.currentPage - 1;
+    return Math.max(0, Math.min(zeroBased, totalPages - 1));
+  }
+
+  // Get total number of pages
+  get totalPages(): number {
+    return Math.ceil(this.totalCount / this.pageSize);
+  }
+
+  // Check if on first page
+  get isFirstPage(): boolean {
+    return this.currentPage === 1;
+  }
+
+  // Check if on last page
+  get isLastPage(): boolean {
+    return this.currentPage >= this.totalPages || this.totalPages === 0;
+  }
+
+  @Output() rowSelectionChange = new EventEmitter<{
+    row: any;
+    selected: boolean;
+  }>();
+  @Output() selectAllChange = new EventEmitter<boolean>();
+  @Output() pageChange = new EventEmitter<PageEvent>();
+  @Output() pageSizeChange = new EventEmitter<number>();
+  @Output() edit = new EventEmitter<any>();
+  @Output() delete = new EventEmitter<any>();
+  @Output() view = new EventEmitter<any>();
+  @Output() rowDragStart = new EventEmitter<any>();
+  @Output() chat = new EventEmitter<any>();
+  @Output() email = new EventEmitter<any>();
+  @Output() note = new EventEmitter<any>();
+  @Output() call = new EventEmitter<any>();
+  @Output() meeting = new EventEmitter<any>();
+  @Output() followUp = new EventEmitter<any>();
+  @Output() leadStatusClick = new EventEmitter<any>();
+  @Output() statusChange = new EventEmitter<{ row: any; status: string }>();
+  @Output() saveLeadStatus = new EventEmitter<any>();
+  @Output() cancelLeadStatus = new EventEmitter<any>();
+  @Output() addButtonClick = new EventEmitter<any>();
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  // Dropdown state for per-row action menu
+  openDropdownRowIndex: number | null = null;
+
+  ngAfterViewInit() {
+    // Listen for page changes (includes page size changes)
+    if (this.paginator) {
+      this.paginator.page.subscribe((event: PageEvent) => {
+        if (event.pageSize && event.pageSize !== this.pageSize) {
+          this.pageSizeChange.emit(event.pageSize);
+        }
+        this.pageChange.emit(event);
+      });
+    }
+
+    // Close dropdown when clicking outside
+    document.addEventListener('click', (event: MouseEvent) => {
+      const target = event.target as HTMLElement;
+      if (!target.closest('.dropdown')) {
+        this.openDropdownRowIndex = null;
+      }
+    });
+  }
+
+  ngOnChanges(changes: SimpleChanges) {
+    // Handle input changes if needed
+  }
+
+  isRowSelected(row: any) {
+    return this.selectedRows.some((selectedRow) => selectedRow.id === row.id);
+  }
+
+  isAllSelected() {
+    return (
+      this.data.length > 0 && this.data.every((row) => this.isRowSelected(row))
+    );
+  }
+
+  getRowIndex(index: number): number {
+    // Calculate the actual row number in the dataset
+    // currentPage is 1-based, so we need to subtract 1 to get 0-based page index
+    return (this.currentPage - 1) * this.pageSize + index + 1;
+  }
+
+  onRowSelectionChange(row: any, event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.rowSelectionChange.emit({ row, selected: target?.checked || false });
+  }
+
+  onRowClick(row: any, event: Event) {
+    // Prevent selection when clicking on checkboxes or action buttons
+    const target = event.target as HTMLElement;
+    if (
+      target.closest('input[type="checkbox"]') ||
+      target.closest('.action-btn')
+    ) {
+      return;
+    }
+
+    // Toggle row selection
+    const isSelected = this.isRowSelected(row);
+    this.rowSelectionChange.emit({ row, selected: !isSelected });
+  }
+
+  onSelectAllChange(event: Event) {
+    const target = event.target as HTMLInputElement;
+    this.selectAllChange.emit(target?.checked || false);
+  }
+
+  onPageChange(event: any) {
+    // Prevent pagination if no data
+    if (this.totalCount === 0) {
+      return;
+    }
+
+    // Prevent duplicate events
+    if (
+      this.lastEmittedPageIndex === event.pageIndex &&
+      this.lastEmittedPageSize === (event.pageSize || this.pageSize)
+    ) {
+      return;
+    }
+
+    // Check if page size changed and emit pageSizeChange event
+    if (event.pageSize && event.pageSize !== this.pageSize) {
+      this.pageSize = event.pageSize;
+      this.pageSizeChange.emit(event.pageSize);
+      this.lastEmittedPageIndex = event.pageIndex;
+      this.lastEmittedPageSize = event.pageSize;
+      // Don't emit pageChange if only pageSize changed
+      return;
+    }
+
+    // Update tracking
+    this.lastEmittedPageIndex = event.pageIndex;
+    this.lastEmittedPageSize = this.pageSize;
+
+    // Emit the page change event to parent component
+    // The parent will handle updating currentPage
+    this.pageChange.emit(event);
+  }
+
+  onPageSizeChange(event: any) {
+    // Handle page size change
+    const newPageSize = event.pageSize || event;
+    this.pageSizeChange.emit(newPageSize);
+  }
+
+  onDragStartRow(row: any, event: DragEvent) {
+    // Allow dragging any row
+    const ids: string[] =
+      Array.isArray(this.selectedRows) && this.selectedRows.length > 0
+        ? this.selectedRows.map((r) => r?.id).filter(Boolean)
+        : [row?.id];
+    try {
+      event.dataTransfer?.setData('application/json', JSON.stringify(ids));
+    } catch {}
+    // Fallback single id for compatibility
+    event.dataTransfer?.setData('text/plain', row?.id ?? '');
+    this.rowDragStart.emit(row);
+  }
+
+  onAddButton(row: any) {
+    this.addButtonClick.emit(row);
+  }
+
+  onEdit(row: any) {
+    this.edit.emit(row);
+  }
+
+  onDelete(row: any) {
+    this.delete.emit(row);
+  }
+
+  onView(row: any) {
+    this.view.emit(row);
+  }
+  onChat(row: any) {
+    this.chat.emit(row);
+  }
+  onEmail(row: any) {
+    this.email.emit(row);
+  }
+
+  onNote(row: any, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.note.emit(row);
+  }
+
+  onCall(row: any, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.call.emit(row);
+  }
+
+  onMeeting(row: any, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.meeting.emit(row);
+  }
+
+  onFollowUp(row: any, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.followUp.emit(row);
+  }
+
+  dropdownPosition: { top: number; left: number } = { top: 0, left: 0 };
+
+  toggleDropdown(rowIndex: number, event: MouseEvent) {
+    event.stopPropagation();
+    this.openDropdownRowIndex =
+      this.openDropdownRowIndex === rowIndex ? null : rowIndex;
+
+    // Position the dropdown with fixed coordinates to avoid overflow clipping
+    const target = event.currentTarget as HTMLElement;
+    if (target) {
+      const rect = target.getBoundingClientRect();
+      // Place menu below the button, align right edge
+      this.dropdownPosition.top = rect.bottom + 4;
+      this.dropdownPosition.left = rect.right - 160; // 160px ~ menu width
+    }
+  }
+
+  // Get status class based on lead status name
+  getStatusClass(status: string): string {
+    const statusMap: { [key: string]: string } = {
+      // English statuses
+      new: 'status-new',
+      qualified: 'status-qualified',
+      'proposal sent': 'status-proposal',
+      negotiation: 'status-negotiation',
+      closed: 'status-closed',
+      lost: 'status-lost',
+      contacted: 'status-contacted',
+      'follow up': 'status-followup',
+      meeting: 'status-meeting',
+      call: 'status-call',
+      email: 'status-email',
+      pending: 'status-pending',
+
+      // Arabic statuses
+      جديد: 'status-new',
+      مؤهل: 'status-qualified',
+      'تم الإرسال': 'status-proposal',
+      مقترح: 'status-proposal',
+      متوقع: 'status-qualified',
+      اتصال: 'status-call',
+      'في انتظار': 'status-pending',
+      مغلق: 'status-closed',
+      مفقود: 'status-lost',
+      'تم الاتصال': 'status-contacted',
+      متابعة: 'status-followup',
+      اجتماع: 'status-meeting',
+      'بريد إلكتروني': 'status-email',
+    };
+
+    // Convert to lowercase for comparison
+    const lowerStatus = status?.toLowerCase() || '';
+    return statusMap[lowerStatus] || 'status-default';
+  }
+
+  // Get lead status name for display
+  getLeadStatusDisplay(status: string): string {
+    // You can add custom formatting here if needed
+    return status || '-';
+  }
+
+  // Get lead status options with current value included
+  getLeadStatusOptionsWithCurrent(row: any): string[] {
+    const currentStatus = row._draftLeadStatus || row.leadStatus;
+    if (!currentStatus) return this.leadStatusOptions;
+
+    // Check if current status is already in options
+    const isInOptions = this.leadStatusOptions.some(
+      (opt) => opt.toLowerCase() === currentStatus.toLowerCase()
+    );
+
+    // If not in options, add it to the beginning
+    if (!isInOptions) {
+      return [currentStatus, ...this.leadStatusOptions];
+    }
+
+    return this.leadStatusOptions;
+  }
+
+  // Format cell value based on formatter type
+  formatCellValue(value: any, formatter?: string): string {
+    if (!value) return '-';
+
+    if (formatter === 'date' || formatter === 'datetime') {
+      const date = new Date(value);
+      if (isNaN(date.getTime())) return value; // Invalid date
+
+      const day = date.getDate().toString().padStart(2, '0');
+      const month = (date.getMonth() + 1).toString().padStart(2, '0');
+      const year = date.getFullYear();
+
+      if (formatter === 'datetime') {
+        const hours = date.getHours().toString().padStart(2, '0');
+        const minutes = date.getMinutes().toString().padStart(2, '0');
+        return `${day}/${month}/${year} ${hours}:${minutes}`;
+      }
+      return `${day}/${month}/${year}`;
+    }
+
+    return value;
+  }
+
+  // Lead status editing methods
+  isEditingLeadStatus(row: any): boolean {
+    if (this.alwaysEditLeadStatus) {
+      return true;
+    }
+    return this.editingLeadId === row.id;
+  }
+
+  onLeadStatusClick(row: any): void {
+    this.leadStatusClick.emit(row);
+  }
+
+  onStatusChange(row: any, newStatus: string): void {
+    this.statusChange.emit({ row, status: newStatus });
+  }
+
+  onSaveLeadStatus(row: any): void {
+    // Update the draft status and emit save event
+    this.saveLeadStatus.emit(row);
+
+    // Close editing mode after save
+    this.editingLeadId = null;
+  }
+
+  onCancelLeadStatus(row: any): void {
+    this.cancelLeadStatus.emit(row);
+  }
+}

@@ -1,0 +1,24 @@
+/* Wizard Dialog Styles */
+::ng-deep .wizard-dialog .mat-dialog-container {
+  background: transparent;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+::ng-deep .wizard-dialog .mat-dialog-content {
+  padding: 0;
+  margin: 0;
+  max-height: none;
+}
+
+::ng-deep .wizard-dialog .mat-dialog-actions {
+  padding: 0;
+  margin: 0;
+}
+
+/* Override Material Dialog backdrop */
+::ng-deep .wizard-dialog + .cdk-overlay-backdrop {
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(4px);
+}

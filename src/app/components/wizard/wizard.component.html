@@ -1,344 +1,114 @@
 <div class="wizard-wrapper">
   <div class="wizard-title">
-      <h1>بيانات العملاء</h1>
-      <div class="breadcrumb">
-        <span>الرئيسية > إضافة العملاء</span>
-      </div>
+    <h1>بيانات العملاء</h1>
+    <div class="breadcrumb">
+      <span>الرئيسية > إضافة العملاء</span>
+    </div>
   </div>
 
   <div class="parentwizard">
-<div class="wizard-container">
+    <div class="wizard-container">
       <!-- Header Section -->
-  <div class="wizard-header">
-    <!-- Step Navigation Tabs -->
-    <div class="step-tabs">
-      <div 
-        *ngFor="let step of stepTitles; let i = index" 
-        class="step-tab"
-        [class.active]="isCurrentStep(i)"
-        [class.completed]="isStepCompleted(i)"
-        (click)="jumpToStep(i)"
-      >
-        {{ step }}
-      </div>
-    </div>
-
-    <!-- Progress Indicator -->
-    <div class="progress-indicator"  >
-      <div class="progress-bar">
-        <div class="progress-fill" [style.width.%]="getProgressPercentage()"></div>
-      </div>
-      <!-- <div class="progress-icons">
-        <div 
-          *ngFor="let step of stepTitles; let i = index" 
-          class="progress-icon"
-          [class.completed]="isStepCompleted(i)"
-          [class.current]="isCurrentStep(i)"
-          [class.valid]="isStepValid(i)"
-          (click)="jumpToStep(i)"
-          [title]="step"
-        >
-          <span *ngIf="isStepCompleted(i)" class="check-icon">✓</span>
-          <span *ngIf="!isStepCompleted(i) && !isCurrentStep(i)" class="step-number">{{ i + 1 }}</span>
-          <span *ngIf="isCurrentStep(i)" class="current-step">{{ i + 1 }}</span>
+      <div class="wizard-header">
+        <div class="wizard-title">
+          <h1>اضافة عميل جديد</h1>
+          <p class="wizard-description">ادخال بيانات العميل الجديد</p>
         </div>
-      </div> -->
-    </div>
-  </div>
-
-  <!-- Form Container -->
-  <div class="form-container">
-    <!-- Pac-Man Progress Tracker -->
-    <!-- Dynamic Status Tracker for Each Form -->
-    <div class="status-tracker" [ngClass]="'tracker-step-' + currentStep">
-      
-      <!-- Step 0-1: Personal Data Forms - Classic Pac-Man Style -->
-      <div *ngIf="currentStep <= 1" class="pacman-tracker">
-      <div class="dots-row">
-        <div 
-          *ngFor="let field of getCurrentFields(); let i = index" 
-          class="dot-container"
-          [class.eaten]="isFieldCompleted(currentStep + '_' + field)"
-          [class.current]="isCurrentField(currentStep + '_' + field)"
-            [class.available]="isFieldAvailableForCompletion(i)"
-        >
-          <img 
-              *ngIf="!isFieldCompleted(currentStep + '_' + field) && isFieldAvailableForCompletion(i)"
-              src="assets/duck-eat.svg" 
-              alt="Duck" 
-            class="dot"
+        <!-- Step Navigation Tabs -->
+        <div class="step-tabs">
+          <div
+            *ngFor="let step of stepTitles; let i = index"
+            class="step-tab"
+            [class.active]="isCurrentStep(i)"
+            [class.completed]="isStepCompleted(i)"
+            (click)="jumpToStep(i)"
           >
-            <img 
-              *ngIf="isFieldCompleted(currentStep + '_' + field)"
-              src="assets/duckling.png" 
-              alt="Eaten Duck" 
-              class="dot eaten-duck"
-            >
-            <!-- <div class="field-label">{{ field }}</div> -->
+            {{ step }}
           </div>
-      </div>
-      
-      <!-- Pac-Man Character -->
-      <div 
-        class="pacman-character"
-        [style.left.%]="getPacmanPosition()"
-        [class.moving]="isPacmanMoving"
-        [class.mouth-open]="isPacmanMoving"
-      >
-        <img 
-            src="assets/pacman.svg" 
-          alt="Pac-Man" 
-          class="pacman-icon"
-          (error)="onImageError($event, 'pacman')"
-          (load)="onImageLoad($event, 'pacman')"
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-          >
-          <!-- Fallback Pac-Man using CSS -->
-          <div class="pacman-fallback" style="display: none; width: 30px; height: 30px; background: #FFD700; border-radius: 50%; position: relative;">
-            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 0; height: 0; border-left: 15px solid transparent; border-right: 15px solid #FFD700; border-top: 15px solid transparent; border-bottom: 15px solid transparent; clip-path: polygon(0 0, 100% 0, 100% 50%, 0 50%);"></div>
+        </div>
+
+        <!-- Progress Indicator -->
+        <div class="progress-indicator">
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              [style.width.%]="getProgressPercentage()"
+            ></div>
           </div>
         </div>
       </div>
 
-      <!-- Step 2: Company Data - Building Blocks Style -->
-      <div *ngIf="currentStep === 2" class="building-tracker">
-        <div class="building-row">
-          <div 
-            *ngFor="let field of getCurrentFields(); let i = index" 
-            class="building-block"
-            [class.completed]="isFieldCompleted(currentStep + '_' + field)"
-            [class.current]="isCurrentField(currentStep + '_' + field)"
-          >
-            <div class="block-icon">🏢</div>
-            <div class="field-label">{{ field }}</div>
-          </div>
+      <!-- Form Container -->
+      <div class="form-container">
+        <!-- Step 0: البيانات الشخصية -->
+        <div class="wizard-form" *ngIf="currentStep === 0">
+          <app-step1
+            [wizardComponent]="this"
+            [jobLevels]="jobLevels"
+            [@slideAnimation]
+            #step1Ref
+          ></app-step1>
         </div>
-        <div class="progress-line" [style.width.%]="getBuildingProgress()"></div>
-      </div>
 
-      <!-- Step 3: Technical Data - Circuit Board Style -->
-      <div *ngIf="currentStep === 3" class="circuit-tracker">
-        <div class="circuit-row">
-          <div 
-            *ngFor="let field of getCurrentFields(); let i = index" 
-            class="circuit-node"
-            [class.connected]="isFieldCompleted(currentStep + '_' + field)"
-            [class.active]="isCurrentField(currentStep + '_' + field)"
-          >
-            <div class="node-icon">⚡</div>
-            <div class="field-label">{{ field }}</div>
-          </div>
+        <!-- Step 1: بيانات الشركة والصناعة -->
+        <div class="wizard-form" *ngIf="currentStep === 1">
+          <app-step2
+            [wizardComponent]="this"
+            [countries]="countries"
+            [cities]="cities"
+            [@slideAnimation]
+            #step2Ref
+          ></app-step2>
         </div>
-        <div class="circuit-line" [style.width.%]="getCircuitProgress()"></div>
-      </div>
 
-      <!-- Step 4: Behavior - Heart Rate Style -->
-      <div *ngIf="currentStep === 4" class="heartbeat-tracker">
-        <div class="heartbeat-row">
-          <div 
-            *ngFor="let field of getCurrentFields(); let i = index" 
-            class="heartbeat-node"
-            [class.beating]="isFieldCompleted(currentStep + '_' + field)"
-            [class.current]="isCurrentField(currentStep + '_' + field)"
-          >
-            <div class="heart-icon">💓</div>
-            <div class="field-label">{{ field }}</div>
-          </div>
+        <!-- Step 2: العنوان -->
+        <div class="wizard-form" *ngIf="currentStep === 2">
+          <app-step3
+            [wizardComponent]="this"
+            [@slideAnimation]
+            #step3Ref
+          ></app-step3>
         </div>
-        <div class="heartbeat-line" [style.width.%]="getHeartbeatProgress()"></div>
-      </div>
 
-      <!-- Step 5: Purchasing Power - Money Flow Style -->
-      <div *ngIf="currentStep === 5" class="money-tracker">
-        <div class="money-row">
-          <div 
-            *ngFor="let field of getCurrentFields(); let i = index" 
-            class="money-node"
-            [class.earned]="isFieldCompleted(currentStep + '_' + field)"
-            [class.current]="isCurrentField(currentStep + '_' + field)"
-          >
-            <div class="money-icon">💰</div>
-            <div class="field-label">{{ field }}</div>
-          </div>
+        <!-- Step 3: وسائل التواصل الاجتماعي -->
+        <div class="wizard-form" *ngIf="currentStep === 3">
+          <app-step4
+            [wizardComponent]="this"
+            [@slideAnimation]
+            #step4Ref
+          ></app-step4>
         </div>
-        <div class="money-flow" [style.width.%]="getMoneyProgress()"></div>
-      </div>
 
-      <!-- Step 6: Purchase Intentions - Shopping Cart Style -->
-      <div *ngIf="currentStep === 6" class="shopping-tracker">
-        <div class="shopping-row">
-          <div 
-            *ngFor="let field of getCurrentFields(); let i = index" 
-            class="shopping-item"
-            [class.added]="isFieldCompleted(currentStep + '_' + field)"
-            [class.current]="isCurrentField(currentStep + '_' + field)"
+        <!-- Navigation Buttons -->
+        <div class="navigation-buttons">
+          <button
+            type="button"
+            class="btn btn-previous"
+            (click)="previousStep()"
+            [disabled]="currentStep <= 0"
           >
-            <div class="item-icon">🛒</div>
-            <div class="field-label">{{ field }}</div>
-          </div>
-        </div>
-        <div class="shopping-progress" [style.width.%]="getShoppingProgress()"></div>
-      </div>
+            السابق
+          </button>
 
-      <!-- Step 7: Psychographic - Brain Network Style -->
-      <div *ngIf="currentStep === 7" class="brain-tracker">
-        <div class="brain-row">
-          <div 
-            *ngFor="let field of getCurrentFields(); let i = index" 
-            class="brain-node"
-            [class.activated]="isFieldCompleted(currentStep + '_' + field)"
-            [class.current]="isCurrentField(currentStep + '_' + field)"
+          <button
+            *ngIf="currentStep < 3"
+            type="button"
+            class="btn btn-next"
+            (click)="nextStep()"
           >
-            <div class="brain-icon">🧠</div>
-            <div class="field-label">{{ field }}</div>
-          </div>
-        </div>
-        <div class="neural-path" [style.width.%]="getBrainProgress()"></div>
-      </div>
+            التالي
+          </button>
 
-      <!-- Step 8: Transactional Data - Database Style -->
-      <div *ngIf="currentStep === 8" class="database-tracker">
-        <div class="database-row">
-          <div 
-            *ngFor="let field of getCurrentFields(); let i = index" 
-            class="database-record"
-            [class.saved]="isFieldCompleted(currentStep + '_' + field)"
-            [class.current]="isCurrentField(currentStep + '_' + field)"
+          <button
+            *ngIf="currentStep === 3"
+            type="button"
+            class="btn btn-submit"
+            (click)="submitForm()"
           >
-            <div class="record-icon">💾</div>
-            <div class="field-label">{{ field }}</div>
-          </div>
+            إرسال
+          </button>
         </div>
-        <div class="database-progress" [style.width.%]="getDatabaseProgress()"></div>
       </div>
-
-      <!-- Step 9: Campaigns - Rocket Launch Style -->
-      <div *ngIf="currentStep === 9" class="rocket-tracker">
-        <div class="rocket-row">
-          <div 
-            *ngFor="let field of getCurrentFields(); let i = index" 
-            class="rocket-stage"
-            [class.launched]="isFieldCompleted(currentStep + '_' + field)"
-            [class.current]="isCurrentField(currentStep + '_' + field)"
-          >
-            <div class="stage-icon">🚀</div>
-            <div class="field-label">{{ field }}</div>
-          </div>
-        </div>
-        <div class="rocket-trail" [style.width.%]="getRocketProgress()"></div>
-      </div>
-
-      <!-- Step 10: Relationships - Network Connection Style -->
-      <div *ngIf="currentStep === 10" class="network-tracker">
-        <div class="network-row">
-          <div 
-            *ngFor="let field of getCurrentFields(); let i = index" 
-            class="network-node"
-            [class.connected]="isFieldCompleted(currentStep + '_' + field)"
-            [class.current]="isCurrentField(currentStep + '_' + field)"
-          >
-            <div class="node-icon">🔗</div>
-            <div class="field-label">{{ field }}</div>
-          </div>
-        </div>
-        <div class="connection-line" [style.width.%]="getNetworkProgress()"></div>
-      </div>
-      
-      <!-- Level Complete Animation -->
-      <div 
-        *ngIf="isLevelComplete()" 
-        class="level-complete"
-        [@levelCompleteAnimation]
-      >
-        <div class="level-complete-text">Level Complete! 🎉</div>
-      </div>
-    </div>
-
-    <!-- Step 0: بيانات الأشخاص - Form 1 -->
-    <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 0">
-      <app-step1 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step1>
-    </form>
-
-    <!-- Step 1: بيانات الأشخاص - Form 2 -->
-    <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 1">
-      <app-step2 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step2>
-    </form>
-
-    <!-- Step 2: بيانات الشركة -->
-    <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 2">
-      <app-step3 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step3>
-    </form>
-
-    <!-- Step 3: بيانات تقنية -->
-    <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 3">
-      <app-step4 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step4>
-    </form>
-
-    <!-- Step 4: السلوك -->
-    <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 4">
-      <app-step5 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step5>
-    </form>
-
-    <!-- Step 5: القدرة الشرائية -->
-    <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 5">
-      <app-step6 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step6>
-    </form>
-
-    <!-- Step 6: نوايا الشراء -->
-    <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 6">
-      <app-step7 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step7>
-    </form>
-
-    <!-- Step 7: البعد النفسي -->
-    <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 7">
-      <app-step8 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step8>
-    </form>
-
-    <!-- Step 8: بيانات المعاملات -->
-    <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 8">
-      <app-step9 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step9>
-    </form>
-
-    <!-- Step 9: الحملات -->
-    <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 9">
-      <app-step10 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step10>
-    </form>
-
-    <!-- Step 10: العلاقات -->
-    <form [formGroup]="getCurrentForm()" class="wizard-form" *ngIf="currentStep === 10">
-      <app-step11 [form]="getCurrentForm()" [wizardComponent]="this" [@slideAnimation]></app-step11>
-    </form>
-
-    <!-- Navigation Buttons -->
-    <div class="navigation-buttons">
-      <button 
-        type="button" 
-        class="btn btn-previous" 
-        (click)="previousStep()" 
-        [disabled]="currentStep <= 0"
-      >
-        السابق
-      </button>
-
-      <button 
-        *ngIf="currentStep < 10"
-        type="button" 
-        class="btn btn-next" 
-        (click)="nextStep()"
-      >
-        التالي
-      </button>
-
-      <button 
-        *ngIf="currentStep === 10"
-        type="button" 
-        class="btn btn-submit" 
-        (click)="submitForm()"
-      >
-        إرسال
-      </button>
     </div>
   </div>
-</div>
-</div>
 </div>

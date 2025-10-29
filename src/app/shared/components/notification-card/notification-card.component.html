@@ -1,0 +1,46 @@
+<div class="notifications-panel">
+  <!-- رأس اللوحة -->
+  <div class="panel-header">
+    <div class="panel-title">
+      <h3>الاشعارات و التنبيه</h3>
+      <p class="panel-subtitle">قائمة الاشعارات الخاصة بك</p>
+    </div>
+    <div class="header-left">
+      <i class="bi bi-bell-fill notification-icon">
+        <span class="notification-badge">{{ notifications.length }}</span>
+      </i>
+    </div>
+  </div>
+
+  <!-- قائمة الإشعارات -->
+  <div class="notifications-list">
+    <div
+      *ngFor="let notification of notifications"
+      class="notification-card"
+      [class]="notification.type"
+      [class.unread]="!notification.isRead"
+    >
+      <div class="notification-content">
+        <div class="notification-header">
+          <i class="bi" [ngClass]="getNotificationIcon(notification.type)"></i>
+          <span class="notification-type">{{ notification.typeText }}</span>
+          <span class="notification-time">{{
+            formatNotificationTime(notification.createdAt)
+          }}</span>
+        </div>
+        <div class="notification-body">
+          <p class="notification-text">{{ notification.message }}</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- حالة لا توجد بيانات -->
+    <div
+      *ngIf="notifications.length === 0 && !loadingNotifications"
+      class="no-data-state"
+    >
+      <i class="bi bi-bell-slash"></i>
+      <span>لا توجد إشعارات متاحة</span>
+    </div>
+  </div>
+</div>

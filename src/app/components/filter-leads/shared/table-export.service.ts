@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import * as XLSX from 'xlsx';
-import { NotifyDialogService } from '../../../shared/notify-dialog/notify-dialog.service';
+import { NotifyDialogService } from '../../../shared/notify-dialog-host/notify-dialog.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 
 export interface ExportableData {

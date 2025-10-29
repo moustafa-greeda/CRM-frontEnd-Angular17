@@ -1,7 +1,7 @@
 import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
-import { IApiResponse, ICountry } from '../../core/Models/icountry';
+import { IApiResponse, ICountry } from '../../core/Models/common/icountry';
 import { environment } from '../../../environments/environment';
 
 @Injectable({

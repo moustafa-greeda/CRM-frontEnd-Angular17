@@ -1,20 +1,20 @@
 import { Component, OnInit } from '@angular/core';
 import { CountriesService } from './countries.service';
 import { Observable, BehaviorSubject, combineLatest } from 'rxjs';
-import { ICountry } from '../../core/Models/icountry';
+import { ICountry } from '../../core/Models/common/icountry';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { map, startWith } from 'rxjs/operators';
-import { NotifyDialogService } from '../../shared/notify-dialog/notify-dialog.service';
-import { PageEvent } from '@angular/material/paginator';  // Import PageEvent here
+import { NotifyDialogService } from '../../shared/notify-dialog-host/notify-dialog.service';
+import { PageEvent } from '@angular/material/paginator'; // Import PageEvent here
 
 @Component({
   selector: 'app-countries',
   templateUrl: './countries.component.html',
-  styleUrls: ['./countries.component.css']
+  styleUrls: ['./countries.component.css'],
 })
 export class CountriesComponent implements OnInit {
   countries$: Observable<ICountry[]> = new Observable(); // Observable for the countries list
-  filteredCountries$ = new BehaviorSubject<ICountry[]>([]);  // Always initialize with an empty array
+  filteredCountries$ = new BehaviorSubject<ICountry[]>([]); // Always initialize with an empty array
   pagedCountries$ = new BehaviorSubject<ICountry[]>([]); // replace the current pagedCountries$ declaration
 
   search = new FormControl('');
@@ -27,31 +27,43 @@ export class CountriesComponent implements OnInit {
     id: new FormControl(0),
     name: new FormControl('', Validators.required),
     keyCode: new FormControl('', Validators.required),
-    iso_2: new FormControl('', [Validators.required, Validators.minLength(2), Validators.maxLength(2)])
+    iso_2: new FormControl('', [
+      Validators.required,
+      Validators.minLength(2),
+      Validators.maxLength(2),
+    ]),
   });
 
   isEditMode = false;
 
-  constructor(private service: CountriesService, private notify: NotifyDialogService) {}
+  constructor(
+    private service: CountriesService,
+    private notify: NotifyDialogService
+  ) {}
 
   ngOnInit() {
     this.loadCountries();
 
     // Real-time filter on input change
-    combineLatest([this.countries$, this.search.valueChanges.pipe(startWith(''))]).pipe(
-      map(([countries, search]) =>
-        (countries || []).filter(c =>
-          c.name.toLowerCase().includes(search?.toLowerCase() || '')
+    combineLatest([
+      this.countries$,
+      this.search.valueChanges.pipe(startWith('')),
+    ])
+      .pipe(
+        map(([countries, search]) =>
+          (countries || []).filter((c) =>
+            c.name.toLowerCase().includes(search?.toLowerCase() || '')
+          )
         )
       )
-    ).subscribe(filteredCountries => {
-      this.filteredCountries$.next(filteredCountries);
-      this.totalCountriesCount = filteredCountries.length;  // Update total count after filter
-      this.paginateData(filteredCountries);  // Apply pagination
-    });
+      .subscribe((filteredCountries) => {
+        this.filteredCountries$.next(filteredCountries);
+        this.totalCountriesCount = filteredCountries.length; // Update total count after filter
+        this.paginateData(filteredCountries); // Apply pagination
+      });
 
     // Watch for ISO code changes to update flag
-    this.countryForm.get('iso_2')?.valueChanges.subscribe(value => {
+    this.countryForm.get('iso_2')?.valueChanges.subscribe((value) => {
       // This will trigger the flag update in the template
     });
   }
@@ -60,9 +72,9 @@ export class CountriesComponent implements OnInit {
   loadCountries() {
     this.countries$ = this.service.getCountries().pipe(
       map((countries: ICountry[]) => {
-        this.filteredCountries$.next(countries || []);  // Update filtered countries
-        this.totalCountriesCount = countries.length;  // Update total countries count
-        this.paginateData(countries);  // Apply pagination on first load
+        this.filteredCountries$.next(countries || []); // Update filtered countries
+        this.totalCountriesCount = countries.length; // Update total countries count
+        this.paginateData(countries); // Apply pagination on first load
         return countries || [];
       })
     );
@@ -70,27 +82,27 @@ export class CountriesComponent implements OnInit {
 
   // Paginate data based on pageIndex and pageSize
   paginateData(countries: ICountry[]) {
-    const startIndex = this.pageIndex * this.pageSize;  // Calculate the starting index of the current page
-    const pagedData = countries.slice(startIndex, startIndex + this.pageSize);  // Slice the data for the current page
-    this.pagedCountries$.next(pagedData);  // Update the pagedCountries to display in the table
+    const startIndex = this.pageIndex * this.pageSize; // Calculate the starting index of the current page
+    const pagedData = countries.slice(startIndex, startIndex + this.pageSize); // Slice the data for the current page
+    this.pagedCountries$.next(pagedData); // Update the pagedCountries to display in the table
   }
 
   // Handle page change event from the paginator
   onPageChange(event: PageEvent) {
     this.pageIndex = event.pageIndex;
     this.pageSize = event.pageSize;
-    this.paginateData(this.filteredCountries$.getValue());  // Apply pagination after page change
+    this.paginateData(this.filteredCountries$.getValue()); // Apply pagination after page change
   }
 
   // Handle search click
   onSearchClick() {
     const searchValue = this.search?.value?.trim().toLowerCase() || '';
-    const filtered = this.filteredCountries$.getValue().filter(country =>
-      country.name.toLowerCase().includes(searchValue)
-    );
+    const filtered = this.filteredCountries$
+      .getValue()
+      .filter((country) => country.name.toLowerCase().includes(searchValue));
     this.filteredCountries$.next(filtered);
-    this.totalCountriesCount = filtered.length;  // Update total count after search
-    this.paginateData(filtered);  // Apply pagination after search
+    this.totalCountriesCount = filtered.length; // Update total count after search
+    this.paginateData(filtered); // Apply pagination after search
   }
 
   // Add or update a country
@@ -108,7 +120,7 @@ export class CountriesComponent implements OnInit {
               soundUrl: 'assets/sound/duck.mp3',
               autoCloseMs: 2000,
             });
-            this.loadCountries();  // Reload the countries list after update
+            this.loadCountries(); // Reload the countries list after update
             this.cancelEdit();
           },
           error: (error) => {
@@ -120,7 +132,7 @@ export class CountriesComponent implements OnInit {
               autoCloseMs: 2000,
             });
             console.error('Update failed:', error);
-          }
+          },
         });
       } else {
         this.service.addCountry(country).subscribe({
@@ -132,7 +144,7 @@ export class CountriesComponent implements OnInit {
               soundUrl: 'assets/sound/duck.mp3',
               autoCloseMs: 2000,
             });
-            this.loadCountries();  // Reload the countries list after adding
+            this.loadCountries(); // Reload the countries list after adding
             this.countryForm.reset({ id: 0 });
           },
           error: (error) => {
@@ -144,7 +156,7 @@ export class CountriesComponent implements OnInit {
               autoCloseMs: 2000,
             });
             console.error('Add failed:', error);
-          }
+          },
         });
       }
     } else {
@@ -175,12 +187,12 @@ export class CountriesComponent implements OnInit {
   onEditCountry(country: ICountry) {
     this.isEditMode = true;
     this.countryForm.setValue({
-      id: country.id || null,  // Handle null or undefined for ID
+      id: country.id || null, // Handle null or undefined for ID
       name: country.name,
-      keyCode: country.keyCode || null,  // Ensure keyCode is null if it's undefined
-      iso_2: country.iso_2 || null  // Ensure iso_2 is null if it's undefined
+      keyCode: country.keyCode || null, // Ensure keyCode is null if it's undefined
+      iso_2: country.iso_2 || null, // Ensure iso_2 is null if it's undefined
     });
-    this.loadCountries();  // Reload the countries list after update
+    this.loadCountries(); // Reload the countries list after update
   }
 
   // Clear the form values
@@ -191,21 +203,20 @@ export class CountriesComponent implements OnInit {
   // Get flag emoji from ISO code
   getFlagEmoji(isoCode: string): string {
     if (!isoCode || isoCode.length !== 2) return '';
-    
+
     const codePoints = isoCode
       .toUpperCase()
       .split('')
-      .map(char => 127397 + char.charCodeAt(0));
-    
+      .map((char) => 127397 + char.charCodeAt(0));
+
     return String.fromCodePoint(...codePoints);
   }
 
   getCurrentFlag(): string {
     const code = this.countryForm.get('iso_2')?.value;
     if (!code) {
-      return ''; 
+      return '';
     }
     return `./assets/images/${code.toLowerCase()}.svg`;
   }
-  
 }

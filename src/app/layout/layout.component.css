@@ -15,6 +15,16 @@
   overflow-x: hidden;
 }
 
+/* Ensure content takes full width when sidebar is closed */
+/* .dashboard-layout:not(.sidebar-open) {
+  grid-template-columns: 0 1fr;
+}
+
+.dashboard-layout:not(.sidebar-open) .content {
+  width: 100%;
+  max-width: 100%;
+} */
+
 .dashboard-layout.sidebar-open {
   grid-template-columns: var(--sidebar-width) 1fr;
 }

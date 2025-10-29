@@ -1,0 +1,81 @@
+<div class="step-content personal-data-form full-width" [formGroup]="form">
+  <div class="form-row">
+    <div class="form-column">
+      <!-- country -->
+      <div class="form-group">
+        <label for="country">الدولة *</label>
+        <select
+          id="country"
+          formControlName="country"
+          class="form-select"
+          (blur)="onFieldBlur('country')"
+          (change)="onCountryChange($event)"
+        >
+          <option value="">إختر إسم الدولة</option>
+          <option *ngFor="let country of countries" [value]="country.id">
+            {{ country.name }}
+          </option>
+        </select>
+        <div class="error-message" *ngIf="getErrorMessage('country')">
+          {{ getErrorMessage("country") }}
+        </div>
+      </div>
+
+      <!-- city -->
+      <div class="form-group">
+        <label for="city">المدينة *</label>
+        <select
+          id="city"
+          formControlName="city"
+          class="form-select"
+          (blur)="onFieldBlur('city')"
+          (change)="onFieldChange('city')"
+        >
+          <option value="">إختر إسم المدينة</option>
+          <option *ngFor="let city of cityList" [value]="city.id">
+            {{ city.name }}
+          </option>
+        </select>
+        <div class="error-message" *ngIf="getErrorMessage('city')">
+          {{ getErrorMessage("city") }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-column">
+      <!-- postal code -->
+      <div class="form-group">
+        <label for="postalCode">الرمز البريدي *</label>
+        <input
+          type="text"
+          id="postalCode"
+          formControlName="postalCode"
+          placeholder="إدخل الرمز البريدي"
+          class="form-input"
+          (blur)="onFieldBlur('postalCode')"
+          (input)="onFieldChange('postalCode')"
+        />
+        <div class="error-message" *ngIf="getErrorMessage('postalCode')">
+          {{ getErrorMessage("postalCode") }}
+        </div>
+      </div>
+
+      <!-- address line -->
+      <div class="form-group">
+        <label for="addressLine">العنوان التفصيلي *</label>
+        <input
+          type="text"
+          id="addressLine"
+          formControlName="addressLine"
+          placeholder="إدخل العنوان التفصيلي"
+          class="form-input"
+          (blur)="onFieldBlur('addressLine')"
+          (input)="onFieldChange('addressLine')"
+        />
+        <div class="error-message" *ngIf="getErrorMessage('addressLine')">
+          {{ getErrorMessage("addressLine") }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

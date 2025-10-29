@@ -1,50 +1,166 @@
 .sidebar {
   width: 100%;
-  transition: transform 0.3s ease;
+  height: 100vh;
+  background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
+  border-right: 2px solid rgba(255, 95, 0, 0.2);
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
   align-items: center;
   flex-direction: column;
+  position: relative;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+/* Custom scrollbar */
+.sidebar::-webkit-scrollbar {
+  width: 6px;
+}
+
+.sidebar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #ff5f00 0%, #ff7a2f 100%);
+  border-radius: 3px;
+}
+
+.sidebar::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #ff7a2f 0%, #ff5f00 100%);
 }
 /************* logo ***********/
 .sidebar .logo {
-  margin-top: 15px;
-  width: 168px;
-  height: 62px;
+  margin: 20px 0 30px 0;
+  width: 180px;
+  height: 70px;
   display: flex;
   justify-content: center;
   align-items: center;
+  background: rgba(255, 95, 0, 0.1);
+  border-radius: 15px;
+  border: 2px solid rgba(255, 95, 0, 0.3);
+  box-shadow: 0 4px 15px rgba(255, 95, 0, 0.2);
+  transition: all 0.3s ease;
+}
+
+.sidebar .logo:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(255, 95, 0, 0.3);
+  border-color: rgba(255, 95, 0, 0.5);
 }
 
 .sidebar .logo img {
-  width: 100%;
-  height: 100%;
-  margin-bottom: 20px;
+  width: 90%;
+  height: 90%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
 .menu {
   width: 100%;
-}
-.sidebar ul {
-  width: 100%;
-  padding: 0 10px;
-}
-.sidebar ul li {
-  /* width: 100%; */
-  box-sizing: border-box;
-  padding: 10px 5px;
-  margin: 10px 0;
-  display: flex;
-  justify-content: space-between;
-  align-self: stretch;
-  align-items: center;
-  border-radius: 6px;
-  border: 1px solid #ffae7e;
-  background-color: #1e1e1e;
+  padding: 0 15px;
 }
 
-.active {
-  background: #e36012;
+.sidebar ul {
+  width: 100%;
+  padding: 0;
+  margin: 0;
+  list-style: none;
+}
+
+.sidebar ul li {
+  margin: 8px 0;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s ease;
+  position: relative;
+}
+
+.sidebar ul li a {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  text-decoration: none;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 500;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 95, 0, 0.2);
+  backdrop-filter: blur(10px);
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.sidebar ul li a::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 95, 0, 0.1),
+    transparent
+  );
+  transition: left 0.5s ease;
+}
+
+.sidebar ul li a:hover::before {
+  left: 100%;
+}
+
+.sidebar ul li a i {
+  font-size: 18px;
+  color: #ff5f00;
+  transition: all 0.3s ease;
+}
+
+/* Enhanced Active State */
+.sidebar ul li a.active {
+  background: linear-gradient(135deg, #ff5f00 0%, #ff7a2f 100%);
+  color: #ffffff !important;
+  box-shadow: 0 8px 25px rgba(255, 95, 0, 0.4);
+  transform: translateX(8px) scale(1.02);
+  border-color: rgba(255, 95, 0, 0.8);
+}
+
+.sidebar ul li a.active::before {
+  display: none;
+}
+
+.sidebar ul li a.active i {
+  color: #ffffff !important;
+  transform: scale(1.2);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Hover effects */
+.sidebar ul li a:hover {
+  background: rgba(255, 95, 0, 0.15);
+  color: #ff5f00 !important;
+  transform: translateX(5px) scale(1.01);
+  border-color: rgba(255, 95, 0, 0.5);
+  box-shadow: 0 5px 15px rgba(255, 95, 0, 0.2);
+}
+
+.sidebar ul li a:hover i {
+  color: #ff5f00 !important;
+  transform: scale(1.1);
+}
+
+/* Focus state for accessibility */
+.sidebar ul li a:focus {
+  outline: 2px solid #ff5f00;
+  outline-offset: 2px;
 }
 
 /* nested submenu */
@@ -52,37 +168,89 @@
   border: none;
   padding: 0;
   height: auto;
-  display: block; /* stack button and submenu vertically */
+  display: block;
+  margin: 8px 0;
+}
+
+.submenu {
+  margin-top: 5px;
+  padding-left: 20px;
 }
 
 .submenu li {
-  height: 38px;
-  margin: 6px 0;
-  padding: 0 16px;
-  display: flex;
-  align-items: center;
-  border: none !important;
+  margin: 4px 0;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.submenu li a {
+  padding: 10px 15px;
+  font-size: 14px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 95, 0, 0.1);
+}
+
+.submenu li a:hover {
+  background: rgba(255, 95, 0, 0.1);
+  transform: translateX(3px);
+}
+
+.submenu li a.active {
+  background: linear-gradient(135deg, #ff5f00 0%, #ff7a2f 100%);
+  transform: translateX(5px) scale(1.01);
 }
 
 .nav-sublink {
-  color: var(--white-color);
+  color: #ffffff;
   text-decoration: none;
   font-size: 14px;
+  font-weight: 400;
 }
 
 /* button reset for clickable parent */
 .btn-reset {
   appearance: none;
   -webkit-appearance: none;
-  background: transparent;
-  border: 1px solid #ffae7e;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 95, 0, 0.2);
   width: 100%;
-  height: 44px;
+  height: 50px;
   padding: 0 20px;
-  margin: 10px 0px;
+  margin: 8px 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-radius: 6px;
-  color: var(--white-color);
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.btn-reset:hover {
+  background: rgba(255, 95, 0, 0.15);
+  border-color: rgba(255, 95, 0, 0.5);
+  transform: translateX(5px);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+  }
+
+  .sidebar ul li a {
+    padding: 12px 15px;
+    font-size: 14px;
+  }
+
+  .sidebar .logo {
+    width: 150px;
+    height: 60px;
+    margin: 15px 0 20px 0;
+  }
 }

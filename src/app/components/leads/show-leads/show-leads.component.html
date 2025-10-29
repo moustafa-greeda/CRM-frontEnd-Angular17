@@ -1,0 +1,382 @@
+<div class="client-management-container">
+  <!-- Header Section -->
+  <div class="header-section">
+    <!-- Parent Title -->
+    <div class="parent-title">
+      <div class="page-title">
+        <h1>إدارة العملاء</h1>
+      </div>
+
+      <!-- Breadcrumb -->
+      <div class="breadcrumb">
+        <span class="breadcrumb-item">الرئيسية</span>
+        <span class="breadcrumb-separator">></span>
+        <span class="breadcrumb-item active">بيانات العملاء</span>
+      </div>
+    </div>
+    <!-- add lead -->
+    <div class="action-bar">
+      <div class="action-buttons">
+        <button class="btn btn-primary" (click)="onAddClient()">
+          إضافة عميل
+          <i class="bi bi-plus"></i>
+        </button>
+
+        <button class="btn btn-primary" (click)="onImport()" title="استيراد">
+          <i class="bi bi-box-arrow-in-up"></i>
+        </button>
+
+        <button
+          class="btn btn-primary"
+          (click)="onExport()"
+          [disabled]="filteredClients.length === 0"
+          title="تصدير"
+        >
+          <i class="bi bi-box-arrow-right"></i>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Filter and Search Bar -->
+  <section class="filter">
+    <div class="filter-search-bar">
+      <div class="filter-section">
+        <div class="custom-dropdown" [class.open]="isDropdownOpen">
+          <div class="dropdown-trigger" (click)="toggleDropdown()">
+            <span class="selected-option">
+              <i
+                class="bi bi-person-fill-add"
+                *ngIf="selectedFilter === 'recent'"
+              ></i>
+              <i class="bi bi-person" *ngIf="selectedFilter === 'name'"></i>
+              <i class="bi bi-envelope" *ngIf="selectedFilter === 'email'"></i>
+              <i class="bi bi-telephone" *ngIf="selectedFilter === 'phone'"></i>
+              <i
+                class="bi bi-briefcase"
+                *ngIf="selectedFilter === 'position'"
+              ></i>
+              {{ getFilterLabel(selectedFilter) }}
+            </span>
+            <i class="bi bi-chevron-down dropdown-arrow"></i>
+          </div>
+          <div class="dropdown-menu">
+            <div class="dropdown-item" (click)="selectFilter('recent')">
+              <i class="bi bi-person-fill-add"></i>
+              <span>الإضافة مؤخرا</span>
+            </div>
+            <div class="dropdown-item" (click)="selectFilter('name')">
+              <i class="bi bi-person"></i>
+              <span>الاسم</span>
+            </div>
+            <div class="dropdown-item" (click)="selectFilter('email')">
+              <i class="bi bi-envelope"></i>
+              <span>البريد الإلكتروني</span>
+            </div>
+            <div class="dropdown-item" (click)="selectFilter('phone')">
+              <i class="bi bi-telephone"></i>
+              <span>رقم الهاتف</span>
+            </div>
+            <div class="dropdown-item" (click)="selectFilter('position')">
+              <i class="bi bi-briefcase"></i>
+              <span>المنصب</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="search-section">
+        <div class="search-input-container">
+          <i [class]="getSearchIcon()" class="search-icon"></i>
+          <input
+            [type]="getInputType()"
+            class="search-input"
+            [placeholder]="getSearchPlaceholder()"
+            [(ngModel)]="searchTerm"
+            (input)="onSearchChange()"
+            [pattern]="getInputPattern()"
+            [attr.inputmode]="getInputMode()"
+          />
+        </div>
+      </div>
+    </div>
+
+    <app-dropdown
+      [label]="
+        isLoadingLeadStatus
+          ? 'جاري التحميل...'
+          : isLeadStatusSelected
+          ? 'حالة العميل المحتمل'
+          : 'اختر حالة العميل'
+      "
+      [options]="leadStatusOptions"
+      [selectedOption]="leadStatusLookupId"
+      (optionSelected)="onLeadStatusChange($event)"
+    ></app-dropdown>
+
+    <!-- Create Lead Button -->
+    <button
+      class="btn btn-primary"
+      (click)="createLeadForSelectedClients()"
+      [disabled]="selectedCards.length === 0 || !isLeadStatusSelected"
+      title="إنشاء عميل محتمل للعملاء المحددين"
+    >
+      <i class="bi bi-plus-circle"></i>
+      إنشاء عميل محتمل ({{ selectedCards.length }})
+    </button>
+
+    <!-- count lead -->
+    <div class="countLead">
+      <p class="countLead-text">
+        {{
+          selectedCards.length > 0
+            ? selectedCards.length + " محدد من " + filteredClients.length
+            : filteredClients.length
+        }}
+        من {{ totalCount }} عميل
+      </p>
+      <i class="bi bi-person-fill"></i>
+    </div>
+  </section>
+
+  <!-- import and export -->
+  <div class="filter">
+    <!--parent import -->
+    <div class="parent-import">
+      <!-- select all -->
+      <div class="select-all">
+        <p class="select-all-text">تحديد الكل</p>
+        <div class="checkbox-wrapper">
+          <input
+            type="checkbox"
+            class="custom-checkbox"
+            [checked]="isAllSelected"
+            (change)="onSelectAllChange($event)"
+          />
+        </div>
+      </div>
+
+      <!-- delet lead -->
+      <i class="bi bi-trash3"></i>
+    </div>
+
+    <div class="export-section">
+      <button
+        class="btn btn-outline-success"
+        (click)="onExportSelected()"
+        [disabled]="selectedCards.length === 0"
+      >
+        <i class="bi bi-check-circle"></i>
+        تصدير المحدد ({{ selectedCards.length }})
+      </button>
+
+      <button
+        class="btn btn-outline-info"
+        (click)="onExportCurrentPage()"
+        [disabled]="filteredClients.length === 0"
+      >
+        <i class="bi bi-file-earmark-text"></i>
+        تصدير الصفحة الحالية ({{ filteredClients.length }})
+      </button>
+
+      <button
+        class="btn btn-outline-warning"
+        (click)="onExportAll()"
+        [disabled]="leads.length === 0"
+      >
+        <i class="bi bi-cloud-download"></i>
+        تصدير الكل ({{ leads.length }})
+      </button>
+    </div>
+
+    <!-- Custom Pagination Controls -->
+    <div class="pagination-controls">
+      <div class="page-size-selector">
+        <label>عدد العناصر:</label>
+        <select (change)="onPageSizeChange($event)" [value]="pageSize">
+          <option value="10">10</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="500">500</option>
+        </select>
+      </div>
+
+      <div class="pagination-info">
+        <span>صفحة {{ currentPage }} من {{ totalPages }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!------------------------- Client Cards Grid ---------------------->
+  <div class="clients-grid" *ngIf="!isLoading && !error">
+    <div
+      class="client-card border-gradient diagonal medium rounded-lg"
+      [class.selected]="isCardSelected(client)"
+      *ngFor="let client of filteredClients; trackBy: trackByClientId"
+    >
+      <div class="client-avatar">
+        <div class="icon">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="20"
+            height="20"
+            viewBox="0 0 20 20"
+            fill="none"
+          >
+            <path
+              d="M8.44388 15.5065C8.44382 15.3021 8.48401 15.0997 8.56217 14.9108C8.64034 14.7219 8.75493 14.5503 8.89942 14.4057C9.04391 14.2612 9.21546 14.1464 9.40428 14.0682C9.59309 13.9899 9.79548 13.9496 9.99988 13.9495C10.2043 13.9494 10.4067 13.9896 10.5956 14.0678C10.7844 14.1459 10.9561 14.2605 11.1006 14.405C11.2452 14.5495 11.3599 14.7211 11.4382 14.9099C11.5165 15.0987 11.5568 15.3011 11.5569 15.5055C11.557 15.9183 11.3932 16.3143 11.1013 16.6063C10.8095 16.8982 10.4137 17.0624 10.0009 17.0625C9.58808 17.0626 9.19212 16.8988 8.90013 16.607C8.60813 16.3152 8.44402 15.9193 8.44388 15.5065Z"
+              fill="white"
+            />
+            <path
+              d="M8.44391 10.1645C8.44391 11.0238 9.14055 11.7205 9.99991 11.7205C10.8593 11.7205 11.5559 11.0238 11.5559 10.1645C11.5559 9.30514 10.8593 8.60849 9.99991 8.60849C9.14055 8.60849 8.44391 9.30514 8.44391 10.1645Z"
+              fill="white"
+            />
+            <path
+              d="M8.44391 4.8215C8.44391 5.68086 9.14055 6.3775 9.99991 6.3775C10.8593 6.3775 11.5559 5.68086 11.5559 4.8215C11.5559 3.96215 10.8593 3.2655 9.99991 3.2655C9.14055 3.2655 8.44391 3.96215 8.44391 4.8215Z"
+              fill="white"
+            />
+          </svg>
+        </div>
+        <div class="avatar-placeholder">
+          {{ client.name.charAt(0) }}
+        </div>
+        <div class="checkbox-wrapper">
+          <input
+            type="checkbox"
+            class="custom-checkbox"
+            [checked]="isCardSelected(client)"
+            (change)="onClientSelect(client, $event)"
+          />
+        </div>
+      </div>
+
+      <div class="client-info">
+        <div class="client-name-container">
+          <h3 class="client-name">{{ client.name }}</h3>
+          <button>{{ client.jobTitle || "لا يوجد منصب" }}</button>
+        </div>
+        <div class="email-container">
+          <div
+            class="icon-wrapper border-gradient horizontal thin rounded-full"
+          >
+            <i class="bi bi-envelope"></i>
+          </div>
+          <p class="client-email">
+            {{ client.email || "لا يوجد بريد الكتروني" }}
+          </p>
+        </div>
+        <div class="phone-container">
+          <div class="icon-wrapper border-gradient diagonal thin rounded-full">
+            <i class="bi bi-telephone"></i>
+          </div>
+          <p class="client-phone">{{ client.phone }}</p>
+        </div>
+        <div class="client-meta">
+          <span class="client-source border-gradient horizontal thin"
+            >اسم الصناعة : {{ client.industeryName || "غير محدد" }}</span
+          >
+          <span class="client-source border-gradient horizontal thin"
+            >اسم الشركة : {{ client.companyName || "غير محدد" }}</span
+          >
+        </div>
+      </div>
+
+      <div class="client-actions">
+        <div class="icon-star">
+          <span>0.5</span>
+          <i class="bi bi-star-fill"></i>
+        </div>
+
+        <div class="container-social">
+          <div class="icon-social">
+            <i class="bi bi-linkedin"></i>
+          </div>
+        </div>
+        <div class="icon-social">
+          <i class="bi bi-facebook"></i>
+        </div>
+
+        <div class="icon-social">
+          <i class="bi bi-twitter-x"></i>
+        </div>
+
+        <div class="icon-social">
+          <i class="bi bi-globe"></i>
+        </div>
+
+        <div class="icon-social">
+          <i class="bi bi-chat-left-text"></i>
+        </div>
+
+        <div class="icon-social">
+          <i class="bi bi-envelope"></i>
+        </div>
+
+        <div class="icon-social">
+          <i class="bi bi-telephone-fill"></i>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Empty State -->
+  <div class="empty-state" *ngIf="!isLoading && filteredClients.length === 0">
+    <div class="empty-state-content">
+      <h3>لا توجد عملاء</h3>
+      <p>لم يتم العثور على عملاء مطابقين لمعايير البحث</p>
+    </div>
+  </div>
+
+  <!-- Custom Pagination Navigation -->
+  <div class="pagination-navigation" *ngIf="!isLoading && totalPages > 1">
+    <div class="pagination-buttons">
+      <button
+        class="btn btn-outline-primary"
+        (click)="onPageChange(1)"
+        [disabled]="currentPage === 1"
+        title="الصفحة الأولى"
+      >
+        <i class="bi bi-chevron-double-left"></i>
+      </button>
+
+      <button
+        class="btn btn-outline-primary"
+        (click)="onPageChange(currentPage - 1)"
+        [disabled]="currentPage === 1"
+        title="الصفحة السابقة"
+      >
+        <i class="bi bi-chevron-left"></i>
+      </button>
+
+      <div class="page-numbers">
+        <button
+          *ngFor="let page of getPageNumbers()"
+          class="btn"
+          [class.btn-primary]="page === currentPage"
+          [class.btn-outline-primary]="page !== currentPage"
+          (click)="onPageChange(page)"
+        >
+          {{ page }}
+        </button>
+      </div>
+
+      <button
+        class="btn btn-outline-primary"
+        (click)="onPageChange(currentPage + 1)"
+        [disabled]="currentPage === totalPages"
+        title="الصفحة التالية"
+      >
+        <i class="bi bi-chevron-right"></i>
+      </button>
+
+      <button
+        class="btn btn-outline-primary"
+        (click)="onPageChange(totalPages)"
+        [disabled]="currentPage === totalPages"
+        title="الصفحة الأخيرة"
+      >
+        <i class="bi bi-chevron-double-right"></i>
+      </button>
+    </div>
+  </div>
+</div>

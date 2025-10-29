@@ -14,7 +14,7 @@ import {
   PersonalServiceService,
   ContactFilterParams,
 } from './personal-service.service';
-import { NotifyDialogService } from '../../../shared/notify-dialog/notify-dialog.service';
+import { NotifyDialogService } from '../../../shared/notify-dialog-host/notify-dialog.service';
 import { NgxSpinnerService } from 'ngx-spinner';
 import { TableExportService } from '../shared/table-export.service';
 import { TableSelectionService } from '../shared/table-selection.service';

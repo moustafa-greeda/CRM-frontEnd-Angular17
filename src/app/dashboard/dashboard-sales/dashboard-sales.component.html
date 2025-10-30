@@ -27,11 +27,11 @@
         [options]="cityNames"
         (optionSelected)="onCitySelected($event)"
       ></app-dropdown>
-      <app-dropdown
+      <!-- <app-dropdown
         label="تاريخ الإجراء"
         [options]="actionDateFilterOptions"
         (optionSelected)="onActionDateFilterSelected($event)"
-      ></app-dropdown>
+      ></app-dropdown> -->
     </div>
   </div>
   <!-- table -->
@@ -47,8 +47,9 @@
       [hasNoData]="leadsList.length === 0"
       [showIndex]="true"
       [showView]="true"
-      [showEdit]="false"
+      [showEdit]="true"
       [showDelete]="false"
+      [addButton]="false"
       [showChat]="false"
       [showEmail]="true"
       [leadStatusOptions]="leadStatusOptions"
@@ -57,7 +58,7 @@
       (pageChange)="onPageChange($event)"
       (pageSizeChange)="onPageSizeChange($event)"
       (view)="onView($event)"
-      (edit)="onEdit($event)"
+      (edit)="onEditBudget($event)"
       (note)="onNote($event)"
       (call)="onCall($event)"
       (email)="onEmail($event)"

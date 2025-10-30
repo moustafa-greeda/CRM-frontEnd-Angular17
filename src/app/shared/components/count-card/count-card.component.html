@@ -6,7 +6,9 @@
   <div class="stat-card" *ngFor="let stat of stats">
     <div class="stat-card-content">
       <h3>{{ stat.title }}</h3>
-      <p>{{ stat.count }}</p>
+      <p [ngClass]="{ 'small-count': stat.title === 'القيمة الإجمالية' }">
+        {{ stat.count }}
+      </p>
     </div>
     <i class="bi {{ stat.icon }}"></i>
   </div>

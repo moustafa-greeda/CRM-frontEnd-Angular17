@@ -27,6 +27,7 @@ import { TabelDealsComponent } from './components/deals/tabel-deals/tabel-deals.
 import { DistributionComponent } from './components/leads/distribution/distribution.component';
 import { EmployeeComponent } from './components/employee/employee/employee.component';
 import { CompanyComponent } from './components/company/company.component';
+import { ExportedDataComponent } from './components/exported-data/exported-data.component';
 
 const routes: Routes = [
   { path: '', redirectTo: 'login', pathMatch: 'full' },
@@ -98,7 +99,7 @@ const routes: Routes = [
         canActivate: [AuthGuard, RoleGuard],
         data: { roles: ['Admin', 'Customer'] },
         children: [
-          { path: '', redirectTo: 'home', pathMatch: 'full' },
+          { path: '', redirectTo: 'employee', pathMatch: 'full' },
           {
             path: 'home',
             component: HomeAdminComponent,
@@ -162,6 +163,13 @@ const routes: Routes = [
           {
             path: 'filterLeads',
             component: FilterLeadsComponent,
+            canActivate: [AuthGuard, RoleGuard],
+            data: { roles: ['Admin', 'Customer'] },
+          },
+
+          {
+            path: 'exportedData',
+            component: ExportedDataComponent,
             canActivate: [AuthGuard, RoleGuard],
             data: { roles: ['Admin', 'Customer'] },
           },

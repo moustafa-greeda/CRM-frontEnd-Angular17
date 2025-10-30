@@ -34,14 +34,15 @@ export class DashboardSalseService {
   }
   // ==================================== get total GetTotalMoney this month ===========================================
   GetTotalMoney(): Observable<any> {
+    // Return budgets per currency for current salesperson
     return this.http.get(
-      `${this.BASE_API_URL}/Client/GetMyTotalSalesCountThisMonth`
+      `${this.BASE_API_URL}/SalesDashbored/GetTotalBudgetAtThisMonth`
     );
   }
   // ================================ get total clients waiting for follow up this month ===========================================
   GetWaitingForFollowUp(): Observable<any> {
     return this.http.get(
-      `${this.BASE_API_URL}/Client/GetAverageCallDurationThisMonth`
+      `${this.BASE_API_URL}/SalesDashbored/GetFollowUpCount`
     );
   }
 
@@ -67,7 +68,7 @@ export class DashboardSalseService {
   }
 
   // ==================================== get tele sales actions ===========================================
-  getTeleSalesActions(
+  getSalesActions(
     employeeId: number,
     startDate?: string,
     actionNotes?: string,
@@ -85,9 +86,9 @@ export class DashboardSalseService {
     return this.http.get<ITeleSalseActionResponse>(url);
   }
   // ==================================== create tele sales action ===========================================
-  createTeleSalesAction(data: ITeleSalseActionRequest): Observable<any> {
+  createSalesAction(data: ITeleSalseActionRequest): Observable<any> {
     return this.http.post(
-      `${this.BASE_API_URL}/Client/CreateTeleSealsAction`,
+      `${this.BASE_API_URL}/SalesDashbored/createAction`,
       data
     );
   }
@@ -105,11 +106,25 @@ export class DashboardSalseService {
       `${this.BASE_API_URL}/Notfication/GetNotficationForMe`
     );
   }
+
+  // ==================================== update sales budget ===========================================
+  updateSalesBudget(id: number, budget: number): Observable<any> {
+    const url = `${this.BASE_API_URL}/SalesDashbored/update-sales-budget/${id}`;
+    // API expects raw number in body with application/json
+    return this.http.put(url, budget, {
+      headers: { 'Content-Type': 'application/json' },
+    });
+  }
   // ==================================== update lead status ===========================================
-  editLeadStatus(payload: EditLeadStatusRequest): Observable<any> {
-    const url = `${this.BASE_API_URL}/Client/UpdateLeadStatus`;
+  editLeadStatus(
+    payload: EditLeadStatusRequest & { assignmentId?: number }
+  ): Observable<any> {
+    // API expects the assignment id in the query param (named leadId by backend)
+    const assignmentId = (payload as any).assignmentId ?? payload.leadId;
+    const url = `${this.BASE_API_URL}/SalesDashbored/UpdateSalesLeadStatus?leadId=${assignmentId}`;
     const body: any = {
       leadId: payload.leadId,
+      assignmentId: assignmentId,
       leadStatus: payload.leadStatus,
     };
 

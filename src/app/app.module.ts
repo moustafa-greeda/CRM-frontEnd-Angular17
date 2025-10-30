@@ -80,6 +80,7 @@ import { CardComponent } from './shared/ui/card/card.component';
 import { InfoBoxesComponent } from './shared/ui/info-boxes/info-boxes.component';
 import { CompanyComponent } from './components/company/company.component';
 import { CompanyWizardModule } from './shared/components/company-wizard/company-wizard.module';
+import { ExportedDataComponent } from './components/exported-data/exported-data.component';
 
 @NgModule({
   declarations: [
@@ -121,6 +122,7 @@ import { CompanyWizardModule } from './shared/components/company-wizard/company-
     CardComponent,
     InfoBoxesComponent,
     CompanyComponent,
+    ExportedDataComponent,
   ],
   imports: [
     AppRoutingModule,

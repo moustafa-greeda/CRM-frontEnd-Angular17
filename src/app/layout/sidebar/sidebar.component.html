@@ -6,12 +6,12 @@
     <ul>
       <!-- Admin Navigation -->
       <ng-container *ngIf="isAdmin()">
-        <li>
+        <!-- <li>
           <a routerLink="/dashboard/admin/home" routerLinkActive="active">
             الرئيسيه
             <i class="bi bi-house-door"></i>
           </a>
-        </li>
+        </li> -->
         <li>
           <a routerLink="/dashboard/admin/employee" routerLinkActive="active">
             الموظفين
@@ -51,10 +51,19 @@
             <i class="bi bi-globe"></i>
           </a>
         </li>
-        <li>
+        <!-- <li>
           <a routerLink="/dashboard/admin/cities" routerLinkActive="active">
             المدن
             <i class="bi bi-geo-alt"></i>
+          </a>
+        </li> -->
+        <li>
+          <a
+            routerLink="/dashboard/admin/exportedData"
+            routerLinkActive="active"
+          >
+            البيانات المصدرة
+            <i class="bi bi-file-earmark-excel"></i>
           </a>
         </li>
       </ng-container>
@@ -135,48 +144,68 @@
       <!-- Sales Navigation -->
       <ng-container *ngIf="isSales()">
         <li>
-          <a routerLink="/dashboard/sales">الرئيسيه</a>
-          <i class="bi bi-house-door"></i>
+          <a routerLink="/dashboard/sales"
+            >الرئيسيه
+            <i class="bi bi-house-door"></i>
+          </a>
         </li>
         <li>
-          <a routerLink="/dashboard/sales/deals">الصفقات</a>
-          <i class="bi bi-handshake"></i>
+          <a routerLink="/dashboard/sales/deals"
+            >الصفقات
+            <i class="bi bi-cash-coin"></i>
+          </a>
         </li>
         <li>
-          <a routerLink="/dashboard/sales/customers">العملاء</a>
-          <i class="bi bi-people"></i>
+          <a routerLink="/dashboard/sales/customers"
+            >العملاء
+            <i class="bi bi-people"></i>
+          </a>
         </li>
         <li>
-          <a routerLink="/dashboard/sales/opportunities">الفرص</a>
-          <i class="bi bi-lightbulb"></i>
+          <a routerLink="/dashboard/sales/opportunities"
+            >الفرص
+            <i class="bi bi-lightbulb"></i>
+          </a>
         </li>
         <li>
-          <a routerLink="/dashboard/sales/reports">التقارير</a>
-          <i class="bi bi-graph-up"></i>
+          <a routerLink="/dashboard/sales/reports"
+            >التقارير
+            <i class="bi bi-graph-up"></i>
+          </a>
         </li>
       </ng-container>
 
       <!-- Account Navigation -->
       <ng-container *ngIf="isAccount()">
         <li>
-          <a routerLink="/dashboard/account">الرئيسيه</a>
-          <i class="bi bi-house-door"></i>
+          <a routerLink="/dashboard/account"
+            >الرئيسيه
+            <i class="bi bi-house-door"></i>
+          </a>
         </li>
         <li>
-          <a routerLink="/dashboard/account/accounts">الحسابات</a>
-          <i class="bi bi-bank"></i>
+          <a routerLink="/dashboard/account/accounts"
+            >الحسابات
+            <i class="bi bi-bank"></i>
+          </a>
         </li>
         <li>
-          <a routerLink="/dashboard/account/approvals">الموافقات</a>
-          <i class="bi bi-clipboard-check"></i>
+          <a routerLink="/dashboard/account/approvals"
+            >الموافقات
+            <i class="bi bi-clipboard-check"></i>
+          </a>
         </li>
         <li>
-          <a routerLink="/dashboard/account/transactions">المعاملات</a>
-          <i class="bi bi-arrow-left-right"></i>
+          <a routerLink="/dashboard/account/transactions"
+            >المعاملات
+            <i class="bi bi-arrow-left-right"></i>
+          </a>
         </li>
         <li>
-          <a routerLink="/dashboard/account/reports">التقارير المالية</a>
-          <i class="bi bi-graph-up"></i>
+          <a routerLink="/dashboard/account/reports"
+            >التقارير المالية
+            <i class="bi bi-graph-up"></i>
+          </a>
         </li>
       </ng-container>
 

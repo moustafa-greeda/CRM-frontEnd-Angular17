@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import {
   ITeleSalseActionResponse,
@@ -94,6 +94,107 @@ export class DashboardSalesComponent implements OnInit {
   get leadStatusColorMap(): Record<string, string> {
     return this.statusColorService.getAllStatusColors();
   }
+  // Persisted filters for refreshing actions after create
+  private actionsStartDate?: string;
+  private actionsEndDate?: string;
+
+  private addActionToGroupedState(action: {
+    leadId: number;
+    actionTypeId: number;
+    actionNotes: string;
+  }): void {
+    if (!this.teleSalesActions || !this.teleSalesActions.data) {
+      return;
+    }
+
+    const nowIso = new Date().toISOString();
+    const newItem: any = {
+      id: 0,
+      leadId: action.leadId,
+      actionTypeId: action.actionTypeId,
+      actionNotes: action.actionNotes,
+      actionDate: nowIso,
+    };
+
+    const groups: any[] = this.teleSalesActions.data.actionsGrouped || [];
+    let group = groups.find((g: any) => g.actionTypeId === action.actionTypeId);
+    if (!group) {
+      group = {
+        actionTypeId: action.actionTypeId,
+        actionTypeName: this.getActionTypeNameById(action.actionTypeId),
+        actions: [],
+      };
+      groups.unshift(group);
+    }
+
+    group.actions = [newItem, ...(group.actions || [])];
+
+    // Force change detection with new references
+    const clonedGroups = groups.map((g: any) => ({
+      ...g,
+      actions: [...(g.actions || [])],
+    }));
+    this.teleSalesActions = {
+      ...(this.teleSalesActions as any),
+      data: {
+        ...(this.teleSalesActions as any).data,
+        actionsGrouped: clonedGroups,
+      },
+    } as ITeleSalseActionResponse;
+
+    // If the actions dialog is open for the same lead, update it too
+    const actionTypeName = this.getActionTypeNameById(action.actionTypeId);
+    const dialogItem = { ...newItem, actionTypeName };
+    const currentLeadId = this.selectedLead?.leadId ?? this.selectedLead?.id;
+    if (
+      currentLeadId &&
+      currentLeadId === action.leadId &&
+      Array.isArray(this.selectedLeadActions)
+    ) {
+      this.selectedLeadActions = [dialogItem, ...this.selectedLeadActions];
+    }
+
+    // Also reflect in recent interactions (optimistic) - match component schema
+    if (Array.isArray(this.recentInteractions)) {
+      const actionTypeKey = this.getActionTypeKeyById(action.actionTypeId); // 'Call' | 'Email' ...
+      const contactName =
+        this.selectedLead?.contactName ||
+        this.tryGetContactNameByLeadId(action.leadId) ||
+        '';
+      const recentItem: any = {
+        actionType: actionTypeKey,
+        actionTime: nowIso,
+        contactName,
+        actionText: action.actionNotes,
+      };
+      this.recentInteractions = [recentItem, ...this.recentInteractions];
+    }
+
+    // Force change detection for OnPush views
+    this.cdr.detectChanges();
+  }
+
+  private getActionTypeKeyById(actionTypeId: number): string {
+    switch (actionTypeId) {
+      case 1:
+        return 'Call';
+      case 2:
+        return 'Email';
+      case 3:
+        return 'Meeting';
+      case 4:
+        return 'Notes';
+      case 5:
+        return 'FollowUp';
+      default:
+        return 'Action';
+    }
+  }
+
+  private tryGetContactNameByLeadId(leadId: number): string | null {
+    const lead = this.leadsList.find((l) => (l.leadId ?? l.id) === leadId);
+    return lead?.contactName || lead?.name || null;
+  }
 
   constructor(
     private _dashboardService: DashboardSalseService,
@@ -103,7 +204,8 @@ export class DashboardSalesComponent implements OnInit {
     private notify: NotifyDialogService,
     private _countryCityService: CountryCityService,
     private statusColorService: StatusColorService,
-    private dateUtils: DateUtilsService
+    private dateUtils: DateUtilsService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -116,6 +218,21 @@ export class DashboardSalesComponent implements OnInit {
       TotalMoney: this._dashboardService.GetTotalMoney(),
       AverageCallDuration: this._dashboardService.GetWaitingForFollowUp(),
     }).subscribe((res) => {
+      const budgets = res.TotalMoney.data.budgets as Array<{
+        totalBudget: number;
+        currency: string;
+      }>;
+      const totalBudget = budgets.reduce(
+        (acc: number, budget: { totalBudget: number }) =>
+          acc + budget.totalBudget,
+        0
+      );
+
+      // Combine all budget values into a single card with multiple counts
+      const budgetDetails = budgets
+        .map((budget) => `${budget.totalBudget} ${budget.currency}`)
+        .join(' , ');
+
       this.stats = [
         {
           title: 'اجمالي العملاء',
@@ -129,21 +246,24 @@ export class DashboardSalesComponent implements OnInit {
         },
         {
           title: 'القيمة الإجمالية',
-          count: res.TotalMoney.data.totalLeadsAssignedThisMonth,
+          count: `${budgetDetails} | الإجمالي: ${totalBudget}`, // Combined budgets and total
           icon: 'bi bi-cash-coin',
         },
         {
           title: 'في انتظار المتابعة',
-          count: res.AverageCallDuration.data.averageCallDuration,
+          count: res.AverageCallDuration.data.leadAssignmentsCount,
           icon: 'bi bi-bar-chart',
         },
       ];
+
       // call get list lead status
       this.getListLeadStatus();
     });
+    // call get list lead status
+    this.getListLeadStatus();
 
     // Load tele sales actions
-    this.loadTeleSalesActions();
+    this.loadSalesActions();
 
     // Load recent interactions
     this.loadRecentInteractions();
@@ -324,6 +444,7 @@ export class DashboardSalesComponent implements OnInit {
       city: '',
       lastActionTime: '',
       actionNote: '',
+      // Align with teleSales: API expects 1-based page index
       pageIndex: this.currentPage,
       pageSize: this.pageSize,
     };
@@ -338,7 +459,30 @@ export class DashboardSalesComponent implements OnInit {
             ? responseData
             : [];
 
-          this.totalCount = responseData.totalCount ?? items.length ?? 0;
+          // Sync paginator from backend response when available
+          const apiPageIndex = Number(
+            (responseData as any).pageIndex ?? (responseData as any).PageIndex
+          );
+          if (!Number.isNaN(apiPageIndex) && apiPageIndex > 0) {
+            this.currentPage = apiPageIndex;
+          } else if (apiPageIndex === 0) {
+            // normalize 0-based to 1-based UI
+            this.currentPage = 1;
+          }
+
+          const apiPageSize = Number(
+            (responseData as any).pageSize ?? (responseData as any).PageSize
+          );
+          if (!Number.isNaN(apiPageSize) && apiPageSize > 0) {
+            this.pageSize = apiPageSize;
+          }
+
+          this.totalCount = Number(
+            (responseData as any).totalCount ??
+              (responseData as any).TotalCount ??
+              items.length ??
+              0
+          );
 
           // Assign page items directly (server-side paging), with date formatting
           this.leadsList = (items || []).map((lead: any) => {
@@ -359,6 +503,7 @@ export class DashboardSalesComponent implements OnInit {
 
             return {
               ...lead,
+              assignmentId: lead.id, // persist assignment id from GetSalesTableData
               leadId: lead.leadId || lead.id,
               assignDate: lead.assignDate || lead.assigndate || '', // Keep original for formatter
               assigndate: lead.assignDate || lead.assigndate || '', // Also keep for compatibility
@@ -510,16 +655,23 @@ export class DashboardSalesComponent implements OnInit {
     });
   }
 
-  loadTeleSalesActions(
+  loadSalesActions(
     employeeId: number = 11,
     startDate?: string,
     endDate?: string
   ): void {
     this.loadingActions = true;
+    // Store provided dates if passed; otherwise reuse last ones
+    if (startDate !== undefined) this.actionsStartDate = startDate;
+    if (endDate !== undefined) this.actionsEndDate = endDate;
+
+    const effectiveStart = this.actionsStartDate;
+    const effectiveEnd = this.actionsEndDate;
+
     this._dashboardService
-      .getTeleSalesActions(employeeId, startDate, endDate)
+      .getSalesActions(employeeId, effectiveStart, undefined, effectiveEnd)
       .subscribe({
-        next: (response) => {
+        next: (response: any) => {
           this.teleSalesActions = response;
           this.loadingActions = false;
         },
@@ -624,15 +776,18 @@ export class DashboardSalesComponent implements OnInit {
 
   // Show all notifications/actions for a selected user
   onView(lead: any): void {
-    if (!lead || !lead.id) {
+    if (!lead) {
       return;
     }
+
+    // Actions are keyed by the actual leadId, not the assignment id (row.id)
+    const keyLeadId = lead.leadId ?? lead.id;
 
     // Filter actions for this specific lead and map with action type info
     const leadActions =
       this.teleSalesActions?.data?.actionsGrouped?.flatMap((group: any) =>
         group.actions
-          .filter((action: any) => action.leadId === lead.id)
+          .filter((action: any) => (action.leadId ?? action.id) === keyLeadId)
           .map((action: any) => ({
             ...action,
             actionTypeName: group.actionTypeName,
@@ -852,8 +1007,7 @@ export class DashboardSalesComponent implements OnInit {
           actionTypeId: actionTypeId,
           actionNotes: formData.actionNotes,
         };
-        this.createTeleSalesAction(requestData);
-        console.log('requestData ==============> ', requestData);
+        this.createSalesAction(requestData);
 
         // Close the dialog after successful submission
         dialogRef.close();
@@ -892,16 +1046,89 @@ export class DashboardSalesComponent implements OnInit {
     this.openActionDialog(lead, 5); // FollowUp = 5
   }
 
-  private createTeleSalesAction(data: ITeleSalseActionRequest): void {
+  // ============================ Edit budget ================================
+  onEditBudget(lead: any): void {
+    // API expects the assignment row id, which is available as `id`
+    const id = lead.id;
+    if (!lead.id) return;
+
+    const dialogRef = this.dialog.open(FormUiComponent, {
+      width: '500px',
+      panelClass: 'agreement-dialog',
+      data: {
+        config: {
+          title: 'تحديث الميزانية',
+          submitText: 'حفظ',
+          cancelText: 'إلغاء',
+          fields: [
+            {
+              name: 'budget',
+              label: 'الميزانية',
+              type: 'number',
+              required: true,
+              placeholder: 'أدخل الميزانية',
+              colSpan: 3,
+            },
+          ],
+        },
+        initialData: {
+          budget: lead.budget,
+        },
+      },
+    });
+
+    dialogRef.componentInstance.formSubmit.subscribe((formData) => {
+      const value = Number(formData?.budget);
+      if (!Number.isFinite(value) || value < 0) {
+        this.notify.open({
+          type: 'error',
+          title: 'خطأ',
+          description: 'يرجى إدخال ميزانية صحيحة',
+        });
+        return;
+      }
+
+      this._dashboardService.updateSalesBudget(id, value).subscribe({
+        next: (res) => {
+          // Update row and cache
+          lead.budget = value;
+          const cached = this.allLeadsCache.find(
+            (l) => (l.leadId ?? l.id) === id
+          );
+          if (cached) cached.budget = value;
+
+          this.notify.open({
+            type: 'success',
+            title: 'تم بنجاح',
+            description: 'تم تحديث الميزانية بنجاح',
+          });
+          dialogRef.close();
+        },
+        error: (error) => {
+          const msg =
+            error?.error?.validationErrors?.[0]?.errorMessage ||
+            error?.error?.message ||
+            error?.message ||
+            'فشل تحديث الميزانية';
+          this.notify.open({ type: 'error', title: 'خطأ', description: msg });
+        },
+      });
+    });
+
+    dialogRef.afterClosed().subscribe(() => {
+      dialogRef.componentInstance.formSubmit.unsubscribe();
+    });
+  }
+
+  private createSalesAction(data: ITeleSalseActionRequest): void {
     // Show loading state
     this.isSearching = true;
 
-    this._dashboardService.createTeleSalesAction(data).subscribe({
+    this._dashboardService.createSalesAction(data).subscribe({
       next: (response: any) => {
         this.isSearching = false;
         if (response.succeeded) {
           this.notify.open({
-            autoCloseMs: 3000,
             type: 'success',
             title: 'تم بنجاح',
             description: 'تم إضافة الملاحظة بنجاح',
@@ -916,6 +1143,13 @@ export class DashboardSalesComponent implements OnInit {
               this.selectedLeadStatusId
             );
           }
+
+          // Optimistically update actions list without refetch
+          this.addActionToGroupedState({
+            leadId: data.leadId,
+            actionTypeId: data.actionTypeId,
+            actionNotes: data.actionNotes,
+          });
         } else {
           this.notify.open({
             type: 'error',
@@ -1003,16 +1237,11 @@ export class DashboardSalesComponent implements OnInit {
     }
 
     // Get assignLeadId from lead data or use current user's ID as fallback
-    const assignLeadId =
-      lead.assignedLeadId ||
-      lead.assignedToId ||
-      lead.employeeId ||
-      lead.assignedEmployeeId ||
-      this._authService.getEmployeeId() ||
-      1; // Final fallback
+    const assignLeadId = lead.id || this._authService.getEmployeeId() || 1; // Final fallback
 
     // Build payload with required fields
     const payload: any = {
+      assignmentId: lead.assignmentId ?? lead.id, // ensure from GetSalesTableData
       leadId: leadId,
       assignLeadId: assignLeadId,
       leadStatus: newStatus,

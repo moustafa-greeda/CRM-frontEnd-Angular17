@@ -10,5 +10,6 @@ export class CountCardComponent {
   @Input() title: string = '';
 
   // Dynamic stats cards
-  @Input() stats: { title: string; count: number; icon: string }[] = [];
+  @Input() stats: { title: string; count: string | number; icon: string }[] =
+    [];
 }

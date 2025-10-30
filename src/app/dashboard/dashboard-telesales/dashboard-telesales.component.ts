@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import {
   ITeleSalseActionResponse,
@@ -109,7 +109,8 @@ export class DashboardTelesalesComponent implements OnInit {
     private statusColorService: StatusColorService,
     private dateUtils: DateUtilsService,
     private _salesService: GetAllSalesService,
-    private _currencyService: CurruncyService
+    private _currencyService: CurruncyService,
+    private cdr: ChangeDetectorRef
   ) {}
 
   ngOnInit(): void {
@@ -533,6 +534,103 @@ export class DashboardTelesalesComponent implements OnInit {
       });
   }
 
+  private addActionToGroupedState(action: {
+    leadId: number;
+    actionTypeId: number;
+    actionNotes: string;
+  }): void {
+    if (!this.teleSalesActions || !this.teleSalesActions.data) {
+      return;
+    }
+
+    const nowIso = new Date().toISOString();
+    const newItem: any = {
+      id: 0,
+      leadId: action.leadId,
+      actionTypeId: action.actionTypeId,
+      actionNotes: action.actionNotes,
+      actionDate: nowIso,
+    };
+
+    const groups: any[] = this.teleSalesActions.data.actionsGrouped || [];
+    let group = groups.find((g: any) => g.actionTypeId === action.actionTypeId);
+    if (!group) {
+      group = {
+        actionTypeId: action.actionTypeId,
+        actionTypeName: this.getActionTypeNameById(action.actionTypeId),
+        actions: [],
+      };
+      groups.unshift(group);
+    }
+
+    group.actions = [newItem, ...(group.actions || [])];
+
+    const clonedGroups = groups.map((g: any) => ({
+      ...g,
+      actions: [...(g.actions || [])],
+    }));
+    this.teleSalesActions = {
+      ...(this.teleSalesActions as any),
+      data: {
+        ...(this.teleSalesActions as any).data,
+        actionsGrouped: clonedGroups,
+      },
+    } as ITeleSalseActionResponse;
+
+    // Update open dialog list for same lead
+    const actionTypeName = this.getActionTypeNameById(action.actionTypeId);
+    const dialogItem = { ...newItem, actionTypeName };
+    const currentLeadId = this.selectedLead?.leadId ?? this.selectedLead?.id;
+    if (
+      currentLeadId &&
+      currentLeadId === action.leadId &&
+      Array.isArray(this.selectedLeadActions)
+    ) {
+      this.selectedLeadActions = [dialogItem, ...this.selectedLeadActions];
+    }
+
+    // Optimistic recent interactions
+    if (Array.isArray(this.recentInteractions)) {
+      const actionTypeKey = this.getActionTypeKeyById(action.actionTypeId);
+      const contactName =
+        this.selectedLead?.contactName ||
+        this.selectedLead?.name ||
+        this.tryGetContactNameByLeadId(action.leadId) ||
+        '';
+      const recentItem: any = {
+        actionType: actionTypeKey,
+        actionTime: nowIso,
+        contactName,
+        actionText: action.actionNotes,
+      };
+      this.recentInteractions = [recentItem, ...this.recentInteractions];
+    }
+
+    this.cdr.detectChanges();
+  }
+
+  private getActionTypeKeyById(actionTypeId: number): string {
+    switch (actionTypeId) {
+      case 1:
+        return 'Call';
+      case 2:
+        return 'Email';
+      case 3:
+        return 'Meeting';
+      case 4:
+        return 'Notes';
+      case 5:
+        return 'FollowUp';
+      default:
+        return 'Action';
+    }
+  }
+
+  private tryGetContactNameByLeadId(leadId: number): string | null {
+    const lead = this.leadsList.find((l) => (l.leadId ?? l.id) === leadId);
+    return lead?.contactName || lead?.name || null;
+  }
+
   // Load recent interactions from API
   loadRecentInteractions(): void {
     this.loadingRecentInteractions = true;
@@ -920,6 +1018,12 @@ export class DashboardTelesalesComponent implements OnInit {
               this.selectedLeadStatusId
             );
           }
+          // Optimistically update actions list and recent interactions
+          this.addActionToGroupedState({
+            leadId: data.leadId,
+            actionTypeId: data.actionTypeId,
+            actionNotes: data.actionNotes,
+          });
         } else {
           this.notify.open({
             type: 'error',

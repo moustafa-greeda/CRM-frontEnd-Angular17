@@ -1,141 +1,60 @@
 <div class="client-management-container">
-  <!-- Header Section -->
-  <div class="header-section">
-    <!-- Parent Title -->
-    <div class="parent-title">
-      <div class="page-title">
-        <h1>إدارة العملاء</h1>
-      </div>
+  <!----------------------- Header Section ------------------>
+  <app-page-header
+    [title]="pageTitle"
+    [breadcrumb]="breadcrumb"
+    [actionButtons]="actionButtons"
+  ></app-page-header>
 
-      <!-- Breadcrumb -->
-      <div class="breadcrumb">
-        <span class="breadcrumb-item">الرئيسية</span>
-        <span class="breadcrumb-separator">></span>
-        <span class="breadcrumb-item active">بيانات العملاء</span>
-      </div>
-    </div>
-    <!-- add lead -->
-    <div class="action-bar">
-      <div class="action-buttons">
-        <button class="btn btn-primary" (click)="onAddClient()">
-          إضافة عميل
-          <i class="bi bi-plus"></i>
-        </button>
-
-        <button class="btn btn-primary" (click)="onImport()" title="استيراد">
-          <i class="bi bi-box-arrow-in-up"></i>
-        </button>
-
-        <button
-          class="btn btn-primary"
-          (click)="onExport()"
-          [disabled]="filteredClients.length === 0"
-          title="تصدير"
-        >
-          <i class="bi bi-box-arrow-right"></i>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Filter and Search Bar -->
+  <!----------------------- Search Bar filter section ----------->
   <section class="filter">
+    <!-- right section -->
     <div class="filter-search-bar">
-      <div class="filter-section">
-        <div class="custom-dropdown" [class.open]="isDropdownOpen">
-          <div class="dropdown-trigger" (click)="toggleDropdown()">
-            <span class="selected-option">
-              <i
-                class="bi bi-person-fill-add"
-                *ngIf="selectedFilter === 'recent'"
-              ></i>
-              <i class="bi bi-person" *ngIf="selectedFilter === 'name'"></i>
-              <i class="bi bi-envelope" *ngIf="selectedFilter === 'email'"></i>
-              <i class="bi bi-telephone" *ngIf="selectedFilter === 'phone'"></i>
-              <i
-                class="bi bi-briefcase"
-                *ngIf="selectedFilter === 'position'"
-              ></i>
-              {{ getFilterLabel(selectedFilter) }}
-            </span>
-            <i class="bi bi-chevron-down dropdown-arrow"></i>
-          </div>
-          <div class="dropdown-menu">
-            <div class="dropdown-item" (click)="selectFilter('recent')">
-              <i class="bi bi-person-fill-add"></i>
-              <span>الإضافة مؤخرا</span>
-            </div>
-            <div class="dropdown-item" (click)="selectFilter('name')">
-              <i class="bi bi-person"></i>
-              <span>الاسم</span>
-            </div>
-            <div class="dropdown-item" (click)="selectFilter('email')">
-              <i class="bi bi-envelope"></i>
-              <span>البريد الإلكتروني</span>
-            </div>
-            <div class="dropdown-item" (click)="selectFilter('phone')">
-              <i class="bi bi-telephone"></i>
-              <span>رقم الهاتف</span>
-            </div>
-            <div class="dropdown-item" (click)="selectFilter('position')">
-              <i class="bi bi-briefcase"></i>
-              <span>المنصب</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
       <div class="search-section">
-        <div class="search-input-container">
-          <i [class]="getSearchIcon()" class="search-icon"></i>
-          <input
-            [type]="getInputType()"
-            class="search-input"
-            [placeholder]="getSearchPlaceholder()"
-            [(ngModel)]="searchTerm"
-            (input)="onSearchChange()"
-            [pattern]="getInputPattern()"
-            [attr.inputmode]="getInputMode()"
-          />
-        </div>
+        <app-search-input
+          [placeholder]="getSearchPlaceholder()"
+          (search)="onSearch($event)"
+        ></app-search-input>
       </div>
     </div>
+    <!-- left section -->
+    <div class="parent-left">
+      <app-dropdown
+        [label]="
+          isLoadingLeadStatus
+            ? 'جاري التحميل...'
+            : isLeadStatusSelected
+            ? 'حالة العميل المحتمل'
+            : 'اختر حالة العميل'
+        "
+        [options]="leadStatusOptions"
+        [selectedOption]="leadStatusLookupId"
+        (optionSelected)="onLeadStatusChange($event)"
+      ></app-dropdown>
 
-    <app-dropdown
-      [label]="
-        isLoadingLeadStatus
-          ? 'جاري التحميل...'
-          : isLeadStatusSelected
-          ? 'حالة العميل المحتمل'
-          : 'اختر حالة العميل'
-      "
-      [options]="leadStatusOptions"
-      [selectedOption]="leadStatusLookupId"
-      (optionSelected)="onLeadStatusChange($event)"
-    ></app-dropdown>
+      <!-- Create Lead Button -->
+      <button
+        class="btn button-color"
+        (click)="createLeadForSelectedClients()"
+        [disabled]="selectedCards.length === 0 || !isLeadStatusSelected"
+        title="إنشاء عميل محتمل للعملاء المحددين"
+      >
+        <i class="bi bi-plus-circle"></i>
+        إنشاء عميل محتمل ({{ selectedCards.length }})
+      </button>
 
-    <!-- Create Lead Button -->
-    <button
-      class="btn btn-primary"
-      (click)="createLeadForSelectedClients()"
-      [disabled]="selectedCards.length === 0 || !isLeadStatusSelected"
-      title="إنشاء عميل محتمل للعملاء المحددين"
-    >
-      <i class="bi bi-plus-circle"></i>
-      إنشاء عميل محتمل ({{ selectedCards.length }})
-    </button>
-
-    <!-- count lead -->
-    <div class="countLead">
-      <p class="countLead-text">
-        {{
-          selectedCards.length > 0
-            ? selectedCards.length + " محدد من " + filteredClients.length
-            : filteredClients.length
-        }}
-        من {{ totalCount }} عميل
-      </p>
-      <i class="bi bi-person-fill"></i>
+      <!-- count lead -->
+      <div class="countLead">
+        <p class="countLead-text">
+          {{
+            selectedCards.length > 0
+              ? selectedCards.length + " محدد من " + filteredClients.length
+              : filteredClients.length
+          }}
+          من {{ totalCount }} عميل
+        </p>
+        <i class="bi bi-person-fill"></i>
+      </div>
     </div>
   </section>
 
@@ -143,6 +62,13 @@
   <div class="filter">
     <!--parent import -->
     <div class="parent-import">
+      <!----------------------- View Toggle Button ----------->
+      <div class="view-toggle-container">
+        <app-view-toggle
+          [viewMode]="viewMode"
+          (viewModeChange)="viewMode = $event"
+        ></app-view-toggle>
+      </div>
       <!-- select all -->
       <div class="select-all">
         <p class="select-all-text">تحديد الكل</p>
@@ -189,8 +115,8 @@
       </button>
     </div>
 
-    <!-- Custom Pagination Controls -->
-    <div class="pagination-controls">
+    <!-- Custom Pagination Controls (cards only) -->
+    <div class="pagination-controls" *ngIf="viewMode === 'card'">
       <div class="page-size-selector">
         <label>عدد العناصر:</label>
         <select (change)="onPageSizeChange($event)" [value]="pageSize">
@@ -208,7 +134,7 @@
   </div>
 
   <!------------------------- Client Cards Grid ---------------------->
-  <div class="clients-grid" *ngIf="!isLoading && !error">
+  <div class="clients-grid" *ngIf="!isLoading && !error && viewMode === 'card'">
     <div
       class="client-card border-gradient diagonal medium rounded-lg"
       [class.selected]="isCardSelected(client)"
@@ -319,16 +245,45 @@
     </div>
   </div>
 
+  <!------------------------- Table View (Reusable) ---------------------->
+  <div
+    class="table-view-container"
+    *ngIf="!isLoading && !error && viewMode === 'table'"
+  >
+    <app-table
+      [data]="filteredClients"
+      [columns]="tableColumns"
+      [selectedRows]="selectedCards"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      [totalCount]="totalCount"
+      [showIndex]="true"
+      (rowSelectionChange)="onTableRowSelection($event)"
+      (selectAllChange)="onTableSelectAll($event)"
+      (pageChange)="onTablePage($event)"
+      (pageSizeChange)="onTablePageSize($event)"
+      (view)="onViewClient($event)"
+      (edit)="onEditClient($event)"
+      (delete)="onDeleteClient($event)"
+    ></app-table>
+  </div>
+
   <!-- Empty State -->
-  <div class="empty-state" *ngIf="!isLoading && filteredClients.length === 0">
+  <div
+    class="empty-state"
+    *ngIf="!isLoading && filteredClients.length === 0 && viewMode === 'card'"
+  >
     <div class="empty-state-content">
       <h3>لا توجد عملاء</h3>
       <p>لم يتم العثور على عملاء مطابقين لمعايير البحث</p>
     </div>
   </div>
 
-  <!-- Custom Pagination Navigation -->
-  <div class="pagination-navigation" *ngIf="!isLoading && totalPages > 1">
+  <!-- Custom Pagination Navigation (cards only) -->
+  <div
+    class="pagination-navigation"
+    *ngIf="!isLoading && totalPages > 1 && viewMode === 'card'"
+  >
     <div class="pagination-buttons">
       <button
         class="btn btn-outline-primary"

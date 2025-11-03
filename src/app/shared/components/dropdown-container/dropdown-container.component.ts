@@ -27,12 +27,12 @@ import { StatusColorService } from '../../services/status-color.service';
     `
       .dropdown-container {
         width: 100%;
-        min-width: 150px;
+        min-width: 70px;
       }
 
       .dropdown-select {
         width: 100%;
-        min-width: 150px;
+        min-width: 70px;
         padding: 8px 12px;
         border: 1px solid #46e3ff;
         border-radius: 6px;

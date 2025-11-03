@@ -1,8 +1,7 @@
 .sidebar {
   width: 100%;
-  height: 100vh;
+  height: 100%;
   background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
-  border-right: 2px solid rgba(255, 95, 0, 0.2);
   box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
   transition: all 0.3s ease;
   display: flex;
@@ -11,7 +10,119 @@
   flex-direction: column;
   position: relative;
   overflow-y: auto;
-  overflow-x: hidden;
+  overflow-x: visible;
+}
+
+/* ---------------------------- Sidebar Toggle Button -------------- */
+.sidebar-toggle-btn {
+  position: absolute;
+  top: 20px;
+  left: clac(50% - 10px);
+  width: 50px;
+  height: 50px;
+  border-radius: 8px;
+  border: 1px solid rgba(255, 95, 0, 0.3);
+  background: rgba(255, 95, 0, 0.1);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  z-index: 100;
+  padding: 0;
+}
+
+.sidebar-toggle-btn:hover {
+  background: rgba(255, 95, 0, 0.2);
+  border-color: rgba(255, 95, 0, 0.5);
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(255, 95, 0, 0.3);
+}
+
+.sidebar-toggle-btn i {
+  font-size: 18px;
+  transition: transform 0.3s ease;
+}
+
+.sidebar.collapsed .sidebar-toggle-btn {
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.sidebar.collapsed .sidebar-toggle-btn:hover {
+  transform: translateX(-50%) scale(1.1);
+}
+
+/* Collapsed sidebar styles */
+.sidebar.collapsed {
+  width: var(--sidebar-collapsed-width);
+  height: 100%;
+  align-items: center;
+}
+
+.sidebar.collapsed .menu {
+  padding: 70px 10px;
+  height: 100%;
+  width: 100%;
+}
+
+.sidebar.collapsed ul li a {
+  justify-content: center;
+  padding: 15px;
+  position: relative;
+}
+
+.sidebar.collapsed ul li a .nav-text {
+  display: none;
+}
+
+/* Hide direct text content when collapsed - only affects text nodes, not icons */
+.sidebar.collapsed ul li a {
+  font-size: 0;
+  line-height: 0;
+}
+
+.sidebar.collapsed ul li a i {
+  margin: 0;
+  font-size: 20px !important;
+  line-height: normal;
+  display: inline-block;
+}
+
+/* Tooltip using data attribute */
+.sidebar.collapsed ul li a[data-tooltip]:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  right: calc(100% + 15px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  white-space: nowrap;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+.sidebar.collapsed ul li a[data-tooltip]:hover::before {
+  content: "";
+  position: absolute;
+  right: calc(100% + 9px);
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-left-color: rgba(0, 0, 0, 0.9);
+  z-index: 1001;
+  pointer-events: none;
+}
+
+/* Keep existing tooltip class for items that use it */
+.sidebar.collapsed ul li a:hover .tooltip {
+  opacity: 1;
 }
 
 /* Custom scrollbar */
@@ -34,7 +145,7 @@
 }
 /************* logo ***********/
 .sidebar .logo {
-  margin: 20px 0 30px 0;
+  margin: 80px 0 30px 0;
   width: 180px;
   height: 70px;
   display: flex;
@@ -62,6 +173,7 @@
 
 .menu {
   width: 100%;
+  height: 100%;
   padding: 0 15px;
 }
 
@@ -95,7 +207,50 @@
   backdrop-filter: blur(10px);
   transition: all 0.3s ease;
   position: relative;
-  overflow: hidden;
+  overflow: visible;
+}
+
+.sidebar ul li a .nav-text {
+  flex: 1;
+  text-align: right;
+  transition: opacity 0.3s ease, width 0.3s ease;
+}
+
+.sidebar ul li a i {
+  transition: all 0.3s ease;
+}
+
+/* Tooltip for collapsed state */
+.sidebar ul li a .tooltip {
+  position: absolute;
+  right: calc(100% + 15px);
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(0, 0, 0, 0.9);
+  color: #fff;
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 14px;
+  white-space: nowrap;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+  z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+}
+
+.sidebar ul li a .tooltip::after {
+  content: "";
+  position: absolute;
+  left: 100%;
+  top: 50%;
+  transform: translateY(-50%);
+  border: 6px solid transparent;
+  border-left-color: rgba(0, 0, 0, 0.9);
+}
+
+.sidebar.collapsed ul li a:hover .tooltip {
+  opacity: 1;
 }
 
 .sidebar ul li a::before {

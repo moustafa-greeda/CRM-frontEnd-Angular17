@@ -26,39 +26,89 @@ export class LeadsService {
   SearchLeads(searchParams: ILeadsSearchParams): Observable<ILeadsResponse> {
     let params = new HttpParams();
 
-    // Add search parameters to the query string
-    if (searchParams.name) {
-      params = params.set('name', searchParams.name);
+    // Add search parameters to the query string (only if they have values)
+    if (
+      searchParams.name &&
+      typeof searchParams.name === 'string' &&
+      searchParams.name.trim()
+    ) {
+      params = params.set('name', searchParams.name.trim());
     }
-    if (searchParams.phone) {
-      params = params.set('phone', searchParams.phone);
+    if (
+      searchParams.phone &&
+      typeof searchParams.phone === 'string' &&
+      searchParams.phone.trim()
+    ) {
+      params = params.set('phone', searchParams.phone.trim());
     }
-    if (searchParams.companyName) {
-      params = params.set('companyName', searchParams.companyName);
+    if (
+      searchParams.companyName &&
+      typeof searchParams.companyName === 'string' &&
+      searchParams.companyName.trim()
+    ) {
+      params = params.set('companyName', searchParams.companyName.trim());
     }
-    if (searchParams.email) {
-      params = params.set('email', searchParams.email);
+    if (
+      searchParams.email &&
+      typeof searchParams.email === 'string' &&
+      searchParams.email.trim()
+    ) {
+      params = params.set('email', searchParams.email.trim());
     }
-    if (searchParams.jobTitle) {
-      params = params.set('jobTitle', searchParams.jobTitle);
+    if (
+      searchParams.jobTitle &&
+      typeof searchParams.jobTitle === 'string' &&
+      searchParams.jobTitle.trim()
+    ) {
+      params = params.set('jobTitle', searchParams.jobTitle.trim());
     }
-    if (searchParams.id) {
+    if (searchParams.id !== undefined && searchParams.id !== null) {
       params = params.set('id', searchParams.id.toString());
     }
-    if (searchParams.sortField) {
-      params = params.set('sortField', searchParams.sortField);
+    if (
+      searchParams.sortField &&
+      typeof searchParams.sortField === 'string' &&
+      searchParams.sortField.trim()
+    ) {
+      params = params.set('sortField', searchParams.sortField.trim());
     }
-    if (searchParams.sortDirection) {
-      params = params.set('sortDirection', searchParams.sortDirection);
+    if (
+      searchParams.sortDirection &&
+      typeof searchParams.sortDirection === 'string' &&
+      searchParams.sortDirection.trim()
+    ) {
+      params = params.set('sortDirection', searchParams.sortDirection.trim());
     }
-    if (searchParams.pageIndex !== undefined) {
+    if (
+      searchParams.pageIndex !== undefined &&
+      searchParams.pageIndex !== null
+    ) {
       params = params.set('pageIndex', searchParams.pageIndex.toString());
     }
-    if (searchParams.pageSize !== undefined) {
+    if (searchParams.pageSize !== undefined && searchParams.pageSize !== null) {
       params = params.set('pageSize', searchParams.pageSize.toString());
     }
-    if (searchParams.searchKeyword) {
-      params = params.set('searchKeyword', searchParams.searchKeyword);
+    // Send searchKeyword if provided (this is important for general search)
+    if (
+      searchParams.searchKeyword !== undefined &&
+      searchParams.searchKeyword !== null
+    ) {
+      const keyword =
+        typeof searchParams.searchKeyword === 'string'
+          ? searchParams.searchKeyword.trim()
+          : String(searchParams.searchKeyword).trim();
+      if (keyword) {
+        params = params.set('searchKeyword', keyword);
+      }
+    }
+    if (
+      searchParams.isLeadContact !== undefined &&
+      searchParams.isLeadContact !== null
+    ) {
+      params = params.set(
+        'isLeadContact',
+        searchParams.isLeadContact.toString()
+      );
     }
 
     return this.http.get<ILeadsResponse>(

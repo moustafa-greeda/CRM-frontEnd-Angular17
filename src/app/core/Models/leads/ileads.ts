@@ -29,6 +29,7 @@ export interface ILeadsSearchParams {
   email?: string;
   jobTitle?: string;
   id?: number;
+  isLeadContact?: boolean;
   sortField?: string;
   sortDirection?: 'asc' | 'desc';
   pageIndex?: number;

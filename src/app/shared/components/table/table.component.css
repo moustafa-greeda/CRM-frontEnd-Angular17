@@ -8,7 +8,7 @@
   flex-direction: column;
   overflow: visible; /* Allow overflow to be visible */
   border-radius: 12px;
-  border: 1px solid #e55a2b;
+  border: 1px solid #46e3ff;
   -webkit-overflow-scrolling: touch;
 }
 
@@ -229,12 +229,6 @@
   width: 50px !important;
   max-width: 50px !important;
 }
-.data-table th:nth-child(2),
-.data-table td:nth-child(2) {
-  min-width: 50px !important;
-  width: 50px !important;
-  max-width: 50px !important;
-}
 
 /* Selected row styling for drag indication */
 .data-table tr.selected {
@@ -329,13 +323,18 @@
 
 /* No Data Styling */
 .no-data-row {
-  height: 300px;
+  /* height: 300px; */
+  height: 80vh;
+  height: 100% !important;
 }
 
 .no-data-cell {
+  width: 100%;
+  height: 100% !important;
   text-align: center;
   vertical-align: middle;
   border: none !important;
+  color: #fff;
   background: transparent !important;
 }
 
@@ -367,6 +366,14 @@
   font-size: 14px;
   color: #9ca3af;
   opacity: 0.8;
+}
+
+.custom-no-data-message {
+  margin: 0;
+  font-size: 16px;
+  color: #d1d5db;
+  font-weight: 500;
+  padding: 20px;
 }
 
 /* Action Buttons Styling */
@@ -473,7 +480,15 @@
   box-shadow: 0 4px 8px rgba(69, 72, 72, 0.38);
 }
 
-/* Responsive action buttons */
+/*  */
+/* استهداف عمود الإجراءات حسب ترتيب العمود أو الكلاس */
+/* .data-table th:last-child,
+.data-table td:last-child {
+  width: 250px !important;
+  min-width: 250px !important;
+  text-align: center;
+} */
+/************************* Responsive action buttons *************************/
 @media (max-width: 768px) {
   .action-buttons {
     gap: 4px;
@@ -484,6 +499,12 @@
     height: 28px;
     font-size: 12px;
   }
+  /* .data-table th:last-child,
+  .data-table td:last-child {
+    width: 100px !important;
+    min-width: 50px !important;
+    text-align: center;
+  } */
 }
 
 /* Responsive Table */

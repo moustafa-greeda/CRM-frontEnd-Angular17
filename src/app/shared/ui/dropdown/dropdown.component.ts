@@ -29,7 +29,8 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   styles: `
   .custom-dropdown {
   position: relative;
-  width: 100%;  min-width: fit-content;
+  width: 100%;
+  min-width: 180px;
 }
 
 .dropdown-trigger {

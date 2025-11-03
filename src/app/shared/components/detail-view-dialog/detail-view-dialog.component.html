@@ -1,0 +1,96 @@
+<div class="detail-dialog-container">
+  <!-- ---------------------------- Dialog Header -------------- -->
+  <div class="dialog-header">
+    <h2 class="dialog-title">{{ displayTitle }}</h2>
+    <button class="close-btn" (click)="close()" aria-label="Close">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <!-- ---------------------------- Dialog Content -------------- -->
+  <div class="dialog-content">
+    <div class="detail-grid">
+      <div
+        class="detail-item"
+        *ngFor="let field of displayFields"
+        [class.full-width]="field.key === 'notes'"
+        [class.link-group]="
+          field.key === 'webSiteUrl' ||
+          field.key === 'isHaveSocialMedia' ||
+          field.key === 'socialMediaLink'
+        "
+      >
+        <div class="detail-label">{{ field.label }}</div>
+        <div class="detail-value" [class.value-url]="field.type === 'url'">
+          <!-- URL Type -->
+          <a
+            *ngIf="field.type === 'url' && isUrl(field.value)"
+            [href]="field.value"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="url-link"
+          >
+            {{ field.value }}
+            <i class="bi bi-box-arrow-up-right"></i>
+          </a>
+
+          <!-- Email Type -->
+          <a
+            *ngIf="field.type === 'email' && field.value"
+            [href]="'mailto:' + field.value"
+            class="email-link"
+          >
+            {{ field.value }}
+          </a>
+
+          <!-- Phone Type -->
+          <a
+            *ngIf="field.type === 'phone' && field.value"
+            [href]="'tel:' + field.value"
+            class="phone-link"
+          >
+            {{ field.value }}
+          </a>
+
+          <!-- Boolean Type -->
+          <span
+            *ngIf="field.type === 'boolean'"
+            [class.boolean-yes]="field.value"
+            [class.boolean-no]="!field.value"
+          >
+            {{ formatValue(field.value, field.type) }}
+          </span>
+
+          <!-- Notes Textarea -->
+          <textarea
+            *ngIf="field.key === 'notes'"
+            readonly
+            disabled
+            class="notes-textarea"
+            #notesTextarea
+            >{{ formatValue(field.value, field.type) }}</textarea
+          >
+
+          <!-- Default Text -->
+          <span
+            *ngIf="
+              field.type !== 'url' &&
+              field.type !== 'email' &&
+              field.type !== 'phone' &&
+              field.type !== 'boolean' &&
+              field.type !== 'json' &&
+              field.key !== 'notes'
+            "
+          >
+            {{ formatValue(field.value, field.type) }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------------------- Dialog Footer -------------- -->
+  <div class="dialog-footer">
+    <button class="close-button" (click)="close()">إغلاق</button>
+  </div>
+</div>

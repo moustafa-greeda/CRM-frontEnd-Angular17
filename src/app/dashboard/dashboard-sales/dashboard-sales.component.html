@@ -1,8 +1,12 @@
 <section class="dashboard-info">
-  <div class="welcome-section">
-    <h1>مرحباً بك في لوحة تحكم - Salse</h1>
-    <p>مرحباً {{ userInfo.name || "المستخدم" }}</p>
-  </div>
+  <!-- <h1 class="welcome-section">
+    مرحباً بك <span>{{ userInfo.name || "المستخدم" }}</span> في لوحة تحكم -
+    Salse
+  </h1> -->
+  <h1 class="welcome-section">
+    مرحباً بك <span>{{ userInfo.name || "المستخدم" }}</span> في لوحة تحكم -
+    Salse
+  </h1>
   <!-- count card -->
   <app-count-card [stats]="stats"></app-count-card>
   <!-- search and dropdown -->
@@ -47,11 +51,15 @@
       [hasNoData]="leadsList.length === 0"
       [showIndex]="true"
       [showView]="true"
+      [addButton]="true"
       [showEdit]="true"
       [showDelete]="false"
-      [addButton]="false"
       [showChat]="false"
       [showEmail]="true"
+      [showCall]="true"
+      [showNote]="true"
+      [showMeeting]="true"
+      [showFollowUp]="true"
       [leadStatusOptions]="leadStatusOptions"
       [leadStatusColorMap]="leadStatusColorMap"
       [alwaysEditLeadStatus]="true"

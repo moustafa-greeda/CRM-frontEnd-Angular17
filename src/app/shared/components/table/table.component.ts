@@ -29,21 +29,23 @@ export class TableComponent implements OnChanges, AfterViewInit {
   @Input() showDataTable = true;
   @Input() hasNoData = false;
   @Input() totalCount: number = 0;
+  @Input() noDataMessage: string = '';
   // Public class names for styling from parent components
   @Input() tableClass: string = '';
   @Input() containerClass: string = '';
   // Action visibility
-  @Input() showView: boolean = true;
-  @Input() showEdit: boolean = true;
-  @Input() showDelete: boolean = true;
+  @Input() showView: boolean = false;
+  @Input() showEdit: boolean = false;
+  @Input() showDelete: boolean = false;
   @Input() showIndex: boolean = false;
-  @Input() showChat: boolean = true;
-  @Input() showEmail: boolean = true;
-  @Input() showNote: boolean = true;
-  @Input() showCall: boolean = true;
-  @Input() showMeeting: boolean = true;
-  @Input() showFollowUp: boolean = true;
-  @Input() addButton: boolean = true;
+  @Input() showChat: boolean = false;
+  @Input() showEmail: boolean = false;
+  @Input() showNote: boolean = false;
+  @Input() showAdd: boolean = false;
+  @Input() showCall: boolean = false;
+  @Input() showMeeting: boolean = false;
+  @Input() showFollowUp: boolean = false;
+  @Input() addButton: boolean = false;
   // Actions display mode: 'inline' buttons or single dropdown menu
   @Input() actionDisplayMode: 'inline' | 'dropdown' = 'inline';
 
@@ -227,6 +229,11 @@ export class TableComponent implements OnChanges, AfterViewInit {
   }
 
   onAddButton(row: any) {
+    this.addButtonClick.emit(row);
+  }
+
+  // Alias used by inline actions template
+  onAdd(row: any) {
     this.addButtonClick.emit(row);
   }
 

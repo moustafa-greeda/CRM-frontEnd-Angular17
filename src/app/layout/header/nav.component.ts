@@ -1,4 +1,4 @@
-import { Component, Inject } from '@angular/core';
+import { Component, Inject, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { ThemeService } from '../../core/services/theme.service';
 import { AuthService } from '../../Auth/login/auth.service';
@@ -20,18 +20,11 @@ export class HeaderComponent {
 
   theme$ = this.themeService.theme$;
 
-  isSidebarOpen = true;
+  @Input() isSidebarOpen: boolean = false;
+  @Output() menuToggle = new EventEmitter<void>();
 
   toggleSidebar() {
-    this.isSidebarOpen = !this.isSidebarOpen;
-    const layout = document.querySelector('.dashboard-layout');
-    if (layout) {
-      if (this.isSidebarOpen) {
-        layout.classList.add('sidebar-open');
-      } else {
-        layout.classList.remove('sidebar-open');
-      }
-    }
+    this.menuToggle.emit();
   }
   isLoggedIn(): boolean {
     return this.authService.isAuthenticated();

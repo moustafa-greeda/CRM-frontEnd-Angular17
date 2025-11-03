@@ -34,7 +34,7 @@ export class EmployeeService {
   getEmpTeleSels(): Observable<ApiResponse<IEmployee[]>> {
     const headers = this.getAuthHeaders();
     return this.http.get<ApiResponse<IEmployee[]>>(
-      `${this.BASE_API_URL}/Employee/GetAllTeleSels`,
+      `${this.BASE_API_URL}/Employee/GetAllEmployee`,
       { headers }
     );
   }

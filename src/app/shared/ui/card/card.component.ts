@@ -257,11 +257,18 @@ export interface CardField {
         align-items: center;
         justify-content: center;
       }
+      .client-actions .icon-star span {
+        color: #fff;
+      }
 
       .client-actions .icon-star i {
         font-size: 18px;
         font-weight: 600;
         color: #ffb012;
+      }
+
+      .icon-social i {
+        color: #fff;
       }
     `,
   ],

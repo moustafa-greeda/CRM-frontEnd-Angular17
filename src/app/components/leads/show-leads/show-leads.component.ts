@@ -12,6 +12,8 @@ import { Router } from '@angular/router';
 import { NotifyDialogService } from '../../../shared/notify-dialog-host/notify-dialog.service';
 import { LeadStatusService } from '../../../core/services/common/lead-status.service';
 import { ILeadStatus } from '../../../core/Models/common/ilead-status';
+import { BreadcrumbItem } from '../../../shared/interfaces/breadcrumb-item.interface';
+import { ActionButton } from '../../../shared/interfaces/action-button.interface';
 
 // Using ILeads interface from the API instead of local Client interface
 
@@ -25,6 +27,22 @@ export class ShowLeadsComponent implements OnInit {
   searchTerm: string = '';
   selectedFilter: string = 'recent';
   isDropdownOpen: boolean = false;
+  searchPlaceholder: string = 'ابحث في جميع الحقول';
+
+  // Filter options with icons (for template use)
+  filterOptionsWithIcons = [
+    { value: 'recent', label: 'اختر طريقة البحث', icon: 'bi-person-fill-add' },
+    { value: 'name', label: 'الاسم', icon: 'bi-person' },
+    { value: 'companyName', label: 'اسم الشركة', icon: 'bi-building' },
+    { value: 'email', label: 'البريد الإلكتروني', icon: 'bi-envelope' },
+    { value: 'phone', label: 'رقم الهاتف', icon: 'bi-telephone' },
+    { value: 'position', label: 'المنصب', icon: 'bi-briefcase' },
+  ];
+
+  // Getter to convert filter options to string array for dropdown
+  get filterOptions(): string[] {
+    return this.filterOptionsWithIcons.map((opt) => opt.label);
+  }
   leads: ILeads[] = [];
   totalCount: number = 0;
   isLoading: boolean = false;
@@ -42,6 +60,9 @@ export class ShowLeadsComponent implements OnInit {
   pageSize: number = 10;
   totalPages: number = 0;
 
+  // View mode: 'card' or 'table'
+  viewMode: 'card' | 'table' = 'card';
+
   // Search debouncing
   private searchSubject = new Subject<string>();
   isSearchPending: boolean = false;
@@ -53,6 +74,31 @@ export class ShowLeadsComponent implements OnInit {
     private notify: NotifyDialogService,
     private leadStatusService: LeadStatusService
   ) {}
+  // ====================== page header ======================
+  pageTitle = 'إدارة الموظفين';
+  breadcrumb: BreadcrumbItem[] = [
+    { label: 'الرئيسية' },
+    { label: 'بيانات العملاء', active: true },
+  ];
+
+  actionButtons: ActionButton[] = [
+    {
+      label: 'إضافة عميل',
+      iconClass: 'bi bi-plus',
+      click: () => this.onAddClient(),
+    },
+    {
+      iconClass: 'bi bi-box-arrow-in-up',
+      click: () => console.log('Upload'),
+      tooltip: 'Upload',
+    },
+    {
+      iconClass: 'bi bi-box-arrow-right',
+      click: () => console.log('Download'),
+      tooltip: 'Download',
+    },
+  ];
+  // =============================================================
 
   filteredClients: ILeads[] = [];
 
@@ -65,21 +111,22 @@ export class ShowLeadsComponent implements OnInit {
   private setupSearchDebouncing(): void {
     this.searchSubject
       .pipe(
-        debounceTime(3000), // Wait 3 seconds after user stops typing
-        distinctUntilChanged() // Only emit if the value has changed
+        debounceTime(300), // Short delay to avoid excessive API calls while typing
+        distinctUntilChanged()
       )
-      .subscribe((searchTerm: string) => {
-        this.searchTerm = searchTerm;
-        this.currentPage = 1; // Reset to first page when searching
-        this.isSearchPending = false; // Hide pending indicator
+      .subscribe(() => {
+        this.currentPage = 1;
+        this.isSearchPending = false;
         this.searchLeads();
       });
   }
 
   loadLeads(): void {
-    // Load all data without search filters
+    // Load all data from API without search filters
     this.searchTerm = '';
     this.currentPage = 1;
+    this.selectedFilter = 'recent';
+    // Always call API
     this.searchLeads();
   }
 
@@ -108,32 +155,55 @@ export class ShowLeadsComponent implements OnInit {
     this.error = null;
 
     const searchParams: ILeadsSearchParams = {
+      pageIndex: this.currentPage,
+      pageSize: this.pageSize,
       sortField: this.getSortField(),
       sortDirection: this.getSortDirection(),
-      pageIndex: this.currentPage, // Send 1-based index, backend converts to 0-based offset
-      pageSize: this.pageSize,
     };
 
-    // Add specific field search based on selected filter
+    // Add search parameter based on filter type
     if (this.searchTerm && this.searchTerm.trim()) {
+      const trimmedTerm = this.searchTerm.trim();
+
+      // Clear all search fields first
+      delete searchParams.name;
+      delete searchParams.companyName;
+      delete searchParams.email;
+      delete searchParams.phone;
+      delete searchParams.jobTitle;
+      delete searchParams.searchKeyword;
+
+      // Set only the relevant search field
       switch (this.selectedFilter) {
         case 'name':
-          searchParams.name = this.searchTerm.trim();
+          searchParams.name = trimmedTerm;
+          break;
+        case 'companyName':
+          searchParams.companyName = trimmedTerm;
           break;
         case 'email':
-          searchParams.email = this.searchTerm.trim();
+          searchParams.email = trimmedTerm;
           break;
         case 'phone':
-          searchParams.phone = this.searchTerm.trim();
+          searchParams.phone = trimmedTerm;
           break;
         case 'position':
-          searchParams.jobTitle = this.searchTerm.trim();
+          searchParams.jobTitle = trimmedTerm;
           break;
         case 'recent':
         default:
-          searchParams.searchKeyword = this.searchTerm.trim();
+          // Use searchKeyword for general search when filter is 'recent'
+          searchParams.searchKeyword = trimmedTerm;
           break;
       }
+    } else {
+      // If search term is empty, ensure no search parameters are sent
+      delete searchParams.name;
+      delete searchParams.companyName;
+      delete searchParams.email;
+      delete searchParams.phone;
+      delete searchParams.jobTitle;
+      delete searchParams.searchKeyword;
     }
 
     this.leadsService.SearchLeads(searchParams).subscribe({
@@ -143,14 +213,13 @@ export class ShowLeadsComponent implements OnInit {
           this.totalCount = response.data.totalCount || 0;
           this.filteredClients = [...this.leads];
           this.totalPages = Math.ceil(this.totalCount / this.pageSize);
-          this.isLoading = false;
         } else {
           this.error = 'فشل في تحميل بيانات العملاء';
           this.leads = [];
           this.filteredClients = [];
           this.totalPages = 0;
-          this.isLoading = false;
         }
+        this.isLoading = false;
       },
       error: (error: any) => {
         console.error('Error loading leads:', error);
@@ -164,15 +233,19 @@ export class ShowLeadsComponent implements OnInit {
   }
 
   onSearchChange(): void {
-    // Show pending indicator
     this.isSearchPending = true;
-    // Reset to page 1 when searching to search all data
     this.currentPage = 1;
-    // Emit the search term to the debounced subject
-    this.searchSubject.next(this.searchTerm);
+    this.searchSubject.next(this.searchTerm || '');
   }
 
-  // Clear search and reload all data
+  onSearch(searchTerm: string): void {
+    this.searchTerm = searchTerm || '';
+    this.currentPage = 1;
+    this.isSearchPending = false;
+    // Search immediately without debounce
+    this.searchLeads();
+  }
+
   clearSearch(): void {
     this.searchTerm = '';
     this.currentPage = 1;
@@ -181,8 +254,12 @@ export class ShowLeadsComponent implements OnInit {
   }
 
   onFilterChange(): void {
-    this.currentPage = 1; // Reset to first page when filtering
-    this.searchLeads();
+    this.currentPage = 1;
+    if (this.searchTerm?.trim()) {
+      this.searchLeads();
+    } else {
+      this.loadLeads();
+    }
   }
 
   toggleDropdown(): void {
@@ -192,13 +269,20 @@ export class ShowLeadsComponent implements OnInit {
   selectFilter(filterValue: string): void {
     this.selectedFilter = filterValue;
     this.isDropdownOpen = false;
-    this.currentPage = 1; // Reset to first page when filtering
-    // If there's a search term, search with new filter
-    if (this.searchTerm && this.searchTerm.trim()) {
+    this.currentPage = 1;
+    if (this.searchTerm?.trim()) {
       this.searchLeads();
     } else {
-      // If no search term, just reload all data
-      this.searchLeads();
+      this.loadLeads();
+    }
+  }
+
+  selectFilterByLabel(label: string): void {
+    const option = this.filterOptionsWithIcons.find(
+      (opt) => opt.label === label
+    );
+    if (option) {
+      this.selectFilter(option.value);
     }
   }
 
@@ -206,6 +290,7 @@ export class ShowLeadsComponent implements OnInit {
     const labels: { [key: string]: string } = {
       recent: 'الإضافة مؤخرا',
       name: 'الاسم',
+      companyName: 'اسم الشركة',
       email: 'البريد الإلكتروني',
       phone: 'رقم الهاتف',
       position: 'المنصب',
@@ -217,6 +302,7 @@ export class ShowLeadsComponent implements OnInit {
     const placeholders: { [key: string]: string } = {
       recent: 'ابحث في جميع الحقول',
       name: 'ابحث بالاسم',
+      companyName: 'ابحث باسم الشركة',
       email: 'ابحث بالبريد الإلكتروني',
       phone: 'ابحث برقم الهاتف',
       position: 'ابحث بالمنصب',
@@ -228,6 +314,7 @@ export class ShowLeadsComponent implements OnInit {
     const icons: { [key: string]: string } = {
       recent: 'bi bi-search',
       name: 'bi bi-person',
+      companyName: 'bi bi-building',
       email: 'bi bi-envelope',
       phone: 'bi bi-telephone',
       position: 'bi bi-briefcase',
@@ -281,6 +368,8 @@ export class ShowLeadsComponent implements OnInit {
     switch (this.selectedFilter) {
       case 'name':
         return 'name';
+      case 'companyName':
+        return 'companyName';
       case 'email':
         return 'email';
       case 'phone':
@@ -309,6 +398,38 @@ export class ShowLeadsComponent implements OnInit {
       // Always search with current search term and filter
       this.searchLeads();
     }
+  }
+
+  // Handlers for reusable table component
+  onTablePage(event: any): void {
+    // MatPaginator PageEvent: pageIndex is 0-based
+    const newPage = (event?.pageIndex ?? 0) + 1;
+    if (newPage !== this.currentPage) {
+      this.currentPage = newPage;
+    }
+    if (event?.pageSize && event.pageSize !== this.pageSize) {
+      this.pageSize = event.pageSize;
+    }
+    this.searchLeads();
+  }
+
+  onTablePageSize(newSize: number): void {
+    if (newSize && newSize !== this.pageSize) {
+      this.pageSize = newSize;
+      this.currentPage = 1;
+      this.searchLeads();
+    }
+  }
+
+  onTableRowSelection(evt: { row: ILeads; selected: boolean }): void {
+    // Normalize to existing selection logic
+    const fakeEvent = { target: { checked: evt.selected } } as unknown as Event;
+    this.onClientSelect(evt.row, fakeEvent);
+  }
+
+  onTableSelectAll(isChecked: boolean): void {
+    const fakeEvent = { target: { checked: isChecked } } as unknown as Event;
+    this.onSelectAllChange(fakeEvent);
   }
 
   onPageSizeChange(event: Event): void {
@@ -440,11 +561,9 @@ export class ShowLeadsComponent implements OnInit {
     const isChecked = target.checked;
 
     if (isChecked) {
-      // Add to selected cards if not already selected
+      // Add to selected cards if not already selected (selection only, no API call)
       if (!this.selectedCards.find((card) => card.id === client.id)) {
         this.selectedCards.push(client);
-        // Call CreateLead API when card is selected
-        this.createLeadForClient(client);
       }
     } else {
       // Remove from selected cards
@@ -461,10 +580,8 @@ export class ShowLeadsComponent implements OnInit {
     const isChecked = target.checked;
 
     if (isChecked) {
-      // Select all visible cards
+      // Select all visible cards (selection only, no API call)
       this.selectedCards = [...this.filteredClients];
-      // Call CreateLead API for all selected cards
-      this.createLeadForMultipleClients(this.filteredClients);
     } else {
       // Deselect all cards
       this.selectedCards = [];
@@ -594,5 +711,26 @@ export class ShowLeadsComponent implements OnInit {
 
     // Reset pagination to first page
     this.currentPage = 1;
+  }
+
+  /**
+   * Toggle between card and table view
+   */
+  toggleViewMode(): void {
+    this.viewMode = this.viewMode === 'card' ? 'table' : 'card';
+  }
+
+  /**
+   * Table columns configuration for leads
+   */
+  get tableColumns() {
+    return [
+      { key: 'name', header: 'الاسم', width: '150px' },
+      { key: 'jobTitle', header: 'المسمى الوظيفي', width: '120px' },
+      { key: 'email', header: 'البريد الإلكتروني', width: '200px' },
+      { key: 'phone', header: 'رقم الهاتف', width: '120px' },
+      { key: 'companyName', header: 'اسم الشركة', width: '150px' },
+      { key: 'industeryName', header: 'الصناعة', width: '120px' },
+    ];
   }
 }

@@ -46,6 +46,24 @@
   bottom: 0 !important;
 }
 
+/* Detail View Dialog Styles */
+::ng-deep .detail-view-dialog-panel .mat-dialog-container {
+  padding: 0 !important;
+  background: transparent !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.5) !important;
+}
+
+::ng-deep .detail-view-dialog-panel .cdk-overlay-pane {
+  max-width: 900px !important;
+}
+
+::ng-deep .detail-view-dialog-panel + .cdk-overlay-backdrop {
+  background: rgba(0, 0, 0, 0.7) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
 * {
   padding: 0px;
   margin: 0px;
@@ -699,7 +717,7 @@ background: rgba(17, 24, 31, 0.30);  /* background-color: none; */
   width: 18px;
   height: 18px;
   cursor: pointer;
-  border: 2px solid #ff5f00;
+  border: 2px solid #46E3FF;
   border-radius: 3px;
   appearance: none;
   -webkit-appearance: none;
@@ -778,12 +796,12 @@ background: rgba(17, 24, 31, 0.30);  /* background-color: none; */
   text-decoration: none;
 }
 
-.btn-primary {
+.btn-primary, .button-color {
   background: #ff5f00;
   color: #ffffff;
 }
 
-.btn-primary i{
+.btn-primary i , .button-color i{
   font-size: 25px;
 }
 

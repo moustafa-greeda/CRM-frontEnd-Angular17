@@ -1,5 +1,18 @@
-<nav class="sidebar">
-  <div class="logo">
+<nav class="sidebar" [class.collapsed]="isCollapsed">
+  <!-- ---------------------------- Sidebar Toggle Button -------------- -->
+  <button
+    class="sidebar-toggle-btn"
+    (click)="onToggle()"
+    [attr.aria-label]="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+  >
+    <i
+      class="bi"
+      [class.bi-chevron-left]="isCollapsed"
+      [class.bi-chevron-right]="!isCollapsed"
+    ></i>
+  </button>
+
+  <div class="logo" *ngIf="!isCollapsed">
     <img src="../../../assets/logo_elbatt.png" alt="logo_elbatt" />
   </div>
   <div class="menu">
@@ -8,32 +21,36 @@
       <ng-container *ngIf="isAdmin()">
         <!-- <li>
           <a routerLink="/dashboard/admin/home" routerLinkActive="active">
-            الرئيسيه
+            <span class="nav-text">الرئيسيه</span>
             <i class="bi bi-house-door"></i>
           </a>
         </li> -->
         <li>
           <a routerLink="/dashboard/admin/employee" routerLinkActive="active">
-            الموظفين
+            <span class="nav-text">الموظفين</span>
             <i class="bi bi-people"></i>
+            <span class="tooltip" *ngIf="isCollapsed">الموظفين</span>
           </a>
         </li>
         <li>
           <a routerLink="/dashboard/admin/company" routerLinkActive="active">
-            الشركات
+            <span class="nav-text">الشركات</span>
             <i class="bi bi-building"></i>
+            <span class="tooltip" *ngIf="isCollapsed">الشركات</span>
           </a>
         </li>
         <li>
           <a routerLink="/dashboard/admin/addLead" routerLinkActive="active">
-            إضافة عميل
+            <span class="nav-text">إضافة عميل</span>
             <i class="bi bi-person-plus"></i>
+            <span class="tooltip" *ngIf="isCollapsed">إضافة عميل</span>
           </a>
         </li>
         <li>
           <a routerLink="/dashboard/admin/showLeads" routerLinkActive="active">
-            عرض العملاء
+            <span class="nav-text">عرض العملاء</span>
             <i class="bi bi-people-fill"></i>
+            <span class="tooltip" *ngIf="isCollapsed">عرض العملاء</span>
           </a>
         </li>
         <li>
@@ -41,19 +58,30 @@
             routerLink="/dashboard/admin/distribution"
             routerLinkActive="active"
           >
-            توزيع العملاء
+            <span class="nav-text">توزيع العملاء</span>
             <i class="bi bi-diagram-3"></i>
+            <span class="tooltip" *ngIf="isCollapsed">توزيع العملاء</span>
           </a>
         </li>
-        <li>
+        <!-- <li>
           <a routerLink="/dashboard/admin/countries" routerLinkActive="active">
             الدول
+            <i class="bi bi-globe"></i>
+          </a>
+        </li> -->
+        <li>
+          <a
+            routerLink="/dashboard/admin/showdeals"
+            routerLinkActive="active"
+            data-tooltip="ادارة الاتفاقيات"
+          >
+            <span class="nav-text">ادارة الاتفاقيات</span>
             <i class="bi bi-globe"></i>
           </a>
         </li>
         <!-- <li>
           <a routerLink="/dashboard/admin/cities" routerLinkActive="active">
-            المدن
+            <span class="nav-text">المدن</span>
             <i class="bi bi-geo-alt"></i>
           </a>
         </li> -->
@@ -61,8 +89,9 @@
           <a
             routerLink="/dashboard/admin/exportedData"
             routerLinkActive="active"
+            data-tooltip="البيانات المصدرة"
           >
-            البيانات المصدرة
+            <span class="nav-text">البيانات المصدرة</span>
             <i class="bi bi-file-earmark-excel"></i>
           </a>
         </li>

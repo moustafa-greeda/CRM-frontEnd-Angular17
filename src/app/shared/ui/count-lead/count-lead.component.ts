@@ -4,14 +4,13 @@ import { Component, Input } from '@angular/core';
   selector: 'app-count-lead',
   template: `
     <div class="countLead">
-      <p class="countLead-text">8 عميل</p>
+      <p class="countLead-text">{{ count || 0 }} {{ label || 'عميل' }}</p>
       <i class="bi bi-person-fill"></i>
     </div>
   `,
   styles: `
   .countLead {
-  // width: 150px;
-  padding: 5px 15px;
+  padding: 12px 15px;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -19,6 +18,7 @@ import { Component, Input } from '@angular/core';
   border-radius: 12px;
   border: 1px solid #46e3ff;
   background: #008299;
+  color: #fff;
 }
 
 .countLead .countLead-text {
@@ -27,6 +27,7 @@ import { Component, Input } from '@angular/core';
   font-size: 14px;
   font-weight: 600;
   cursor: pointer;
+  color: #fff;
 }
 
 .countLead:hover {

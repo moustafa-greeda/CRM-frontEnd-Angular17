@@ -1,0 +1,46 @@
+.view-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 20px;
+  background: rgba(17, 24, 31, 0.8);
+  border: 1px solid #46e3ff;
+  border-radius: 12px;
+  color: #ffffff;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
+}
+
+.view-toggle-btn:hover {
+  background: rgba(70, 227, 255, 0.15);
+  border-color: #ff5f00;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(255, 95, 0, 0.2);
+}
+
+.view-toggle-btn.active-card {
+  background: rgba(70, 227, 255, 0.2);
+  border-color: #46e3ff;
+}
+
+.view-toggle-btn.active-table {
+  background: rgba(255, 95, 0, 0.2);
+  border-color: #ff5f00;
+}
+
+.view-toggle-btn i {
+  font-size: 18px;
+  transition: transform 0.3s ease;
+}
+
+.view-toggle-btn .toggle-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.view-toggle-btn:hover i {
+  transform: scale(1.1);
+}

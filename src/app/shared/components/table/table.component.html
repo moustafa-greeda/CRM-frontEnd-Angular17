@@ -29,8 +29,11 @@
           >
             <div class="no-data-content">
               <i class="bi bi-inbox"></i>
-              <h3>لا توجد بيانات</h3>
-              <p>لم يتم العثور على أي عناصر لعرضها</p>
+              <h3 *ngIf="!noDataMessage">لا توجد بيانات</h3>
+              <p *ngIf="!noDataMessage">لم يتم العثور على أي عناصر لعرضها</p>
+              <p *ngIf="noDataMessage" class="custom-no-data-message">
+                {{ noDataMessage }}
+              </p>
             </div>
           </td>
         </tr>
@@ -96,40 +99,120 @@
                   {{ getLeadStatusDisplay(row.leadStatus) }}
                 </span>
               </ng-container>
-              <ng-container *ngSwitchCase="'actions'">
-                <!-- Dropdown mode -->
-                <ng-container
-                  *ngIf="actionDisplayMode === 'dropdown'; else inlineActions"
-                >
-                  <div class="action-buttons">
-                    <div
-                      class="dropdown"
-                      style="position: relative; display: inline-block"
+
+              <ng-container *ngSwitchDefault>
+                <ng-container [ngSwitch]="col.key">
+                  <ng-container *ngSwitchCase="'status'">
+                    <span
+                      class="status-chip"
+                      [class.active]="row[col.key] === 'نشط'"
+                      [class.inactive]="row[col.key] !== 'نشط'"
                     >
-                      <button
-                        class="action-btn view-btn"
-                        title="إجراءات"
-                        (click)="toggleDropdown(i, $event)"
-                      >
-                        <i class="bi bi-three-dots"></i>
-                      </button>
-                      <div
-                        *ngIf="openDropdownRowIndex === i"
-                        class="dropdown-menu"
-                        [ngStyle]="{
-                          position: 'fixed',
-                          top: dropdownPosition.top + 'px',
-                          left: dropdownPosition.left + 'px'
-                        }"
-                        style="
-                          min-width: 160px;
-                          background: rgba(17, 24, 31, 0.95);
-                          border: 1px solid #46e3ff;
-                          border-radius: 6px;
-                          padding: 6px;
-                          z-index: 2147483647;
+                      {{ row[col.key] || "-" }}
+                    </span>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'leadStatusName'">
+                    <span
+                      class="status-chip status-chip-lead"
+                      [ngClass]="getStatusClass(row[col.key])"
+                    >
+                      {{ getLeadStatusDisplay(row[col.key]) }}
+                    </span>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'assignState'">
+                    <span
+                      class="assign-badge"
+                      [class.assigned]="row[col.key]?.includes('مُخصّص')"
+                      [class.unassigned]="row[col.key]?.includes('غير')"
+                    >
+                      {{ row[col.key] || "-" }}
+                    </span>
+                  </ng-container>
+                  <ng-container *ngSwitchCase="'createdAt'">
+                    <span class="date-field">
+                      {{ (row[col.key] | date : "dd/MM/yyyy") || "-" }}
+                    </span>
+                  </ng-container>
+                  <!-- Correct actions case rendered as its own switch case -->
+                  <ng-container *ngSwitchCase="'actions'">
+                    <div class="action-buttons">
+                      <ng-container
+                        *ngIf="
+                          actionDisplayMode === 'inline';
+                          else dropdownActions
                         "
                       >
+                        <!-- Inline Mode -->
+                        <!-- <button
+                          *ngIf="showView"
+                          class="action-btn view-btn"
+                          (click)="onView(row)"
+                        >
+                          <i class="bi bi-eye"></i>
+                        </button>
+                        <button
+                          *ngIf="showEmail"
+                          class="action-btn email-btn"
+                          (click)="onEmail(row)"
+                        >
+                          <i class="bi bi-envelope"></i>
+                        </button>
+                        <button
+                          *ngIf="showCall"
+                          class="action-btn email-btn"
+                          (click)="onCall(row)"
+                        >
+                          <i class="bi bi-telephone"></i>
+                        </button>
+                        <button
+                          *ngIf="showFollowUp"
+                          class="action-btn view-btn"
+                          (click)="onFollowUp(row)"
+                        >
+                          <i class="bi bi-arrow-repeat"></i>
+                        </button>
+                        <button
+                          *ngIf="showDelete"
+                          class="action-btn delete-btn"
+                          (click)="onDelete(row)"
+                        >
+                          <i class="bi bi-trash"></i>
+                        </button>
+                        <button
+                          *ngIf="showEdit"
+                          class="action-btn edit-btn"
+                          (click)="onEdit(row)"
+                        >
+                          <i class="bi bi-pencil"></i>
+                        </button>
+                        <button
+                          *ngIf="showChat"
+                          class="action-btn chat-btn"
+                          (click)="onChat(row)"
+                        >
+                          <i class="bi bi-chat"></i>
+                        </button>
+                        <button
+                          *ngIf="showNote"
+                          class="action-btn email-btn"
+                          (click)="onNote(row)"
+                        >
+                          <i class="bi bi-note"></i>
+                        </button>
+                        <button
+                          *ngIf="showMeeting"
+                          class="action-btn chat-btn"
+                          (click)="onMeeting(row)"
+                        >
+                          <i class="bi bi-calendar"></i>
+                        </button>
+                        <button
+                          *ngIf="showFollowUp"
+                          class="action-btn follow-up-btn"
+                          (click)="onFollowUp(row)"
+                        >
+                          <i class="bi bi-arrow-repeat"></i>
+                        </button> -->
                         <button
                           class="action-btn view-btn"
                           *ngIf="showView"
@@ -137,6 +220,16 @@
                           style="width: 100%; margin: 4px 0"
                         >
                           <i class="bi bi-eye"></i>
+                        </button>
+                        <button
+                          class="action-btn add-btn"
+                          *ngIf="showAdd"
+                          (click)="
+                            onAddButton(row); openDropdownRowIndex = null
+                          "
+                          style="width: 100%; margin: 4px 0"
+                        >
+                          <i class="bi bi-plus"></i>
                         </button>
                         <button
                           class="action-btn edit-btn"
@@ -210,140 +303,94 @@
                         >
                           <i class="bi bi-arrow-repeat"></i>
                         </button>
-                      </div>
+                      </ng-container>
+
+                      <ng-template #dropdownActions>
+                        <!-- Dropdown Mode -->
+                        <button
+                          class="action-btn main-dropdown-btn"
+                          (click)="toggleDropdown(i, $event)"
+                        >
+                          <i class="bi bi-three-dots-vertical"></i>
+                        </button>
+                        <div
+                          *ngIf="openDropdownRowIndex === i"
+                          class="dropdown-menu"
+                        >
+                          <!-- dropdown Mode -->
+                          <button
+                            *ngIf="showView"
+                            class="action-btn view-btn"
+                            (click)="onView(row)"
+                          >
+                            <i class="bi bi-eye"></i>
+                          </button>
+                          <button
+                            *ngIf="showEmail"
+                            class="action-btn email-btn"
+                            (click)="onEmail(row)"
+                          >
+                            <i class="bi bi-envelope"></i>
+                          </button>
+                          <button
+                            *ngIf="showCall"
+                            class="action-btn email-btn"
+                            (click)="onCall(row)"
+                          >
+                            <i class="bi bi-telephone"></i>
+                          </button>
+                          <button
+                            *ngIf="showFollowUp"
+                            class="action-btn view-btn"
+                            (click)="onFollowUp(row)"
+                          >
+                            <i class="bi bi-arrow-repeat"></i>
+                          </button>
+                          <button
+                            *ngIf="showDelete"
+                            class="action-btn delete-btn"
+                            (click)="onDelete(row)"
+                          >
+                            <i class="bi bi-trash"></i>
+                          </button>
+                          <button
+                            *ngIf="showEdit"
+                            class="action-btn edit-btn"
+                            (click)="onEdit(row)"
+                          >
+                            <i class="bi bi-pencil"></i>
+                          </button>
+                          <button
+                            *ngIf="showChat"
+                            class="action-btn chat-btn"
+                            (click)="onChat(row)"
+                          >
+                            <i class="bi bi-chat"></i>
+                          </button>
+                          <button
+                            *ngIf="showNote"
+                            class="action-btn note-btn"
+                            (click)="onNote(row)"
+                          >
+                            <i class="bi bi-note"></i>
+                          </button>
+                          <button
+                            *ngIf="showMeeting"
+                            class="action-btn meeting-btn"
+                            (click)="onMeeting(row)"
+                          >
+                            <i class="bi bi-calendar"></i>
+                          </button>
+                          <button
+                            *ngIf="showFollowUp"
+                            class="action-btn follow-up-btn"
+                            (click)="onFollowUp(row)"
+                          >
+                            <i class="bi bi-arrow-repeat"></i>
+                          </button>
+                        </div>
+                      </ng-template>
                     </div>
-                  </div>
-                </ng-container>
-                <!-- Inline mode -->
-                <ng-template #inlineActions>
-                  <div class="action-buttons">
-                    <!-- add button -->
-                    <button
-                      class="action-btn edit-btn"
-                      *ngIf="addButton"
-                      (click)="onAddButton(row)"
-                      title="اضافة"
-                    >
-                      <i class="bi bi-person-plus"></i>
-                    </button>
-                    <!-- view button -->
-                    <button
-                      class="action-btn view-btn"
-                      *ngIf="showView"
-                      (click)="onView(row)"
-                      title="عرض"
-                    >
-                      <i class="bi bi-eye"></i>
-                    </button>
-                    <button
-                      class="action-btn edit-btn"
-                      *ngIf="showEdit"
-                      (click)="onEdit(row)"
-                      title="تعديل"
-                    >
-                      <i class="bi bi-pencil"></i>
-                    </button>
-                    <button
-                      class="action-btn delete-btn"
-                      *ngIf="showDelete"
-                      (click)="onDelete(row)"
-                      title="حذف"
-                    >
-                      <i class="bi bi-trash"></i>
-                    </button>
-                    <!-- chat button -->
-                    <button
-                      class="action-btn chat-btn"
-                      *ngIf="showChat"
-                      (click)="onChat(row)"
-                      title="رساله"
-                    >
-                      <i class="bi bi-chat-left-text-fill"></i>
-                    </button>
-
-                    <!-- email button -->
-                    <button
-                      class="action-btn email-btn"
-                      (click)="onEmail(row)"
-                      title="اميل"
-                    >
-                      <i class="bi bi-envelope"></i>
-                    </button>
-                    <!-- notes -->
-                    <button
-                      class="action-btn view-btn"
-                      *ngIf="showNote"
-                      (click)="onNote(row, $event)"
-                      title="ملاحظة"
-                    >
-                      <i class="bi bi-file-earmark-text"></i>
-                    </button>
-
-                    <!-- call button -->
-                    <button
-                      class="action-btn email-btn"
-                      *ngIf="showCall"
-                      (click)="onCall(row, $event)"
-                      title="مكالمة"
-                    >
-                      <i class="bi bi-telephone"></i>
-                    </button>
-
-                    <!-- meeting button -->
-                    <button
-                      class="action-btn chat-btn"
-                      *ngIf="showMeeting"
-                      (click)="onMeeting(row, $event)"
-                      title="اجتماع"
-                    >
-                      <i class="bi bi-camera-video"></i>
-                    </button>
-
-                    <!-- follow up button -->
-                    <button
-                      class="action-btn view-btn"
-                      *ngIf="showFollowUp"
-                      (click)="onFollowUp(row, $event)"
-                      title="متابعة"
-                    >
-                      <i class="bi bi-arrow-repeat"></i>
-                    </button>
-                  </div>
-                </ng-template>
-              </ng-container>
-
-              <ng-container *ngSwitchDefault>
-                <ng-container [ngSwitch]="col.key">
-                  <ng-container *ngSwitchCase="'status'">
-                    <span
-                      class="status-chip"
-                      [class.active]="row[col.key] === 'نشط'"
-                      [class.inactive]="row[col.key] !== 'نشط'"
-                    >
-                      {{ row[col.key] || "-" }}
-                    </span>
-                  </ng-container>
-                  <ng-container *ngSwitchCase="'leadStatusName'">
-                    <span
-                      class="status-chip status-chip-lead"
-                      [ngClass]="getStatusClass(row[col.key])"
-                    >
-                      {{ getLeadStatusDisplay(row[col.key]) }}
-                    </span>
-                  </ng-container>
-                  <ng-container *ngSwitchCase="'assignState'">
-                    <span
-                      class="assign-badge"
-                      [class.assigned]="row[col.key]?.includes('مُخصّص')"
-                      [class.unassigned]="row[col.key]?.includes('غير')"
-                    >
-                      {{ row[col.key] || "-" }}
-                    </span>
-                  </ng-container>
-                  <ng-container *ngSwitchCase="'createdAt'">
-                    <span class="date-field">
-                      {{ (row[col.key] | date : "dd/MM/yyyy") || "-" }}
-                    </span>
                   </ng-container>
                   <ng-container *ngSwitchDefault>
                     <!-- Check for formatter -->
@@ -356,7 +403,32 @@
                     >
                       {{ formatCellValue(row[col.key], "datetime") }}
                     </span>
-                    <ng-container *ngIf="!col.formatter">
+                    <!-- Check if value is a URL -->
+                    <a
+                      *ngIf="
+                        !col.formatter &&
+                        col.key === 'webSiteUrl' &&
+                        row[col.key] &&
+                        (row[col.key].startsWith('http://') ||
+                          row[col.key].startsWith('https://'))
+                      "
+                      [href]="row[col.key]"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {{ row[col.key] }}
+                    </a>
+                    <ng-container
+                      *ngIf="
+                        !col.formatter &&
+                        !(
+                          col.key === 'webSiteUrl' &&
+                          row[col.key] &&
+                          (row[col.key].startsWith('http://') ||
+                            row[col.key].startsWith('https://'))
+                        )
+                      "
+                    >
                       {{ row[col.key] || "-" }}
                     </ng-container>
                   </ng-container>

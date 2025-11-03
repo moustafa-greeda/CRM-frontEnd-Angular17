@@ -1,5 +1,6 @@
 :root {
   --sidebar-width: 250px;
+  --sidebar-collapsed-width: 70px;
 }
 
 .dashboard-layout {
@@ -15,18 +16,13 @@
   overflow-x: hidden;
 }
 
-/* Ensure content takes full width when sidebar is closed */
-/* .dashboard-layout:not(.sidebar-open) {
-  grid-template-columns: 0 1fr;
-}
-
-.dashboard-layout:not(.sidebar-open) .content {
-  width: 100%;
-  max-width: 100%;
-} */
-
 .dashboard-layout.sidebar-open {
   grid-template-columns: var(--sidebar-width) 1fr;
+}
+
+.dashboard-layout.sidebar-open.sidebar-collapsed {
+  /* grid-template-columns: var(--sidebar-collapsed-width) 1fr; */
+  grid-template-columns: 100px 1fr;
 }
 
 .dashboard-layout.sidebar-closed {
@@ -63,6 +59,61 @@
 }
 .content .scroll-h {
   overflow-x: auto;
+}
+
+/* ====== Tablets and smaller desktops (عرض أقل من 1600px) ====== */
+@media (max-width: 1199px) {
+  .dashboard-layout {
+    grid-template-areas:
+      "header"
+      "content"
+      "footer";
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    grid-area: unset;
+    position: fixed;
+    top: 75px;
+    bottom: 0;
+    right: 0;
+    width: var(--sidebar-width);
+    max-width: 85vw;
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    padding-top: 16px;
+    background: var(--sidebar-bg, #111);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dashboard-layout.sidebar-open .sidebar {
+    transform: translateX(0);
+  }
+
+  .dashboard-layout.sidebar-open {
+    grid-template-columns: 1fr;
+  }
+
+  .backdrop {
+    display: none;
+  }
+
+  .dashboard-layout.sidebar-open .backdrop {
+    display: block;
+    position: fixed;
+    width: 100%;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+
+  .content {
+    margin: 0px !important;
+    min-width: 0;
+    overflow-x: hidden;
+  }
 }
 
 /* ====== الموبايل (عرض أقل من 992px) ====== */

@@ -11,6 +11,8 @@ import { ClickOutsideDirective } from '../directives/click-outside.directive';
 import { NotificationCardComponent } from './notification-card/notification-card.component';
 import { RecentInteractionsComponent } from './recent-interactions/recent-interactions.component';
 import { DropdownModule } from './dropdown.module';
+import { DetailViewDialogComponent } from './detail-view-dialog/detail-view-dialog.component';
+import { ViewToggleComponent } from './view-toggle/view-toggle.component';
 
 @NgModule({
   declarations: [
@@ -21,6 +23,8 @@ import { DropdownModule } from './dropdown.module';
     ClickOutsideDirective,
     NotificationCardComponent,
     RecentInteractionsComponent,
+    DetailViewDialogComponent,
+    ViewToggleComponent,
   ],
   imports: [
     CommonModule,
@@ -39,6 +43,7 @@ import { DropdownModule } from './dropdown.module';
     NotificationCardComponent,
     RecentInteractionsComponent,
     DropdownModule,
+    ViewToggleComponent,
   ],
 })
 export class SharedComponentsModule {}

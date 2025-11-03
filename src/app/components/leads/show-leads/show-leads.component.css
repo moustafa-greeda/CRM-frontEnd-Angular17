@@ -6,86 +6,57 @@
   overflow: visible;
 }
 
-/* Header Section */
-.header-section {
-  margin-bottom: 32px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
+/* View Toggle Button */
 
-.page-title h1 {
-  font-size: 32px;
-  font-weight: 700;
+.view-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 20px;
+  background: rgba(17, 24, 31, 0.8);
+  border: 1px solid #46e3ff;
+  border-radius: 12px;
   color: #ffffff;
-  margin: 0 0 8px 0;
-}
-
-.breadcrumb {
-  display: flex;
-  align-items: center;
-  gap: 8px;
   font-size: 14px;
-  color: #888888;
-}
-
-.breadcrumb-separator {
-  color: #ff5f00;
-}
-
-.breadcrumb-item.active {
-  color: #ff5f00;
-  font-weight: 600;
-}
-
-/* Action Bar */
-.action-bar {
-  margin-bottom: 24px;
-}
-
-.action-buttons {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-
-/* Primary Button Styling */
-.btn-primary {
-  background: linear-gradient(135deg, #e25400 0%, #ff6b1a 100%);
-  border: none;
-  color: white;
-  padding: 10px 20px;
-  border-radius: 8px;
-  font-weight: 600;
+  font-weight: 500;
+  cursor: pointer;
   transition: all 0.3s ease;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  box-shadow: 0 4px 15px rgba(226, 84, 0, 0.3);
+  backdrop-filter: blur(10px);
 }
 
-.btn-primary:hover:not(:disabled) {
+.view-toggle-btn:hover {
+  background: rgba(70, 227, 255, 0.15);
+  border-color: #ff5f00;
   transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(226, 84, 0, 0.4);
-  background: linear-gradient(135deg, #ff6b1a 0%, #e25400 100%);
+  box-shadow: 0 4px 12px rgba(255, 95, 0, 0.2);
 }
 
-.btn-primary:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-  transform: none;
-  box-shadow: none;
-  background: #6c757d;
-  border-color: #6c757d;
+.view-toggle-btn.active-card {
+  background: rgba(70, 227, 255, 0.2);
+  border-color: #46e3ff;
 }
 
-.btn-primary:disabled:hover {
-  background: #6c757d;
-  border-color: #6c757d;
-  transform: none;
+.view-toggle-btn.active-table {
+  background: rgba(255, 95, 0, 0.2);
+  border-color: #ff5f00;
+}
+
+.view-toggle-btn i {
+  font-size: 18px;
+  transition: transform 0.3s ease;
+}
+
+.view-toggle-btn .toggle-label {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.view-toggle-btn:hover i {
+  transform: scale(1.1);
 }
 
 /**************************** Filter and Search Bar **************/
+
 .filter {
   padding: 10px;
   display: flex;
@@ -147,28 +118,18 @@
   color: #888888;
 }
 
+.parent-left {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+}
 /* ======================= import and export ==================== */
 .parent-import {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 50px;
-}
-
-.parent-import .import-export {
-  display: flex;
-  align-items: center;
-  gap: 30px;
-  padding: 10px;
-  justify-content: space-between;
-  border-radius: 12px;
-  border: 1px solid #46e3ff;
-  background: rgba(17, 24, 31, 0.8);
-}
-.parent-import .import-export svg:hover {
-  color: #fff;
-  font-size: 18px;
-  transform: translateY(-2px);
+  gap: 10px;
 }
 
 .select-all {
@@ -675,7 +636,31 @@
 }
 
 /* Responsive design for import/export section */
+@media (max-width: 1024px) {
+  .filter {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  .filter-search-bar {
+    justify-content: center;
+  }
+  .import-export-section {
+    flex-direction: column;
+    gap: 15px;
+    align-items: stretch;
+  }
+  .import-section,
+  .export-section {
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+}
 @media (max-width: 768px) {
+  .filter {
+    flex-direction: column;
+  }
+
   .import-export-section {
     flex-direction: column;
     gap: 15px;
@@ -700,7 +685,6 @@
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0.5rem;
   background: rgba(17, 24, 31, 0.85);
   border-radius: 8px;
   border: 1px solid #46e3ff;
@@ -790,30 +774,6 @@
   background-color: #ff7e33; /* Hover color */
 }
 
-/* Active page (btn-primary) – make it pop */
-.page-numbers .btn.btn-primary {
-  background: linear-gradient(
-    135deg,
-    #ff7e33 0%,
-    #cc4b00 100%
-  ); /* Active state with gradient */
-  color: #fff;
-  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15),
-    0 8px 20px rgba(13, 110, 253, 0.35);
-}
-
-/* Outline buttons harmonized with dark backgrounds */
-.pagination-buttons .btn.btn-outline-primary {
-  border-color: rgba(13, 110, 253, 0.5);
-  color: #b9d8ff;
-  background: rgba(13, 110, 253, 0.06);
-}
-
-.pagination-buttons .btn.btn-outline-primary:hover {
-  background: rgba(13, 110, 253, 0.12);
-  color: #e6f1ff;
-}
-
 /* Circular icon buttons at edges */
 .pagination-buttons > .btn:first-child,
 .pagination-buttons > .btn:nth-child(2),
@@ -837,7 +797,7 @@
 /* Responsive pagination */
 @media (max-width: 768px) {
   .pagination-controls {
-    flex-direction: column;
+    /* flex-direction: column; */
     gap: 1rem;
     text-align: center;
   }
@@ -855,5 +815,187 @@
     min-width: 40px;
     height: 40px;
     font-size: 0.85rem;
+  }
+}
+
+/* ============================= Table View Styles ============================= */
+.table-view-container {
+  margin-bottom: 32px;
+  overflow-x: auto;
+}
+
+.table-wrapper {
+  background: rgba(17, 24, 31, 0.8);
+  border-radius: 12px;
+  border: 1px solid #46e3ff;
+  overflow: hidden;
+  backdrop-filter: blur(10px);
+}
+
+.leads-table {
+  width: 100%;
+  border-collapse: collapse;
+  color: #ffffff;
+}
+
+.leads-table thead {
+  background: rgba(70, 227, 255, 0.1);
+  border-bottom: 2px solid #46e3ff;
+}
+
+.leads-table th {
+  padding: 16px;
+  text-align: right;
+  font-weight: 600;
+  font-size: 14px;
+  color: #46e3ff;
+  border-bottom: 1px solid rgba(70, 227, 255, 0.2);
+}
+
+.leads-table tbody tr {
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.leads-table tbody tr:hover {
+  background: rgba(70, 227, 255, 0.05);
+}
+
+.leads-table tbody tr.selected {
+  background: rgba(70, 227, 255, 0.15);
+  border-left: 3px solid #46e3ff;
+}
+
+.leads-table td {
+  padding: 14px 16px;
+  text-align: right;
+  font-size: 14px;
+  color: #ffffff;
+}
+
+.leads-table tbody tr.no-data-row {
+  background: transparent;
+}
+
+.leads-table tbody tr.no-data-row:hover {
+  background: transparent;
+}
+
+.no-data-cell {
+  text-align: center;
+  padding: 60px 20px;
+}
+
+.no-data-cell .empty-state-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.no-data-cell .empty-state-content i {
+  font-size: 48px;
+  color: #46e3ff;
+  opacity: 0.5;
+}
+
+.no-data-cell .empty-state-content h3 {
+  color: #ffffff;
+  font-size: 20px;
+  margin: 0;
+}
+
+.no-data-cell .empty-state-content p {
+  color: #9ca3af;
+  font-size: 14px;
+  margin: 0;
+}
+
+.actions-cell {
+  text-align: center;
+}
+
+.table-actions {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+}
+
+.table-actions .action-btn {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 8px;
+  background: rgba(17, 24, 31, 0.8);
+  color: #ffffff;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  padding: 0;
+}
+
+.table-actions .action-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.table-actions .action-btn.view-btn {
+  border-color: #46e3ff;
+  color: #46e3ff;
+}
+
+.table-actions .action-btn.view-btn:hover {
+  background: rgba(70, 227, 255, 0.2);
+  border-color: #46e3ff;
+}
+
+.table-actions .action-btn.edit-btn {
+  border-color: #ffb012;
+  color: #ffb012;
+}
+
+.table-actions .action-btn.edit-btn:hover {
+  background: rgba(255, 176, 18, 0.2);
+  border-color: #ffb012;
+}
+
+.table-actions .action-btn.delete-btn {
+  border-color: #db0000;
+  color: #db0000;
+}
+
+.table-actions .action-btn.delete-btn:hover {
+  background: rgba(219, 0, 0, 0.2);
+  border-color: #db0000;
+}
+
+.table-actions .action-btn i {
+  font-size: 16px;
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+  .table-view-container {
+    overflow-x: auto;
+  }
+
+  .leads-table {
+    min-width: 800px;
+  }
+
+  .view-toggle-container {
+    justify-content: center;
+  }
+
+  .view-toggle-btn {
+    padding: 8px 16px;
+    font-size: 12px;
+  }
+
+  .view-toggle-btn .toggle-label {
+    font-size: 12px;
   }
 }

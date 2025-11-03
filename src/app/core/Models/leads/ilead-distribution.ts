@@ -8,5 +8,6 @@ export interface ILeadDistribution {
   campaignName: string | null;
   leadSourceName: string | null;
   leadStatusName: string | null;
+  assignedTo: string | null;
   createdAt: string;
 }

@@ -1,11 +1,12 @@
 <div class="parent-container">
-  <!-------------- page header ------------->
+  <!-- ---------------------------- Page Header -------------- -->
   <app-page-header
     [title]="pageTitle"
     [breadcrumb]="breadcrumb"
     [actionButtons]="actionButtons"
   ></app-page-header>
-  <!-------------- filter drop down  ------------->
+
+  <!-- ---------------------------- Filter Dropdown -------------- -->
   <div class="filter-dropdown">
     <div class="filter-dropdown-item" *ngFor="let dd of filterDropdowns">
       <div
@@ -36,12 +37,13 @@
     </div>
   </div>
 
-  <!--------------- import and export ------------>
+  <!-- ---------------------------- Search and Actions Bar -------------- -->
   <div class="filter border-gradient thin">
     <!--parent import -->
     <div class="parent-search">
       <!-- search input -->
       <app-search-input
+        class="search-input"
         (search)="onSearchChange($any($event))"
       ></app-search-input>
     </div>
@@ -83,13 +85,17 @@
           <input type="checkbox" class="custom-checkbox" />
         </div>
         <!-- count lead -->
-        <app-count-lead [count]="8" [label]="'عميل'"></app-count-lead>
+        <app-count-lead
+          class="count-lead"
+          [count]="totalCount || 0"
+          [label]="'عميل'"
+        ></app-count-lead>
       </div>
     </div>
   </div>
-  <!--------------------------------------------- distribution layout ----------------------------------->
+  <!-- ---------------------------- Distribution Layout -------------- -->
   <div class="distribution-layout">
-    <!-- Toggle Button -->
+    <!-- ---------------------------- Sidebar Toggle Button -------------- -->
     <button
       class="sidebar-toggle"
       (click)="toggleSidebar()"
@@ -102,18 +108,17 @@
       ></i>
     </button>
 
+    <!-- ---------------------------- Sidebar -------------- -->
     <aside
       class="sidebar border-gradient"
       [class.collapsed]="isSidebarCollapsed"
     >
-      <!-- Collapsed content -->
       <div class="collapsed-content" *ngIf="isSidebarCollapsed">
         <div class="collapsed-text">افتح للتخصيص</div>
       </div>
 
-      <!-- Full content -->
       <div class="full-content" *ngIf="!isSidebarCollapsed">
-        <!-- dropdown -->
+        <!-- ---------------------------- Employee Selection -------------- -->
         <app-dropdown
           [label]="'اختر الموظف'"
           [options]="employeeOptions"
@@ -121,7 +126,7 @@
           (optionSelected)="onEmployeeSelected($event)"
         ></app-dropdown>
 
-        <!-- employee card -->
+        <!-- ---------------------------- Employee Card -------------- -->
         <div class="employee-card" *ngIf="selectedEmployee">
           <div class="avatar-placeholder">
             {{ selectedEmployee.name.charAt(0) }}
@@ -131,26 +136,14 @@
             <div class="role">{{ selectedEmployee.departmentName }}</div>
           </div>
           <div class="count">
-            <app-count-lead [count]="8" [label]="'عميل'"></app-count-lead>
+            <app-count-lead
+              [count]="assignedCustomers.length || 0"
+              [label]="'عميل'"
+            ></app-count-lead>
           </div>
         </div>
 
-        <!-- groups list -->
-        <div class="groups-list">
-          <button
-            class="chip assigned border-gradient"
-            *ngFor="let item of groupsList"
-            (click)="onGroupUnassign(item)"
-          >
-            <span class="dot"></span>
-            <span class="label">{{ item.name }}</span>
-            <i
-              class="bi bi-x close"
-              (click)="onGroupUnassign(item); $event.stopPropagation()"
-            ></i>
-          </button>
-        </div>
-
+        <!-- ---------------------------- Assigned Customers Section -------------- -->
         <div class="section">
           <div class="section-title">المجموعات/العملاء المُخصصة</div>
           <div
@@ -179,6 +172,7 @@
           </div>
         </div>
 
+        <!-- ---------------------------- Sidebar Actions -------------- -->
         <div class="sidebar-actions">
           <button
             class="confirm"
@@ -191,7 +185,7 @@
       </div>
     </aside>
 
-    <!-- table -->
+    <!-- ---------------------------- Table Section -------------- -->
     <div class="table-wrapper">
       <div class="drag-hint" *ngIf="!isSidebarCollapsed">
         <i class="bi bi-arrow-right-circle"></i>
@@ -207,20 +201,14 @@
         [showDataTable]="true"
         [hasNoData]="leadsList.length === 0"
         [pageSize]="pageSize"
-        [currentPage]="currentPage - 1"
+        [currentPage]="currentPage"
         [totalCount]="totalCount"
         [tableClass]="'erb-data-table'"
         [containerClass]="'erb-table-container'"
-        [showView]="false"
+        [showView]="true"
+        [showEdit]="true"
+        [showDelete]="true"
         [showIndex]="true"
-        [showChat]="false"
-        [showChat]="false"
-        [showEmail]="false"
-        [showNote]="false"
-        [showCall]="false"
-        [showMeeting]="false"
-        [showFollowUp]="false"
-        [addButton]="false"
         (rowSelectionChange)="onRowSelectionChange($event)"
         (selectAllChange)="onSelectAllChange($event)"
         (pageChange)="onPageChange($event)"

@@ -1,3 +1,68 @@
+/*---------------------------- Container --------------*/
 .parent-container {
   padding: 15px;
+}
+
+/*---------------------------- Filter Section --------------*/
+.filter-section {
+  margin: 10px 0;
+  padding: 20px;
+  background: rgba(17, 24, 31, 0.8);
+  border-radius: 12px;
+  border: 1px solid rgba(255, 95, 0, 0.2);
+}
+
+/* .search-container {
+  margin-bottom: 20px;
+} */
+
+.dropdown-container {
+  margin-top: 20px;
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.job-id-search {
+  width: 100%;
+  max-width: 500px;
+}
+
+/*---------------------------- Table Container --------------*/
+.table-container {
+  margin-top: 20px;
+}
+/*---------------------------- Empty State --------------*/
+.empty-state {
+  margin-top: 40px;
+  padding: 40px;
+  text-align: center;
+  color: #888;
+  font-size: 16px;
+}
+
+.empty-state p {
+  margin: 0;
+}
+
+/*---------------------------- Loading State --------------*/
+.loading-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  min-height: 200px;
+}
+
+/*---------------------------- Responsive --------------*/
+@media (max-width: 768px) {
+  .dropdown-container {
+    flex-direction: column;
+  }
+
+  .job-id-search {
+    width: 100%;
+    min-width: 100%;
+  }
 }

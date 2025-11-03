@@ -1,4 +1,12 @@
-import { Component, OnInit, Inject, PLATFORM_ID } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  Inject,
+  PLATFORM_ID,
+  Input,
+  Output,
+  EventEmitter,
+} from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../../Auth/login/auth.service';
 
@@ -8,9 +16,15 @@ import { AuthService } from '../../Auth/login/auth.service';
   styleUrls: ['./sidebar.component.css'],
 })
 export class SidebarComponent implements OnInit {
+  @Input() isCollapsed: boolean = false;
+  @Output() toggleCollapse = new EventEmitter<void>();
   roles: string[] = [];
   userType: string | null = null;
   employeeOpen = false;
+
+  onToggle() {
+    this.toggleCollapse.emit();
+  }
 
   constructor(
     private authService: AuthService,
@@ -21,15 +35,6 @@ export class SidebarComponent implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       this.roles = this.authService.getUserRoles();
       this.userType = this.authService.getUserType();
-
-      // Debug logging
-      console.log('Sidebar - Roles:', this.roles);
-      console.log('Sidebar - UserType:', this.userType);
-      console.log('Sidebar - isAdmin():', this.isAdmin());
-      console.log('Sidebar - isTeleSales():', this.isTeleSales());
-      console.log('Sidebar - isSales():', this.isSales());
-      console.log('Sidebar - isAccount():', this.isAccount());
-      console.log('Sidebar - isTech():', this.isTech());
     }
   }
 

@@ -1,0 +1,23 @@
+<button
+  class="view-toggle-btn"
+  [class.active-card]="viewMode === 'card'"
+  [class.active-table]="viewMode === 'table'"
+  (click)="toggle()"
+  [attr.aria-label]="
+    viewMode === 'card' ? 'تبديل إلى عرض الجدول' : 'تبديل إلى عرض البطاقات'
+  "
+>
+  <i
+    class="bi"
+    [class.bi-grid-3x3-gap]="viewMode === 'card'"
+    [class.bi-table]="viewMode === 'table'"
+  ></i>
+  <span class="toggle-label">{{
+    viewMode === "card" ? cardLabel : tableLabel
+  }}</span>
+  <i
+    class="bi"
+    [class.bi-chevron-left]="viewMode === 'card'"
+    [class.bi-chevron-right]="viewMode === 'table'"
+  ></i>
+</button>

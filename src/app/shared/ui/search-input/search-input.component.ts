@@ -20,6 +20,7 @@ import { Component, EventEmitter, Output, Input } from '@angular/core';
   `,
   styles: `
     .search-input-container {
+      width:500px;
       position: relative;
       display: flex;
       align-items: center;
@@ -80,6 +81,11 @@ import { Component, EventEmitter, Output, Input } from '@angular/core';
 
     .search-button i {
       font-size: 16px;
+    }
+    @media (max-width: 1024px) {
+      .search-input-container {
+        width: 100%;
+      }
     }
   `,
 })

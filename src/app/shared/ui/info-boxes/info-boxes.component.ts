@@ -35,13 +35,12 @@ export interface InfoBox {
     background: transparent;
   }
 
-  .client-source:hover {
-    background: rgba(255, 95, 0, 0.15);
-    border-color: #ffb012;
-  }
+  // .client-source:hover {
+  //   background: var(--primary-color);
+  // }
 
   .label {
-    color: #ffb012;
+    color: var(--secondary-color);
     font-weight: 500;
   }
 

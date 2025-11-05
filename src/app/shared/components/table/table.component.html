@@ -42,6 +42,7 @@
         <tr
           *ngFor="let row of data; let i = index"
           [class.selected]="isRowSelected(row)"
+          [class.has-open-dropdown]="openDropdownRowIndex === i"
           draggable="true"
           (dragstart)="onDragStartRow(row, $event)"
           (click)="onRowClick(row, $event)"
@@ -136,83 +137,8 @@
                   <!-- Correct actions case rendered as its own switch case -->
                   <ng-container *ngSwitchCase="'actions'">
                     <div class="action-buttons">
-                      <ng-container
-                        *ngIf="
-                          actionDisplayMode === 'inline';
-                          else dropdownActions
-                        "
-                      >
-                        <!-- Inline Mode -->
-                        <!-- <button
-                          *ngIf="showView"
-                          class="action-btn view-btn"
-                          (click)="onView(row)"
-                        >
-                          <i class="bi bi-eye"></i>
-                        </button>
-                        <button
-                          *ngIf="showEmail"
-                          class="action-btn email-btn"
-                          (click)="onEmail(row)"
-                        >
-                          <i class="bi bi-envelope"></i>
-                        </button>
-                        <button
-                          *ngIf="showCall"
-                          class="action-btn email-btn"
-                          (click)="onCall(row)"
-                        >
-                          <i class="bi bi-telephone"></i>
-                        </button>
-                        <button
-                          *ngIf="showFollowUp"
-                          class="action-btn view-btn"
-                          (click)="onFollowUp(row)"
-                        >
-                          <i class="bi bi-arrow-repeat"></i>
-                        </button>
-                        <button
-                          *ngIf="showDelete"
-                          class="action-btn delete-btn"
-                          (click)="onDelete(row)"
-                        >
-                          <i class="bi bi-trash"></i>
-                        </button>
-                        <button
-                          *ngIf="showEdit"
-                          class="action-btn edit-btn"
-                          (click)="onEdit(row)"
-                        >
-                          <i class="bi bi-pencil"></i>
-                        </button>
-                        <button
-                          *ngIf="showChat"
-                          class="action-btn chat-btn"
-                          (click)="onChat(row)"
-                        >
-                          <i class="bi bi-chat"></i>
-                        </button>
-                        <button
-                          *ngIf="showNote"
-                          class="action-btn email-btn"
-                          (click)="onNote(row)"
-                        >
-                          <i class="bi bi-note"></i>
-                        </button>
-                        <button
-                          *ngIf="showMeeting"
-                          class="action-btn chat-btn"
-                          (click)="onMeeting(row)"
-                        >
-                          <i class="bi bi-calendar"></i>
-                        </button>
-                        <button
-                          *ngIf="showFollowUp"
-                          class="action-btn follow-up-btn"
-                          (click)="onFollowUp(row)"
-                        >
-                          <i class="bi bi-arrow-repeat"></i>
-                        </button> -->
+                      <!-- Inline Mode -->
+                      <ng-container *ngIf="actionDisplayMode === 'inline'">
                         <button
                           class="action-btn view-btn"
                           *ngIf="showView"
@@ -305,91 +231,117 @@
                         </button>
                       </ng-container>
 
-                      <ng-template #dropdownActions>
-                        <!-- Dropdown Mode -->
-                        <button
-                          class="action-btn main-dropdown-btn"
-                          (click)="toggleDropdown(i, $event)"
-                        >
-                          <i class="bi bi-three-dots-vertical"></i>
-                        </button>
-                        <div
-                          *ngIf="openDropdownRowIndex === i"
-                          class="dropdown-menu"
-                        >
-                          <!-- dropdown Mode -->
+                      <!-- Dropdown Mode -->
+                      <ng-container *ngIf="actionDisplayMode === 'dropdown'">
+                        <div class="dropdown-wrapper">
                           <button
-                            *ngIf="showView"
-                            class="action-btn view-btn"
-                            (click)="onView(row)"
+                            class="action-btn main-dropdown-btn"
+                            (click)="toggleDropdown(i, $event)"
+                            type="button"
+                            title="الإجراءات"
+                            [attr.aria-label]="'الإجراءات'"
                           >
-                            <i class="bi bi-eye"></i>
+                            <i class="bi bi-three-dots-vertical"></i>
                           </button>
-                          <button
-                            *ngIf="showEmail"
-                            class="action-btn email-btn"
-                            (click)="onEmail(row)"
+                          <div
+                            *ngIf="openDropdownRowIndex === i"
+                            class="dropdown-menu"
+                            (click)="$event.stopPropagation()"
                           >
-                            <i class="bi bi-envelope"></i>
-                          </button>
-                          <button
-                            *ngIf="showCall"
-                            class="action-btn email-btn"
-                            (click)="onCall(row)"
-                          >
-                            <i class="bi bi-telephone"></i>
-                          </button>
-                          <button
-                            *ngIf="showFollowUp"
-                            class="action-btn view-btn"
-                            (click)="onFollowUp(row)"
-                          >
-                            <i class="bi bi-arrow-repeat"></i>
-                          </button>
-                          <button
-                            *ngIf="showDelete"
-                            class="action-btn delete-btn"
-                            (click)="onDelete(row)"
-                          >
-                            <i class="bi bi-trash"></i>
-                          </button>
-                          <button
-                            *ngIf="showEdit"
-                            class="action-btn edit-btn"
-                            (click)="onEdit(row)"
-                          >
-                            <i class="bi bi-pencil"></i>
-                          </button>
-                          <button
-                            *ngIf="showChat"
-                            class="action-btn chat-btn"
-                            (click)="onChat(row)"
-                          >
-                            <i class="bi bi-chat"></i>
-                          </button>
-                          <button
-                            *ngIf="showNote"
-                            class="action-btn note-btn"
-                            (click)="onNote(row)"
-                          >
-                            <i class="bi bi-note"></i>
-                          </button>
-                          <button
-                            *ngIf="showMeeting"
-                            class="action-btn meeting-btn"
-                            (click)="onMeeting(row)"
-                          >
-                            <i class="bi bi-calendar"></i>
-                          </button>
-                          <button
-                            *ngIf="showFollowUp"
-                            class="action-btn follow-up-btn"
-                            (click)="onFollowUp(row)"
-                          >
-                            <i class="bi bi-arrow-repeat"></i>
-                          </button>
+                            <!---------------------- dropdown Mode -------------------->
+                            <button
+                              *ngIf="showAdd"
+                              class="action-btn add-btn"
+                              (click)="
+                                onAddButton(row); openDropdownRowIndex = null
+                              "
+                            >
+                              <i class="bi bi-plus"></i>
+                              <span>إضافة</span>
+                            </button>
+                            <button
+                              *ngIf="showView"
+                              class="action-btn view-btn"
+                              (click)="onView(row); openDropdownRowIndex = null"
+                            >
+                              <i class="bi bi-eye"></i>
+                              <span>عرض</span>
+                            </button>
+                            <button
+                              *ngIf="showDelete"
+                              class="action-btn delete-btn"
+                              (click)="
+                                onDelete(row); openDropdownRowIndex = null
+                              "
+                            >
+                              <i class="bi bi-trash"></i>
+                              <span>حذف</span>
+                            </button>
+                            <button
+                              *ngIf="showEdit"
+                              class="action-btn edit-btn"
+                              (click)="onEdit(row); openDropdownRowIndex = null"
+                            >
+                              <i class="bi bi-pencil"></i>
+                              <span>تعديل</span>
+                            </button>
+                            <button
+                              *ngIf="showEmail"
+                              class="action-btn email-btn"
+                              (click)="
+                                onEmail(row); openDropdownRowIndex = null
+                              "
+                            >
+                              <i class="bi bi-envelope"></i>
+                              <span>بريد</span>
+                            </button>
+                            <button
+                              *ngIf="showFollowUp"
+                              class="action-btn view-btn"
+                              (click)="
+                                onFollowUp(row); openDropdownRowIndex = null
+                              "
+                            >
+                              <i class="bi bi-arrow-repeat"></i>
+                              <span>متابعة</span>
+                            </button>
+                            <button
+                              *ngIf="showChat"
+                              class="action-btn chat-btn"
+                              (click)="onChat(row); openDropdownRowIndex = null"
+                            >
+                              <i class="bi bi-chat"></i>
+                              <span>محادثة</span>
+                            </button>
+                            <button
+                              *ngIf="showNote"
+                              class="action-btn note-btn"
+                              (click)="onNote(row); openDropdownRowIndex = null"
+                            >
+                              <i class="bi bi-file-earmark-text"></i>
+                              <span>ملاحظة</span>
+                            </button>
+                            <button
+                              *ngIf="showCall"
+                              class="action-btn email-btn"
+                              (click)="onCall(row); openDropdownRowIndex = null"
+                            >
+                              <i class="bi bi-telephone"></i>
+                              <span>مكالمة</span>
+                            </button>
+                            <button
+                              *ngIf="showMeeting"
+                              class="action-btn meeting-btn"
+                              (click)="
+                                onMeeting(row); openDropdownRowIndex = null
+                              "
+                            >
+                              <i class="bi bi-camera-video"></i>
+                              <span>اجتماع</span>
+                            </button>
+                          </div>
                         </div>
-                      </ng-template>
+                      </ng-container>
                     </div>
                   </ng-container>
                   <ng-container *ngSwitchDefault>

@@ -45,9 +45,6 @@ export class LoginComponent {
         this.notify.success({
           title: 'تم تسجيل الدخول',
           description: 'أهلاً بك!',
-          imageUrl: 'assets/logo_elbatt.png',
-          soundUrl: 'assets/sound/duck.mp3',
-          autoCloseMs: 2000,
         });
 
         if (isPlatformBrowser(this.platformId)) {

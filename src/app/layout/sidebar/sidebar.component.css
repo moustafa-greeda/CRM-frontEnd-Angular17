@@ -1,28 +1,33 @@
+/* =========================
+   SIDEBAR BASE STYLES
+========================= */
 .sidebar {
   width: 100%;
-  height: 100%;
-  background: linear-gradient(180deg, #1a1a1a 0%, #2d2d2d 100%);
-  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.3);
-  transition: all 0.3s ease;
+  max-width: 280px;
+  height: 100vh;
   display: flex;
-  justify-content: flex-start;
-  align-items: center;
   flex-direction: column;
-  position: relative;
+  align-items: center;
+  justify-content: flex-start;
+  position: sticky;
+  top: 0;
+  align-self: start;
+  transition: all 0.3s ease;
+  border: 1px solid #46e3ff;
+  background: #04080b;
   overflow-y: auto;
-  overflow-x: visible;
+  overflow-x: hidden;
 }
 
-/* ---------------------------- Sidebar Toggle Button -------------- */
+/* ---------------- Sidebar Toggle Button ---------------- */
 .sidebar-toggle-btn {
   position: absolute;
   top: 20px;
-  left: clac(50% - 10px);
+  left: calc(50% - 35px);
   width: 50px;
   height: 50px;
-  border-radius: 8px;
-  border: 1px solid rgba(255, 95, 0, 0.3);
-  background: rgba(255, 95, 0, 0.1);
+  border-radius: 50%;
+  background: transparent;
   color: #fff;
   display: flex;
   align-items: center;
@@ -31,13 +36,14 @@
   transition: all 0.3s ease;
   z-index: 100;
   padding: 0;
+  border: 1px solid #46e3ff;
 }
 
 .sidebar-toggle-btn:hover {
-  background: rgba(255, 95, 0, 0.2);
-  border-color: rgba(255, 95, 0, 0.5);
+  background: #2d8091;
+  border-color: #46e3ff;
   transform: scale(1.1);
-  box-shadow: 0 4px 12px rgba(255, 95, 0, 0.3);
+  /* box-shadow: 0 4px 12px rgba(255, 95, 0, 0.3); */
 }
 
 .sidebar-toggle-btn i {
@@ -45,6 +51,7 @@
   transition: transform 0.3s ease;
 }
 
+/* Collapsed toggle alignment */
 .sidebar.collapsed .sidebar-toggle-btn {
   left: 50%;
   transform: translateX(-50%);
@@ -54,43 +61,36 @@
   transform: translateX(-50%) scale(1.1);
 }
 
-/* Collapsed sidebar styles */
+/* ---------------- Collapsed Sidebar ---------------- */
 .sidebar.collapsed {
   width: var(--sidebar-collapsed-width);
-  height: 100%;
   align-items: center;
 }
 
 .sidebar.collapsed .menu {
-  padding: 70px 10px;
-  height: 100%;
   width: 100%;
+  height: 100%;
+  padding: 70px 10px;
 }
 
 .sidebar.collapsed ul li a {
   justify-content: center;
   padding: 15px;
-  position: relative;
+  font-size: 0;
+  line-height: 0;
 }
 
 .sidebar.collapsed ul li a .nav-text {
   display: none;
 }
 
-/* Hide direct text content when collapsed - only affects text nodes, not icons */
-.sidebar.collapsed ul li a {
-  font-size: 0;
-  line-height: 0;
-}
-
 .sidebar.collapsed ul li a i {
   margin: 0;
   font-size: 20px !important;
-  line-height: normal;
   display: inline-block;
 }
 
-/* Tooltip using data attribute */
+/* ---------------- Collapsed Tooltip ---------------- */
 .sidebar.collapsed ul li a[data-tooltip]:hover::after {
   content: attr(data-tooltip);
   position: absolute;
@@ -103,7 +103,6 @@
   border-radius: 6px;
   font-size: 14px;
   white-space: nowrap;
-  z-index: 1000;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   pointer-events: none;
 }
@@ -116,16 +115,9 @@
   transform: translateY(-50%);
   border: 6px solid transparent;
   border-left-color: rgba(0, 0, 0, 0.9);
-  z-index: 1001;
-  pointer-events: none;
 }
 
-/* Keep existing tooltip class for items that use it */
-.sidebar.collapsed ul li a:hover .tooltip {
-  opacity: 1;
-}
-
-/* Custom scrollbar */
+/* ---------------- Custom Scrollbar ---------------- */
 .sidebar::-webkit-scrollbar {
   width: 6px;
 }
@@ -136,32 +128,26 @@
 }
 
 .sidebar::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, #ff5f00 0%, #ff7a2f 100%);
+  background: #2d8091;
   border-radius: 3px;
 }
 
-.sidebar::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(180deg, #ff7a2f 0%, #ff5f00 100%);
-}
-/************* logo ***********/
+/* =========================
+   LOGO SECTION
+========================= */
 .sidebar .logo {
-  margin: 80px 0 30px 0;
+  margin: 80px 30px 30px;
   width: 180px;
   height: 70px;
   display: flex;
   justify-content: center;
   align-items: center;
-  background: rgba(255, 95, 0, 0.1);
   border-radius: 15px;
-  border: 2px solid rgba(255, 95, 0, 0.3);
-  box-shadow: 0 4px 15px rgba(255, 95, 0, 0.2);
   transition: all 0.3s ease;
 }
 
 .sidebar .logo:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 95, 0, 0.3);
-  border-color: rgba(255, 95, 0, 0.5);
+  transform: scale(1.02);
 }
 
 .sidebar .logo img {
@@ -171,6 +157,9 @@
   filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
 }
 
+/* =========================
+   MENU & NAV LINKS
+========================= */
 .menu {
   width: 100%;
   height: 100%;
@@ -179,8 +168,8 @@
 
 .sidebar ul {
   width: 100%;
-  padding: 0;
   margin: 0;
+  padding: 0;
   list-style: none;
 }
 
@@ -192,35 +181,75 @@
   position: relative;
 }
 
+/* ------------- Sidebar Link ------------- */
 .sidebar ul li a {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 15px 20px;
   text-decoration: none;
-  color: #ffffff;
+  color: #fff;
   font-size: 16px;
   font-weight: 500;
-  border-radius: 12px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 95, 0, 0.2);
-  backdrop-filter: blur(10px);
+  border-radius: 6px;
+  border-right: 6px solid #46e3ff;
+  background: #0a1114;
   transition: all 0.3s ease;
+  backdrop-filter: blur(10px);
   position: relative;
-  overflow: visible;
-}
-
-.sidebar ul li a .nav-text {
-  flex: 1;
-  text-align: right;
-  transition: opacity 0.3s ease, width 0.3s ease;
+  z-index: 1;
 }
 
 .sidebar ul li a i {
+  font-size: 18px;
   transition: all 0.3s ease;
 }
 
-/* Tooltip for collapsed state */
+/* Hover */
+.sidebar ul li a:hover {
+  transform: translateX(5px) scale(1.01);
+  border-color: rgba(70, 227, 255, 0.8);
+  color: #fff;
+  box-shadow: var(--button-hover-shadow);
+}
+
+.sidebar ul li a:hover i {
+  transform: scale(1.1);
+}
+
+/* Active */
+.sidebar ul li a.active {
+  background: #2d8091;
+  color: #fff !important;
+  border-color: rgba(70, 227, 255, 0.8);
+  box-shadow: 0 8px 25px rgba(70, 227, 255, 0.4);
+  transform: translateX(8px) scale(1.02);
+}
+
+.sidebar ul li a.active i {
+  transform: scale(1.2);
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Hover background animation */
+.sidebar ul li a::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 0;
+  height: 100%;
+  background: linear-gradient(135deg, #2d8091 0%, #2d8091 100%);
+  transition: width 1s ease;
+  border-radius: inherit;
+  z-index: -1;
+}
+
+.sidebar ul li a:hover::before {
+  width: 100%;
+}
+
+/* Tooltip (Collapsed State) */
 .sidebar ul li a .tooltip {
   position: absolute;
   right: calc(100% + 15px);
@@ -235,7 +264,6 @@
   opacity: 0;
   pointer-events: none;
   transition: opacity 0.3s ease;
-  z-index: 1000;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
@@ -253,77 +281,11 @@
   opacity: 1;
 }
 
-.sidebar ul li a::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: -100%;
-  width: 100%;
-  height: 100%;
-  background: linear-gradient(
-    90deg,
-    transparent,
-    rgba(255, 95, 0, 0.1),
-    transparent
-  );
-  transition: left 0.5s ease;
-}
-
-.sidebar ul li a:hover::before {
-  left: 100%;
-}
-
-.sidebar ul li a i {
-  font-size: 18px;
-  color: #ff5f00;
-  transition: all 0.3s ease;
-}
-
-/* Enhanced Active State */
-.sidebar ul li a.active {
-  background: linear-gradient(135deg, #ff5f00 0%, #ff7a2f 100%);
-  color: #ffffff !important;
-  box-shadow: 0 8px 25px rgba(255, 95, 0, 0.4);
-  transform: translateX(8px) scale(1.02);
-  border-color: rgba(255, 95, 0, 0.8);
-}
-
-.sidebar ul li a.active::before {
-  display: none;
-}
-
-.sidebar ul li a.active i {
-  color: #ffffff !important;
-  transform: scale(1.2);
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
-}
-
-/* Hover effects */
-.sidebar ul li a:hover {
-  background: rgba(255, 95, 0, 0.15);
-  color: #ff5f00 !important;
-  transform: translateX(5px) scale(1.01);
-  border-color: rgba(255, 95, 0, 0.5);
-  box-shadow: 0 5px 15px rgba(255, 95, 0, 0.2);
-}
-
-.sidebar ul li a:hover i {
-  color: #ff5f00 !important;
-  transform: scale(1.1);
-}
-
-/* Focus state for accessibility */
-.sidebar ul li a:focus {
-  outline: 2px solid #ff5f00;
-  outline-offset: 2px;
-}
-
-/* nested submenu */
-.sidebar ul li.nav-item {
+/* =========================
+   SUBMENU STYLES
+========================= */
+.nav-item {
   border: none;
-  padding: 0;
-  height: auto;
-  display: block;
   margin: 8px 0;
 }
 
@@ -335,7 +297,6 @@
 .submenu li {
   margin: 4px 0;
   border-radius: 8px;
-  overflow: hidden;
 }
 
 .submenu li a {
@@ -343,6 +304,7 @@
   font-size: 14px;
   background: rgba(255, 255, 255, 0.03);
   border: 1px solid rgba(255, 95, 0, 0.1);
+  transition: all 0.3s ease;
 }
 
 .submenu li a:hover {
@@ -351,21 +313,15 @@
 }
 
 .submenu li a.active {
-  background: linear-gradient(135deg, #ff5f00 0%, #ff7a2f 100%);
+  background: linear-gradient(135deg, #2d8091 0%, #2d8091 100%);
   transform: translateX(5px) scale(1.01);
 }
 
-.nav-sublink {
-  color: #ffffff;
-  text-decoration: none;
-  font-size: 14px;
-  font-weight: 400;
-}
-
-/* button reset for clickable parent */
+/* =========================
+   BUTTON RESET (Parent Click)
+========================= */
 .btn-reset {
   appearance: none;
-  -webkit-appearance: none;
   background: rgba(255, 255, 255, 0.05);
   border: 1px solid rgba(255, 95, 0, 0.2);
   width: 100%;
@@ -376,7 +332,7 @@
   justify-content: space-between;
   align-items: center;
   border-radius: 12px;
-  color: #ffffff;
+  color: #fff;
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
@@ -390,7 +346,9 @@
   transform: translateX(5px);
 }
 
-/* Responsive design */
+/* =========================
+   RESPONSIVE
+========================= */
 @media (max-width: 768px) {
   .sidebar {
     width: 100%;
@@ -398,14 +356,14 @@
     position: relative;
   }
 
-  .sidebar ul li a {
-    padding: 12px 15px;
-    font-size: 14px;
-  }
-
   .sidebar .logo {
     width: 150px;
     height: 60px;
-    margin: 15px 0 20px 0;
+    margin: 15px 0 20px;
+  }
+
+  .sidebar ul li a {
+    padding: 12px 15px;
+    font-size: 14px;
   }
 }

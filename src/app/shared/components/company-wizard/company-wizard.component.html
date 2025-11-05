@@ -3,7 +3,6 @@
     <!-- Header -->
     <div class="wizard-header">
       <h1 class="wizard-title">إضافة شركة جديدة</h1>
-      <p class="wizard-subtitle">إدخل بيانات الشركة الجديدة</p>
     </div>
 
     <!-- Progress Steps -->
@@ -70,10 +69,10 @@
       >
         السابق
       </button>
-
+      <!-- 
       <div class="step-indicator">
         الخطوة {{ currentStep + 1 }} من {{ steps.length }}
-      </div>
+      </div> -->
 
       <button
         *ngIf="currentStep < steps.length - 1"
@@ -95,9 +94,9 @@
         حفظ
       </button>
 
-      <button type="button" class="btn btn-cancel" (click)="onCancel()">
+      <!-- <button type="button" class="btn btn-cancel" (click)="onCancel()">
         إلغاء
-      </button>
+      </button> -->
     </div>
   </div>
 </div>

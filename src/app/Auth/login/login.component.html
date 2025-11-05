@@ -1,10 +1,11 @@
 <div class="parent">
+  <!-- <img src="assets/bg-login.svg" alt="bg-login" class="bg-login" /> -->
   <div class="section">
     <div class="logo">
-      <img src="assets/logo_elbatt.png" alt="logo elbatt" />
+      <img src="assets/logo.svg" alt="logo elbatt" />
     </div>
     <h1>تسجيل الدخول</h1>
-    <form (ngSubmit)="loginUser()" class="form-login">
+    <form (ngSubmit)="loginUser()" class="form-login" autocomplete="off">
       <!-- input user name  -->
       <div class="form-login">
         <label for="name">اسم المستخدم</label>
@@ -14,6 +15,7 @@
           name="login"
           [(ngModel)]="login"
           placeholder="إدخل  إسم المستخدم"
+          autocomplete="off"
           required
         />
         <small class="error" *ngIf="fieldErrors['login']">
@@ -32,6 +34,7 @@
             name="password"
             [(ngModel)]="password"
             placeholder="ادخل كلمة المرور"
+            autocomplete="new-password"
             required
           />
           <i
@@ -48,7 +51,7 @@
       <div class="check-group">
         <!-- <a routerLink="/forget-password">نسيت كلمة السر</a> -->
         <a routerLink="/dashboard/admin/employee">نسيت كلمة السر</a>
-        <input type="checkbox" />
+        <input type="checkbox" class="custom-checkbox" />
       </div>
       <button type="submit">متابعه</button>
 

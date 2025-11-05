@@ -17,6 +17,8 @@ export class CompanyComponent {
   employeeFormConfig = { ...COMPANY_FORM_CONFIG };
 
   pageTitle = 'ادارة الشركات';
+  selectedCompanies: Set<number> = new Set();
+  isAllSelected = false;
   companyList$ = new BehaviorSubject<any[]>([
     {
       id: 1,
@@ -172,12 +174,11 @@ export class CompanyComponent {
   // =============================== form company ===================
   onAddCompany() {
     const dialogRef = this.dialog.open(CompanyWizardComponent, {
-      width: '80vw',
-      maxWidth: '80vw',
+      width: '70vw',
+      maxWidth: '70vw',
       height: '90vh',
       maxHeight: '90vh',
       disableClose: true,
-      // panelClass: 'wizard-dialog',
       panelClass: 'agreement-dialog',
     });
 
@@ -216,6 +217,9 @@ export class CompanyComponent {
     const currentList = this.companyList$.value;
     this.companyList$.next([newCompany, ...currentList]);
 
+    // Update select all state after adding new company
+    this.updateSelectAllState();
+
     // Show success message
     console.log('Company added successfully:', newCompany);
 
@@ -234,5 +238,43 @@ export class CompanyComponent {
 
   trackByCompanyId(index: number, company: any): any {
     return company?.id || index;
+  }
+
+  // =============================== Selection Methods ===================
+  onSelectAllChange(event: Event): void {
+    const isChecked = (event.target as HTMLInputElement).checked;
+    this.isAllSelected = isChecked;
+
+    if (isChecked) {
+      // Select all companies
+      this.companyList$.value.forEach((company) => {
+        this.selectedCompanies.add(company.id);
+      });
+    } else {
+      // Deselect all companies
+      this.selectedCompanies.clear();
+    }
+  }
+
+  onCardSelectionChange(company: any, isSelected: boolean): void {
+    if (isSelected) {
+      this.selectedCompanies.add(company.id);
+    } else {
+      this.selectedCompanies.delete(company.id);
+    }
+
+    // Update select all checkbox state
+    this.updateSelectAllState();
+  }
+
+  isCompanySelected(company: any): boolean {
+    return this.selectedCompanies.has(company.id);
+  }
+
+  private updateSelectAllState(): void {
+    const companyList = this.companyList$.value;
+    this.isAllSelected =
+      companyList.length > 0 &&
+      companyList.every((company) => this.selectedCompanies.has(company.id));
   }
 }

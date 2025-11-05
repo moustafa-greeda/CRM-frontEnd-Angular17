@@ -21,7 +21,7 @@ export class NotifyDialogService {
   open(data: NotifyDialogData) {
     // Set default image if not provided
     if (!data.imageUrl) {
-      data.imageUrl = 'assets/logo_elbatt.png';
+      data.imageUrl = 'assets/logo.svg';
     }
 
     this.state$.next(data);
@@ -37,11 +37,11 @@ export class NotifyDialogService {
       type: 'success',
       title: opts.title ?? 'نجاح',
       iconName: 'bi:check-circle-fill',
-      imageUrl: opts.imageUrl ?? 'assets/logo_elbatt.png',
+      imageUrl: opts.imageUrl ?? 'assets/logo.svg',
       soundUrl: opts.soundUrl ?? 'assets/sound/duck.mp3',
       disableBackdropClose: opts.disableBackdropClose ?? false,
-      ...opts,
       autoCloseMs: opts.autoCloseMs ?? 2000,
+      ...opts, // Spread opts after defaults to allow overriding
     });
   }
 
@@ -50,11 +50,11 @@ export class NotifyDialogService {
       type: 'error',
       title: opts.title ?? 'خطأ',
       iconName: 'bi:x-circle-fill',
-      imageUrl: opts.imageUrl ?? 'assets/logo_elbatt.png',
+      imageUrl: opts.imageUrl ?? 'assets/logo.svg',
       soundUrl: opts.soundUrl ?? 'assets/sound/Failure_Alert.mp3',
       disableBackdropClose: opts.disableBackdropClose ?? false,
-      ...opts,
       autoCloseMs: opts.autoCloseMs ?? 2000,
+      ...opts, // Spread opts after defaults to allow overriding
     });
   }
 }

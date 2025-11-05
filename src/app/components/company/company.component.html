@@ -52,10 +52,13 @@
         <!-- select all -->
         <div class="select-all">
           <p class="select-all-text">تحديد الكل</p>
-          <input type="checkbox" class="custom-checkbox" />
+          <input
+            type="checkbox"
+            class="custom-checkbox"
+            [checked]="isAllSelected"
+            (change)="onSelectAllChange($event)"
+          />
         </div>
-        <!-- count lead -->
-        <!-- <app-count-lead [count]="8" [label]="'عميل'"></app-count-lead> -->
       </div>
     </div>
   </div>
@@ -65,6 +68,8 @@
       *ngFor="let company of companyList$ | async; trackBy: trackByCompanyId"
       [data]="company"
       [selectable]="true"
+      [isSelected]="isCompanySelected(company)"
+      (selectionChange)="onCardSelectionChange(company, $event)"
       [titleKey]="'name'"
       [subTitleKey]="'departmentName'"
       [fields]="[

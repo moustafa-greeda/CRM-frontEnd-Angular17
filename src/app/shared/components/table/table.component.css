@@ -3,18 +3,26 @@
   position: relative;
   margin: 0px auto;
   width: 100%;
+  min-width: 800px; /* Minimum width for the table container */
   height: 70vh; /* Fixed height */
   display: flex;
   flex-direction: column;
-  overflow: visible; /* Allow overflow to be visible */
+  overflow-x: hidden; /* Hide horizontal scrollbar */
+  overflow-y: visible; /* Allow vertical overflow for dropdowns */
   border-radius: 12px;
   border: 1px solid #46e3ff;
   -webkit-overflow-scrolling: touch;
 }
 
+/* Ensure dropdown menus are not clipped by table container */
+.table-container .dropdown-menu {
+  position: absolute !important;
+}
+
 /* Data Table */
 .data-table {
   width: 100%;
+  min-width: 800px; /* Minimum width for the table */
   border-collapse: collapse;
   border-radius: 12px;
   table-layout: fixed;
@@ -26,12 +34,16 @@
 /* Table scroll wrapper */
 .table-scroll-wrapper {
   flex: 1;
-  overflow-y: auto;
-  overflow-x: auto;
+  overflow-y: auto; /* Only vertical scroll */
+  overflow-x: hidden; /* Hide horizontal scrollbar */
   max-height: calc(80vh - 60px); /* Account for paginator height */
   border-radius: 12px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
   background: rgba(17, 24, 31, 0.8);
+  position: relative;
+  min-width: 800px; /* Minimum width for the table */
+  scroll-behavior: smooth; /* Smooth scrolling */
+  -webkit-overflow-scrolling: touch; /* iOS smooth scrolling */
 }
 
 /* Table wrapper for scrolling */
@@ -52,6 +64,13 @@
   word-wrap: break-word;
   overflow-wrap: break-word;
   max-width: 200px;
+  position: relative;
+  overflow: visible;
+}
+
+.data-table td:has(.dropdown-wrapper) {
+  overflow: visible;
+  position: relative;
 }
 
 /* Status chip */
@@ -199,6 +218,30 @@
   background: #1a1a1a;
 }
 
+/* Ensure table rows don't overlap dropdown */
+.data-table tbody tr {
+  position: relative;
+  z-index: 1;
+}
+
+/* Row with open dropdown should be above all other rows */
+.data-table tbody tr.has-open-dropdown {
+  z-index: 10002 !important;
+  position: relative;
+  isolation: isolate !important;
+}
+
+.data-table tbody tr.has-open-dropdown {
+  z-index: 10002 !important;
+  position: relative;
+  isolation: isolate !important;
+}
+
+.data-table tbody tr.has-open-dropdown .dropdown-menu {
+  z-index: 999999 !important;
+  position: absolute !important;
+}
+
 .data-table th {
   background: #11181f;
   color: #e55a2b;
@@ -208,11 +251,15 @@
 /* Row Styling */
 .data-table tr:nth-child(even) {
   background-color: #11181f;
+  position: relative;
+  z-index: 1;
 }
 
 .data-table tr:nth-child(odd) {
   backdrop-filter: blur(10px);
   background-color: rgba(17, 24, 31, 0.7);
+  position: relative;
+  z-index: 1;
 }
 
 .data-table tr:hover {
@@ -221,6 +268,16 @@
   outline: 1px solid #46e3ff;
   transform: translateY(-1px);
   transition: all 0.1s ease-in-out;
+  z-index: 2;
+}
+
+.data-table tr:hover:not(.has-open-dropdown) {
+  z-index: 2 !important;
+}
+
+/* Row with open dropdown should be above others */
+.data-table tbody tr:has(.dropdown-menu[style*="display"]) {
+  z-index: 10002 !important;
 }
 
 .data-table th:first-child,
@@ -375,13 +432,172 @@
   font-weight: 500;
   padding: 20px;
 }
-
+/* ====================== Dropdown Menu Styling ====================== */
 /* Action Buttons Styling */
 .action-buttons {
   display: flex;
   gap: 8px;
   justify-content: center;
   align-items: center;
+  position: relative;
+}
+
+.dropdown-wrapper {
+  position: relative;
+  display: inline-block;
+  width: auto;
+  height: auto;
+  overflow: visible;
+  z-index: 1000;
+}
+
+.dropdown-wrapper .main-dropdown-btn {
+  position: relative;
+  z-index: 10;
+}
+
+/* Ensure dropdown menu stays within table cell */
+.action-buttons {
+  overflow: visible;
+  position: relative;
+  z-index: 1000;
+}
+
+.data-table td:has(.action-buttons) {
+  overflow: visible !important;
+  position: relative;
+  z-index: 1000;
+}
+
+.dropdown-menu {
+  position: absolute !important;
+  background: rgba(17, 24, 31, 0.95) !important;
+  backdrop-filter: blur(10px);
+  border: 1px solid #46e3ff !important;
+  border-radius: 6px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+  padding: 4px;
+  display: flex !important;
+  flex-direction: column;
+  gap: 3px;
+  z-index: 10000 !important;
+  min-width: 120px;
+  max-width: 140px;
+  max-height: 350px;
+  overflow-y: auto;
+  visibility: visible !important;
+  opacity: 1 !important;
+  pointer-events: auto !important;
+  top: calc(100% + 4px) !important;
+  left: 0 !important;
+  right: auto !important;
+  transform: translateZ(0);
+  will-change: transform;
+}
+
+.dropdown-menu .action-btn {
+  width: 100%;
+  justify-content: flex-start;
+  padding: 6px 10px;
+  margin: 0;
+  height: auto;
+  min-height: 32px;
+  gap: 8px;
+  font-size: 12px;
+  border-radius: 4px;
+  border: none !important;
+}
+
+.dropdown-menu .action-btn:hover {
+  border: none !important;
+}
+
+.dropdown-menu .action-btn i {
+  font-size: 14px;
+  flex-shrink: 0;
+}
+
+.dropdown-menu .action-btn span {
+  font-size: 12px;
+  white-space: nowrap;
+  line-height: 1.2;
+}
+
+/* Remove border from all button types inside dropdown menu */
+.dropdown-menu .view-btn,
+.dropdown-menu .edit-btn,
+.dropdown-menu .delete-btn,
+.dropdown-menu .chat-btn,
+.dropdown-menu .email-btn,
+.dropdown-menu .note-btn,
+.dropdown-menu .meeting-btn,
+.dropdown-menu .follow-up-btn,
+.dropdown-menu .add-btn {
+  border: none !important;
+}
+
+.dropdown-menu .view-btn:hover,
+.dropdown-menu .edit-btn:hover,
+.dropdown-menu .delete-btn:hover,
+.dropdown-menu .chat-btn:hover,
+.dropdown-menu .email-btn:hover,
+.dropdown-menu .note-btn:hover,
+.dropdown-menu .meeting-btn:hover,
+.dropdown-menu .follow-up-btn:hover,
+.dropdown-menu .add-btn:hover {
+  border: none !important;
+}
+
+/* Add button styling */
+.add-btn {
+  color: #22c55e;
+  border-radius: 6px;
+  border: 1.5px solid #22c55e;
+  background: rgba(69, 72, 72, 0.38);
+}
+
+.add-btn:hover {
+  color: white;
+  background: #22c55e;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(34, 197, 94, 0.3);
+}
+
+.main-dropdown-btn {
+  color: #46e3ff !important;
+  border: 1.5px solid #46e3ff !important;
+  background: rgba(69, 72, 72, 0.38) !important;
+  width: 32px !important;
+  height: 32px !important;
+  min-width: 32px !important;
+  min-height: 32px !important;
+  display: flex !important;
+  flex-shrink: 0 !important;
+  align-items: center !important;
+  justify-content: center !important;
+  cursor: pointer !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.main-dropdown-btn i {
+  font-size: 18px !important;
+  line-height: 1 !important;
+  display: block !important;
+}
+
+.main-dropdown-btn:hover {
+  color: #fff !important;
+  background: #46e3ff !important;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(70, 227, 255, 0.3);
+}
+
+.main-dropdown-btn i {
+  font-size: 16px;
+  line-height: 1;
 }
 
 .action-btn {
@@ -480,6 +696,64 @@
   box-shadow: 0 4px 8px rgba(69, 72, 72, 0.38);
 }
 
+.dropdown-menu .email-btn:hover {
+  border: none !important;
+}
+
+.note-btn {
+  color: #f59e0b;
+  border-radius: 6px;
+  border: 1.5px solid #f59e0b;
+  background: rgba(69, 72, 72, 0.38);
+}
+
+.note-btn:hover {
+  color: white;
+  background: #f59e0b;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(245, 158, 11, 0.3);
+}
+
+.dropdown-menu .note-btn:hover {
+  border: none !important;
+}
+
+.meeting-btn {
+  color: #8b5cf6;
+  border-radius: 6px;
+  border: 1.5px solid #8b5cf6;
+  background: rgba(69, 72, 72, 0.38);
+}
+
+.meeting-btn:hover {
+  color: white;
+  background: #8b5cf6;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(139, 92, 246, 0.3);
+}
+
+.dropdown-menu .meeting-btn:hover {
+  border: none !important;
+}
+
+.follow-up-btn {
+  color: #10b981;
+  border-radius: 6px;
+  border: 1.5px solid #10b981;
+  background: rgba(69, 72, 72, 0.38);
+}
+
+.follow-up-btn:hover {
+  color: white;
+  background: #10b981;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+.dropdown-menu .follow-up-btn:hover {
+  border: none !important;
+}
+
 /*  */
 /* استهداف عمود الإجراءات حسب ترتيب العمود أو الكلاس */
 /* .data-table th:last-child,
@@ -499,12 +773,6 @@
     height: 28px;
     font-size: 12px;
   }
-  /* .data-table th:last-child,
-  .data-table td:last-child {
-    width: 100px !important;
-    min-width: 50px !important;
-    text-align: center;
-  } */
 }
 
 /* Responsive Table */
@@ -685,4 +953,86 @@
     display: flex;
     align-items: center;
   }
+}
+
+/* ========================== Custom Scrollbar Styling ====================== */
+/* Webkit browsers (Chrome, Safari, Edge) - Vertical Scrollbar */
+.table-scroll-wrapper::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-track {
+  background: rgba(17, 24, 31, 0.5);
+  border-radius: 10px;
+  margin: 5px;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #46e3ff 0%, #2fb3d1 100%);
+  border-radius: 10px;
+  border: 2px solid rgba(17, 24, 31, 0.5);
+  transition: all 0.3s ease;
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #5ee8ff 0%, #46e3ff 100%);
+  border-color: rgba(70, 227, 255, 0.8);
+  box-shadow: 0 0 8px rgba(70, 227, 255, 0.5);
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-thumb:active {
+  background: linear-gradient(180deg, #2fb3d1 0%, #1d8ca8 100%);
+}
+
+.table-scroll-wrapper::-webkit-scrollbar-corner {
+  background: rgba(17, 24, 31, 0.5);
+}
+
+/* Horizontal Scrollbar Styling - Applied when overflow-x is auto */
+/* Note: The same scrollbar styles apply to both vertical and horizontal */
+/* The gradient direction changes based on scrollbar orientation automatically */
+
+/* Table Container Horizontal Scrollbar */
+.table-container::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.table-container::-webkit-scrollbar-track {
+  background: rgba(17, 24, 31, 0.5);
+  border-radius: 10px;
+  margin: 5px;
+}
+
+.table-container::-webkit-scrollbar-thumb {
+  background: #5ee8ff;
+  border-radius: 10px;
+  border: 2px solid rgba(17, 24, 31, 0.5);
+  transition: all 0.3s ease;
+}
+
+.table-container::-webkit-scrollbar-thumb:hover {
+  background: #77f0ff;
+  border-color: rgba(94, 232, 255, 0.8);
+  box-shadow: 0 0 8px rgba(94, 232, 255, 0.5);
+}
+
+.table-container::-webkit-scrollbar-thumb:active {
+  background: #46e3ff;
+}
+
+.table-container::-webkit-scrollbar-corner {
+  background: rgba(17, 24, 31, 0.5);
+}
+
+/* Firefox - Both Vertical and Horizontal */
+.table-scroll-wrapper {
+  scrollbar-width: thin;
+  scrollbar-color: #46e3ff rgba(17, 24, 31, 0.5);
+}
+
+.table-container {
+  scrollbar-width: thin;
+  scrollbar-color: #5ee8ff rgba(17, 24, 31, 0.5);
 }

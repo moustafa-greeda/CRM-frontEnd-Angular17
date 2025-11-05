@@ -16,7 +16,11 @@
     </div>
 
     <div class="nd-media" *ngIf="d.imageUrl">
-      <img [src]="d.imageUrl" alt="" />
+      <img
+        [src]="d.imageUrl"
+        [alt]="d.title || 'صورة'"
+        (error)="onImageError($event)"
+      />
     </div>
 
     <p class="nd-desc" *ngIf="d.description">{{ d.description }}</p>

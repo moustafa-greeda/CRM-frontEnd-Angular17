@@ -17,16 +17,16 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 14px;
+  font-size: 18px;
   color: #888888;
 }
 
 .breadcrumb-separator {
-  color: #ff5f00;
+  color: #888888;
 }
 
 .breadcrumb-item.active {
-  color: #ff5f00;
+  color: var(--primary-color);
   font-weight: 600;
 }
 
@@ -36,6 +36,6 @@
 
 .action-buttons {
   display: flex;
-  gap: 12px;
+  gap: 20px;
   align-items: center;
 }

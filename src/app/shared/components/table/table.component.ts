@@ -3,8 +3,6 @@ import {
   Input,
   Output,
   EventEmitter,
-  OnChanges,
-  SimpleChanges,
   ViewChild,
   AfterViewInit,
 } from '@angular/core';
@@ -13,9 +11,9 @@ import { MatPaginator, PageEvent } from '@angular/material/paginator';
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
-  styleUrl: './table.component.css',
+  styleUrls: ['./table.component.css'],
 })
-export class TableComponent implements OnChanges, AfterViewInit {
+export class TableComponent implements AfterViewInit {
   @Input() data: any[] = [];
   @Input() columns: {
     key: string;
@@ -48,6 +46,15 @@ export class TableComponent implements OnChanges, AfterViewInit {
   @Input() addButton: boolean = false;
   // Actions display mode: 'inline' buttons or single dropdown menu
   @Input() actionDisplayMode: 'inline' | 'dropdown' = 'inline';
+
+  // Getter to debug actionDisplayMode value
+  get displayMode(): string {
+    console.log(
+      'TableComponent getter - actionDisplayMode:',
+      this.actionDisplayMode
+    );
+    return this.actionDisplayMode;
+  }
 
   // Lead status editing properties
   @Input() leadStatusOptions: string[] = [];
@@ -111,6 +118,9 @@ export class TableComponent implements OnChanges, AfterViewInit {
   openDropdownRowIndex: number | null = null;
 
   ngAfterViewInit() {
+    // Debug: Log actionDisplayMode value
+    console.log('TableComponent - actionDisplayMode:', this.actionDisplayMode);
+
     // Listen for page changes (includes page size changes)
     if (this.paginator) {
       this.paginator.page.subscribe((event: PageEvent) => {
@@ -124,14 +134,13 @@ export class TableComponent implements OnChanges, AfterViewInit {
     // Close dropdown when clicking outside
     document.addEventListener('click', (event: MouseEvent) => {
       const target = event.target as HTMLElement;
-      if (!target.closest('.dropdown')) {
+      if (
+        !target.closest('.action-buttons') &&
+        !target.closest('.dropdown-menu')
+      ) {
         this.openDropdownRowIndex = null;
       }
     });
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    // Handle input changes if needed
   }
 
   isRowSelected(row: any) {
@@ -287,16 +296,33 @@ export class TableComponent implements OnChanges, AfterViewInit {
 
   toggleDropdown(rowIndex: number, event: MouseEvent) {
     event.stopPropagation();
-    this.openDropdownRowIndex =
-      this.openDropdownRowIndex === rowIndex ? null : rowIndex;
+    event.preventDefault();
+
+    const wasOpen = this.openDropdownRowIndex === rowIndex;
+    this.openDropdownRowIndex = wasOpen ? null : rowIndex;
 
     // Position the dropdown with fixed coordinates to avoid overflow clipping
-    const target = event.currentTarget as HTMLElement;
-    if (target) {
-      const rect = target.getBoundingClientRect();
-      // Place menu below the button, align right edge
-      this.dropdownPosition.top = rect.bottom + 4;
-      this.dropdownPosition.left = rect.right - 160; // 160px ~ menu width
+    if (!wasOpen) {
+      const target = event.currentTarget as HTMLElement;
+      if (target) {
+        const rect = target.getBoundingClientRect();
+        // Place menu below the button - use getBoundingClientRect which gives viewport coordinates
+        this.dropdownPosition.top = rect.bottom + 4;
+        // Align right edge of menu with right edge of button
+        this.dropdownPosition.left = rect.right - 160; // 160px ~ menu width
+
+        // Ensure dropdown is visible - log for debugging
+        console.log('Dropdown opened at row:', rowIndex);
+        console.log('Button position:', {
+          top: rect.top,
+          bottom: rect.bottom,
+          left: rect.left,
+          right: rect.right,
+        });
+        console.log('Dropdown position:', this.dropdownPosition);
+      }
+    } else {
+      console.log('Dropdown closed for row:', rowIndex);
     }
   }
 

@@ -5,18 +5,17 @@
     </button>
 
     <div class="user-details">
-      <span class="user-name">Andy Warhol</span>
-      <span class="user-email">email</span>
+      <span class="user-name">{{ getUserName() }}</span>
+      <span class="user-email">{{
+        getUserEmail() || "لا يوجد بريد إلكتروني"
+      }}</span>
     </div>
-    <img
-      src="../../../assets/logo_elbatt.png"
-      alt="User Profile"
-      class="profile-pic"
-    />
+    <div class="avatar-circle" *ngIf="getFirstNameChar()">
+      <span class="avatar-text">{{ getFirstNameChar() }}</span>
+    </div>
   </div>
 
-  <div class="icons">
-    <!-- icon toggel them -->
+  <!-- <div class="icons">
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="38"
@@ -31,7 +30,6 @@
         fill="white"
       />
     </svg>
-    <!-- icon bell -->
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="24"
@@ -47,7 +45,6 @@
       <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"></path>
       <path d="M13.73 21a2 2 0 0 1-3.46 0"></path>
     </svg>
-    <!-- translate -->
     <div class="info-item">
       <svg
         xmlns="http://www.w3.org/2000/svg"
@@ -75,7 +72,6 @@
         />
       </svg>
     </div>
-    <!-- search -->
     <div class="search-box">
       <input type="text" placeholder="Search..." />
       <svg
@@ -94,7 +90,7 @@
         <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
       </svg>
     </div>
-  </div>
+  </div> -->
 
   <div class="header-left">
     <button class="logout-btn" (click)="logout()">تسجيل خروج</button>

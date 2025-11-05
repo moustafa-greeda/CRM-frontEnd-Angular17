@@ -45,6 +45,9 @@ export class DashboardTelesalesComponent implements OnInit {
     { key: 'actionNote', header: 'ملاحظة الإجراء' },
     { key: 'actions', header: 'الإجراءات' },
   ];
+
+  // Action display mode for table
+  actionDisplayMode: 'inline' | 'dropdown' = 'dropdown';
   // Filters
   countryList: ICountry[] = [];
   cityList: ICity[] = [];
@@ -114,6 +117,12 @@ export class DashboardTelesalesComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    // Debug: Log actionDisplayMode value
+    console.log(
+      'DashboardTelesalesComponent - actionDisplayMode:',
+      this.actionDisplayMode
+    );
+
     // Get username from auth service
     const username = this._authService.getUsername();
 

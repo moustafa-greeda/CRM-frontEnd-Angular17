@@ -100,11 +100,8 @@ export class AuthService {
     try {
       const userData = this.getUserData();
       const userType = userData?.userType || userData?.userTypeName || null;
-      console.log('AuthService - getUserType - userData:', userData);
-      console.log('AuthService - getUserType - result:', userType);
       return userType;
     } catch (error) {
-      console.error('Error getting user type:', error);
       return null;
     }
   }
@@ -188,6 +185,35 @@ export class AuthService {
       return localStorage.getItem('username');
     }
     return null;
+  }
+
+  /**
+   * Get user email from sessionStorage or userData
+   */
+  getUserEmail(): string | null {
+    if (!isPlatformBrowser(this.platformId)) {
+      return null;
+    }
+
+    try {
+      const userData = this.getUserData();
+      if (userData) {
+        // Try different possible property names for email
+        return (
+          userData.email ||
+          userData.Email ||
+          userData.login ||
+          userData.Login ||
+          userData.userEmail ||
+          userData.userEmailAddress ||
+          null
+        );
+      }
+      return null;
+    } catch (error) {
+      console.error('Error getting user email:', error);
+      return null;
+    }
   }
 
   /**

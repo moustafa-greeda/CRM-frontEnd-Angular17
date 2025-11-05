@@ -46,6 +46,7 @@ export class DashboardSalesComponent implements OnInit {
   cityList: ICity[] = [];
   actionDateFilterOptions: string[] = ['اليوم', 'آخر 7 أيام', 'آخر 30 يوم'];
   selectedActionDateFilter: string = '--';
+  actionDisplayMode: 'inline' | 'dropdown' = 'dropdown';
 
   // Derived option lists for dropdowns (template-safe)
   get countryNames(): string[] {

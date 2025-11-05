@@ -2,7 +2,6 @@ import { Component, Inject, Input, Output, EventEmitter } from '@angular/core';
 import { Router } from '@angular/router';
 import { ThemeService } from '../../core/services/theme.service';
 import { AuthService } from '../../Auth/login/auth.service';
-import { isPlatformBrowser } from '@angular/common';
 import { PLATFORM_ID } from '@angular/core';
 
 @Component({
@@ -36,5 +35,22 @@ export class HeaderComponent {
 
   logout() {
     this.authService.logout();
+  }
+
+  getUserName(): string | null {
+    return this.authService.getUsername();
+  }
+
+  getUserEmail(): string | null {
+    return this.authService.getUserEmail();
+  }
+
+  getFirstNameChar(): string {
+    const name = this.getUserName();
+    if (name && name.length > 0) {
+      // Get first character and convert to uppercase
+      return name.charAt(0).toUpperCase();
+    }
+    return '';
   }
 }

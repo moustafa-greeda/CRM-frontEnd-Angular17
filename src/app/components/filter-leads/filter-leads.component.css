@@ -1,9 +1,8 @@
-
 .filter-leads-container {
   position: relative;
   min-height: 85vh;
   padding: 20px;
-  background-image: url('../../../assets/bg-filter.svg');
+  /* background-image: url("./assets/bg-filter.svg"); */
   background-size: cover;
   background-position: center;
   overflow: hidden;
@@ -11,13 +10,13 @@
 
 /* Overlay */
 .filter-leads-container::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(17, 24, 31, 0.7); 
+  background: rgba(17, 24, 31, 0.7);
 
   z-index: 0;
 }
@@ -34,7 +33,7 @@
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 10px;
   margin-bottom: 50px;
-  background: rgba(17, 24, 31, 0.7);   ;
+  background: rgba(17, 24, 31, 0.7);
   padding: 12px;
   border-radius: 15px;
   border: 1px solid rgba(255, 255, 255, 0.05);
@@ -67,14 +66,13 @@
   background: linear-gradient(145deg, #3a3a3a, #2a2a2a);
   color: #fff;
   transform: perspective(1000px) rotateX(-5deg) translateY(-3px);
-  box-shadow: 
-    0 8px 15px rgba(0, 0, 0, 0.4),
+  box-shadow: 0 8px 15px rgba(0, 0, 0, 0.4),
     inset 0 1px 0 rgba(255, 255, 255, 0.2);
   border-color: rgba(255, 255, 255, 0.2);
 }
 
 .nav-tab.active {
-  background:#ff6b35;
+  background: #ff6b35;
   color: #fff;
   transform: perspective(1000px) rotateX(-3deg) translateY(-2px);
   border-color: rgba(255, 107, 53, 0.5);
@@ -118,7 +116,11 @@
 }
 
 .tab-count {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.3),
+    rgba(255, 255, 255, 0.1)
+  );
   padding: 4px 8px;
   border-radius: 12px;
   font-size: 12px;
@@ -128,8 +130,7 @@
   z-index: 1;
   position: relative;
   border: 1px solid rgba(255, 255, 255, 0.2);
-  box-shadow: 
-    0 2px 4px rgba(0, 0, 0, 0.2),
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2),
     inset 0 1px 0 rgba(255, 255, 255, 0.3);
   transition: all 0.3s ease;
   transform: perspective(1000px) rotateX(0deg);
@@ -137,18 +138,24 @@
 }
 
 .nav-tab:hover .tab-count {
-  background: linear-gradient(145deg, rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0.2));
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.4),
+    rgba(255, 255, 255, 0.2)
+  );
   transform: perspective(1000px) rotateX(-10deg) translateZ(5px);
-  box-shadow: 
-    0 4px 8px rgba(0, 0, 0, 0.3),
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
 .nav-tab.active .tab-count {
-  background: linear-gradient(145deg, rgba(255, 107, 53, 0.8), rgba(255, 107, 53, 0.6));
+  background: linear-gradient(
+    145deg,
+    rgba(255, 107, 53, 0.8),
+    rgba(255, 107, 53, 0.6)
+  );
   transform: perspective(1000px) rotateX(-5deg) translateZ(8px);
-  box-shadow: 
-    0 4px 10px rgba(255, 107, 53, 0.3),
+  box-shadow: 0 4px 10px rgba(255, 107, 53, 0.3),
     inset 0 1px 0 rgba(255, 255, 255, 0.4);
 }
 
@@ -176,7 +183,7 @@
 
 /* Arrow glow effect */
 .tab-arrow::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -190,7 +197,11 @@
 
 /* Arrow bounce animation */
 @keyframes arrowBounce {
-  0%, 20%, 50%, 80%, 100% {
+  0%,
+  20%,
+  50%,
+  80%,
+  100% {
     transform: translateX(-50%) translateY(0);
   }
   40% {
@@ -203,7 +214,8 @@
 
 /* Arrow glow animation */
 @keyframes arrowGlow {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 0.6;
     transform: translate(-50%, -50%) scale(1);
   }
@@ -259,10 +271,10 @@
   flex-direction: column;
   gap: 20px;
   /* background-color: red; */
-  border: 1px solid #46E3FF;
+  border: 1px solid #46e3ff;
   border-radius: 12px;
   margin-top: 20px;
-  padding-top: 10px; 
+  padding-top: 10px;
 }
 
 /*=========================================== Responsive Design =============================*/
@@ -270,31 +282,31 @@
   .filter-leads-container {
     padding: 15px;
   }
-  
+
   .nav-tabs {
     flex-direction: column;
     gap: 5px;
-    margin-bottom: 40px; 
+    margin-bottom: 40px;
   }
-  
+
   .nav-tab {
     justify-content: center;
     padding: 15px 20px;
   }
-  
+
   /* Adjust arrow for mobile */
   .tab-arrow {
     bottom: -12px;
   }
-  
+
   .tab-arrow mat-icon {
     font-size: 24px;
     width: 24px;
     height: 24px;
   }
-  
+
   .tables-container {
-    margin-top: 15px; 
+    margin-top: 15px;
   }
 }
 

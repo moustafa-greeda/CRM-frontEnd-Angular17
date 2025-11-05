@@ -57,12 +57,11 @@
 .form-select:focus,
 .form-textarea:focus {
   outline: none;
-  border-color: #ff5f00;
-  box-shadow: 0 0 0 2px rgba(255, 95, 0, 0.2);
+  border-color: var(--primary-color);
   background: rgba(255, 255, 255, 0.08);
 }
 
-.form-input::placeholder,
+.form-select .form-input::placeholder,
 .form-textarea::placeholder {
   color: #9fb2c9;
 }

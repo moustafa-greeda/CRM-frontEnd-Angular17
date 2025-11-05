@@ -10,9 +10,9 @@
 /* dark mode friendly */
 @media (prefers-color-scheme: dark) {
   :root {
-    --nd-bg: #0b0f1a; /* deep slate */
-    --nd-fg: #e2e8f0; /* slate-200 */
-    --nd-muted: #94a3b8; /* slate-400 */
+    --nd-bg: #0b0f1a;
+    --nd-fg: #e2e8f0;
+    --nd-muted: #94a3b8;
     --nd-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
   }
 }
@@ -80,23 +80,31 @@
 .nd-desc {
   margin: 6px 0 12px;
   line-height: 1.55;
-  color: #e36012;
+  color: #fff;
 }
 
 /* media */
 .nd-media {
-  display: grid;
-  place-items: center;
-  padding: 8px;
-  border-radius: 12px;
-  background: rgba(0, 0, 0, 0.04);
-  border: 1px dashed rgba(0, 0, 0, 0.08);
-  margin: 8px 0 6px;
+  display: grid !important;
+  place-items: center !important;
+  padding: 16px !important;
+  border-radius: 12px !important;
+  border: 1px dashed rgba(0, 0, 0, 0.08) !important;
+  margin: 8px 0 6px !important;
+  min-height: 100px !important;
+  width: 100% !important;
 }
 .nd-media img {
-  max-width: 100%;
-  border-radius: 10px;
-  display: block;
+  max-width: 100% !important;
+  max-height: 200px !important;
+  min-height: 80px !important;
+  width: auto !important;
+  height: auto !important;
+  border-radius: 10px !important;
+  display: block !important;
+  object-fit: contain !important;
+  visibility: visible !important;
+  opacity: 1 !important;
 }
 
 /* actions */
@@ -175,24 +183,16 @@
 .nd-accent {
   width: 52px;
   height: 52px;
-  border-radius: 50%; /* دائرة حقيقية */
+  border-radius: 50%;
   display: grid;
   place-items: center;
   background: var(--nd-accent);
-  color: #fff; /* أيقونة بيضاء (currentColor) */
+  color: #fff;
   box-shadow: 0 0 18px color-mix(in oklab, var(--nd-accent) 60%, transparent);
 }
 
-/* أيقونة Iconify داخل الدائرة */
 .nd-accent iconify-icon {
   width: 26px;
   height: 26px;
-  color: #fff; /* تأكيد اللون الأبيض */
+  color: #fff;
 }
-
-/* احذف/علّق هذه القاعدة القديمة لأنها كانت تمنع الخلفية الصلبة */
-/* .nd-accent {
-      background: color-mix(in oklab, var(--nd-accent) 18%, transparent);
-      border-radius: 12px;
-    }
- */

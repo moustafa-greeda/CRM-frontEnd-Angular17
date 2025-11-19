@@ -1,0 +1,82 @@
+/* ============================================================================
+   ANIMATIONS & KEYFRAMES
+   ============================================================================
+   Reusable animations and keyframe definitions.
+   ============================================================================ */
+
+/* ========== Fade In Scale (Notify Dialog) ========== */
+@keyframes fade-in-scale {
+  from {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ========== Fade Out Scale ========== */
+@keyframes fade-out-scale {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.85);
+  }
+}
+
+/* ========== Fade Up Dialog ========== */
+@keyframes fade-up-dialog {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.65);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/* ========== Fade In Backdrop ========== */
+@keyframes fade-in-backdrop {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ========== Gradient Shift ========== */
+@keyframes gradient-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* ========== Animation Utilities ========== */
+.animate-fade-in {
+  animation: fade-in-scale var(--transition-normal) ease-out;
+}
+
+.animate-fade-up {
+  animation: fade-up-dialog 0.6s ease-out;
+}
+
+.animate-gradient {
+  animation: gradient-shift 3s ease infinite;
+}
+
+
+
+
+

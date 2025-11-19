@@ -1,0 +1,70 @@
+<section class="dashboard-info">
+  <!-- page header -->
+  <app-page-header
+    [title]="pageTitle"
+    [breadcrumb]="breadcrumb"
+  ></app-page-header>
+  <app-count-card [stats]="stats"></app-count-card>
+  <app-first-charts></app-first-charts>
+
+  <!-- ==================================== GetTransferredLeadsToSales ============================ -->
+  <div class="table-container">
+    <app-table [data]="transferredLeads" [columns]="transferredLeadsColumns">
+    </app-table>
+  </div>
+
+  <!-- أفضل 3 مندوبين -->
+  <div class="top-salespeople-section border-card">
+    <span class="corner tl"></span>
+    <span class="corner tr"></span>
+    <span class="corner bl"></span>
+    <span class="corner br"></span>
+    <h2 class="section-title">أفضل 3 مندوبين</h2>
+    <div class="salespeople-list">
+      <div
+        *ngFor="let person of topSalespeople"
+        class="salesperson-card"
+        [class.rank-1]="person.rank === 1"
+        [class.rank-2]="person.rank === 2"
+        [class.rank-3]="person.rank === 3"
+      >
+        <div class="salesperson-content">
+          <div class="profile-section">
+            <!-- Medal Badge -->
+            <div class="medal-badge">
+              <img
+                class="medal-icon"
+                [src]="getMedalIcon(person.rank)"
+                alt="medal"
+              />
+              <span class="medal-number">{{ person.rank }}</span>
+            </div>
+            <div class="profile-image-wrapper">
+              <!-- Profile Image -->
+              <img
+                [src]="person.profileImage"
+                [alt]="person.name"
+                class="profile-image"
+              />
+            </div>
+            <h3 class="salesperson-name">{{ person.name }}</h3>
+          </div>
+
+          <!-- <div class="stat-item">
+            <span class="stat-label">إجمالي المبيعات</span>
+            <span class="stat-value">{{
+              formatCurrency(person.totalSales)
+            }}</span>
+          </div> -->
+
+          <!-- <div class="sales-stats"> -->
+          <div class="stat-item">
+            <span class="stat-label">إجمالي الصفقات</span>
+            <span class="stat-value">{{ person.totalDeals }} صفقة مغلقة</span>
+          </div>
+        </div>
+        <!-- </div> -->
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,112 @@
+/* ============================================================================
+   FORMS & INPUTS
+   ============================================================================
+   Form elements, inputs, textareas, and form-related styles.
+   ============================================================================ */
+
+/* ========== Form Fields Grid ========== */
+.form-fields {
+  display: grid;
+  gap: var(--spacing-md);
+}
+
+/* ========== Input Base ========== */
+input[type="text"],
+input[type="email"],
+input[type="password"],
+input[type="number"],
+input[type="tel"],
+input[type="url"],
+textarea,
+select {
+  width: 100%;
+  padding: var(--spacing-sm) var(--spacing-md);
+  border: 1px solid var(--input-border);
+  border-radius: var(--radius-md);
+  background: var(--input-bg);
+  color: var(--text-color);
+  font-family: inherit;
+  font-size: inherit;
+  transition: all var(--transition-fast);
+}
+
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  border-color: var(--input-focus);
+  box-shadow: 0 0 0 3px rgba(81, 192, 158, 0.1);
+}
+
+/* ========== Textarea ========== */
+textarea {
+  resize: vertical;
+  min-height: 100px;
+}
+
+/* ========== Select ========== */
+select {
+  cursor: pointer;
+  appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%2346e3ff' d='M6 9L1 4h10z'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right var(--spacing-sm) center;
+  padding-right: calc(var(--spacing-md) + 20px);
+}
+
+[dir="rtl"] select {
+  background-position: left var(--spacing-sm) center;
+  padding-right: var(--spacing-md);
+  padding-left: calc(var(--spacing-md) + 20px);
+}
+
+/* ========== Input States ========== */
+input:invalid,
+textarea:invalid,
+select:invalid {
+  border-color: var(--input-error);
+}
+
+input:disabled,
+textarea:disabled,
+select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* ========== Form Labels ========== */
+label {
+  display: block;
+  margin-bottom: var(--spacing-xs);
+  font-weight: 500;
+  color: var(--text-color);
+}
+
+/* ========== Form Groups ========== */
+.form-group {
+  margin-bottom: var(--spacing-md);
+}
+
+.form-row {
+  display: flex;
+  gap: var(--spacing-md);
+}
+
+/* ========== Error Messages ========== */
+.error-message {
+  color: var(--input-error);
+  font-size: 0.875rem;
+  margin-top: var(--spacing-xs);
+}
+
+/* ========== Helper Text ========== */
+.helper-text {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+  margin-top: var(--spacing-xs);
+}
+
+
+
+
+

@@ -1,0 +1,104 @@
+<div class="wizard-wrapper">
+  <div class="wizard-title">
+    <h1>بيانات العملاء</h1>
+    <div class="breadcrumb">
+      <span>الرئيسية > إضافة العملاء</span>
+    </div>
+  </div>
+
+  <div class="parentwizard">
+    <div class="wizard-container">
+      <!-- Header Section -->
+      <div class="wizard-header">
+        <button
+          type="button"
+          class="wizard-close-btn"
+          (click)="onCancel()"
+          title="إغلاق"
+        >
+          <img src="assets/icon/close-icon.svg" alt="إغلاق" loading="lazy" />
+        </button>
+        <div class="wizard-title">
+          <h1>اضافة عميل جديد</h1>
+          <p class="wizard-description">ادخال بيانات العميل الجديد</p>
+        </div>
+        <!-- Step Navigation Tabs -->
+        <div class="step-tabs">
+          <div
+            *ngFor="let step of stepTitles; let i = index"
+            class="step-tab"
+            [class.active]="isCurrentStep(i)"
+            [class.completed]="isStepCompleted(i)"
+            (click)="jumpToStep(i)"
+          >
+            {{ step }}
+          </div>
+        </div>
+
+        <!-- Progress Indicator -->
+        <div class="progress-indicator">
+          <div class="progress-bar">
+            <div
+              class="progress-fill"
+              [style.width.%]="getProgressPercentage()"
+            ></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Form Container -->
+      <div class="form-container">
+        <!-- Step 0: البيانات الشخصية (includes Address) -->
+        <div class="wizard-form" *ngIf="currentStep === 0">
+          <app-step1
+            [wizardComponent]="this"
+            [jobLevels]="jobLevels"
+            [countries]="countries"
+            [cities]="cities"
+            [@slideAnimation]
+            #step1Ref
+          ></app-step1>
+        </div>
+
+        <!-- Step 1: وسائل التواصل الاجتماعي -->
+        <div class="wizard-form" *ngIf="currentStep === 1">
+          <app-step3
+            [wizardComponent]="this"
+            [@slideAnimation]
+            #step3Ref
+          ></app-step3>
+        </div>
+
+        <!-- Navigation Buttons -->
+        <div class="navigation-buttons">
+          <button
+            type="button"
+            class="btn btn-previous"
+            (click)="previousStep()"
+            [disabled]="currentStep <= 0"
+          >
+            السابق
+          </button>
+
+          <button
+            *ngIf="currentStep < 1"
+            type="button"
+            class="btn btn-next"
+            (click)="nextStep()"
+          >
+            التالي
+          </button>
+
+          <button
+            *ngIf="currentStep === 1"
+            type="button"
+            class="btn btn-submit"
+            (click)="submitForm()"
+          >
+            إرسال
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

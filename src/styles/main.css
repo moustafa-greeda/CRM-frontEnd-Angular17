@@ -1,0 +1,33 @@
+/* ============================================================================
+   MAIN STYLESHEET
+   ============================================================================
+   This is the main entry point for all styles.
+   Import order matters - variables must come first.
+   ============================================================================ */
+
+/* ========== 1. Variables & Themes ========== */
+@import "./_variables.css";
+
+/* ========== 2. Reset & Base ========== */
+@import "./_reset.css";
+@import "./_base.css";
+
+/* ========== 3. Layout & Direction ========== */
+@import "./_rtl.css";
+
+/* ========== 4. Components ========== */
+@import "./_buttons.css";
+@import "./_forms.css";
+@import "./_dialogs.css";
+@import "./_dropdowns.css";
+@import "./_tables.css";
+@import "./_components.css";
+
+/* ========== 5. Third-party Customization ========== */
+@import "./_material.css";
+
+/* ========== 6. Animations ========== */
+@import "./_animations.css";
+
+/* ========== 7. Utilities (Last - highest specificity) ========== */
+@import "./_utilities.css";

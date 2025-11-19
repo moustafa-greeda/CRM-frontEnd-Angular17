@@ -1,0 +1,217 @@
+:root {
+  --sidebar-width: 250px;
+  --sidebar-collapsed-width: 70px;
+}
+
+.dashboard-layout {
+  display: grid;
+  min-height: 100vh;
+  grid-template-areas:
+    "sidebar header"
+    "sidebar content"
+    "sidebar footer";
+  grid-template-columns: 0 1fr;
+  grid-template-rows: auto 1fr auto;
+  transition: grid-template-columns 0.3s ease;
+  overflow-x: hidden;
+  position: relative;
+  padding-top: 50px;
+}
+
+.dashboard-layout.sidebar-open {
+  grid-template-columns: var(--sidebar-width) 1fr;
+}
+
+.dashboard-layout.sidebar-open .sidebar {
+  width: var(--sidebar-width);
+}
+
+.dashboard-layout.sidebar-open.sidebar-collapsed {
+  grid-template-columns: 100px 1fr;
+}
+
+.dashboard-layout.sidebar-open.sidebar-collapsed .sidebar {
+  width: 100px;
+}
+
+.dashboard-layout.sidebar-closed {
+  grid-template-columns: 0 1fr;
+}
+
+.header {
+  grid-area: header;
+}
+.sidebar {
+  grid-area: sidebar;
+  background-color: var(--sidebar-bg, #111);
+  color: var(--white-color, #fff);
+  overflow: hidden;
+  position: fixed;
+  top: 0;
+  right: 0;
+  align-self: start;
+  height: 100vh;
+  max-height: 100vh;
+  z-index: 100;
+}
+.content {
+  grid-area: content;
+  margin: 0;
+  min-width: 0;
+}
+.footer {
+  grid-area: footer;
+  margin: 0 10px;
+  padding: 1rem;
+  text-align: center;
+  border: 1px solid var(--border-color);
+  background: #0a1114;
+  color: #fff;
+}
+
+.content table,
+.content .table,
+.content .data-grid {
+  width: 100%;
+  max-width: 100%;
+}
+.content .scroll-h {
+  overflow-x: auto;
+}
+
+/* ====== Tablets and smaller desktops (عرض أقل من 1600px) ====== */
+@media (max-width: 1199px) {
+  .dashboard-layout {
+    grid-template-areas:
+      "header"
+      "content"
+      "footer";
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    max-width: 85vw;
+    grid-area: unset;
+    position: fixed;
+    top: 75px;
+    bottom: 0;
+    right: 0;
+    width: var(--sidebar-width);
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000;
+    padding-top: 16px;
+    background: var(--sidebar-bg, #111);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .dashboard-layout.sidebar-open .sidebar {
+    transform: translateX(0);
+  }
+
+  .dashboard-layout.sidebar-open {
+    grid-template-columns: 1fr;
+  }
+
+  .backdrop {
+    display: none;
+  }
+
+  .dashboard-layout.sidebar-open .backdrop {
+    display: block;
+    position: fixed;
+    width: 100%;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+
+  .content {
+    margin: 0px !important;
+    min-width: 0;
+    overflow-x: hidden;
+    /* padding-top: 70px; */
+  }
+}
+
+/* ====== الموبايل (عرض أقل من 992px) ====== */
+@media (max-width: 991px) {
+  /* نخلي الشبكة عمود واحد (Header / Content / Footer) */
+  .dashboard-layout {
+    grid-template-areas:
+      "header"
+      "content"
+      "footer";
+    grid-template-columns: 1fr; /* المحتوى ياخد العرض كله */
+  }
+
+  /* الـ header يبقى فوق الـ sidebar */
+  .header {
+    z-index: 1001 !important;
+    position: fixed !important;
+  }
+
+  /* الـ sidebar يبقى off-canvas تحت الهيدر */
+  .sidebar {
+    grid-area: unset; /* مهم → ما يبقاش جزء من grid */
+    position: fixed !important;
+    top: 70px !important; /* تحت الهيدر - ارتفاع الـ header تقريباً */
+    bottom: 0;
+    right: 0; /* أو right:0 لو RTL */
+    width: var(--sidebar-width); /* العرض المطلوب */
+    max-width: 85vw; /* يمنع يغطي الشاشة كلها */
+    transform: translateX(100%);
+    transition: transform 0.3s ease;
+    z-index: 1000 !important; /* أقل من الـ header */
+    padding-top: 16px;
+    background: var(--sidebar-bg, #111);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    height: calc(
+      100vh - 70px
+    ) !important; /* ارتفاع الشاشة ناقص ارتفاع الـ header */
+  }
+
+  /* لما يفتح */
+  .dashboard-layout.sidebar-open .sidebar {
+    transform: translateX(0);
+  }
+
+  .dashboard-layout.sidebar-open {
+    grid-template-columns: 1fr;
+  }
+
+  /* الـ backdrop */
+  .backdrop {
+    display: none;
+  }
+  .dashboard-layout.sidebar-open .backdrop {
+    display: block;
+    position: fixed;
+    width: 100%;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 999;
+  }
+
+  /* المحتوى يفضل بعرض الشاشة كلها */
+  .content {
+    margin: 0px !important;
+    min-width: 0;
+    overflow-x: hidden;
+  }
+
+  /* الجداول العريضة تلف داخل حاوية قابلة للتمرير أفقي */
+  .content table {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
+
+  /* منع تحرك الصفحة تحت الـ off-canvas عند الفتح */
+  body.sidebar-lock,
+  .dashboard-layout.sidebar-open {
+    touch-action: none;
+  }
+}

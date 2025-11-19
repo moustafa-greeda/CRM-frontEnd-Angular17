@@ -1,0 +1,42 @@
+<div class="interactions-panel">
+  <div class="panel-header">
+    <h3>التفاعلات الأخيرة</h3>
+  </div>
+
+  <div class="interactions-list">
+    <div *ngIf="recentInteractions && recentInteractions.length > 0">
+      <div
+        *ngFor="let interaction of recentInteractions"
+        class="interaction-card"
+      >
+        <div class="interaction-content">
+          <div class="interaction-header">
+            <h4 class="interaction-type-name">{{ interaction.actionType }}</h4>
+            <span class="interaction-time">{{
+              formatActionDate(interaction.actionTime)
+            }}</span>
+          </div>
+          <h4 class="interaction-name">
+            <span>الاسم</span> : {{ interaction.contactName }}
+          </h4>
+          <p class="interaction-description">{{ interaction.actionText }}</p>
+          <div class="interaction-type">
+            <i
+              class="bi"
+              [ngClass]="getActionTypeIcon(interaction.actionType)"
+            ></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- No data state -->
+    <div
+      *ngIf="!recentInteractions?.length && !loadingRecentInteractions"
+      class="no-data-state"
+    >
+      <i class="bi bi-inbox"></i>
+      <span>لا توجد تفاعلات متاحة</span>
+    </div>
+  </div>
+</div>

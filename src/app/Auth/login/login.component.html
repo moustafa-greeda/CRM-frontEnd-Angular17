@@ -1,0 +1,60 @@
+<div class="parent">
+  <!-- <img src="assets/bg-login.svg" alt="bg-login" class="bg-login" /> -->
+  <div class="section">
+    <div class="logo">
+      <img src="assets/logo.svg" alt="logo elbatt" loading="lazy" />
+    </div>
+    <h1>تسجيل الدخول</h1>
+    <form (ngSubmit)="loginUser()" class="form-login" autocomplete="off">
+      <!-- input user name  -->
+      <div class="form-login">
+        <label for="name">اسم المستخدم</label>
+        <input
+          id="name"
+          type="text"
+          name="login"
+          [(ngModel)]="login"
+          placeholder="إدخل  إسم المستخدم"
+          autocomplete="off"
+          required
+        />
+        <small class="error" *ngIf="fieldErrors['login']">
+          {{ fieldErrors["login"] }}
+        </small>
+      </div>
+
+      <!-- input password  -->
+      <div class="form-login">
+        <label for="password">كلمة المرور</label>
+
+        <div class="password-wrapper">
+          <input
+            id="password"
+            [type]="showPassword ? 'text' : 'password'"
+            name="password"
+            [(ngModel)]="password"
+            placeholder="ادخل كلمة المرور"
+            autocomplete="new-password"
+            required
+          />
+          <i
+            class="bi bi-eye-fill toggle-password"
+            (click)="togglePassword()"
+          ></i>
+        </div>
+
+        <small class="error" *ngIf="fieldErrors['password']">
+          {{ fieldErrors["password"] }}
+        </small>
+      </div>
+
+      <div class="check-group">
+        <a routerLink="/forget-password">نسيت كلمة السر</a>
+        <input type="checkbox" class="custom-checkbox" />
+      </div>
+      <button type="submit">متابعه</button>
+
+      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+    </form>
+  </div>
+</div>

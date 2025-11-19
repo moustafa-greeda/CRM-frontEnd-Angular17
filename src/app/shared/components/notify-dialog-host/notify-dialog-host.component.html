@@ -1,0 +1,35 @@
+<div *ngIf="data as d" class="nd-overlay" (click)="backdropClick()">
+  <div
+    class="nd-modal"
+    [class.nd-success]="d.type === 'success'"
+    [class.nd-error]="d.type === 'error'"
+    [ngStyle]="autoVars"
+    role="dialog"
+    aria-modal="true"
+    (click)="$event.stopPropagation()"
+  >
+    <div class="nd-header">
+      <div class="nd-accent">
+        <iconify-icon [icon]="iconName" width="26" height="26"></iconify-icon>
+      </div>
+      <h2 class="nd-title">{{ displayTitle }}</h2>
+    </div>
+
+    <div class="nd-media" *ngIf="d.imageUrl">
+      <img
+        [src]="d.imageUrl"
+        [alt]="d.title || 'صورة'"
+        loading="lazy"
+        (error)="onImageError($event)"
+      />
+    </div>
+
+    <p class="nd-desc" *ngIf="d.description">{{ d.description }}</p>
+
+    <audio *ngIf="d.soundUrl" [src]="d.soundUrl" autoplay></audio>
+
+    <div class="nd-progress" *ngIf="d.autoCloseMs">
+      <div class="nd-progress-bar"></div>
+    </div>
+  </div>
+</div>

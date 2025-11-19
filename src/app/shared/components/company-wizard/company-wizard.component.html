@@ -1,0 +1,110 @@
+<div class="wizard-wrapper">
+  <div class="wizard-container">
+    <!-- Header -->
+    <div class="wizard-header">
+      <button
+        type="button"
+        class="wizard-close-btn"
+        (click)="onCancel()"
+        title="إغلاق"
+      >
+        <img src="assets/icon/close-icon.svg" alt="إغلاق" loading="lazy" />
+      </button>
+      <h1 class="wizard-title">إضافة شركة جديدة</h1>
+    </div>
+
+    <!-- Progress Steps -->
+    <div class="wizard-steps">
+      <div
+        *ngFor="let step of steps; let i = index"
+        class="step-item"
+        [class.active]="i === currentStep"
+        [class.completed]="isStepValid(i)"
+        [class.disabled]="!canProceedToStep(i)"
+        (click)="goToStep(i)"
+      >
+        <div class="step-number">{{ i + 1 }}</div>
+        <div class="step-title">{{ step.title }}</div>
+      </div>
+    </div>
+
+    <!-- Step Content -->
+    <div class="wizard-content">
+      <!-- Personal Data Step -->
+      <div *ngIf="currentStep === 0" class="step-content">
+        <app-personal-data-step
+          [form]="wizardForm"
+          (stepValid)="steps[0].isValid = $event"
+        >
+        </app-personal-data-step>
+      </div>
+
+      <!-- Address Step -->
+      <div *ngIf="currentStep === 1" class="step-content">
+        <app-address-step
+          [form]="wizardForm"
+          (stepValid)="steps[1].isValid = $event"
+        >
+        </app-address-step>
+      </div>
+
+      <!-- Social Media Step -->
+      <div *ngIf="currentStep === 2" class="step-content">
+        <app-social-media-step
+          [form]="wizardForm"
+          (stepValid)="steps[2].isValid = $event"
+        >
+        </app-social-media-step>
+      </div>
+
+      <!-- Customization Step -->
+      <div *ngIf="currentStep === 3" class="step-content">
+        <app-customization-step
+          [form]="wizardForm"
+          (stepValid)="steps[3].isValid = $event"
+        >
+        </app-customization-step>
+      </div>
+    </div>
+
+    <!-- Navigation -->
+    <div class="wizard-navigation">
+      <button
+        type="button"
+        class="btn btn-secondary"
+        (click)="previousStep()"
+        [disabled]="currentStep === 0"
+      >
+        السابق
+      </button>
+      <!-- 
+      <div class="step-indicator">
+        الخطوة {{ currentStep + 1 }} من {{ steps.length }}
+      </div> -->
+
+      <button
+        *ngIf="currentStep < steps.length - 1"
+        type="button"
+        class="btn btn-primary"
+        (click)="nextStep()"
+        [disabled]="!steps[currentStep].isValid"
+      >
+        التالي
+      </button>
+
+      <button
+        *ngIf="currentStep === steps.length - 1"
+        type="button"
+        class="btn btn-success"
+        (click)="onSubmit()"
+        [disabled]="!wizardForm.valid"
+      >
+        حفظ
+      </button>
+
+      <!-- <button type="button" class="btn btn-cancel" (click)="onCancel()">
+        إلغاء
+      </button> -->
+    </div>
+  </div>
+</div>

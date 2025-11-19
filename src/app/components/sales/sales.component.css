@@ -1,0 +1,234 @@
+.dashboard-info {
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+  display: grid;
+  background-size: cover;
+  background-image: none;
+  background-repeat: no-repeat;
+  /* background-color: #11181f !important;*/
+}
+/* .dashboard-info::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  filter: blur(250px);
+} */
+
+::ng-deep .stat-card:nth-child(3) p,
+::ng-deep .stat-card:nth-child(4) p {
+  font-size: 12px !important;
+}
+
+/* أفضل 3 مندوبين Section */
+.top-salespeople-section {
+  margin-top: 30px;
+  padding: 20px;
+}
+
+.section-title {
+  color: #ffffff;
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 25px;
+  text-align: right;
+  font-family: "Arial", sans-serif;
+}
+
+.salespeople-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.salesperson-card {
+  background: linear-gradient(
+    135deg,
+    rgba(79, 209, 199, 0.1) 0%,
+    rgba(18, 18, 18, 0.9) 100%
+  );
+  border: 1px solid rgba(79, 209, 199, 0.3);
+  border-radius: 12px;
+  padding: 5px;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+}
+
+.salesperson-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, #4fd1c7, #81e6d9);
+  opacity: 0.6;
+}
+
+.salesperson-card.rank-1 {
+  border-radius: 20px;
+  background: linear-gradient(
+    89deg,
+    #11181f 87.69%,
+    #88703c 93.45%,
+    #ffc859 99.2%
+  );
+  box-shadow: 0 0 6px 0 #2c2c2c;
+}
+
+.salesperson-card.rank-1::before {
+  background: linear-gradient(90deg, #ffd700, #ffa500);
+}
+
+.salesperson-card.rank-2 {
+  border-radius: 20px;
+  background: linear-gradient(
+    89deg,
+    #11181f 87.69%,
+    #3f4246 93.45%,
+    #6c6c6c 99.2%
+  );
+  box-shadow: 0 0 6px 0 #2c2c2c;
+}
+
+.salesperson-card.rank-2::before {
+  background: linear-gradient(90deg, #c0c0c0, #a0a0a0);
+}
+
+.salesperson-card.rank-3 {
+  border-radius: 20px;
+  background: linear-gradient(
+    89deg,
+    #11181f 87.69%,
+    #392e2f 93.45%,
+    #60443e 99.2%
+  );
+  box-shadow: 0 0 6px 0 rgba(44, 44, 44, 0.69);
+}
+
+.salesperson-card.rank-3::before {
+  background: linear-gradient(90deg, #cd7f32, #8b4513);
+}
+
+.salesperson-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 20px rgba(79, 209, 199, 0.2);
+  border-color: rgba(79, 209, 199, 0.5);
+}
+
+.salesperson-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+.profile-image-wrapper {
+  /* position: relative; */
+  width: 80px;
+  height: 80px;
+}
+
+.profile-image {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid rgba(79, 209, 199, 0.5);
+  background: linear-gradient(135deg, #4fd1c7, #81e6d9);
+}
+
+.medal-badge {
+  width: 35px;
+  height: 35px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.medal-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.medal-number {
+  font-size: 10px;
+  color: #ffffff;
+  font-weight: bold;
+  margin-top: -2px;
+}
+
+.salesperson-name {
+  color: #ffffff;
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0;
+  font-family: "Arial", sans-serif;
+}
+
+.sales-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  text-align: right;
+  flex: 1;
+  max-width: 400px;
+}
+
+.stat-item {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 20px;
+}
+
+.stat-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 18px;
+  font-family: "Arial", sans-serif;
+}
+
+.stat-value {
+  color: #51c09e;
+  font-size: 16px;
+  font-weight: bold;
+  font-family: "Arial", sans-serif;
+  direction: ltr;
+  text-align: left;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .salesperson-content {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .sales-stats {
+    width: 100%;
+    max-width: 100%;
+  }
+
+  .stat-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .stat-value {
+    text-align: right;
+  }
+}

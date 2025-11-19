@@ -1,0 +1,207 @@
+<section class="country">
+  <!-- Head + actions -->
+  <div class="page-header" dir="rtl">
+    <div class="title">إدارة الدول</div>
+  </div>
+
+  <div class="search-box">
+    <input type="text" placeholder="بحث..." [formControl]="search" />
+    <mat-icon class="search-icon">search</mat-icon>
+  </div>
+
+  <!-- Two columns -->
+  <div class="grid-2">
+    <!-- Right: table -->
+    <mat-card class="panel">
+      <table
+        mat-table
+        [dataSource]="(pagedCountries$ | async) ?? []"
+        class="full-width-table"
+      >
+        <ng-container matColumnDef="index">
+          <th mat-header-cell *matHeaderCellDef>#</th>
+          <td mat-cell *matCellDef="let c; let i = index">{{ i + 1 }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>اسم الدولة</th>
+          <td mat-cell *matCellDef="let c">{{ c.name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="keyCode">
+          <th mat-header-cell *matHeaderCellDef>كود الهاتف</th>
+          <td mat-cell *matCellDef="let c">{{ c.keyCode }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef>الإجراءات</th>
+          <td mat-cell *matCellDef="let c">
+            <button mat-icon-button color="primary" (click)="onEditCountry(c)">
+              <mat-icon>edit</mat-icon>
+            </button>
+            <button
+              mat-icon-button
+              color="warn"
+              (click)="onDeleteCountry(c.id)"
+            >
+              <mat-icon>delete</mat-icon>
+            </button>
+          </td>
+        </ng-container>
+
+        <tr
+          mat-header-row
+          *matHeaderRowDef="['index', 'name', 'keyCode', 'actions']"
+        ></tr>
+        <tr
+          mat-row
+          *matRowDef="
+            let row;
+            columns: ['index', 'name', 'keyCode', 'actions'];
+            let odd = odd;
+            let even = even
+          "
+          [ngClass]="{ 'row-odd': odd, 'row-even': even }"
+        ></tr>
+      </table>
+
+      <mat-paginator
+        [length]="totalCountriesCount"
+        [pageIndex]="pageIndex"
+        [pageSize]="pageSize"
+        [pageSizeOptions]="[10, 20, 50, 100, 500, 1000]"
+        (page)="onPageChange($event)"
+      >
+      </mat-paginator>
+    </mat-card>
+
+    <!-- Left: Form Cards -->
+    <div class="form-cards-container">
+      <!-- Input Card -->
+      <div class="panel form-input-card">
+        <div class="form-title">إضافة دولة جديدة</div>
+        <div class="form-subtitle">قم بإدخال بيانات الدولة الجديدة</div>
+
+        <form [formGroup]="countryForm" class="form">
+          <label class="field">
+            <span class="label">اسم الدولة</span>
+            <input
+              class="input"
+              type="text"
+              formControlName="name"
+              placeholder="أدخل اسم الدولة"
+            />
+            <small
+              class="hint"
+              *ngIf="
+                countryForm.get('name')?.invalid &&
+                countryForm.get('name')?.touched
+              "
+            >
+              مطلوب
+            </small>
+          </label>
+
+          <!-- <label class="field">
+						<span class="label">كود الهاتف</span>
+						<div class="input-with-prefix">
+							<span class="prefix flag-prefix">
+
+								<span *ngIf="countryForm.get('iso_2')?.value" class="flag-emoji">
+									{{ getCurrentFlag() }}
+								</span>
+								<span *ngIf="!countryForm.get('iso_2')?.value" class="default-prefix">+</span>
+							</span>
+							<input class="input naked" type="text" formControlName="keyCode" placeholder="966" />
+						</div>
+						<small class="hint" *ngIf="countryForm.get('keyCode')?.invalid && countryForm.get('keyCode')?.touched">
+							مطلوب
+						</small>
+					</label> -->
+
+          <label class="field">
+            <span class="label">كود الهاتف</span>
+            <div class="input-with-prefix">
+              <span class="prefix flag-prefix">
+                <!-- لو في كود دولة -->
+                <img
+                  *ngIf="countryForm.get('iso_2')?.value"
+                  [src]="getCurrentFlag()"
+                  class="flag-emoji"
+                  alt="flag"
+                />
+
+                <!-- لو مفيش كود دولة -->
+                <span
+                  *ngIf="!countryForm.get('iso_2')?.value"
+                  class="default-prefix"
+                  >+</span
+                >
+              </span>
+
+              <input
+                class="input naked"
+                type="text"
+                formControlName="keyCode"
+                placeholder="966"
+              />
+            </div>
+            <small
+              class="hint"
+              *ngIf="
+                countryForm.get('keyCode')?.invalid &&
+                countryForm.get('keyCode')?.touched
+              "
+            >
+              مطلوب
+            </small>
+          </label>
+
+          <label class="field">
+            <span class="label">كود الدولة (ISO)</span>
+            <input
+              class="input"
+              type="text"
+              formControlName="iso_2"
+              placeholder="SA"
+              maxlength="2"
+            />
+            <small
+              class="hint"
+              *ngIf="
+                countryForm.get('iso_2')?.invalid &&
+                countryForm.get('iso_2')?.touched
+              "
+            >
+              مطلوب (2 أحرف)
+            </small>
+          </label>
+        </form>
+      </div>
+
+      <!-- Actions Card -->
+      <div class="panel form-actions-card">
+        <div class="actions">
+          <button type="button" class="btn btn-ghost" (click)="clearForm()">
+            <mat-icon>refresh</mat-icon>
+          </button>
+          <button
+            type="button"
+            class="btn btn-accent"
+            (click)="onSaveCountry()"
+          >
+            <mat-icon>save</mat-icon>
+          </button>
+          <button
+            *ngIf="isEditMode"
+            type="button"
+            class="btn btn-outline"
+            (click)="cancelEdit()"
+          >
+            <mat-icon>edit</mat-icon>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

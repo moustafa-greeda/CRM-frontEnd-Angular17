@@ -1,0 +1,55 @@
+<div class="step-form">
+  <!-- Right Column -->
+  <div class="form-column">
+    <div class="form-group">
+      <label class="form-label">العنوان *</label>
+      <input
+        type="text"
+        class="form-input"
+        formControlName="address"
+        placeholder="ادخل العنوان"
+      />
+      <div
+        *ngIf="form.get('address')?.invalid && form.get('address')?.touched"
+        class="error-message"
+      >
+        العنوان مطلوب
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">المدينة *</label>
+      <input
+        type="text"
+        class="form-input"
+        formControlName="city"
+        placeholder="ادخل المدينة"
+      />
+      <div
+        *ngIf="form.get('city')?.invalid && form.get('city')?.touched"
+        class="error-message"
+      >
+        المدينة مطلوبة
+      </div>
+    </div>
+  </div>
+
+  <!-- Left Column -->
+  <div class="form-column">
+    <div class="form-group">
+      <label class="form-label">الدولة *</label>
+      <input
+        type="text"
+        class="form-input"
+        formControlName="country"
+        placeholder="ادخل الدولة"
+      />
+      <div
+        *ngIf="form.get('country')?.invalid && form.get('country')?.touched"
+        class="error-message"
+      >
+        الدولة مطلوبة
+      </div>
+    </div>
+  </div>
+</div>

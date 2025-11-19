@@ -1,0 +1,31 @@
+<div class="parent">
+  <div class="section">
+    <div class="logo">
+      <img src="assets/logo.svg" alt="logo ZaWolf" loading="lazy" />
+    </div>
+    <h2>إعادة تعيين كلمة المرور</h2>
+    <p>
+      لقد أرسلنا رمز التحقق (otp) إلي بريدك الإلكتروني/ رقم الهاتف برجاء التحقق
+      منة
+    </p>
+    <form class="form-login" (ngSubmit)="onSubmit()">
+      <div class="otp-container">
+        <input
+          *ngFor="let d of digits; let i = index"
+          #otpInput
+          type="text"
+          maxlength="1"
+          class="otp-input"
+          [(ngModel)]="otp[i]"
+          (input)="onInput($event, i)"
+          (keydown.backspace)="onBackspace($event, i)"
+          [autofocus]="i === 0"
+        />
+      </div>
+
+      <button type="submit">إعادة تعيين كلمة المرور</button>
+
+      <p class="error"></p>
+    </form>
+  </div>
+</div>

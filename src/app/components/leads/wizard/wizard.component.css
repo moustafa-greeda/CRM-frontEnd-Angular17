@@ -1,0 +1,667 @@
+/* RTL Support */
+[dir="rtl"] .wizard-wrapper {
+  direction: rtl;
+}
+
+[dir="rtl"] .wizard-title {
+  text-align: right;
+}
+
+[dir="rtl"] .wizard-title h1 {
+  text-align: right;
+}
+
+[dir="rtl"] .wizard-title .breadcrumb {
+  text-align: right;
+}
+
+[dir="rtl"] .step-tabs {
+  direction: rtl;
+}
+
+[dir="rtl"] .step-tab {
+  text-align: center;
+}
+
+[dir="rtl"] .form-container {
+  direction: rtl;
+}
+
+[dir="rtl"] .form-row {
+  direction: rtl;
+}
+
+[dir="rtl"] .form-group {
+  text-align: right;
+}
+
+[dir="rtl"] .form-input,
+[dir="rtl"] .form-select {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] .error-message {
+  text-align: right;
+}
+
+[dir="rtl"] .navigation-buttons {
+  direction: rtl;
+  justify-content: flex-start;
+}
+
+[dir="rtl"] .btn {
+  margin-left: 10px;
+  margin-right: 0;
+}
+
+[dir="rtl"] .btn:first-child {
+  margin-left: 0;
+}
+
+[dir="rtl"] .btn:last-child {
+  margin-right: 0;
+}
+
+/* Wizard Wrapper with Background */
+.wizard-wrapper {
+  width: 100%;
+  min-height: 100vh;
+  /* background-image: url("assets"); */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.wizard-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.wizard-wrapper > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Wizard Title Styling */
+.wizard-title {
+  padding: 20px;
+  color: #e6edf3;
+}
+
+.wizard-title h1 {
+  color: #e6edf3;
+  font-size: 32px;
+  font-weight: 700;
+  margin: 5px 0;
+}
+
+.wizard-title .breadcrumb {
+  color: #9fb2c9;
+  font-size: 14px;
+}
+
+/* Wizard Header with Close Button */
+.wizard-header {
+  position: relative;
+}
+
+.wizard-close-btn {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+}
+
+.wizard-close-btn:hover {
+  background: var(--bg-error);
+  transform: scale(1.1);
+}
+
+.wizard-close-btn:active {
+  transform: scale(0.95);
+}
+
+.wizard-close-btn img {
+  width: 100%;
+  height: 100%;
+  filter: brightness(0) invert(1);
+  transition: all 0.3s ease;
+}
+
+.wizard-close-btn:hover img {
+  filter: brightness(0) invert(1) sepia(1) saturate(5) hue-rotate(0deg);
+  transform: rotate(90deg);
+}
+
+/* RTL Support for close button */
+[dir="rtl"] .wizard-close-btn {
+  left: auto;
+  right: 5px;
+}
+
+.parentwizard {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  margin: 0;
+  direction: rtl;
+  color: #e6edf3;
+  position: relative;
+  box-sizing: border-box;
+}
+/* Wizard Container */
+.wizard-container {
+  width: 100%;
+  max-width: 95%;
+  min-height: 70vh;
+  max-height: 100vh;
+  margin-bottom: 15px;
+  background: rgba(17, 24, 31, 0.9);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  overflow: auto;
+  border: 1px solid var(--border-color);
+}
+
+/* Step Tabs */
+.step-tabs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 100px;
+  overflow-x: auto;
+  border-bottom: 1px solid #2a2a2a;
+  background-color: #11181f;
+}
+
+.step-tab {
+  text-align: center;
+  padding: 15px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  position: relative;
+  background: transparent;
+  color: #fff;
+}
+
+/* .step-tab::after { */
+.step-tab:not(:first-child)::after {
+  content: "";
+  position: absolute;
+  right: -40px;
+  top: 25%;
+  bottom: 25%;
+  width: 1px;
+  background: var(--primary-color);
+  opacity: 0.6;
+}
+
+.step-tab:hover {
+  color: #e6edf3;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.step-tab.active {
+  padding: 15px 25px;
+  color: #fff;
+  border-radius: 10px;
+  border-bottom-color: var(--primary-color);
+  background: var(--secondary-color);
+  font-size: 16px;
+}
+/* ---------------------------------------------------- */
+
+.error-message {
+  color: var(--bg-error);
+  font-size: 12px;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+/* Navigation Buttons */
+.navigation-buttons {
+  padding: 0 20px;
+  margin-bottom: 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.btn {
+  padding: 12px 24px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 100px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-previous {
+  font-size: 15px;
+  color: white;
+  border: 1px solid var(--bg-error);
+}
+
+.btn-previous:hover:not(:disabled) {
+  background: var(--bg-error);
+  color: #e6edf3;
+}
+
+.btn-next,
+.btn-submit {
+  border: none;
+  padding: 10px 5px;
+  font-size: 15px;
+  color: white;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  background: linear-gradient(90deg, #008299 0%, #002b33 100%);
+}
+.btn-next:hover,
+.btn-submit:hover {
+  font-size: 16px;
+  transform: translateY(-1px);
+  transform: scale(1.02px);
+  background-color: var(--button-hover-color);
+}
+
+/* Animations */
+.step-content {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Slide Animation */
+:host {
+  display: block;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .parentwizard {
+    padding: 15px;
+  }
+
+  .wizard-container {
+    max-width: 900px;
+  }
+
+  .form-row {
+    gap: 30px;
+  }
+
+  .step-indicators {
+    gap: 8px;
+  }
+
+  .step-indicator {
+    width: 35px;
+    height: 35px;
+  }
+
+  .step-number {
+    font-size: 12px;
+  }
+  .step-tabs {
+    gap: 20px;
+  }
+  .step-tab:not(:first-child)::after {
+    display: none;
+  }
+  .step-tabs .step-tab {
+    padding: 10px 20px;
+  }
+  .step-tab.active {
+    padding: 10px 25px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .parentwizard {
+    padding: 10px;
+    min-height: 100vh;
+  }
+
+  .wizard-container {
+    max-width: 100%;
+    margin: 0;
+  }
+
+  .wizard-title h1 {
+    font-size: 24px;
+  }
+
+  .step-tabs {
+    overflow-x: auto;
+    padding-bottom: 10px;
+    gap: 5px;
+  }
+
+  .step-tab {
+    min-width: 80px;
+    padding: 10px 12px;
+    font-size: 11px;
+  }
+
+  .overall-progress {
+    padding: 15px;
+  }
+
+  .progress-info {
+    flex-direction: column;
+    gap: 10px;
+    align-items: flex-start;
+  }
+
+  .step-indicators {
+    gap: 5px;
+    justify-content: center;
+  }
+
+  .step-indicator {
+    width: 30px;
+    height: 30px;
+  }
+
+  .step-number {
+    font-size: 10px;
+  }
+
+  .form-container {
+    padding: 20px;
+  }
+
+  .step-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
+
+  .current-form-progress {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 20px;
+    padding: 0 10px;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    padding: 12px 14px;
+    font-size: 14px;
+    height: 44px;
+  }
+
+  .btn {
+    padding: 12px 20px;
+    font-size: 14px;
+    min-width: 100px;
+  }
+
+  .navigation-buttons {
+    flex-direction: row;
+    gap: 15px;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 480px) {
+  .parentwizard {
+    padding: 5px;
+  }
+
+  .wizard-container {
+    border-radius: 8px;
+  }
+
+  .wizard-title h1 {
+    font-size: 20px;
+  }
+
+  .step-tab {
+    min-width: 70px;
+    padding: 8px 10px;
+    font-size: 10px;
+  }
+
+  .overall-progress {
+    padding: 10px;
+  }
+
+  .progress-label {
+    font-size: 14px;
+  }
+
+  .progress-percentage {
+    font-size: 16px;
+  }
+
+  .step-indicators {
+    gap: 3px;
+  }
+
+  .step-indicator {
+    width: 25px;
+    height: 25px;
+  }
+
+  .step-number {
+    font-size: 9px;
+  }
+
+  .form-container {
+    padding: 15px;
+  }
+
+  .form-row {
+    padding: 0;
+    gap: 15px;
+  }
+
+  .form-group label {
+    font-size: 13px;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    padding: 10px 12px;
+    font-size: 13px;
+    height: 40px;
+  }
+
+  .btn {
+    padding: 10px 16px;
+    font-size: 13px;
+    min-width: 80px;
+  }
+
+  .navigation-buttons {
+    gap: 10px;
+  }
+
+  .progress-text {
+    font-size: 10px;
+  }
+
+  .step-tab:not(:first-child)::after {
+    display: none;
+  }
+  .step-tabs .step-tab {
+    padding: 10px 20px;
+  }
+  .step-tab.active {
+    padding: 10px 25px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .wizard-container {
+    padding: 10px;
+  }
+
+  .progress-indicator {
+    padding: 15px;
+  }
+
+  .progress-title h2 {
+    font-size: 20px;
+  }
+
+  .progress-icons {
+    gap: 10px;
+  }
+
+  .progress-icon {
+    width: 35px;
+    height: 35px;
+    font-size: 18px;
+  }
+
+  .form-container {
+    padding: 20px;
+  }
+
+  .step-header h3 {
+    font-size: 18px;
+  }
+
+  .form-group {
+    margin-bottom: 20px;
+  }
+
+  .form-group label {
+    font-size: 14px;
+  }
+
+  .form-input,
+  .form-select,
+  .form-textarea {
+    padding: 10px;
+    font-size: 13px;
+  }
+
+  .btn {
+    padding: 10px 20px;
+    font-size: 13px;
+  }
+}
+
+/* Additional responsive adjustments for very small screens */
+@media (max-width: 360px) {
+  .progress-icons {
+    gap: 8px;
+  }
+
+  .progress-icon {
+    width: 30px;
+    height: 30px;
+    font-size: 16px;
+  }
+
+  .form-container {
+    padding: 15px;
+  }
+
+  .navigation-buttons {
+    margin-top: 30px;
+    padding-top: 20px;
+  }
+  .step-tab:not(:first-child)::after {
+    display: none;
+  }
+  .step-tabs .step-tab {
+    padding: 10px 20px;
+  }
+  .step-tab.active {
+    padding: 10px 25px;
+    font-size: 14px;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .form-input,
+  .form-select,
+  .form-textarea {
+    border-color: #000;
+  }
+
+  .btn {
+    border: 2px solid #000;
+  }
+}
+
+/* Reduced motion support */
+@media (prefers-reduced-motion: reduce) {
+  .progress-icon,
+  .btn,
+  .step-content {
+    transition: none;
+  }
+
+  .progress-icon.current {
+    animation: none;
+  }
+
+  @keyframes fadeIn {
+    from,
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+}

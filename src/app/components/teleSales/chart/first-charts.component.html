@@ -1,0 +1,44 @@
+<!------------------------- Charts Grid ------------------------->
+<ng-container *ngIf="chartsReady; else chartsSkeleton">
+  <div class="charts-container">
+    <div class="charts-grid-2">
+      <!--------------------- تحليل نتائج المكالمات (Call Results Analysis) ------------------------->
+      <div class="chart-card border-card fade-in-left">
+        <span class="corner tl"></span>
+        <span class="corner tr"></span>
+        <span class="corner bl"></span>
+        <span class="corner br"></span>
+        <canvasjs-chart [options]="callResultsChartOptions"></canvasjs-chart>
+      </div>
+      <!---------------------  أداء المكالمات الأسبوعي (Weekly Call Performance)  ------------------------->
+      <div class="chart-card border-card fade-in-right">
+        <span class="corner tl"></span>
+        <span class="corner tr"></span>
+        <span class="corner bl"></span>
+        <span class="corner br"></span>
+        <canvasjs-chart
+          [options]="weeklyCallPerformanceChartOptions"
+        ></canvasjs-chart>
+      </div>
+    </div>
+  </div>
+</ng-container>
+
+<ng-template #chartsSkeleton>
+  <div class="charts-loading">
+    <div class="chart-card border-card skeleton">
+      <span class="corner tl"></span>
+      <span class="corner tr"></span>
+      <span class="corner bl"></span>
+      <span class="corner br"></span>
+      <div class="skeleton-block"></div>
+    </div>
+    <div class="chart-card border-card skeleton">
+      <span class="corner tl"></span>
+      <span class="corner tr"></span>
+      <span class="corner bl"></span>
+      <span class="corner br"></span>
+      <div class="skeleton-block"></div>
+    </div>
+  </div>
+</ng-template>

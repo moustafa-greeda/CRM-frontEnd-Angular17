@@ -1,0 +1,55 @@
+<div class="parent-container">
+  <!-- page header -->
+  <app-page-header
+    [title]="pageTitle"
+    [breadcrumb]="breadcrumb"
+    [actionButtons]="actionButtons"
+  ></app-page-header>
+
+  <!--------------- import and export ------------>
+  <div class="filter border-gradient thin">
+    <!--parent import -->
+    <div class="parent-search">
+      <!-- search input -->
+      <app-search-input [placeholder]="'ابحث عن شركة'"></app-search-input>
+    </div>
+    <!-- count lead -->
+    <div class="parent-import-export">
+      <div class="parent-import">
+        <!-- delet lead -->
+        <i class="bi bi-trash3"></i>
+        <!-- select all -->
+        <div class="select-all">
+          <p class="select-all-text">تحديد الكل</p>
+          <input
+            type="checkbox"
+            class="custom-checkbox"
+            [checked]="isAllSelected"
+            (change)="onSelectAllChange($event)"
+          />
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- grid cards -->
+  <app-grid-cards [isLoading]="false" [error]="false">
+    <app-card
+      *ngFor="let company of companyList$ | async; trackBy: trackByCompanyId"
+      [data]="company"
+      [selectable]="true"
+      [isSelected]="isCompanySelected(company)"
+      (selectionChange)="onCardSelectionChange(company, $event)"
+      [titleKey]="'name'"
+      [subTitleKey]="'departmentName'"
+      [fields]="[
+        { label: 'البريد الإلكتروني', key: 'email', icon: 'bi bi-envelope' },
+        { label: 'الهاتف', key: 'phone', icon: 'bi bi-telephone-fill' }
+      ]"
+      [rating]="2"
+      [infoBoxes]="[
+        { label: 'كود الشركة', value: company.empCode },
+        { label: 'الموقع', value: company.location }
+      ]"
+    ></app-card>
+  </app-grid-cards>
+</div>

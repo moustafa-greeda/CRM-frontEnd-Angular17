@@ -1,0 +1,120 @@
+<div class="detail-dialog-container">
+  <!-- ---------------------------- Dialog Header -------------- -->
+  <div class="form-header">
+    <button
+      type="button"
+      class="form-close-btn"
+      (click)="close()"
+      title="إغلاق"
+    >
+      <img src="assets/icon/close-icon.svg" alt="إغلاق" loading="lazy" />
+    </button>
+    <h2 class="form-title">{{ displayTitle }}</h2>
+  </div>
+
+  <!-- ---------------------------- Dialog Content -------------- -->
+  <div class="dialog-content">
+    <div class="detail-grid">
+      <div
+        class="detail-item"
+        *ngFor="let field of displayFields; trackBy: trackByFieldKey"
+        [class.full-width]="
+          field.key === 'notes' ||
+          field.key.startsWith('action_') ||
+          field.type === 'json' ||
+          field.key === 'socialMediaLink'
+        "
+        [class.action-field]="field.key.startsWith('action_')"
+        [class.link-group]="
+          field.key === 'webSiteUrl' || field.key === 'isHaveSocialMedia'
+        "
+      >
+        <div class="detail-label-row">
+          <div class="detail-label">{{ field.label }}</div>
+          <button
+            type="button"
+            class="copy-btn"
+            (click)="copyToClipboard(field.value)"
+            title="نسخ القيمة"
+            *ngIf="field.value"
+          >
+            <i class="bi bi-clipboard"></i>
+          </button>
+        </div>
+
+        <div class="detail-value" [class.value-url]="field.type === 'url'">
+          <!-- URL Type -->
+          <a
+            *ngIf="field.type === 'url' && isUrl(field.value)"
+            [href]="field.value"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="url-link"
+          >
+            <span>{{ field.value }}</span>
+            <i class="bi bi-box-arrow-up-right"></i>
+          </a>
+
+          <!-- Email Type -->
+          <a
+            *ngIf="field.type === 'email' && field.value"
+            [href]="'mailto:' + field.value"
+          >
+            {{ field.value }}
+          </a>
+
+          <!-- Phone Type -->
+          <a
+            *ngIf="field.type === 'phone' && field.value"
+            [href]="'tel:' + field.value"
+          >
+            {{ field.value }}
+          </a>
+
+          <!-- Boolean Type -->
+          <span
+            *ngIf="field.type === 'boolean'"
+            [class.boolean-yes]="field.value"
+            [class.boolean-no]="!field.value"
+          >
+            {{ formatValue(field.value, field.type) }}
+          </span>
+
+          <!-- JSON Type -->
+          <pre *ngIf="field.type === 'json'" class="json-value"
+            >{{ formatValue(field.value, field.type) || "غير موجود" }}
+          </pre>
+
+          <!-- Notes Textarea -->
+          <textarea
+            *ngIf="field.key === 'notes'"
+            readonly
+            disabled
+            class="notes-textarea"
+            #notesTextarea
+            >{{ formatValue(field.value, field.type) }}
+          </textarea>
+
+          <!-- Default Text -->
+          <span
+            *ngIf="
+              field.type !== 'email' &&
+              field.type !== 'phone' &&
+              field.type !== 'boolean' &&
+              field.type !== 'json' &&
+              field.type !== 'url' &&
+              field.key !== 'notes'
+            "
+          >
+            {{ formatValue(field.value, field.type) }}
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------------------- Dialog Footer -------------- -->
+  <div class="dialog-footer">
+    <button class="close-button" (click)="close()">إغلاق</button>
+  </div>
+</div>

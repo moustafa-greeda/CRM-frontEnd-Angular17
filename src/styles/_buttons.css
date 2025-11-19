@@ -1,0 +1,61 @@
+/* ============================================================================
+   BUTTONS
+   ============================================================================
+/*************************************************** btn primary ******************************/
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.btn-primary,
+.button-color {
+  border-radius: 12px;
+  border: 1px solid var(--color-primary);
+  background: linear-gradient(90deg, #008299 0%, #002b33 100%);
+}
+
+.btn-primary i,
+.button-color i {
+  font-size: 25px;
+}
+
+.btn-primary:hover {
+  background: var(--button-color);
+  transform: translateY(-2px);
+}
+
+/* ========== Button Sizes ========== */
+.btn-sm {
+  padding: 4px 8px;
+  font-size: 12px;
+}
+
+.btn-lg {
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+/* ========== Button States ========== */
+.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.btn:focus {
+  outline: 2px solid var(--link-color);
+  outline-offset: 2px;
+}
+
+
+
+
+

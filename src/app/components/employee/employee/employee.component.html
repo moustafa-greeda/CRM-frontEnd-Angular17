@@ -1,0 +1,27 @@
+<div class="parent-container">
+  <!-- page header -->
+  <app-page-header
+    [title]="pageTitle"
+    [breadcrumb]="breadcrumb"
+    [actionButtons]="actionButtons"
+  ></app-page-header>
+  <!-- grid cards -->
+  <app-grid-cards [isLoading]="false" [error]="false">
+    <app-card
+      *ngFor="let employee of employeesList$ | async; trackBy: trackByClientId"
+      [data]="employee"
+      [selectable]="true"
+      [titleKey]="'name'"
+      [subTitleKey]="'departmentName'"
+      [rating]="2"
+      [fields]="[
+        { label: 'البريد الإلكتروني', key: 'email', icon: 'bi bi-envelope' },
+        { label: 'الهاتف', key: 'phone', icon: 'bi bi-telephone-fill' }
+      ]"
+      [infoBoxes]="[
+        { label: 'كود الموظف', value: employee.empCode },
+        { label: 'القسم', value: employee.departmentName }
+      ]"
+    ></app-card>
+  </app-grid-cards>
+</div>

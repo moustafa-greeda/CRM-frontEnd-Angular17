@@ -1,0 +1,41 @@
+.header-section {
+  padding-top: 10px;
+  /* margin-bottom: 32px; */
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.page-title h1 {
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 8px 0;
+}
+
+.breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 18px;
+  color: #888888;
+}
+
+.breadcrumb-separator {
+  color: #888888;
+}
+
+.breadcrumb-item.active {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+.action-bar {
+  margin-bottom: 24px;
+}
+
+.action-buttons {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+}

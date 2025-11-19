@@ -1,0 +1,403 @@
+/* RTL Support */
+[dir="rtl"] .wizard-wrapper {
+  direction: rtl;
+}
+
+[dir="rtl"] .wizard-title {
+  text-align: right;
+}
+
+[dir="rtl"] .wizard-title h1 {
+  text-align: right;
+}
+
+[dir="rtl"] .wizard-title .breadcrumb {
+  text-align: right;
+}
+
+[dir="rtl"] .step-tabs {
+  direction: rtl;
+}
+
+[dir="rtl"] .step-tab {
+  text-align: center;
+}
+
+[dir="rtl"] .form-container {
+  direction: rtl;
+}
+
+[dir="rtl"] .form-row {
+  direction: rtl;
+}
+
+[dir="rtl"] .form-group {
+  text-align: right;
+}
+
+[dir="rtl"] .form-input,
+[dir="rtl"] .form-select {
+  text-align: right;
+  direction: rtl;
+}
+
+[dir="rtl"] .error-message {
+  text-align: right;
+}
+
+[dir="rtl"] .navigation-buttons {
+  direction: rtl;
+  justify-content: center;
+}
+
+/* Wizard Wrapper with Background */
+.wizard-wrapper {
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  position: relative;
+  box-sizing: border-box;
+}
+
+.wizard-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.3);
+  z-index: 1;
+}
+
+.wizard-wrapper > * {
+  position: relative;
+  z-index: 2;
+}
+
+.wizard-container {
+  margin: 0 auto 15px;
+  background-color: transparent;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+  overflow: auto;
+  padding: 0;
+}
+
+/* Wizard Title Styling */
+.wizard-header {
+  position: relative;
+  padding: 20px;
+  color: #e6edf3;
+  text-align: center;
+}
+
+.wizard-close-btn {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+}
+
+.wizard-close-btn:hover {
+  background: var(--bg-error);
+  transform: scale(1.1);
+}
+
+.wizard-close-btn:active {
+  transform: scale(0.95);
+}
+
+.wizard-close-btn img {
+  width: 100%;
+  height: 100%;
+  filter: brightness(0) invert(1);
+  transition: all 0.3s ease;
+}
+
+.wizard-close-btn:hover img {
+  filter: brightness(0) invert(1) sepia(1) saturate(5) hue-rotate(0deg);
+  transform: rotate(90deg);
+}
+
+/* RTL Support for close button */
+[dir="rtl"] .wizard-close-btn {
+  left: auto;
+  right: -10px;
+}
+
+.wizard-title {
+  color: #e6edf3;
+  font-size: 32px;
+  font-weight: 700;
+  margin: 5px 0;
+}
+
+/* Step Tabs */
+.wizard-steps {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 100px;
+  overflow-x: auto;
+  border-bottom: 1px solid #2a2a2a;
+  background-color: #11181f;
+  margin-bottom: 0;
+  position: relative;
+}
+
+.step-item {
+  text-align: center;
+  padding: 15px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 500;
+  white-space: nowrap;
+  transition: all 0.3s ease;
+  position: relative;
+  background: transparent;
+  color: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.step-item:not(:first-child)::after {
+  content: "";
+  position: absolute;
+  right: -40px;
+  top: 25%;
+  bottom: 25%;
+  width: 1px;
+  background: var(--border-color);
+  opacity: 0.6;
+}
+
+.step-item:hover {
+  color: #e6edf3;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.step-item.active {
+  padding: 15px 25px;
+  color: #fff;
+  border-radius: 10px;
+  border-bottom-color: var(--primary-color);
+  background: var(--button-color);
+  font-size: 16px;
+}
+
+.step-item.disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.step-number {
+  display: none; /* Hide step numbers for tab-style design */
+}
+
+.step-title {
+  font-size: 14px;
+  color: inherit;
+  text-align: center;
+  max-width: none;
+  margin: 0;
+}
+
+.step-item.active .step-title {
+  color: #fff;
+  font-size: 16px;
+}
+
+.step-item.completed .step-title {
+  color: #e6edf3;
+}
+
+.wizard-content {
+  min-height: 400px;
+  padding: 20px;
+  padding-bottom: 100px; /* Add padding to account for fixed navigation */
+}
+
+.step-content {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateX(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Navigation Buttons - Fixed at Bottom */
+.wizard-navigation {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 20px;
+  background: rgba(17, 24, 31, 0.95);
+  border-top: 1px solid #2a2a2a;
+  border-bottom: 2px solid var(--border-color);
+  border-radius: 8px;
+  backdrop-filter: blur(10px);
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 -5px 20px rgba(0, 0, 0, 0.3);
+}
+
+.step-indicator {
+  color: #9fb2c9;
+  font-size: 14px;
+}
+
+/* Removed wizard-actions - now integrated into fixed navigation */
+
+.btn {
+  padding: 12px 24px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  min-width: 100px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary {
+  font-size: 15px;
+  text-align: center;
+  color: white;
+  border: 1px solid var(--button-color);
+  background: transparent;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  text-align: center;
+
+  background: #2a2a2a;
+  color: #e6edf3;
+}
+
+.btn-primary,
+.btn-success {
+  text-align: center;
+  border: none;
+  padding: 10px 5px;
+  font-size: 15px;
+  color: white;
+  background-color: var(--button-color);
+}
+
+.btn-primary:hover,
+.btn-success:hover {
+  font-size: 16px;
+  transform: translateY(-1px);
+  transform: scale(1.02px);
+  background-color: var(--button-hover-color);
+}
+
+.btn-cancel {
+  text-align: center;
+  background: transparent;
+  color: #9fb2c9;
+  border: 1px solid #666;
+}
+
+.btn-cancel:hover {
+  background: #404040;
+  color: white;
+}
+
+/* Error Message */
+.error-message {
+  color: var(--bg-error);
+  font-size: 12px;
+  margin-top: 5px;
+  font-weight: 500;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+  .wizard-container {
+    max-width: 900px;
+  }
+
+  .wizard-steps {
+    gap: 20px;
+  }
+
+  .step-item:not(:first-child)::after {
+    display: none;
+  }
+
+  .step-item {
+    padding: 10px 20px;
+  }
+
+  .step-item.active {
+    padding: 10px 25px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .wizard-steps {
+    gap: 10px;
+  }
+
+  .step-item {
+    padding: 8px 15px;
+    font-size: 12px;
+  }
+
+  .step-item.active {
+    padding: 8px 20px;
+    font-size: 13px;
+  }
+
+  .wizard-navigation {
+    padding: 15px;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .wizard-navigation .btn {
+    padding: 10px 16px;
+    font-size: 13px;
+    min-width: 80px;
+  }
+
+  .wizard-content {
+    padding-bottom: 120px;
+  }
+}

@@ -1,0 +1,234 @@
+<div class="form-ui-container" *ngIf="config; else loadingTemplate">
+  <div class="form-header">
+    <button
+      type="button"
+      class="form-close-btn"
+      (click)="onCancel()"
+      title="إغلاق"
+    >
+      <img src="assets/icon/close-icon.svg" alt="إغلاق" loading="lazy" />
+    </button>
+    <h2 class="form-title">{{ config.title }}</h2>
+  </div>
+
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-ui">
+    <div class="form-grid">
+      <div
+        *ngFor="let field of config.fields"
+        class="form-field"
+        [class]="'col-span-' + (field.colSpan || 1)"
+      >
+        <label class="field-label">
+          {{ field.label }}
+          <span *ngIf="field.required" class="required-asterisk">*</span>
+        </label>
+
+        <!-- Text Input -->
+        <input
+          *ngIf="
+            field.type === 'text' ||
+            field.type === 'email' ||
+            field.type === 'number'
+          "
+          [type]="field.type"
+          [formControlName]="field.name"
+          [placeholder]="field.placeholder"
+          class="form-input"
+          [class.error]="
+            form.get(field.name)?.invalid && form.get(field.name)?.touched
+          "
+        />
+
+        <!-- Textarea -->
+        <textarea
+          *ngIf="field.type === 'textarea'"
+          [formControlName]="field.name"
+          [placeholder]="field.placeholder"
+          class="form-textarea"
+          [class.error]="
+            form.get(field.name)?.invalid && form.get(field.name)?.touched
+          "
+        ></textarea>
+
+        <!-- Select Dropdown -->
+        <div *ngIf="field.type === 'select'" class="select-wrapper">
+          <select
+            [formControlName]="field.name"
+            class="form-select"
+            [class.error]="
+              form.get(field.name)?.invalid && form.get(field.name)?.touched
+            "
+          >
+            <option value="" disabled>{{ field.placeholder }}</option>
+            <option *ngFor="let option of field.options" [value]="option.value">
+              {{ option.label }}
+            </option>
+          </select>
+        </div>
+
+        <!-- Date Input -->
+        <input
+          *ngIf="field.type === 'date'"
+          type="date"
+          [formControlName]="field.name"
+          class="form-input"
+          [class.error]="
+            form.get(field.name)?.invalid && form.get(field.name)?.touched
+          "
+        />
+
+        <!-- Radio Buttons -->
+        <div *ngIf="field.type === 'radio'" class="radio-group">
+          <div *ngFor="let option of field.options" class="radio-option">
+            <input
+              type="radio"
+              [id]="field.name + '_' + option.value"
+              [formControlName]="field.name"
+              [value]="option.value"
+              class="radio-input"
+            />
+            <label [for]="field.name + '_' + option.value" class="radio-label">
+              {{ option.label }}
+            </label>
+          </div>
+        </div>
+
+        <!-- Two Inputs in One Span -->
+        <div *ngIf="field.type === 'two-inputs'" class="two-inputs-container">
+          <div class="input-group" *ngIf="field.input1">
+            <label class="sub-field-label">{{ field.input1.label }}</label>
+            <input
+              *ngIf="field.input1.type !== 'select'"
+              [type]="field.input1.type || 'text'"
+              [formControlName]="field.input1.name"
+              [placeholder]="field.input1.placeholder"
+              class="form-input"
+              [class.error]="
+                form.get(field.input1.name)?.invalid &&
+                form.get(field.input1.name)?.touched
+              "
+            />
+            <select
+              *ngIf="field.input1.type === 'select'"
+              [formControlName]="field.input1.name"
+              class="form-select"
+              [class.error]="
+                form.get(field.input1.name)?.invalid &&
+                form.get(field.input1.name)?.touched
+              "
+            >
+              <option value="" disabled>{{ field.input1.placeholder }}</option>
+              <option
+                *ngFor="let option of field.input1.options"
+                [value]="option.value"
+              >
+                {{ option.label }}
+              </option>
+            </select>
+          </div>
+          <div class="input-group" *ngIf="field.input2">
+            <label class="sub-field-label">{{ field.input2.label }}</label>
+            <input
+              *ngIf="field.input2.type !== 'select'"
+              [type]="field.input2.type || 'text'"
+              [formControlName]="field.input2.name"
+              [placeholder]="field.input2.placeholder"
+              class="form-input"
+              [class.error]="
+                form.get(field.input2.name)?.invalid &&
+                form.get(field.input2.name)?.touched
+              "
+            />
+            <select
+              *ngIf="field.input2.type === 'select'"
+              [formControlName]="field.input2.name"
+              class="form-select"
+              [class.error]="
+                form.get(field.input2.name)?.invalid &&
+                form.get(field.input2.name)?.touched
+              "
+            >
+              <option value="" disabled>{{ field.input2.placeholder }}</option>
+              <option
+                *ngFor="let option of field.input2.options"
+                [value]="option.value"
+              >
+                {{ option.label }}
+              </option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Checkbox -->
+        <div *ngIf="field.type === 'checkbox'" class="checkbox-group">
+          <div *ngFor="let option of field.options" class="checkbox-option">
+            <input
+              type="checkbox"
+              [id]="field.name + '_' + option.value"
+              [value]="option.value"
+              class="checkbox-input"
+              (change)="onCheckboxChange(field.name, option.value, $event)"
+            />
+            <label
+              [for]="field.name + '_' + option.value"
+              class="checkbox-label"
+            >
+              {{ option.label }}
+            </label>
+          </div>
+        </div>
+
+        <!-- File Input -->
+        <div *ngIf="field.type === 'file'" class="file-input-wrapper">
+          <input
+            type="file"
+            [id]="field.name"
+            [accept]="field.accept"
+            class="file-input"
+            (change)="onFileChange(field.name, $event)"
+            #fileInput
+          />
+          <label [for]="field.name" class="file-input-label">
+            <i class="bi bi-cloud-upload"></i>
+            <span class="file-input-text">{{
+              getFileInputText(field.name)
+            }}</span>
+          </label>
+          <button
+            *ngIf="getSelectedFile(field.name)"
+            type="button"
+            class="file-clear-btn"
+            (click)="clearFile(field.name)"
+            title="إزالة الملف"
+          >
+            <i class="bi bi-x"></i>
+          </button>
+        </div>
+
+        <!-- Error Message -->
+        <div
+          *ngIf="form.get(field.name)?.invalid && form.get(field.name)?.touched"
+          class="error-message"
+        >
+          {{ getFieldError(field.name) }}
+        </div>
+      </div>
+    </div>
+
+    <div class="form-actions">
+      <button type="button" class="btn btn-cancel" (click)="onCancel()">
+        {{ config.cancelText || "إلغاء" }}
+      </button>
+      <button type="submit" class="btn btn-submit" [disabled]="form.invalid">
+        {{ config.submitText || "حفظ" }}
+      </button>
+    </div>
+  </form>
+</div>
+
+<ng-template #loadingTemplate>
+  <div class="loading-container">
+    <div class="loading-spinner"></div>
+    <p>جاري تحميل النموذج...</p>
+  </div>
+</ng-template>

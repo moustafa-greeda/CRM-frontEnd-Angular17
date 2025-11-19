@@ -1,0 +1,414 @@
+/*---------------------------- Dialog Container --------------*/
+.detail-dialog-container {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  max-height: 90vh;
+  background: transparent;
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  animation: fadeUpDialog 0.6s ease-out;
+  position: relative;
+  z-index: 1000;
+}
+
+/* Fade Up Animation for Dialog Container */
+@keyframes fadeUpDialog {
+  from {
+    opacity: 0;
+    transform: translateY(-30px) scale(0.65);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+/*---------------------------- Dialog Header --------------*/
+.form-header {
+  position: relative;
+  margin-bottom: 24px;
+  text-align: center;
+}
+
+.form-header .form-title {
+  padding-top: 10px;
+  color: var(--white-color);
+}
+
+.form-close-btn {
+  position: absolute;
+  top: 5px;
+  left: 5px;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+  border-radius: 50%;
+  width: 50px;
+  height: 50px;
+}
+
+.form-close-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: scale(1.05);
+}
+
+.form-close-btn:active {
+  transform: scale(0.95);
+}
+
+.form-close-btn img {
+  width: 100%;
+  height: 100%;
+  filter: brightness(0) invert(1);
+  transition: all 0.3s ease;
+}
+
+.form-close-btn:hover img {
+  transform: rotate(90deg);
+}
+
+/*---------------------------- Dialog Content --------------*/
+.dialog-content {
+  padding: 24px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+  max-height: calc(90vh - 140px);
+  background: transparent !important;
+  scroll-behavior: smooth;
+}
+
+.detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+  overflow: visible;
+}
+
+.detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  overflow: visible;
+  width: 100%;
+}
+
+.detail-item.full-width {
+  grid-column: 1 / -1;
+  overflow: visible;
+  min-width: 0;
+  width: 100%;
+  max-width: 100%;
+}
+
+.detail-item.link-group {
+  grid-column: span 1;
+}
+
+/* Label + copy button row */
+.detail-label-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.detail-label {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--accent-color);
+  text-align: right;
+}
+
+.copy-btn {
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  color: var(--secondary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+}
+
+.copy-btn:hover {
+  background: rgba(255, 255, 255, 0.08);
+  transform: translateY(-1px);
+}
+
+.copy-btn i {
+  font-size: 14px;
+}
+
+/* Value container */
+.detail-value {
+  font-size: 14px;
+  color: var(--white-color);
+  text-align: right;
+  padding: 10px 12px;
+  background: var(--bg-light);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: pre-line;
+  overflow: visible;
+  line-height: 1.6;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.detail-value > span {
+  width: 100%;
+  display: block;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  overflow: visible;
+  white-space: pre-line;
+  max-width: 100%;
+}
+
+.detail-item.full-width .detail-value {
+  white-space: normal !important;
+  overflow: visible !important;
+  max-height: none !important;
+  min-height: auto !important;
+  align-items: flex-start !important;
+  display: block !important;
+  height: auto !important;
+  width: 100% !important;
+  padding: 0 !important;
+}
+
+/* Action fields should preserve line breaks */
+.detail-item.action-field.full-width .detail-value {
+  white-space: pre-line !important;
+}
+
+.detail-item.action-field.full-width .detail-value > span {
+  padding: 10px;
+  white-space: pre-line !important;
+}
+
+.detail-item.full-width .detail-value:has(.notes-textarea) {
+  background: transparent !important;
+  border: none !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  max-height: none !important;
+  height: auto !important;
+  display: block !important;
+  align-items: flex-start !important;
+}
+
+/*---------------------------- Notes Textarea --------------*/
+.notes-textarea {
+  width: 100% !important;
+  min-height: 120px !important;
+  max-height: none !important;
+  height: auto !important;
+  padding: 10px 12px !important;
+  font-size: 14px;
+  color: var(--white-color) !important;
+  background: var(--bg-light) !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: var(--radius-lg);
+  resize: vertical !important;
+  overflow-x: hidden !important;
+  overflow-y: visible !important;
+  word-wrap: break-word !important;
+  word-break: break-word !important;
+  overflow-wrap: break-word !important;
+  white-space: pre-wrap !important;
+  line-height: 1.6 !important;
+  font-family: inherit;
+  text-align: right !important;
+  direction: rtl !important;
+  box-sizing: border-box !important;
+  display: block !important;
+}
+
+.notes-textarea:disabled {
+  opacity: 1 !important;
+  cursor: default !important;
+  -webkit-text-fill-color: var(--white-color) !important;
+}
+
+.detail-item.full-width .detail-value .notes-textarea {
+  width: 100% !important;
+  min-height: 120px !important;
+  max-height: none !important;
+  height: auto !important;
+}
+
+/* URL / Email / Phone links */
+.detail-value.value-url {
+  padding: 0;
+  background: transparent;
+  border: none;
+  min-height: 50px;
+  display: flex;
+  align-items: center;
+}
+
+.url-link,
+.email-link,
+.phone-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: var(--primary-color) !important;
+  text-decoration: none;
+  padding: 10px 12px;
+  background: var(--bg-light);
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(70, 227, 255, 0.3);
+  transition: all var(--transition-fast);
+  width: 100%;
+  justify-content: flex-end;
+}
+
+.url-link:hover,
+.email-link:hover,
+.phone-link:hover {
+  background: rgba(70, 227, 255, 0.1);
+  border-color: var(--primary-color);
+  text-decoration: underline;
+}
+
+.url-link i {
+  font-size: 12px;
+}
+
+/*---------------------------- Boolean Values --------------*/
+.boolean-yes,
+.boolean-no {
+  font-weight: 600;
+  display: block;
+  width: 100%;
+}
+
+.boolean-yes {
+  color: var(--secondary-color);
+}
+
+.boolean-no {
+  color: var(--bg-error);
+}
+
+/*---------------------------- JSON Values --------------*/
+.json-value {
+  margin: 0;
+  padding: 15px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: var(--radius-md);
+  font-size: 13px;
+  color: var(--primary-color);
+  overflow-x: auto;
+  overflow-y: visible;
+  text-align: left;
+  direction: ltr;
+  font-family: "Courier New", monospace;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-height: none;
+  line-height: 1.8;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* JSON field full-width styling */
+.detail-item.full-width:has(.json-value) .detail-value {
+  padding: 0 !important;
+  background: transparent !important;
+  border: none !important;
+}
+
+.detail-item.full-width .json-value {
+  width: 100%;
+  min-height: 100px;
+  background: var(--bg-light);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: var(--radius-lg);
+}
+
+/*---------------------------- Dialog Footer --------------*/
+.dialog-footer {
+  display: flex;
+  justify-content: flex-end;
+  padding: 16px 24px;
+  background: transparent;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.close-button {
+  padding: 10px 24px;
+  background: linear-gradient(
+    90deg,
+    var(--button-color) 0%,
+    var(--bg-dark) 100%
+  );
+  color: var(--white-color);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all var(--transition-normal);
+}
+
+.close-button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--button-hover-shadow);
+}
+
+/*---------------------------- Scrollbar --------------*/
+.dialog-content::-webkit-scrollbar {
+  width: 8px;
+}
+
+.dialog-content::-webkit-scrollbar-track {
+  background: rgba(20, 20, 20, 0.8);
+  border-radius: 4px;
+}
+
+.dialog-content::-webkit-scrollbar-thumb {
+  background: var(--primary-color);
+  border-radius: var(--radius-sm);
+}
+
+.dialog-content::-webkit-scrollbar-thumb:hover {
+  background: var(--secondary-color);
+}
+
+/*---------------------------- Responsive --------------*/
+@media (max-width: 1200px) {
+  .detail-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 768px) {
+  .detail-dialog-container {
+    max-width: 95vw;
+    max-height: 95vh;
+  }
+
+  .detail-grid {
+    grid-template-columns: 1fr;
+  }
+}

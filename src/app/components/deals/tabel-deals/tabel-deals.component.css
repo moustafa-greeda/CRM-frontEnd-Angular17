@@ -1,0 +1,32 @@
+.parent-container {
+  padding: 15px;
+}
+
+.table-container {
+  overflow-x: auto;
+  min-height: 200px;
+}
+
+.form-container {
+  margin: 20px 0;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  .form-container {
+    margin: 15px 0;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 5px;
+  }
+
+  .form-container {
+    margin: 10px 0;
+  }
+}

@@ -1,0 +1,85 @@
+<div class="company-dialog">
+  <div class="dialog-header">
+    <h2>اختيار الشركة</h2>
+    <button type="button" class="close-button" (click)="onClose()">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <div class="search-bar">
+    <input
+      #searchInput
+      type="text"
+      [value]="searchTerm"
+      placeholder="ابحث عن الشركة بالاسم ..."
+      (input)="applyFilter(searchInput.value)"
+    />
+    <i class="bi bi-search"></i>
+  </div>
+
+  <div
+    class="table-wrapper"
+    *ngIf="dataSource.filteredData.length > 0; else emptyState"
+  >
+    <div class="table-scroll">
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        class="mat-elevation-z1 company-table"
+      >
+        <ng-container matColumnDef="name">
+          <th mat-header-cell *matHeaderCellDef>اسم الشركة</th>
+          <td mat-cell *matCellDef="let company">
+            <div class="company-name">
+              <i class="bi bi-buildings"></i>
+              <span>{{ company.name }}</span>
+            </div>
+            <div class="company-website" *ngIf="company.website">
+              {{ company.website }}
+            </div>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: displayedColumns"
+          (click)="selectCompany(row)"
+          [class.selected]="selectedCompanyId === row.id"
+        ></tr>
+      </table>
+    </div>
+
+    <mat-paginator
+      [length]="totalCount"
+      [pageSize]="pageSize"
+      [pageIndex]="pageIndex"
+      [pageSizeOptions]="pageSizeOptions"
+      showFirstLastButtons
+      class="custom-paginator"
+      (page)="onPageChange($event)"
+    >
+    </mat-paginator>
+  </div>
+
+  <ng-template #emptyState>
+    <div class="empty-state">
+      <i class="bi bi-search"></i>
+      <p>لا توجد نتائج مطابقة لبحثك.</p>
+    </div>
+  </ng-template>
+
+  <div class="dialog-actions">
+    <button type="button" class="action-btn secondary" (click)="onClose()">
+      إلغاء
+    </button>
+    <button
+      type="button"
+      class="action-btn primary"
+      [disabled]="!selectedCompanyId"
+      (click)="confirmSelection()"
+    >
+      اختيار
+    </button>
+  </div>
+</div>

@@ -1,0 +1,46 @@
+<div class="parent-container">
+  <!-- ---------------------------- Page Header -------------- -->
+  <app-page-header
+    [title]="'البيانات المصدرة'"
+    [breadcrumb]="breadcrumb"
+  ></app-page-header>
+
+  <!-- ---------------------------- Dropdown -------------- -->
+  <div class="filter-section">
+    <div class="dropdown-container">
+      <app-dropdown
+        [label]="'اختر Import Job ID'"
+        [options]="dropdownOptions"
+        [selectedOption]="selectedJobId"
+        (optionSelected)="onJobIdSelected($event)"
+      ></app-dropdown>
+    </div>
+  </div>
+
+  <!-- ---------------------------- Data Table -------------- -->
+  <div class="table-container">
+    <app-table
+      [data]="archivedData"
+      [columns]="companyColumns"
+      [showDataTable]="true"
+      [hasNoData]="archivedData.length === 0 && !isLoading"
+      [noDataMessage]="
+        selectedJobId ? '' : 'يرجى اختيار Job ID لعرض البيانات المؤرشفة'
+      "
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      [totalCount]="totalCount"
+      [tableClass]="'erb-data-table'"
+      [containerClass]="'erb-table-container'"
+      [showView]="true"
+      [showEdit]="false"
+      [showDelete]="false"
+      [showIndex]="true"
+      (pageChange)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
+      (rowSelectionChange)="onRowSelectionChange($event)"
+      (selectAllChange)="onSelectAllChange($event)"
+      (view)="onViewDeal($event)"
+    ></app-table>
+  </div>
+</div>

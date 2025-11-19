@@ -1,0 +1,382 @@
+/* ============================================================================
+   UTILITY CLASSES
+   ============================================================================
+   Helper utility classes for common styling needs.
+   ============================================================================ */
+
+/* ========== Display Utilities ========== */
+.d-none {
+  display: none !important;
+}
+.d-block {
+  display: block !important;
+}
+.d-inline {
+  display: inline !important;
+}
+.d-inline-block {
+  display: inline-block !important;
+}
+.d-flex {
+  display: flex !important;
+}
+.d-grid {
+  display: grid !important;
+}
+
+/* ========== Flexbox Utilities ========== */
+.flex-row {
+  flex-direction: row !important;
+}
+.flex-column {
+  flex-direction: column !important;
+}
+.flex-wrap {
+  flex-wrap: wrap !important;
+}
+.flex-nowrap {
+  flex-wrap: nowrap !important;
+}
+.justify-start {
+  justify-content: flex-start !important;
+}
+.justify-center {
+  justify-content: center !important;
+}
+.justify-end {
+  justify-content: flex-end !important;
+}
+.justify-between {
+  justify-content: space-between !important;
+}
+.align-start {
+  align-items: flex-start !important;
+}
+.align-center {
+  align-items: center !important;
+}
+.align-end {
+  align-items: flex-end !important;
+}
+.gap-xs {
+  gap: var(--spacing-xs) !important;
+}
+.gap-sm {
+  gap: var(--spacing-sm) !important;
+}
+.gap-md {
+  gap: var(--spacing-md) !important;
+}
+.gap-lg {
+  gap: var(--spacing-lg) !important;
+}
+
+/* ========== Spacing Utilities ========== */
+.m-0 {
+  margin: 0 !important;
+}
+.m-auto {
+  margin: auto !important;
+}
+.p-0 {
+  padding: 0 !important;
+}
+.mt-xs {
+  margin-top: var(--spacing-xs) !important;
+}
+.mt-sm {
+  margin-top: var(--spacing-sm) !important;
+}
+.mt-md {
+  margin-top: var(--spacing-md) !important;
+}
+.mt-lg {
+  margin-top: var(--spacing-lg) !important;
+}
+.mb-xs {
+  margin-bottom: var(--spacing-xs) !important;
+}
+.mb-sm {
+  margin-bottom: var(--spacing-sm) !important;
+}
+.mb-md {
+  margin-bottom: var(--spacing-md) !important;
+}
+.mb-lg {
+  margin-bottom: var(--spacing-lg) !important;
+}
+
+/* ========== Text Utilities ========== */
+.text-center {
+  text-align: center !important;
+}
+.text-left {
+  text-align: left !important;
+}
+.text-right {
+  text-align: right !important;
+}
+.text-primary {
+  color: var(--color-primary) !important;
+}
+.text-secondary {
+  color: var(--color-secondary) !important;
+}
+.text-muted {
+  color: var(--text-muted) !important;
+}
+.text-white {
+  color: var(--color-white) !important;
+}
+.text-error {
+  color: var(--color-error) !important;
+}
+.font-bold {
+  font-weight: 600 !important;
+}
+.font-normal {
+  font-weight: 400 !important;
+}
+
+/* ========== Border Utilities ========== */
+.border {
+  border: 1px solid var(--border-color) !important;
+}
+.border-top {
+  border-top: 1px solid var(--border-color) !important;
+}
+.border-bottom {
+  border-bottom: 1px solid var(--border-color) !important;
+}
+.border-radius-sm {
+  border-radius: var(--radius-sm) !important;
+}
+.border-radius-md {
+  border-radius: var(--radius-md) !important;
+}
+.border-radius-lg {
+  border-radius: var(--radius-lg) !important;
+}
+.border-radius-xl {
+  border-radius: var(--radius-xl) !important;
+}
+.border-radius-full {
+  border-radius: 50% !important;
+}
+
+/* ========== Shadow Utilities ========== */
+.shadow-sm {
+  box-shadow: var(--shadow-sm) !important;
+}
+.shadow-md {
+  box-shadow: var(--shadow-md) !important;
+}
+.shadow-lg {
+  box-shadow: var(--shadow-lg) !important;
+}
+.shadow-xl {
+  box-shadow: var(--shadow-xl) !important;
+}
+.shadow-none {
+  box-shadow: none !important;
+}
+
+/* ========== Width & Height Utilities ========== */
+.w-full {
+  width: 100% !important;
+}
+.w-auto {
+  width: auto !important;
+}
+.h-full {
+  height: 100% !important;
+}
+.h-auto {
+  height: auto !important;
+}
+.min-h-screen {
+  min-height: 100vh !important;
+}
+
+/* ========== Position Utilities ========== */
+.relative {
+  position: relative !important;
+}
+.absolute {
+  position: absolute !important;
+}
+.fixed {
+  position: fixed !important;
+}
+.sticky {
+  position: sticky !important;
+}
+
+/* ========== Overflow Utilities ========== */
+.overflow-hidden {
+  overflow: hidden !important;
+}
+.overflow-auto {
+  overflow: auto !important;
+}
+.overflow-x-auto {
+  overflow-x: auto !important;
+}
+.overflow-y-auto {
+  overflow-y: auto !important;
+}
+
+/* ========== Cursor Utilities ========== */
+.cursor-pointer {
+  cursor: pointer !important;
+}
+.cursor-not-allowed {
+  cursor: not-allowed !important;
+}
+
+/* ========== Opacity Utilities ========== */
+.opacity-0 {
+  opacity: 0 !important;
+}
+.opacity-50 {
+  opacity: 0.5 !important;
+}
+.opacity-100 {
+  opacity: 1 !important;
+}
+
+/* ========== Z-Index Utilities ========== */
+.z-0 {
+  z-index: 0 !important;
+}
+.z-10 {
+  z-index: 10 !important;
+}
+.z-20 {
+  z-index: 20 !important;
+}
+.z-30 {
+  z-index: 30 !important;
+}
+.z-40 {
+  z-index: 40 !important;
+}
+.z-50 {
+  z-index: 50 !important;
+}
+
+/* ============================================================== Reusable Border Gradient ====================================================== */
+.border-gradient {
+  position: relative;
+  background: transparent;
+  border-radius: 12px;
+}
+
+.border-gradient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #51c09e, #46e3ff, #51c09e);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.border-gradient > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Different gradient directions - 3 colors */
+.border-gradient.horizontal::before {
+  background: linear-gradient(90deg, #29705b, #46e3ff, #29705b);
+}
+
+.border-gradient.vertical::before {
+  background: linear-gradient(180deg, #29705b, #46e3ff, #29705b);
+}
+
+.border-gradient.diagonal::before {
+  background: linear-gradient(45deg, #29705b, #46e3ff, #29705b);
+}
+
+.border-gradient.radial::before {
+  background: radial-gradient(circle, #29705b, #46e3ff, #29705b);
+}
+
+/* Different border widths */
+.border-gradient.thin::before {
+  padding: 1px;
+}
+
+.border-gradient.medium::before {
+  padding: 2px;
+}
+
+.border-gradient.thick::before {
+  padding: 3px;
+}
+
+/* Different border radius */
+.border-gradient.rounded-sm::before {
+  border-radius: 4px;
+}
+
+.border-gradient.rounded::before {
+  border-radius: 8px;
+}
+
+.border-gradient.rounded-lg::before {
+  border-radius: 12px;
+}
+
+.border-gradient.rounded-xl::before {
+  border-radius: 16px;
+}
+
+.border-gradient.rounded-full::before {
+  border-radius: 50%;
+}
+
+/* Hover effects - 3 colors */
+.border-gradient:hover::before {
+  background: linear-gradient(90deg, #46e3ff, #51c09e, #46e3ff);
+  transition: background 0.3s ease;
+}
+
+/* Animation effects - 3 colors */
+.border-gradient.animated::before {
+  background: linear-gradient(90deg, #46e3ff, #51c09e, #46e3ff);
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+

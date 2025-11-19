@@ -1,0 +1,146 @@
+<!------------------------- Charts Grid ------------------------->
+<div class="charts-container">
+  <div class="charts-grid-2">
+    <!--------------------- مسار التحويل (Funnel) ------------------------->
+    <div class="funnel-wrapper border-card fade-in-left">
+      <span class="corner tl"></span>
+      <span class="corner tr"></span>
+      <span class="corner bl"></span>
+      <span class="corner br"></span>
+      <div class="funnel-header">
+        <h3 class="funnel-title">مسار التحويل (Funnel)</h3>
+      </div>
+      <div class="funnel-chart-container">
+        <!-- Y-Axis (Left) -->
+        <div class="y-axis">
+          <div class="y-axis-label">200</div>
+          <div class="y-axis-label">180</div>
+          <div class="y-axis-label">160</div>
+          <div class="y-axis-label">120</div>
+          <div class="y-axis-label">80</div>
+          <div class="y-axis-label">40</div>
+          <div class="y-axis-label">0</div>
+        </div>
+
+        <!-- Chart Content -->
+        <div class="funnel-content-wrapper border-card">
+          <div class="custom-funnel">
+            <div class="funnel-stage">
+              <!-- <div class="stage-label">Lead Capture</div> -->
+              <div class="stage-bar-container">
+                <div
+                  class="stage-bar"
+                  style="
+                    width: 100%;
+                    background: linear-gradient(
+                      90deg,
+                      #51c09e 0%,
+                      #265a4a 100%
+                    );
+                  "
+                >
+                  <span class="stage-value">2.30K</span>
+                </div>
+              </div>
+            </div>
+            <div class="funnel-stage">
+              <!-- <div class="stage-label">Initial Contact</div> -->
+              <div class="stage-bar-container">
+                <div
+                  class="stage-bar"
+                  style="
+                    width: 80%;
+                    background: linear-gradient(
+                      90deg,
+                      #46e3ff 0%,
+                      #2a8899 100%
+                    );
+                  "
+                >
+                  <span class="stage-value">1.84K</span>
+                </div>
+              </div>
+            </div>
+            <div class="funnel-stage">
+              <!-- <div class="stage-label">Engagement</div> -->
+              <div class="stage-bar-container">
+                <div
+                  class="stage-bar"
+                  style="
+                    width: 60%;
+                    background: linear-gradient(
+                      90deg,
+                      #ff5f00 0%,
+                      #993900 100%
+                    );
+                  "
+                >
+                  <span class="stage-value">1.38K</span>
+                </div>
+              </div>
+            </div>
+            <div class="funnel-stage">
+              <!-- <div class="stage-label">Negotiation</div> -->
+              <div class="stage-bar-container">
+                <div
+                  class="stage-bar"
+                  style="
+                    width: 40%;
+                    background: linear-gradient(
+                      90deg,
+                      #6750a4 0%,
+                      #271e3e 100%
+                    );
+                  "
+                >
+                  <span class="stage-value">0.92K</span>
+                  <img src="./assets/img/chart-image1.svg" alt="" />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- X-Axis (Bottom) -->
+          <div class="x-axis">
+            <div class="x-axis-tick">0</div>
+            <div class="x-axis-tick">40</div>
+            <div class="x-axis-tick">80</div>
+            <div class="x-axis-tick">120</div>
+            <div class="x-axis-tick">160</div>
+            <div class="x-axis-tick">180</div>
+            <div class="x-axis-tick">200</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!---------------------  Revenue Trend (اتجاه الإيرادات)  ------------------------->
+    <div class="chart-card border-card fade-in-right">
+      <span class="corner tl"></span>
+      <span class="corner tr"></span>
+      <span class="corner bl"></span>
+      <span class="corner br"></span>
+      <canvasjs-chart [options]="revenueTrendChartOption"></canvasjs-chart>
+    </div>
+  </div>
+
+  <div class="charts-grid-3">
+    <!---------------------  Weekly Performance (الأداء الأسبوعي)  ------------------------->
+    <div class="chart-card border-card fade-in-left">
+      <span class="corner tl"></span>
+      <span class="corner tr"></span>
+      <span class="corner bl"></span>
+      <span class="corner br"></span>
+      <canvasjs-chart
+        [options]="weeklyPerformanceChartOptions"
+      ></canvasjs-chart>
+    </div>
+    <!---------------------  Lead Status (حالة العميل)  ------------------------->
+    <div class="chart-card border-card fade-in-right">
+      <span class="corner tl"></span>
+      <span class="corner tr"></span>
+      <span class="corner bl"></span>
+      <span class="corner br"></span>
+      <canvasjs-chart [options]="leadStatusChartOption"></canvasjs-chart>
+    </div>
+  </div>
+</div>

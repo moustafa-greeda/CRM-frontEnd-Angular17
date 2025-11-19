@@ -1,0 +1,752 @@
+/* Charts Container */
+.charts-container {
+  display: grid;
+  gap: 30px;
+}
+
+.charts-loading {
+  display: grid;
+  gap: 20px;
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 1.4s infinite;
+}
+
+.skeleton-block {
+  width: 100%;
+  height: 300px;
+  border-radius: 12px;
+  background: rgba(17, 24, 31, 0.6);
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ******************************* Chart Card ****************************/
+.chart-card {
+  background: #11181f !important;
+  border: 1px solid rgba(79, 209, 199, 0.2) !important;
+}
+.chart-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  border-color: rgba(70, 227, 255, 0.6);
+}
+/* CanvasJS Chart Styling */
+canvasjs-chart {
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
+  color-scheme: normal !important;
+  color-adjust: exact !important;
+}
+
+canvasjs-chart .canvasjs-chart-title {
+  font-family: "Arial", sans-serif !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+  fill: #ffffff !important;
+  color: #ffffff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* Fix color rendering for Chrome */
+canvasjs-chart svg {
+  color-rendering: optimizeSpeed !important;
+  shape-rendering: geometricPrecision !important;
+  text-rendering: optimizeLegibility !important;
+}
+
+canvasjs-chart .canvasjs-chart-canvas {
+  image-rendering: -webkit-optimize-contrast !important;
+  image-rendering: crisp-edges !important;
+}
+
+canvasjs-chart .canvasjs-axis-label,
+canvasjs-chart .canvasjs-chart-label {
+  font-family: "Arial", sans-serif !important;
+  fill: #ffffff !important;
+  color: #ffffff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+  font-weight: 500 !important;
+}
+
+canvasjs-chart .canvasjs-axis-title {
+  font-family: "Arial", sans-serif !important;
+  fill: #ffffff !important;
+  color: #ffffff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+  font-weight: bold !important;
+}
+
+/* Chrome-specific fixes for color rendering */
+@supports (-webkit-appearance: none) {
+  canvasjs-chart {
+    -webkit-transform: translateZ(0) !important;
+    transform: translateZ(0) !important;
+    will-change: auto !important;
+    -webkit-font-smoothing: subpixel-antialiased !important;
+    -moz-osx-font-smoothing: auto !important;
+  }
+
+  canvasjs-chart svg {
+    -webkit-backface-visibility: hidden !important;
+    backface-visibility: hidden !important;
+    -webkit-transform: translateZ(0) !important;
+    transform: translateZ(0) !important;
+  }
+
+  canvasjs-chart .canvasjs-chart-title,
+  canvasjs-chart .canvasjs-axis-label,
+  canvasjs-chart .canvasjs-chart-label,
+  canvasjs-chart .canvasjs-axis-title {
+    fill: #ffffff !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    text-rendering: optimizeLegibility !important;
+  }
+}
+
+/* Force hardware acceleration for better color rendering */
+canvasjs-chart {
+  transform: translateZ(0) !important;
+  -webkit-transform: translateZ(0) !important;
+}
+
+/* Additional Chrome fixes for text clarity */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  canvasjs-chart {
+    -webkit-text-stroke: 0.01em transparent !important;
+    text-stroke: 0.01em transparent !important;
+  }
+
+  canvasjs-chart .canvasjs-chart-title,
+  canvasjs-chart .canvasjs-axis-label,
+  canvasjs-chart .canvasjs-chart-label,
+  canvasjs-chart .canvasjs-axis-title,
+  canvasjs-chart .canvasjs-legend-text {
+    fill: #ffffff !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    -webkit-text-stroke: 0.01em transparent !important;
+    text-stroke: 0.01em transparent !important;
+    font-weight: 600 !important;
+  }
+}
+
+/* Legend text clarity */
+canvasjs-chart .canvasjs-legend-text {
+  fill: #ffffff !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+  font-family: "Arial", sans-serif !important;
+  font-weight: 500 !important;
+}
+
+/* Tooltip text clarity */
+canvasjs-chart .canvasjs-chart-tooltip {
+  opacity: 1 !important;
+}
+
+canvasjs-chart .canvasjs-chart-tooltip text {
+  fill: #ffffff !important;
+  opacity: 1 !important;
+  font-weight: 500 !important;
+}
+
+/* Chrome color space fixes */
+canvasjs-chart svg {
+  color-interpolation: sRGB !important;
+  color-interpolation-filters: sRGB !important;
+}
+
+/* Top Charts Grid */
+.charts-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(400px, 1fr));
+  gap: 20px;
+}
+
+.charts-grid-3 {
+  display: grid;
+  grid-template-columns: 65% auto;
+  gap: 20px;
+}
+
+.charts-grid-4 {
+  display: grid;
+  grid-template-columns: auto 65%;
+  gap: 20px;
+}
+
+/* Full Width Charts */
+.full-width-charts {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+
+.chart-card {
+  padding: 3px;
+  min-height: 400px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* background: transparent !important; */
+  background: rgba(17, 24, 31, 0.8);
+  overflow: hidden;
+  position: relative;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/****************************** Industry Legend ****************************/
+.industry-legend {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  align-items: start;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  padding: 2px 0;
+  transition: all 0.3s ease;
+  width: 100%;
+}
+
+.legend-item.highlighted {
+  background: rgba(255, 95, 0, 0.2);
+  border: 1px solid #ff5f00;
+  border-radius: 6px;
+  padding: 8px 12px;
+  margin: 4px -12px;
+  transform: scale(1.02);
+  box-shadow: 0 0 15px rgba(255, 95, 0, 0.3);
+}
+
+.legend-item.highlighted .legend-color {
+  box-shadow: 0 0 12px rgba(255, 95, 0, 0.5);
+  border-color: #ff5f00;
+}
+
+.legend-color {
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  margin-left: 12px;
+  box-shadow: 0 0 8px rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.legend-text {
+  flex: 1;
+  color: #ffffff;
+  font-family: "Cairo", sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  text-align: right;
+  margin-right: 12px;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+/* Responsive Design */
+
+@media (max-width: 768px) {
+  .dashboard-info {
+    padding: 15px;
+    gap: 20px;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .charts-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .stat-card {
+    padding: 20px;
+  }
+
+  .stat-card h3 {
+    font-size: 16px;
+  }
+
+  .stat-card p {
+    font-size: 20px;
+  }
+
+  .chart-card {
+    min-height: 250px;
+    padding: 15px;
+  }
+
+  .industry-legend {
+    margin-top: 15px;
+    padding: 12px;
+    grid-template-columns: 1fr;
+    gap: 10px;
+  }
+
+  .legend-item {
+    padding: 6px 0;
+    margin-bottom: 8px;
+  }
+
+  .legend-color {
+    width: 14px;
+    height: 14px;
+    margin-left: 10px;
+  }
+
+  .legend-text {
+    font-size: 13px;
+    margin-right: 10px;
+  }
+
+  .legend-percentage {
+    font-size: 13px;
+    min-width: 35px;
+  }
+
+  .table-container {
+    padding: 15px;
+  }
+
+  .custom-table {
+    font-size: 12px;
+  }
+
+  .custom-table th,
+  .custom-table td {
+    padding: 8px 6px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .charts-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .industry-legend {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+  }
+}
+
+@media (min-width: 1025px) {
+  .stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .charts-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .industry-legend {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 15px;
+  }
+}
+
+/* Animation for loading */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade in from left animation */
+@keyframes fadeInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(300px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Fade in from right animation */
+@keyframes fadeInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(-300px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.stat-card,
+.chart-card {
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.chart-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.chart-card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+/* Fade in from left - overrides default animation */
+.fade-in-left {
+  animation: fadeInFromLeft 1.5s ease-out !important;
+}
+
+/* Fade in from right - overrides default animation */
+.fade-in-right {
+  animation: fadeInFromRight 1.5s ease-out !important;
+}
+
+/* Also apply to funnel-wrapper */
+.funnel-wrapper.fade-in-left {
+  animation: fadeInFromLeft 1.5s ease-out !important;
+}
+
+/* ========================================== Conversion Funnel Chart ========================================== */
+.funnel-wrapper {
+  direction: ltr;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  /* background: rgba(17, 24, 31, 0.8); */
+  background: #11181f;
+  border-radius: 12px;
+  padding: 20px;
+  border: 1px solid rgba(79, 209, 199, 0.2);
+  min-height: 400px;
+}
+
+.funnel-header {
+  margin-bottom: 20px;
+}
+
+.funnel-title {
+  color: #ffffff;
+  font-family: "Arial", sans-serif;
+  font-size: 18px;
+  font-weight: bold;
+  text-align: center;
+  margin: 0;
+  padding-bottom: 15px;
+  border-bottom: 1px solid rgba(79, 209, 199, 0.2);
+}
+
+.funnel-chart-container {
+  display: flex;
+  gap: 15px;
+  position: relative;
+  padding-left: 40px;
+  padding-bottom: 30px;
+}
+
+/* Y-Axis (Left) */
+.y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  width: 35px;
+  padding-right: 10px;
+  height: 100%;
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 30px;
+}
+
+.y-axis-label {
+  color: rgba(255, 255, 255, 0.7);
+  font-family: "Arial", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: right;
+  line-height: 1;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  position: relative;
+}
+
+.y-axis-label::after {
+  content: "";
+  position: absolute;
+  right: -10px;
+  width: 5px;
+  height: 1px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.funnel-content-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+
+.custom-funnel {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 0;
+  width: 100%;
+  position: relative;
+}
+
+/* Grid lines */
+.custom-funnel::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  background-image: linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.05) 100%
+    ),
+    linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.05) 100%
+    ),
+    linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.05) 100%
+    ),
+    linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.05) 100%
+    ),
+    linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.05) 100%
+    ),
+    linear-gradient(
+      to right,
+      rgba(255, 255, 255, 0.05) 0%,
+      rgba(255, 255, 255, 0.05) 100%
+    );
+  background-size: 100% calc(100% / 6);
+  background-position: 0 0%, 0 calc(100% / 6), 0 calc(2 * 100% / 6),
+    0 calc(3 * 100% / 6), 0 calc(4 * 100% / 6), 0 calc(5 * 100% / 6);
+  background-repeat: no-repeat;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* X-Axis (Bottom) */
+.x-axis {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 10px;
+  margin-top: 5px;
+  border-top: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+}
+
+.x-axis-tick {
+  color: rgba(255, 255, 255, 0.7);
+  font-family: "Arial", sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: center;
+  flex: 1;
+  position: relative;
+}
+
+.x-axis-tick::before {
+  content: "";
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 1px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.funnel-stage {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  width: 100%;
+  position: relative;
+  z-index: 1;
+}
+
+.stage-label {
+  color: #ffffff;
+  font-family: "Arial", sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 140px;
+  text-align: right;
+  text-shadow: 0 0 1px rgba(255, 255, 255, 0.1);
+}
+
+.stage-bar-container {
+  flex: 1;
+  position: relative;
+  height: 45px;
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.stage-bar {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  padding: 0 15px;
+  position: relative;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  transition: all 0.3s ease;
+  border-radius: 8px;
+  min-width: 60px;
+}
+
+.stage-bar:hover {
+  transform: scaleY(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.stage-value {
+  color: #ffffff;
+  font-family: "Arial", sans-serif;
+  font-size: 14px;
+  font-weight: bold;
+  text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  white-space: nowrap;
+  z-index: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .funnel-wrapper {
+    padding: 15px;
+    min-height: 350px;
+  }
+
+  .funnel-title {
+    font-size: 16px;
+    padding-bottom: 10px;
+  }
+
+  .funnel-chart-container {
+    padding-left: 30px;
+    padding-bottom: 25px;
+  }
+
+  .y-axis {
+    width: 25px;
+    padding-right: 5px;
+  }
+
+  .y-axis-label {
+    font-size: 10px;
+  }
+
+  .custom-funnel {
+    gap: 10px;
+  }
+
+  .funnel-stage {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .stage-label {
+    min-width: auto;
+    width: 100%;
+    text-align: right;
+    font-size: 13px;
+    margin-bottom: 5px;
+  }
+
+  .stage-bar-container {
+    width: 100%;
+    height: 40px;
+  }
+
+  .stage-bar {
+    height: 100%;
+    padding: 0 12px;
+  }
+
+  .stage-value {
+    font-size: 12px;
+  }
+
+  .x-axis {
+    padding-top: 8px;
+    margin-top: 3px;
+  }
+
+  .x-axis-tick {
+    font-size: 10px;
+  }
+}

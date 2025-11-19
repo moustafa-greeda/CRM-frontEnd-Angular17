@@ -1,0 +1,91 @@
+/* ============================================================================
+   RTL (RIGHT-TO-LEFT) SUPPORT
+   ============================================================================
+   Styles for RTL language support (Arabic, Hebrew, etc.)
+   ============================================================================ */
+
+[dir="rtl"] {
+  text-align: right;
+}
+
+/* ========== Form Elements RTL ========== */
+[dir="rtl"] .form-row,
+[dir="rtl"] .step-tabs,
+[dir="rtl"] .navigation-buttons {
+  direction: rtl;
+}
+
+[dir="rtl"] .form-group,
+[dir="rtl"] .form-input,
+[dir="rtl"] .form-select,
+[dir="rtl"] .error-message {
+  text-align: right;
+}
+
+/* ========== Buttons RTL ========== */
+[dir="rtl"] .btn {
+  margin-right: 0;
+}
+
+[dir="rtl"] .btn:first-child {
+  margin-left: 0;
+}
+
+[dir="rtl"] .btn:last-child {
+  margin-right: 0;
+}
+
+/* ========== Icons RTL ========== */
+[dir="rtl"] .icon-wrapper {
+  margin-left: 8px;
+  margin-right: 0;
+}
+
+[dir="rtl"] .icon-wrapper:first-child {
+  margin-left: 0;
+}
+
+/* ========== Checkboxes RTL ========== */
+[dir="rtl"] .custom-checkbox {
+  margin-left: 8px;
+  margin-right: 0;
+}
+
+[dir="rtl"] .custom-checkbox:first-child {
+  margin-left: 0;
+}
+
+/* ============================================================================
+   LTR (LEFT-TO-RIGHT) SUPPORT
+   ============================================================================ */
+[dir="ltr"] {
+  text-align: left;
+}
+
+[dir="ltr"] .form-row,
+[dir="ltr"] .step-tabs,
+[dir="ltr"] .navigation-buttons {
+  direction: ltr;
+}
+
+[dir="ltr"] .form-group,
+[dir="ltr"] .form-input,
+[dir="ltr"] .form-select,
+[dir="ltr"] .error-message {
+  text-align: left;
+}
+
+[dir="ltr"] .btn {
+  margin-left: 0;
+}
+
+[dir="ltr"] .icon-wrapper {
+  margin-right: 8px;
+  margin-left: 0;
+}
+
+[dir="ltr"] .custom-checkbox {
+  margin-right: 8px;
+  margin-left: 0;
+}
+

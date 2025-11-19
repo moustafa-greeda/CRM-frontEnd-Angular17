@@ -1,0 +1,116 @@
+.parent-container {
+  padding: 15px;
+}
+/* ------------------------------------------------------------------- filter dropdown ----------------------------------> */
+.filter-dropdown {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 15px;
+  border-radius: 10px;
+  border: 1px solid var(--bg-border-input);
+  background: rgba(17, 24, 31, 0.8);
+  flex-wrap: wrap;
+}
+
+.filter-dropdown-item {
+  width: 160px;
+  flex-shrink: 0;
+}
+
+.filter-dropdown-item .custom-dropdown {
+  width: 100%;
+}
+
+.filter-dropdown-item .dropdown-trigger {
+  width: 100%;
+  min-height: 50px;
+}
+
+.filter-dropdown-item .dropdown-menu {
+  width: 100%;
+  max-height: 300px;
+  overflow-y: auto;
+}
+
+/* -------------------------------------------- import and export ------------> */
+.filter {
+  margin-top: 20px;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 50px;
+  gap: 24px;
+  border-radius: 12px;
+  background: rgba(17, 24, 31, 0.8);
+}
+.parent-import-export {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.parent-import,
+.parent-search {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.parent-import .import-export {
+  display: flex;
+  align-items: center;
+  gap: 30px;
+  padding: 10px;
+  justify-content: space-between;
+  border-radius: 12px;
+  border: 1px solid var(--primary-color);
+  background: rgba(17, 24, 31, 0.8);
+}
+.parent-import .import-export svg:hover {
+  color: #fff;
+  font-size: 18px;
+  transform: translateY(-2px);
+}
+
+.select-all {
+  padding: 15px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  border-radius: 12px;
+  border: 1px solid var(--primary-color);
+  background: rgba(17, 24, 31, 0.8);
+}
+
+.select-all .select-all-text {
+  padding: 0px !important;
+  margin: 0px !important;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  color: #fff;
+}
+
+.parent-import > i {
+  padding: 5px 10px;
+  border-radius: 12px;
+  font-size: 25px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: var(--bg-error);
+  border: 1px solid var(--bg-error);
+  background: rgba(17, 24, 31, 0.8);
+}
+
+.parent-import > i:hover {
+  color: #fff;
+  background-color: var(--bg-error);
+  transform: translateY(-2px);
+  box-shadow: 0px 5px 2px #9e2c2c;
+}

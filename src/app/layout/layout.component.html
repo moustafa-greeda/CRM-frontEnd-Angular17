@@ -1,0 +1,29 @@
+<div
+  class="dashboard-layout"
+  [ngClass]="{
+    'sidebar-open': isSidebarOpen,
+    'sidebar-collapsed': isSidebarCollapsed && isSidebarOpen
+  }"
+>
+  <app-nav
+    class="header"
+    [isSidebarOpen]="isSidebarOpen"
+    (menuToggle)="toggleSidebar()"
+  ></app-nav>
+  <app-sidebar
+    class="sidebar"
+    [isCollapsed]="isSidebarCollapsed"
+    (toggleCollapse)="toggleSidebar()"
+    (click)="$event.stopPropagation()"
+  >
+  </app-sidebar>
+  <div
+    class="backdrop"
+    *ngIf="isSidebarOpen && isMobile"
+    (click)="closeSidebar()"
+  ></div>
+  <div class="content">
+    <router-outlet></router-outlet>
+  </div>
+  <app-footer class="footer"></app-footer>
+</div>

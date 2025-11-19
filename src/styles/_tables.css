@@ -1,0 +1,45 @@
+/* ============================================================================
+   TABLES
+   ============================================================================
+   Table styles and responsive table utilities.
+   ============================================================================ */
+
+/* ========== Material Table Responsive ========== */
+@media (max-width: 600px) {
+  .mat-mdc-table {
+    font-size: 12px;
+  }
+  .mat-mdc-cell,
+  .mat-mdc-header-cell {
+    padding: 10px !important;
+  }
+}
+
+@media (min-width: 1024px) {
+  .mat-mdc-table {
+    font-size: 16px;
+  }
+  .mat-mdc-cell,
+  .mat-mdc-header-cell {
+    padding: 10px !important;
+  }
+}
+
+/* ========== Table Utilities ========== */
+.table-responsive {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.table-striped tbody tr:nth-child(odd) {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.table-hover tbody tr:hover {
+  background-color: rgba(70, 227, 255, 0.1);
+}
+
+
+
+
+

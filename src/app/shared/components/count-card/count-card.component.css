@@ -1,0 +1,191 @@
+/* Header Section */
+.dashboard-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.dashboard-header h5 {
+  color: white;
+  font-size: 28px;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Stats Grid */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 20px;
+  margin-bottom: 30px;
+}
+
+.stat-card {
+  position: relative;
+  min-width: 250px;
+  height: 120px;
+  border-radius: 12px;
+  padding: 20px;
+  text-align: center;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+  cursor: pointer;
+  backdrop-filter: blur(30px);
+  border: 2px solid var(--secondary-color);
+  animation: fadeUp 0.8s ease-out both;
+  transition: transform 0.6s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+  will-change: transform;
+}
+
+/* Staggered animation for each stat card */
+.stat-card:nth-child(1) {
+  animation: fadeUp 0.8s ease-out 0.1s both;
+}
+
+.stat-card:nth-child(2) {
+  animation: fadeUp 0.8s ease-out 0.3s both;
+}
+
+.stat-card:nth-child(3) {
+  animation: fadeUp 0.8s ease-out 0.6s both;
+}
+
+.stat-card:nth-child(4) {
+  animation: fadeUp 0.8s ease-out 0.9s both;
+}
+
+.stat-card:nth-child(5) {
+  animation: fadeUp 0.8s ease-out 1.2s both;
+}
+
+/* Fade Up Animation */
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(-100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Border gradient */
+.stat-card::before {
+  content: "";
+  position: absolute;
+  top: -8px;
+  left: -8px;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  border-top: 6px solid transparent;
+  border-left: 6px solid transparent;
+  border-radius: 18px;
+  background: linear-gradient(
+        to right,
+        var(--secondary-color) 4px,
+        transparent 100%
+      )
+      top left no-repeat,
+    linear-gradient(to bottom, var(--secondary-color) 4px, transparent 100%) top
+      left no-repeat;
+  background-size: 100% 6px, 6px 100%;
+  background-repeat: no-repeat;
+}
+
+.stat-card .stat-card-content {
+  gap: 10px;
+  max-width: 70%;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.stat-subtitle {
+  font-size: 8px;
+  color: #a9c3e4;
+  margin: 0;
+}
+
+.stat-card h3 {
+  margin: 0;
+  color: #fff;
+  font-size: 18px;
+  font-weight: 500;
+}
+
+.stat-card p {
+  color: #ff5f00;
+  font-size: 24px;
+  font-weight: bold;
+  margin: 0;
+}
+
+/* Smaller count for the aggregate budgets card */
+.stat-card p.small-count {
+  font-size: 14px;
+  line-height: 1.3;
+  white-space: normal; /* allow wrapping long text */
+}
+
+.stat-details {
+  list-style: none;
+  padding: 8px 0 0;
+  margin: 0;
+  width: 100%;
+  display: flex;
+  /* flex-direction: column; */
+  gap: 4px;
+}
+
+.stat-details li {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  font-size: 6px;
+  color: #d4e3f6;
+  /* border-top: 1px solid rgba(255, 255, 255, 0.08); */
+  padding-top: 4px;
+}
+
+.detail-label {
+  opacity: 0.8;
+}
+
+.detail-value {
+  font-weight: 600;
+}
+
+.stat-card i {
+  width: 44px;
+  height: 44px;
+  padding: 5px;
+  font-size: 24px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: #ff5f00;
+  border: 1px solid #ff5f00;
+  border-radius: 50%;
+}
+
+.stat-card-image {
+  width: 54px;
+  height: 54px;
+  padding: 5px;
+  object-fit: contain;
+  border: 1px solid var(--secondary-color);
+  border-radius: 50%;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px) scale(1.05) !important;
+  box-shadow: 0 10px 25px rgba(0, 0, 0, 0.3) !important;
+  border-color: rgba(70, 227, 255, 0.6) !important;
+  z-index: 10;
+}
+/* ================ responsive styles ================== */

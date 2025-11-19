@@ -1,0 +1,173 @@
+.parent {
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-image: url("/assets/bg-login.svg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: top;
+}
+
+.section {
+  width: 550px;
+  height: 600px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  animation: fadeIn 0.8s ease-in-out;
+  backdrop-filter: blur(5px);
+  border-radius: 33.373px;
+  border: 2px solid #2a8899;
+  box-shadow: 0 4px 30.8px 0 rgba(0, 130, 153, 0.2);
+  background-color: rgb(17, 24, 31, 60%);
+}
+
+.logo {
+  width: 296px;
+  height: 110px;
+  margin: 5px auto;
+}
+.logo img {
+  background-size: cover;
+}
+h1 {
+  color: var(--white-color);
+}
+.form-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.form-login label {
+  width: 450px;
+  font-size: 15px;
+  display: block;
+  color: var(--white-color);
+}
+.form-login input {
+  width: 450px;
+  height: 55px;
+  padding: 12px 15px;
+  margin: 20px 0px;
+  border: 2px solid #46e3ff;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: 0.3s ease;
+  color: #ffffff;
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.form-login input:focus {
+  border: 2px solid #2a8899;
+}
+
+.form-login input::placeholder,
+.password-wrapper input::placeholder {
+  color: #fff;
+  opacity: 1;
+}
+.password-wrapper {
+  position: relative;
+  width: 450px;
+}
+
+.password-wrapper input {
+  width: 100%;
+  height: 55px;
+  padding-left: 20px;
+  border: 2px solid #46e3ff;
+  border-radius: 8px;
+  background-color: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+.password-wrapper .toggle-password {
+  position: absolute;
+  top: 50%;
+  left: 15px; /* stick to the right inside the input */
+  transform: translateY(-50%);
+  font-size: 20px;
+  cursor: pointer;
+  color: #46e3ff; /* adjust to be visible on dark background */
+  opacity: 0.8;
+  transition: opacity 0.2s ease;
+}
+
+.password-wrapper .toggle-password:hover {
+  opacity: 1;
+}
+
+/* Hide Edge's native reveal eye in all password fields */
+input[type="password"]::-ms-reveal {
+  display: none;
+}
+
+/* forget password */
+
+.check-group {
+  width: 450px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center !important;
+  color: var(--white-color);
+}
+.check-group p {
+  color: var(--white-color);
+}
+
+.check-group input[type="checkbox"] {
+  width: 20px;
+  height: 20px;
+  box-shadow: inset 0 0 0 2px #46e3ff;
+  border: 1px solid #46e3ff;
+  border-radius: 4px;
+  accent-color: #fff;
+  background-color: #fff;
+}
+
+button {
+  width: 450px;
+  height: 50px;
+  font-size: 18px;
+  color: var(--white-color);
+  background-color: var(--button-color);
+  transition: 0.3s ease;
+}
+
+button:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--button-hover-shadow);
+}
+
+.error {
+  font-size: 15px;
+  margin-top: 20px;
+  margin-bottom: 10px;
+  padding: 10px 100px;
+  text-align: right;
+  color: red;
+  /* background: #ff6b6b; */
+}
+
+@media (max-width: 768px) {
+  .parent {
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+  }
+}
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

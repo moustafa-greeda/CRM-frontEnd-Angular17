@@ -1,0 +1,15 @@
+<h2 mat-dialog-title class="dialog-title">{{ data.title }}</h2>
+
+<mat-dialog-content class="dialog-content">
+  <p>
+    Are you sure you want to delete <strong>{{ data.message }}</strong
+    >?
+  </p>
+</mat-dialog-content>
+
+<mat-dialog-actions class="dialog-actions">
+  <button mat-button (click)="onCancel()" class="cancel-btn">Cancel</button>
+  <button mat-flat-button color="warn" (click)="onConfirm()" class="delete-btn">
+    Delete
+  </button>
+</mat-dialog-actions>

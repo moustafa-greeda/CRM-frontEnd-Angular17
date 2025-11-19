@@ -1,0 +1,190 @@
+/* ========== Angular Material paginator/select customization  ========== */
+
+.mat-mdc-paginator {
+  .mat-mdc-form-field .mdc-line-ripple {
+    display: none !important;
+  }
+  .mat-mdc-form-field {
+    --mdc-filled-text-field-active-indicator-height: 0px;
+    --mdc-filled-text-field-active-indicator-color: transparent;
+    --mdc-filled-text-field-focus-active-indicator-color: transparent;
+    --mdc-filled-text-field-hover-active-indicator-color: transparent;
+  }
+  .mdc-text-field--outlined .mdc-notched-outline,
+  .mdc-text-field--outlined .mdc-notched-outline__leading,
+  .mdc-text-field--outlined .mdc-notched-outline__notch,
+  .mdc-text-field--outlined .mdc-notched-outline__trailing {
+    border: none !important;
+  }
+  .mat-mdc-select-value {
+    color: #fff !important;
+  }
+  display: flex;
+}
+
+.mat-mdc-paginator-container {
+  font-size: 18px;
+  font-weight: bold;
+  color: #ffff !important;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding: 5px 15px;
+  flex-wrap: wrap;
+  width: 100%;
+  min-height: var(--mat-paginator-container-size);
+}
+
+.cdk-overlay-container .cdk-overlay-pane .mat-mdc-select-panel,
+.mat-mdc-select-panel.mat-mdc-select-panel {
+  background: #121212 !important;
+  color: #fff !important;
+  border: 2px solid var(--primary-color) !important;
+  border-radius: 10px !important;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.55) !important;
+  overflow: hidden !important;
+}
+.mat-mdc-paginator-icon {
+  fill: #e36012 !important;
+}
+.mat-mdc-select-arrow svg {
+  fill: #fff !important;
+  stroke: #fff !important;
+}
+.mat-mdc-option.mdc-list-item--selected:not(.mdc-list-item--disabled)
+  .mdc-list-item__primary-text {
+  color: var(--primary-color) !important;
+}
+.mat-mdc-option .mdc-list-item__primary-text {
+  color: #fff !important;
+}
+
+/*---------------------------------------------------------------------------- */
+/* ================== Global Custom Paginator ================== */
+.custom-paginator {
+  width: 100%;
+  padding: 10px;
+  position: sticky;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(17, 24, 31, 0.95) !important;
+  border: 1px solid rgba(70, 227, 255, 0.2) !important;
+  border-radius: 10px;
+  box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3) !important;
+  backdrop-filter: blur(10px) !important;
+}
+
+.mat-mdc-paginator-container {
+  padding: 12px 16px;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 12px;
+  background: transparent;
+}
+
+.mat-mdc-paginator-range-label,
+.mat-mdc-paginator-page-size {
+  color: var(--primary-color);
+  font-size: 13px;
+  font-weight: 500;
+  margin: 0 12px;
+}
+
+.mat-mdc-paginator-navigation-previous,
+.mat-mdc-paginator-navigation-next {
+  color: var(--primary-color);
+  background: rgba(70, 227, 255, 0.1);
+  border: 1px solid var(--primary-color);
+  border-radius: 6px;
+  margin: 0 6px;
+  min-width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.mat-mdc-paginator-navigation-previous:hover,
+.mat-mdc-paginator-navigation-next:hover {
+  background: rgba(70, 227, 255, 0.2);
+  color: var(--white-color);
+  border-color: var(--primary-color);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(70, 227, 255, 0.3);
+}
+
+.mat-mdc-paginator-navigation-previous:disabled,
+.mat-mdc-paginator-navigation-next:disabled {
+  color: rgba(70, 227, 255, 0.3) !important;
+  border-color: rgba(70, 227, 255, 0.2) !important;
+  background: rgba(70, 227, 255, 0.05) !important;
+  cursor: not-allowed !important;
+  opacity: 0.5;
+  transform: none !important;
+  box-shadow: none !important;
+}
+
+.mat-mdc-paginator-page-size-select {
+  width: 120px;
+  min-height: 36px;
+  background: rgba(70, 227, 255, 0.1);
+  border: 1px solid var(--primary-color);
+  border-radius: 6px;
+  color: var(--primary-color);
+  padding: 6px 12px;
+  margin: 0 12px;
+  transition: all 0.3s ease;
+  white-space: nowrap;
+}
+
+.mat-mdc-paginator-page-size-select:hover {
+  background: rgba(70, 227, 255, 0.15);
+  border-color: var(--primary-color);
+}
+
+.mat-mdc-paginator-page-size-select .mat-mdc-select-value {
+  color: var(--primary-color) !important;
+  font-weight: 500;
+}
+
+.mat-mdc-paginator-page-size-select .mat-mdc-select-arrow {
+  color: var(--primary-color) !important;
+}
+
+.mat-mdc-select-panel {
+  background: rgba(17, 24, 31, 0.95);
+  border: 1px solid var(--primary-color);
+  border-radius: 6px;
+  backdrop-filter: blur(10px);
+}
+
+.mat-mdc-option {
+  color: var(--primary-color);
+  background: transparent;
+  transition: all 0.3s ease;
+}
+
+.mat-mdc-option:hover {
+  background: rgba(70, 227, 255, 0.1);
+  color: var(--white-color);
+}
+
+.mat-mdc-option.mdc-list-item--selected {
+  background: rgba(70, 227, 255, 0.2);
+  color: var(--white-color);
+}
+
+.mat-mdc-paginator {
+  display: flex !important;
+}
+[dir="rtl"] .mat-mdc-text-field-wrapper {
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}

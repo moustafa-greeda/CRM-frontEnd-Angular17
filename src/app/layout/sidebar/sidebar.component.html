@@ -1,0 +1,300 @@
+<nav class="sidebar" [class.collapsed]="isCollapsed">
+  <!-- ---------------------------- Sidebar Toggle Button -------------- -->
+  <button
+    class="sidebar-toggle-btn"
+    (click)="onToggle()"
+    [attr.aria-label]="isCollapsed ? 'Expand sidebar' : 'Collapse sidebar'"
+  >
+    <i
+      class="bi"
+      [class.bi-chevron-left]="isCollapsed"
+      [class.bi-chevron-right]="!isCollapsed"
+    ></i>
+  </button>
+
+  <div class="logo" *ngIf="!isCollapsed">
+    <img src="./assets/logo.svg" alt="logo_elbatt" loading="lazy" />
+  </div>
+  <div class="menu">
+    <ul>
+      <!-- Admin Navigation -->
+      <ng-container *ngIf="isAdmin()">
+        <!-- <li>
+          <a routerLink="/dashboard/admin/home" routerLinkActive="active">
+            <span class="nav-text">الرئيسيه</span>
+            <i class="bi bi-house-door"></i>
+          </a>
+        </li> -->
+        <li>
+          <a routerLink="/dashboard/admin/teleSales" routerLinkActive="active">
+            <span class="nav-text">المبيعات التليفونية</span>
+            <i class="bi bi-telephone"></i>
+            <span class="tooltip" *ngIf="isCollapsed">المبيعات التليفونية</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/dashboard/admin/sales" routerLinkActive="active">
+            <span class="nav-text">المبيعات</span>
+            <i class="bi bi-cash-coin"></i>
+            <span class="tooltip" *ngIf="isCollapsed">المبيعات</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/dashboard/admin/employee" routerLinkActive="active">
+            <span class="nav-text">الموظفين</span>
+            <i class="bi bi-people"></i>
+            <span class="tooltip" *ngIf="isCollapsed">الموظفين</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/dashboard/admin/company" routerLinkActive="active">
+            <span class="nav-text">الشركات</span>
+            <i class="bi bi-building"></i>
+            <span class="tooltip" *ngIf="isCollapsed">الشركات</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/dashboard/admin/addLead" routerLinkActive="active">
+            <span class="nav-text">إضافة عميل</span>
+            <i class="bi bi-person-plus"></i>
+            <span class="tooltip" *ngIf="isCollapsed">إضافة عميل</span>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/dashboard/admin/showLeads" routerLinkActive="active">
+            <span class="nav-text">عرض العملاء</span>
+            <i class="bi bi-people-fill"></i>
+            <span class="tooltip" *ngIf="isCollapsed">عرض العملاء</span>
+          </a>
+        </li>
+        <li>
+          <a
+            routerLink="/dashboard/admin/distribution"
+            routerLinkActive="active"
+          >
+            <span class="nav-text">توزيع العملاء</span>
+            <i class="bi bi-diagram-3"></i>
+            <span class="tooltip" *ngIf="isCollapsed">توزيع العملاء</span>
+          </a>
+        </li>
+        <!-- <li>
+          <a routerLink="/dashboard/admin/countries" routerLinkActive="active">
+            الدول
+            <i class="bi bi-globe"></i>
+          </a>
+        </li> -->
+        <li>
+          <a
+            routerLink="/dashboard/admin/showdeals"
+            routerLinkActive="active"
+            data-tooltip="ادارة الاتفاقيات"
+          >
+            <span class="nav-text">ادارة الاتفاقيات</span>
+            <i class="bi bi-globe"></i>
+          </a>
+        </li>
+        <!-- <li>
+          <a routerLink="/dashboard/admin/cities" routerLinkActive="active">
+            <span class="nav-text">المدن</span>
+            <i class="bi bi-geo-alt"></i>
+          </a>
+        </li> -->
+        <li>
+          <a
+            routerLink="/dashboard/admin/exportedData"
+            routerLinkActive="active"
+            data-tooltip="البيانات المصدرة"
+          >
+            <span class="nav-text">البيانات المصدرة</span>
+            <i class="bi bi-file-earmark-excel"></i>
+          </a>
+        </li>
+      </ng-container>
+
+      <!-- TeleSales Navigation -->
+      <ng-container *ngIf="isTeleSales()">
+        <li>
+          <a routerLink="/dashboard/telesales" routerLinkActive="active">
+            الرئيسيه
+            <i class="bi bi-house-door"></i>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/dashboard/telesales/leads" routerLinkActive="active">
+            العملاء المحتملين
+            <i class="bi bi-people"></i>
+          </a>
+        </li>
+        <li>
+          <a
+            routerLink="/dashboard/telesales/assigned-leads"
+            routerLinkActive="active"
+          >
+            العملاء المخصصة
+            <i class="bi bi-person-check"></i>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/dashboard/telesales/calls" routerLinkActive="active">
+            المكالمات
+            <i class="bi bi-telephone"></i>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/dashboard/telesales/tasks" routerLinkActive="active">
+            المهام
+            <i class="bi bi-list-task"></i>
+          </a>
+        </li>
+        <li>
+          <a
+            routerLink="/dashboard/telesales/calendar"
+            routerLinkActive="active"
+          >
+            التقويم
+            <i class="bi bi-calendar"></i>
+          </a>
+        </li>
+        <li>
+          <a
+            routerLink="/dashboard/telesales/performance"
+            routerLinkActive="active"
+          >
+            الأداء
+            <i class="bi bi-graph-up-arrow"></i>
+          </a>
+        </li>
+        <li>
+          <a
+            routerLink="/dashboard/telesales/reports"
+            routerLinkActive="active"
+          >
+            التقارير
+            <i class="bi bi-graph-up"></i>
+          </a>
+        </li>
+        <li>
+          <a
+            routerLink="/dashboard/telesales/settings"
+            routerLinkActive="active"
+          >
+            الإعدادات
+            <i class="bi bi-gear"></i>
+          </a>
+        </li>
+      </ng-container>
+
+      <!-- Sales Navigation -->
+      <ng-container *ngIf="isSales()">
+        <li>
+          <a routerLink="/dashboard/sales"
+            >الرئيسيه
+            <i class="bi bi-house-door"></i>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/dashboard/sales/deals"
+            >الصفقات
+            <i class="bi bi-cash-coin"></i>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/dashboard/sales/customers"
+            >العملاء
+            <i class="bi bi-people"></i>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/dashboard/sales/opportunities"
+            >الفرص
+            <i class="bi bi-lightbulb"></i>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/dashboard/sales/reports"
+            >التقارير
+            <i class="bi bi-graph-up"></i>
+          </a>
+        </li>
+      </ng-container>
+
+      <!-- Account Navigation -->
+      <ng-container *ngIf="isAccount()">
+        <li>
+          <a routerLink="/dashboard/account"
+            >الرئيسيه
+            <i class="bi bi-house-door"></i>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/dashboard/account/accounts"
+            >الحسابات
+            <i class="bi bi-bank"></i>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/dashboard/account/approvals"
+            >الموافقات
+            <i class="bi bi-clipboard-check"></i>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/dashboard/account/transactions"
+            >المعاملات
+            <i class="bi bi-arrow-left-right"></i>
+          </a>
+        </li>
+        <li>
+          <a routerLink="/dashboard/account/reports"
+            >التقارير المالية
+            <i class="bi bi-graph-up"></i>
+          </a>
+        </li>
+      </ng-container>
+
+      <!-- Tech Navigation -->
+      <ng-container *ngIf="isTech()">
+        <li>
+          <a routerLink="/dashboard/tech">الرئيسيه</a>
+          <i class="bi bi-house-door"></i>
+        </li>
+        <li>
+          <a routerLink="/dashboard/tech/tickets">التذاكر</a>
+          <i class="bi bi-ticket-detailed"></i>
+        </li>
+        <li>
+          <a routerLink="/dashboard/tech/system">مراقبة النظام</a>
+          <i class="bi bi-server"></i>
+        </li>
+        <li>
+          <a routerLink="/dashboard/tech/maintenance">الصيانة</a>
+          <i class="bi bi-tools"></i>
+        </li>
+        <li>
+          <a routerLink="/dashboard/tech/reports">تقارير الأداء</a>
+          <i class="bi bi-graph-up"></i>
+        </li>
+      </ng-container>
+
+      <!-- Customer Navigation -->
+      <ng-container *ngIf="isCustomer()">
+        <li>
+          <a routerLink="/dashboard/customer">الرئيسيه</a>
+          <i class="bi bi-house-door"></i>
+        </li>
+        <li>
+          <a routerLink="/dashboard/customer/profile">الملف الشخصي</a>
+          <i class="bi bi-person"></i>
+        </li>
+        <li>
+          <a routerLink="/dashboard/customer/services">الخدمات</a>
+          <i class="bi bi-gear"></i>
+        </li>
+        <li>
+          <a routerLink="/dashboard/customer/support">الدعم</a>
+          <i class="bi bi-headset"></i>
+        </li>
+      </ng-container>
+    </ul>
+  </div>
+</nav>

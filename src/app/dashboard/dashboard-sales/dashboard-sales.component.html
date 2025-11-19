@@ -1,0 +1,130 @@
+<section class="dashboard-info">
+  <h1 class="welcome-section">
+    مرحباً بك <span>{{ userInfo.name || "المستخدم" }}</span> في لوحة تحكم -
+    Salse
+  </h1>
+  <!-- count card -->
+  <app-count-card [stats]="stats"></app-count-card>
+  <!-- search and dropdown -->
+  <div class="search-container border-gradient">
+    <app-search-input
+      [placeholder]="searchPlaceholder"
+      (search)="onSearch($event)"
+    ></app-search-input>
+    <div class="dropdown-container">
+      <app-dropdown
+        label="اختر الحالة"
+        [options]="listLeadStatus"
+        (optionSelected)="onOptionSelected($event)"
+      ></app-dropdown>
+      <app-dropdown
+        label="اختر الدولة"
+        [options]="countryNames"
+        (optionSelected)="onCountrySelected($event)"
+      ></app-dropdown>
+      <app-dropdown
+        label="اختر المدينة"
+        [options]="cityNames"
+        (optionSelected)="onCitySelected($event)"
+      ></app-dropdown>
+    </div>
+  </div>
+  <!-- table -->
+  <div class="table-container">
+    <app-table
+      *ngIf="!loadingLeads && !isSearching"
+      [data]="leadsList"
+      [columns]="columns"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      [totalCount]="totalCount"
+      [showDataTable]="true"
+      [hasNoData]="leadsList.length === 0"
+      [showIndex]="true"
+      [showView]="true"
+      [addButton]="true"
+      [showEdit]="true"
+      [showDelete]="false"
+      [showChat]="false"
+      [showEmail]="true"
+      [showCall]="true"
+      [showNote]="true"
+      [showMeeting]="true"
+      [showFollowUp]="true"
+      [actionLabels]="actionLabels"
+      [actionDisplayMode]="actionDisplayMode"
+      [leadStatusOptions]="leadStatusOptions"
+      [leadStatusColorMap]="leadStatusColorMap"
+      [alwaysEditLeadStatus]="true"
+      (pageChange)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
+      (view)="onView($event)"
+      (edit)="onEditBudget($event)"
+      (note)="onNote($event)"
+      (call)="onCall($event)"
+      (email)="onEmail($event)"
+      (meeting)="onMeeting($event)"
+      (followUp)="onFollowUp($event)"
+      (leadStatusClick)="onEdit($event)"
+      (statusChange)="onStatusChange($event.row, $event.status)"
+      (saveLeadStatus)="saveLeadStatus($event)"
+      (cancelLeadStatus)="cancelLeadStatus($event)"
+    ></app-table>
+  </div>
+
+  <!--------------------------- Notifications and Recent Interactions ----------------------->
+  <div class="notifications-interactions-container">
+    <!-- Recent Interactions Panel -->
+    <app-recent-interactions
+      [recentInteractions]="recentInteractions"
+      [loadingRecentInteractions]="loadingRecentInteractions"
+    >
+    </app-recent-interactions>
+
+    <!-- notifications panel -->
+    <app-notification-card
+      [notifications]="notifications"
+      [loadingNotifications]="loadingNotifications"
+    >
+    </app-notification-card>
+  </div>
+</section>
+
+<!------------------------ Lead Actions Dialog --------------------->
+<div
+  class="lead-actions-dialog"
+  *ngIf="showLeadActionsDialog"
+  (click)="closeLeadActionsDialog()"
+>
+  <div class="dialog-content" (click)="$event.stopPropagation()">
+    <div class="dialog-header">
+      <h3>إجراءات {{ selectedLead?.name }}</h3>
+      <button class="close-btn" (click)="closeLeadActionsDialog()">
+        <i class="bi bi-x"></i>
+      </button>
+    </div>
+
+    <div class="dialog-body">
+      <div
+        *ngFor="let action of selectedLeadActions; trackBy: trackByAction"
+        class="action-item"
+      >
+        <div class="action-header">
+          <div class="action-type">
+            <i
+              class="bi"
+              [ngClass]="getActionTypeIconById(action.actionTypeId)"
+            ></i>
+            <span>{{ getActionTypeNameById(action) }}</span>
+          </div>
+          <span class="action-time">{{
+            formatActionDate(action.actionDate)
+          }}</span>
+        </div>
+        <div class="action-details" *ngIf="action.actionNotes">
+          <p>{{ action.actionNotes }}</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

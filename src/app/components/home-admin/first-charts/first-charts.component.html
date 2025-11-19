@@ -1,0 +1,81 @@
+<!------------------------- Charts Grid ------------------------->
+<!-- <div class="charts-container">
+  <div class="charts-grid-2">
+    <div class="chart-card">
+      <canvasjs-chart [options]="topIndustryChartOption"></canvasjs-chart>
+    </div>
+    <div class="chart-card">
+      <canvasjs-chart [options]="countryClientChartOption"></canvasjs-chart>
+    </div>
+  </div>
+
+  <div class="charts-grid-3">
+    <div class="chart-card">
+      <canvasjs-chart [options]="jobTitleChartOptions"></canvasjs-chart>
+    </div>
+    <div class="chart-card">
+      <canvasjs-chart [options]="companyStageChart"></canvasjs-chart>
+    </div>
+  </div>
+
+  <div class="charts-grid-4">
+    <div class="chart-card">
+      <canvasjs-chart [options]="dateAddOption"></canvasjs-chart>
+    </div>
+    <div class="chart-card">
+      <div class="map-container">
+        <div #mapContainer class="leaflet-map">
+          <div class="map-loading" *ngIf="!map && !mapError">
+            <div class="loading-spinner"></div>
+            <p>جاري تحميل الخريطة...</p>
+          </div>
+          <div class="map-error" *ngIf="mapError">
+            <div class="error-icon">⚠️</div>
+            <p>خطأ في تحميل الخريطة</p>
+            <small>يرجى تحديث الصفحة</small>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="charts-grid-2">
+    <div class="chart-card">
+      <canvasjs-chart [options]="OwnerShipOption"></canvasjs-chart>
+    </div>
+    <div class="chart-card">
+      <canvasjs-chart [options]="ageRangeOptions"></canvasjs-chart>
+    </div>
+  </div>
+</div>
+
+<div class="table-container">
+  <table class="custom-table">
+    <thead>
+      <tr>
+        <th>الرقم</th>
+        <th>الاسم</th>
+        <th>البريد</th>
+        <th>الهاتف</th>
+        <th>الدولة</th>
+        <th>المدينة</th>
+        <th>اسم الشركة</th>
+        <th>مجال الشركة</th>
+        <th>الصناعة</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let row of tableData; let i = index">
+        <td>{{ i + 1 }}</td>
+        <td>{{ row.name }}</td>
+        <td>{{ row.email }}</td>
+        <td>{{ row.phone }}</td>
+        <td>{{ row.country }}</td>
+        <td>{{ row.city }}</td>
+        <td>{{ row.company }}</td>
+        <td>{{ row.field }}</td>
+        <td>{{ row.industry }}</td>
+      </tr>
+    </tbody>
+  </table>
+</div> -->

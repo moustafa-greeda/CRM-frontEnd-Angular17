@@ -1,0 +1,463 @@
+/* ============================================================================
+   REUSABLE COMPONENTS
+   ============================================================================
+   Shared component styles (border-gradient, icon-wrapper, checkbox, etc.)
+   ============================================================================ */
+.parent-container {
+  padding: 15px;
+}
+
+/* ******************************* Client Card ****************************/
+.border-card {
+  backdrop-filter: blur(20px);
+  box-shadow: inset 2px 2px 10px rgba(255, 255, 255, 0.1),
+    inset -2px -2px 10px rgba(0, 0, 0, 0.6), 0 10px 25px rgba(70, 227, 255, 0.2);
+  background: var(--bg-light);
+  /* transform: perspective(600px) rotateX(2deg) rotateY(-2deg); */
+  transition: 0.4s ease;
+}
+
+.border-card:hover {
+  /* transform: perspective(600px) rotateX(0) rotateY(0) scale(1.05); */
+  box-shadow: inset 2px 2px 10px rgba(255, 255, 255, 0.1),
+    inset -2px -2px 4px rgba(0, 0, 0, 0.6), 0 4px 4px rgba(0, 234, 255, 0.4);
+}
+
+/* ✨ الزوايا الأربعة */
+.border-card .corner {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  pointer-events: none;
+  border-radius: 12px;
+  background-repeat: no-repeat;
+}
+
+/* 🔹 أعلى يسار */
+.border-card .corner.tl {
+  top: 0;
+  left: 0;
+  background: linear-gradient(
+        to right,
+        var(--secondary-color) 4px,
+        transparent 100%
+      )
+      top left no-repeat,
+    linear-gradient(to bottom, var(--secondary-color) 4px, transparent 100%) top
+      left no-repeat;
+  background-size: 100% 6px, 6px 100%;
+}
+
+/* 🔹 أعلى يمين */
+.border-card .corner.tr {
+  top: 0;
+  right: 0;
+  background: linear-gradient(
+        to left,
+        var(--secondary-color) 4px,
+        transparent 100%
+      )
+      top right no-repeat,
+    linear-gradient(to bottom, var(--secondary-color) 4px, transparent 100%) top
+      right no-repeat;
+  background-size: 100% 6px, 6px 100%;
+}
+
+/* 🔹 أسفل يسار */
+.border-card .corner.bl {
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(
+        to right,
+        var(--secondary-color) 4px,
+        transparent 100%
+      )
+      bottom left no-repeat,
+    linear-gradient(to top, var(--secondary-color) 4px, transparent 100%) bottom
+      left no-repeat;
+  background-size: 100% 6px, 6px 100%;
+}
+
+/* 🔹 أسفل يمين */
+.border-card .corner.br {
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(
+        to left,
+        var(--secondary-color) 4px,
+        transparent 100%
+      )
+      bottom right no-repeat,
+    linear-gradient(to top, var(--secondary-color) 4px, transparent 100%) bottom
+      right no-repeat;
+  background-size: 100% 6px, 6px 100%;
+}
+/* ******************************* end border Card ****************************/
+
+/* ============================================================================
+   BORDER GRADIENT
+   ============================================================================ */
+.border-gradient {
+  position: relative;
+  background: transparent;
+  border-radius: 12px;
+}
+
+.border-gradient::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  padding: 1px;
+  border-radius: inherit;
+  background: linear-gradient(90deg, #51c09e, #46e3ff, #51c09e);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.border-gradient > * {
+  position: relative;
+  z-index: 2;
+}
+
+/* Different gradient directions - 3 colors */
+.border-gradient.horizontal::before {
+  background: linear-gradient(90deg, #29705b, #46e3ff, #29705b);
+}
+
+.border-gradient.vertical::before {
+  background: linear-gradient(180deg, #29705b, #46e3ff, #29705b);
+}
+
+.border-gradient.diagonal::before {
+  background: linear-gradient(45deg, #29705b, #46e3ff, #29705b);
+}
+
+.border-gradient.radial::before {
+  background: radial-gradient(circle, #29705b, #46e3ff, #29705b);
+}
+
+/* Different border widths */
+.border-gradient.thin::before {
+  padding: 1px;
+}
+
+.border-gradient.medium::before {
+  padding: 2px;
+}
+
+.border-gradient.thick::before {
+  padding: 3px;
+}
+
+/* Different border radius */
+.border-gradient.rounded-sm::before {
+  border-radius: 4px;
+}
+
+.border-gradient.rounded::before {
+  border-radius: 8px;
+}
+
+.border-gradient.rounded-lg::before {
+  border-radius: 12px;
+}
+
+.border-gradient.rounded-xl::before {
+  border-radius: 16px;
+}
+
+.border-gradient.rounded-full::before {
+  border-radius: 50%;
+}
+
+/* Hover effects - 3 colors */
+.border-gradient:hover::before {
+  background: linear-gradient(90deg, #46e3ff, #51c09e, #46e3ff);
+  transition: background 0.3s ease;
+}
+
+/* Animation effects - 3 colors */
+.border-gradient.animated::before {
+  background: linear-gradient(90deg, #46e3ff, #51c09e, #46e3ff);
+  background-size: 200% 200%;
+  animation: gradientShift 3s ease infinite;
+}
+
+@keyframes gradientShift {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Border Gradient - Hover */
+.border-gradient:hover::before {
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    var(--color-secondary),
+    var(--color-primary)
+  );
+  transition: background var(--transition-normal);
+}
+
+/* Border Gradient - Animation */
+.border-gradient.animated::before {
+  background: linear-gradient(
+    90deg,
+    var(--color-primary),
+    var(--color-secondary),
+    var(--color-primary)
+  );
+  background-size: 200% 200%;
+  animation: gradient-shift 3s ease infinite;
+}
+
+/* ============================================================================
+   ICON WRAPPER
+   ============================================================================ */
+
+.icon-wrapper {
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(17, 24, 31, 0.8);
+  position: relative;
+  z-index: 2;
+}
+
+.icon-wrapper i {
+  color: #46e3ff;
+  font-size: 14px;
+  z-index: 3;
+  position: relative;
+}
+
+/* Different icon sizes */
+.icon-wrapper.small {
+  width: 20px;
+  height: 20px;
+}
+
+.icon-wrapper.small i {
+  font-size: 10px;
+}
+
+.icon-wrapper.medium {
+  width: 30px;
+  height: 30px;
+}
+
+.icon-wrapper.medium i {
+  font-size: 14px;
+}
+
+.icon-wrapper.large {
+  width: 40px;
+  height: 40px;
+}
+
+.icon-wrapper.large i {
+  font-size: 18px;
+}
+
+.icon-wrapper.xlarge {
+  width: 50px;
+  height: 50px;
+}
+
+.icon-wrapper.xlarge i {
+  font-size: 22px;
+}
+
+/* Different icon colors */
+.icon-wrapper.blue i {
+  color: #46e3ff;
+}
+
+.icon-wrapper.white i {
+  color: #ffffff;
+}
+.icon-wrapper.yellow i {
+  color: #f59e0b;
+}
+
+/* Icon with solid background */
+.icon-wrapper.solid {
+  background: #46e3ff;
+}
+
+.icon-wrapper.solid i {
+  color: #ffffff;
+}
+
+.icon-wrapper.solid.orange {
+  background: #ff5f00;
+}
+
+.icon-wrapper.solid.blue {
+  background: #46e3ff;
+}
+
+/* Icon with shadow */
+.icon-wrapper.shadow {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+/* RTL support for icons */
+[dir="rtl"] .icon-wrapper {
+  margin-left: 8px;
+  margin-right: 0;
+}
+
+[dir="rtl"] .icon-wrapper:first-child {
+  margin-left: 0;
+}
+
+/* Icon Wrapper - Sizes */
+.icon-wrapper.small {
+  width: 20px;
+  height: 20px;
+}
+
+.icon-wrapper.small i {
+  font-size: 10px;
+}
+
+.icon-wrapper.medium {
+  width: 30px;
+  height: 30px;
+}
+
+.icon-wrapper.medium i {
+  font-size: 14px;
+}
+
+.icon-wrapper.large {
+  width: 40px;
+  height: 40px;
+}
+
+.icon-wrapper.large i {
+  font-size: 18px;
+}
+
+.icon-wrapper.xlarge {
+  width: 50px;
+  height: 50px;
+}
+
+.icon-wrapper.xlarge i {
+  font-size: 22px;
+}
+
+/* Icon Wrapper - Colors */
+.icon-wrapper.blue i {
+  color: var(--color-primary);
+}
+
+.icon-wrapper.white i {
+  color: var(--color-white);
+}
+
+.icon-wrapper.yellow i {
+  color: var(--color-accent-yellow);
+}
+
+/* Icon Wrapper - Solid Background */
+.icon-wrapper.solid {
+  background: var(--color-primary);
+}
+
+.icon-wrapper.solid i {
+  color: var(--color-white);
+}
+
+.icon-wrapper.solid.orange {
+  background: var(--color-accent);
+}
+
+.icon-wrapper.solid.blue {
+  background: var(--color-primary);
+}
+
+/* Icon Wrapper - Shadow */
+.icon-wrapper.shadow {
+  box-shadow: var(--shadow-md);
+}
+
+/* ============================================================== Shared Checkbox Styles ====================================================== */
+
+.custom-checkbox {
+  width: 18px;
+  height: 18px;
+  cursor: pointer;
+  border: 2px solid #46e3ff;
+  border-radius: 3px;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  position: relative;
+  z-index: 2;
+  transition: all 0.3s ease;
+  background-clip: padding-box !important;
+}
+
+.custom-checkbox:checked {
+  background-color: var(--primary-color);
+  border-color: var(--primary-color);
+}
+
+.custom-checkbox:checked::after {
+  content: "✓";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  color: white;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.custom-checkbox:hover {
+  border-color: var(--primary-color);
+}
+
+.custom-checkbox:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(255, 95, 0, 0.2);
+}
+
+/* Different sizes for different use cases */
+.custom-checkbox.small {
+  width: 14px;
+  height: 14px;
+  font-size: 10px;
+}
+
+.custom-checkbox.large {
+  width: 22px;
+  height: 22px;
+  font-size: 14px;
+}
+
+/* RTL support for checkboxes */
+[dir="rtl"] .custom-checkbox {
+  margin-left: 8px;
+  margin-right: 0;
+}
+
+[dir="rtl"] .custom-checkbox:first-child {
+  margin-left: 0;
+}

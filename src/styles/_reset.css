@@ -1,0 +1,64 @@
+/* ============================================================================
+   CSS RESET
+   ============================================================================
+   Modern CSS reset to ensure consistent styling across browsers.
+   ============================================================================ */
+
+/* ========== Universal Reset ========== */
+*,
+*::before,
+*::after {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ========== HTML & Body ========== */
+html {
+  direction: rtl;
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* ========== Typography Reset ========== */
+p {
+  margin: 0;
+}
+
+li {
+  list-style: none;
+}
+
+/* ========== Form Elements Reset ========== */
+input,
+button,
+textarea,
+select {
+  font-family: inherit;
+  font-size: inherit;
+  line-height: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: none;
+}
+
+input {
+  outline: none;
+}
+
+/* ========== Links Reset ========== */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ========== Images ========== */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}

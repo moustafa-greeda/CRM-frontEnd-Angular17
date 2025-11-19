@@ -1,0 +1,198 @@
+<div class="parent-container">
+  <!-- ---------------------------- Page Header -------------- -->
+  <app-page-header
+    [title]="pageTitle"
+    [breadcrumb]="breadcrumb"
+    [actionButtons]="actionButtons"
+  ></app-page-header>
+
+  <!-- ---------------------------- Filter Dropdown -------------- -->
+  <div class="filter-dropdown">
+    <div class="filter-dropdown-item" *ngFor="let dd of filterDropdowns">
+      <div
+        class="custom-dropdown"
+        [class.open]="dd.open"
+        appClickOutside
+        (appClickOutside)="dd.open = false"
+      >
+        <button
+          class="dropdown-trigger"
+          type="button"
+          (click)="toggleDropdown(dd)"
+        >
+          <span class="selected-option">{{ dd.selected || dd.label }}</span>
+          <i class="bi bi-chevron-down dropdown-arrow"></i>
+        </button>
+        <div class="dropdown-menu">
+          <div
+            class="dropdown-item"
+            *ngFor="let opt of dd.options"
+            (click)="selectOption(dd, opt)"
+          >
+            <i class="bi bi-dot"></i>
+            <span>{{ opt }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ---------------------------- Search and Actions Bar -------------- -->
+  <div class="filter border-gradient thin">
+    <!--parent import -->
+    <div class="parent-search">
+      <!-- search input -->
+      <app-search-input
+        class="search-input"
+        [placeholder]="'ابحث عن عميل'"
+        (search)="onSearchChange($any($event))"
+      ></app-search-input>
+    </div>
+    <!-- count lead -->
+    <div class="parent-import-export">
+      <div class="parent-import">
+        <!-- delet lead -->
+        <i class="bi bi-trash3"></i>
+
+        <!-- select all -->
+        <div class="select-all">
+          <p class="select-all-text">تحديد الكل</p>
+          <input type="checkbox" class="custom-checkbox" />
+        </div>
+        <!-- count lead -->
+        <app-count-lead
+          class="count-lead"
+          [count]="totalCount || 0"
+          [label]="'عميل'"
+        ></app-count-lead>
+      </div>
+    </div>
+  </div>
+  <!-- ---------------------------- Distribution Layout -------------- -->
+  <div class="distribution-layout">
+    <!-- ---------------------------- Sidebar Toggle Button -------------- -->
+    <button
+      class="sidebar-toggle"
+      (click)="toggleSidebar()"
+      [class.collapsed]="isSidebarCollapsed"
+    >
+      <i
+        class="bi"
+        [class.bi-chevron-right]="isSidebarCollapsed"
+        [class.bi-chevron-left]="!isSidebarCollapsed"
+      ></i>
+    </button>
+
+    <!-- ---------------------------- Sidebar -------------- -->
+    <aside
+      class="sidebar border-gradient"
+      [class.collapsed]="isSidebarCollapsed"
+    >
+      <div class="collapsed-content" *ngIf="isSidebarCollapsed">
+        <div class="collapsed-text">افتح للتخصيص</div>
+      </div>
+
+      <div class="full-content" *ngIf="!isSidebarCollapsed">
+        <!-- ---------------------------- Employee Selection -------------- -->
+        <app-dropdown
+          [label]="'اختر الموظف'"
+          [options]="employeeOptions"
+          [selectedOption]="selectedClient"
+          (optionSelected)="onEmployeeSelected($event)"
+        ></app-dropdown>
+
+        <!-- ---------------------------- Employee Card -------------- -->
+        <div class="employee-card" *ngIf="selectedEmployee">
+          <div class="avatar-placeholder">
+            {{ selectedEmployee.name.charAt(0) }}
+          </div>
+          <div class="info">
+            <div class="name">{{ selectedEmployee.name }}</div>
+            <div class="role">{{ selectedEmployee.departmentName }}</div>
+          </div>
+          <div class="count">
+            <app-count-lead
+              [count]="assignedCustomers.length || 0"
+              [label]="'عميل'"
+            ></app-count-lead>
+          </div>
+        </div>
+
+        <!-- ---------------------------- Assigned Customers Section -------------- -->
+        <div class="section">
+          <div class="section-title">المجموعات/العملاء المُخصصة</div>
+          <div
+            class="parent-drop"
+            [class.drag-over]="isDragOver"
+            (dragover)="onDragOver($event)"
+            (dragleave)="onDragLeave($event)"
+            (drop)="onDrop($event)"
+          >
+            <button
+              class="chip assigned border-gradient"
+              *ngFor="let item of assignedCustomers"
+              (click)="onItemUnassign(item)"
+            >
+              <span class="dot"></span>
+              <span class="label">{{ item.name }}</span>
+              <i
+                class="bi bi-x close"
+                (click)="onItemUnassign(item); $event.stopPropagation()"
+              ></i>
+            </button>
+            <div class="empty" *ngIf="assignedCustomers.length === 0">
+              <i class="bi bi-file-earmark-text empty-icon"></i>
+              <p>لا توجد عناصر مخصصة. اسحب العملاء هنا للتخصيص.</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ---------------------------- Sidebar Actions -------------- -->
+        <div class="sidebar-actions">
+          <button
+            class="confirm"
+            (click)="onConfirmAssignment()"
+            [disabled]="assignedCustomers.length === 0"
+          >
+            تأكيد التخصيص
+          </button>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ---------------------------- Table Section -------------- -->
+    <div class="table-wrapper">
+      <div class="drag-hint" *ngIf="!isSidebarCollapsed">
+        <i class="bi bi-arrow-right-circle"></i>
+        <span>اسحب العناصر إلى الشريط الجانبي للتخصيص</span>
+        <span class="selection-count" *ngIf="selectedRows.length > 0">
+          ({{ selectedRows.length }} محدد)
+        </span>
+      </div>
+      <app-table
+        [data]="leadsList"
+        [columns]="companyColumns"
+        [selectedRows]="selectedRows"
+        [showDataTable]="true"
+        [hasNoData]="leadsList.length === 0"
+        [pageSize]="pageSize"
+        [currentPage]="currentPage"
+        [totalCount]="totalCount"
+        [tableClass]="'erb-data-table'"
+        [containerClass]="'erb-table-container'"
+        [showCheckbox]="true"
+        [showView]="true"
+        [showEdit]="true"
+        [showDelete]="true"
+        [showIndex]="true"
+        (rowSelectionChange)="onRowSelectionChange($event)"
+        (selectAllChange)="onSelectAllChange($event)"
+        (pageChange)="onPageChange($event)"
+        (pageSizeChange)="onPageSizeChange($event)"
+        (edit)="onEditDeal($event)"
+        (delete)="onDeleteDeal($event)"
+        (view)="onViewDeal($event)"
+      ></app-table>
+    </div>
+  </div>
+</div>

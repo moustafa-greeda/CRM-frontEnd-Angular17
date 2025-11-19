@@ -1,0 +1,30 @@
+<div class="dashboard-header">
+  <h5>{{ title }}</h5>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card" *ngFor="let stat of stats">
+    <div class="stat-card-content">
+      <h3>{{ stat.title }}</h3>
+      @if (stat.subtitle) {
+      <p class="stat-subtitle">{{ stat.subtitle }}</p>
+      }
+      <p [ngClass]="{ 'small-count': stat.title === 'القيمة الإجمالية' }">
+        {{ stat.count }}
+      </p>
+      @if (stat.details?.length) {
+      <ul class="stat-details">
+        <li *ngFor="let detail of stat.details">
+          <span class="detail-label">{{ detail.label }}</span>
+          <span class="detail-value">{{ detail.value }}</span>
+        </li>
+      </ul>
+      }
+    </div>
+    @if (stat.imageSrc) {
+    <img [src]="stat.imageSrc" [alt]="stat.title" class="stat-card-image" />
+    } @else {
+    <i class="bi {{ stat.icon }}"></i>
+    }
+  </div>
+</div>

@@ -1,0 +1,202 @@
+<div class="step-content personal-data-form full-width" [formGroup]="form">
+  <div class="form-row">
+    <div class="form-column">
+      <!-- has social media (radio) -->
+      <div class="form-group">
+        <label for="isHaveSoialMedia">هل لديه وسائل تواصل اجتماعي؟</label>
+        <div class="radio-group">
+          <label class="radio-item">
+            <input
+              type="radio"
+              name="isHaveSoialMedia"
+              [value]="true"
+              formControlName="isHaveSoialMedia"
+              (change)="onFieldChange('isHaveSoialMedia')"
+            />
+            <span>نعم</span>
+          </label>
+          <label class="radio-item">
+            <input
+              type="radio"
+              name="isHaveSoialMedia"
+              [value]="false"
+              formControlName="isHaveSoialMedia"
+              (change)="onFieldChange('isHaveSoialMedia')"
+            />
+            <span>لا</span>
+          </label>
+        </div>
+      </div>
+
+      <!-- social media link -->
+      <!-- <div class="form-group">
+        <label for="socialMediaLink">رابط وسائل التواصل</label>
+        <input
+          type="text"
+          id="socialMediaLink"
+          formControlName="socialMediaLink"
+          placeholder="أدخل رابط حساب التواصل"
+          class="form-input"
+          (blur)="onFieldBlur('socialMediaLink')"
+          (input)="onFieldChange('socialMediaLink')"
+        />
+        <div class="error-message" *ngIf="getErrorMessage('socialMediaLink')">
+          {{ getErrorMessage("socialMediaLink") }}
+        </div>
+      </div> -->
+
+      <!-- webSiteUrl -->
+      <div class="form-group">
+        <label for="webSiteUrl">الموقع الإلكتروني</label>
+        <input
+          type="text"
+          id="webSiteUrl"
+          formControlName="webSiteUrl"
+          placeholder="رابط الموقع"
+          class="form-input"
+          (blur)="onFieldBlur('webSiteUrl')"
+          (input)="onFieldChange('webSiteUrl')"
+        />
+        <div class="error-message" *ngIf="getErrorMessage('webSiteUrl')">
+          {{ getErrorMessage("webSiteUrl") }}
+        </div>
+      </div>
+
+      <!-- whatsapp -->
+      <div class="form-group">
+        <label for="whatsapp">واتساب</label>
+        <input
+          type="text"
+          id="whatsapp"
+          formControlName="whatsapp"
+          placeholder="إدخل رقم الواتساب "
+          class="form-input"
+          (blur)="onFieldBlur('whatsapp')"
+          (input)="onFieldChange('whatsapp')"
+        />
+        <div class="error-message" *ngIf="getErrorMessage('whatsapp')">
+          {{ getErrorMessage("whatsapp") }}
+        </div>
+      </div>
+      <!-- facebook -->
+      <div class="form-group">
+        <label for="facebook">فيس بوك</label>
+        <input
+          type="text"
+          id="facebook"
+          formControlName="facebook"
+          placeholder="إدخل اسم المستخدم علي فيسبوك "
+          class="form-input"
+          (blur)="onFieldBlur('facebook')"
+          (input)="onFieldChange('facebook')"
+        />
+        <div class="error-message" *ngIf="getErrorMessage('facebook')">
+          {{ getErrorMessage("facebook") }}
+        </div>
+      </div>
+
+      <!-- instgram -->
+      <div class="form-group">
+        <label for="instgram">انستجرام</label>
+        <input
+          type="text"
+          id="instgram"
+          formControlName="instgram"
+          placeholder="إدخل اسم المستخدم علي انستجرام "
+          class="form-input"
+          (blur)="onFieldBlur('instgram')"
+          (input)="onFieldChange('instgram')"
+        />
+        <div class="error-message" *ngIf="getErrorMessage('instgram')">
+          {{ getErrorMessage("instgram") }}
+        </div>
+      </div>
+    </div>
+
+    <!-- column 2 -->
+    <div class="form-column">
+      <!-- snapchat -->
+      <div class="form-group">
+        <label for="snapchat">سناب شات</label>
+        <input
+          type="text"
+          id="snapchat"
+          formControlName="snapchat"
+          placeholder="إدخل اسم المستخدم علي سناب شات "
+          class="form-input"
+          (blur)="onFieldBlur('snapchat')"
+          (input)="onFieldChange('snapchat')"
+        />
+        <div class="error-message" *ngIf="getErrorMessage('snapchat')">
+          {{ getErrorMessage("snapchat") }}
+        </div>
+      </div>
+      <!-- twitter -->
+      <div class="form-group">
+        <label for="twitter">اكس (X)</label>
+        <input
+          type="text"
+          id="twitter"
+          formControlName="twitter"
+          placeholder="إدخل اسم المستخدم علي اكس "
+          class="form-input"
+          (blur)="onFieldBlur('twitter')"
+          (input)="onFieldChange('twitter')"
+        />
+        <div class="error-message" *ngIf="getErrorMessage('twitter')">
+          {{ getErrorMessage("twitter") }}
+        </div>
+      </div>
+      <!-- linkedin -->
+      <div class="form-group">
+        <label for="linkedin">لينكد ان</label>
+        <input
+          type="text"
+          id="linkedin"
+          formControlName="linkedin"
+          placeholder="إدخل اسم المستخدم علي لينكد ان "
+          class="form-input"
+          (blur)="onFieldBlur('linkedin')"
+          (input)="onFieldChange('linkedin')"
+        />
+        <div class="error-message" *ngIf="getErrorMessage('linkedin')">
+          {{ getErrorMessage("linkedin") }}
+        </div>
+      </div>
+
+      <!-- youtube -->
+      <div class="form-group">
+        <label for="youtube">يوتيوب</label>
+        <input
+          type="text"
+          id="youtube"
+          formControlName="youtube"
+          placeholder="إدخل رابط قناة يوتيوب "
+          class="form-input"
+          (blur)="onFieldBlur('youtube')"
+          (input)="onFieldChange('youtube')"
+        />
+        <div class="error-message" *ngIf="getErrorMessage('youtube')">
+          {{ getErrorMessage("youtube") }}
+        </div>
+      </div>
+
+      <!-- tiktok -->
+      <div class="form-group">
+        <label for="tiktok">تيك توك</label>
+        <input
+          type="text"
+          id="tiktok"
+          formControlName="tiktok"
+          placeholder="إدخل اسم المستخدم علي تيك توك "
+          class="form-input"
+          (blur)="onFieldBlur('tiktok')"
+          (input)="onFieldChange('tiktok')"
+        />
+        <div class="error-message" *ngIf="getErrorMessage('tiktok')">
+          {{ getErrorMessage("tiktok") }}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

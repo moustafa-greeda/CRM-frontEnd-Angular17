@@ -1,0 +1,23 @@
+<div class="calls-container">
+  <app-page-header
+    [title]="pageTitle"
+    [breadcrumb]="breadcrumb"
+  ></app-page-header>
+
+  <!-- Table Section -->
+  <div class="table-wrapper" *ngIf="!loading">
+    <app-table
+      [data]="calls"
+      [columns]="callColumns"
+      [selectedRows]="selectedCalls"
+      [showDataTable]="true"
+      [hasNoData]="calls.length === 0"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      [totalCount]="totalCount"
+      [tableClass]="'erb-data-table'"
+      [containerClass]="'erb-table-container'"
+      [showIndex]="true"
+    ></app-table>
+  </div>
+</div>

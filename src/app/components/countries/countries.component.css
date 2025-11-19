@@ -1,0 +1,678 @@
+:host {
+  display: block;
+  width: 100%;
+  min-height: 100vh;
+  padding: 0;
+  margin: 0;
+  direction: rtl;
+  color: #e6edf3;
+  font-family: "Tajawal", "Cairo", system-ui, -apple-system, Segoe UI, Roboto,
+    Arial, sans-serif;
+  position: relative;
+  overflow: auto;
+}
+
+/* Layout margins removed from layout.component.css */
+
+.country {
+  /* background-image: url("../../../assets/bg-country.jpg"); */
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-attachment: fixed;
+  width: 100%;
+  min-height: 100vh;
+  padding: 0;
+  position: relative;
+  box-sizing: border-box;
+  margin: 0;
+}
+
+/* Add overlay for better text readability */
+.country::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.4);
+  z-index: 1;
+}
+
+/* Ensure content is above overlay and add padding */
+.country > * {
+  position: relative;
+  z-index: 2;
+  padding: 16px;
+  box-sizing: border-box;
+}
+
+/* Alternative: If you want a gradient overlay instead of solid */
+.country.gradient-overlay::before {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 0, 0, 0.6) 0%,
+    rgba(0, 0, 0, 0.3) 100%
+  );
+}
+
+/* Desktop: Ensure sidebar is visible */
+@media (min-width: 992px) {
+  .country {
+    margin: 0;
+  }
+}
+
+/* For mobile devices, use scroll instead of fixed */
+@media (max-width: 768px) {
+  .country {
+    background-attachment: scroll;
+    margin: 0;
+  }
+}
+
+/* Remove global overrides that interfere with layout */
+
+/* Make sure the component takes full viewport - styles already applied above */
+
+/* Alternative approach - if the above doesn't work, try this */
+.country.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: -1;
+}
+
+.country.fullscreen + * {
+  position: relative;
+  z-index: 1;
+}
+.search-box {
+  width: 60%;
+  height: 50px;
+  margin: 20px 0;
+  display: flex;
+  align-items: center;
+  border-radius: 57px;
+  border: 1.3px solid rgba(196, 202, 205, 0.08);
+  background: #444444;
+  padding: 6px 10px;
+  gap: 6px;
+  color: #fff !important;
+  max-width: 100%;
+}
+
+/* Responsive search box */
+@media (max-width: 768px) {
+  .search-box {
+    margin: 12px;
+    height: 45px;
+  }
+}
+
+@media (max-width: 480px) {
+  .search-box {
+    margin: 8px;
+    height: 40px;
+    border-radius: 25px;
+  }
+}
+
+.search-box input {
+  width: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: #fff !important;
+  font-size: 14px;
+}
+.search-box input::placeholder {
+  padding: 0 10px;
+  color: #fff;
+  font-size: 18px;
+}
+
+.search-icon {
+  color: #fff;
+}
+
+/* Layout */
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.page-header .title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #f6f7f9;
+}
+
+/* Responsive grid layout */
+.grid-2 {
+  display: grid;
+  grid-template-columns: 60% 1fr;
+  gap: 18px;
+}
+
+/* Mobile responsive breakpoints */
+@media (max-width: 1024px) {
+  .grid-2 {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+@media (max-width: 768px) {
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .page-header .title {
+    font-size: 16px;
+  }
+
+  .grid-2 {
+    gap: 12px;
+  }
+
+  .country {
+    margin: 0;
+  }
+
+  .country > * {
+    padding: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header .title {
+    font-size: 14px;
+  }
+
+  .country {
+    margin: 0;
+  }
+
+  .country > * {
+    padding: 8px;
+  }
+}
+
+/* Panels */
+.panel {
+  background: rgba(17, 24, 31, 0.82) !important;
+  border-radius: 12px;
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
+  overflow: hidden;
+  /* border: 2px solid #11181F; */
+}
+/* Form Cards Container */
+.form-cards-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  /* border: 2px solid #11181F; */
+}
+
+.form-input-card {
+  border: 1px solid rgba(17, 40, 31, 80);
+  padding: 20px;
+}
+
+.form-actions-card {
+  /* border: 1px solid #11181F; */
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.form-title {
+  font-weight: 800;
+  color: #f3f7fb;
+  margin-bottom: 8px;
+  font-size: 16px;
+}
+
+.form-subtitle {
+  color: #9fb2c9;
+  font-size: 13px;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+/* Responsive panels */
+@media (max-width: 768px) {
+  .form-cards-container {
+    gap: 12px;
+  }
+
+  .form-input-card {
+    padding: 16px;
+  }
+
+  .form-actions-card {
+    padding: 12px 16px;
+  }
+
+  .form-title {
+    font-size: 15px;
+  }
+
+  .form-subtitle {
+    font-size: 12px;
+    margin-bottom: 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form-cards-container {
+    gap: 10px;
+  }
+
+  .form-input-card {
+    padding: 12px;
+  }
+
+  .form-actions-card {
+    padding: 10px 12px;
+  }
+
+  .form-title {
+    font-size: 14px;
+  }
+
+  .form-subtitle {
+    font-size: 11px;
+    margin-bottom: 14px;
+  }
+}
+
+/* Custom form (no Angular Material) */
+.form {
+  display: grid;
+  gap: 14px;
+}
+.field {
+  display: grid;
+  gap: 6px;
+}
+.label {
+  color: #9fb2c9;
+  font-size: 13px;
+}
+
+/* Responsive form */
+@media (max-width: 768px) {
+  .form {
+    gap: 12px;
+  }
+
+  .label {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .form {
+    gap: 10px;
+  }
+
+  .label {
+    font-size: 11px;
+  }
+}
+
+.input {
+  width: 100%;
+  height: 44px;
+  /* padding: 0 12px; */
+  color: #e6edf3;
+  background: #04080b;
+  border: 1px solid #11181f;
+  border-radius: 10px;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.input::placeholder {
+  color: #7f8c99;
+}
+.input:focus {
+  border-color: #11181f;
+  outline: none;
+}
+
+/* Responsive inputs */
+@media (max-width: 768px) {
+  .input {
+    height: 40px;
+    padding: 0 10px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .input {
+    height: 36px;
+    padding: 0 8px;
+    font-size: 13px;
+  }
+}
+
+.input-with-prefix {
+  display: flex;
+  align-items: center;
+  height: 44px;
+  background: #04080b;
+  border: 1px solid #11181f;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.input-with-prefix .prefix {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 100%;
+  background: #0b1016;
+  color: #ffb088;
+  border-inline-end: 1px solid #11181f;
+}
+
+.flag-prefix {
+  font-size: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.flag-emoji {
+  border-radius: 10px;
+  width: 50px;
+  height: 100%;
+  object-fit: contain;
+}
+.default-prefix {
+  font-size: 16px;
+  font-weight: bold;
+}
+.input.naked {
+  background: transparent;
+  border: 0;
+  height: 100%;
+  padding: 0 12px;
+  flex: 1;
+}
+
+/* Responsive input with prefix */
+@media (max-width: 768px) {
+  .input-with-prefix {
+    height: 40px;
+  }
+
+  .input-with-prefix .prefix {
+    width: 40px;
+  }
+
+  .input.naked {
+    padding: 0 10px;
+  }
+
+  .flag-emoji {
+    font-size: 18px;
+  }
+
+  .default-prefix {
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .input-with-prefix {
+    height: 36px;
+  }
+
+  .input-with-prefix .prefix {
+    width: 36px;
+  }
+
+  .input.naked {
+    padding: 0 8px;
+  }
+
+  .flag-emoji {
+    font-size: 16px;
+  }
+
+  .default-prefix {
+    font-size: 12px;
+  }
+}
+
+.hint {
+  color: #ff9a82;
+  font-size: 12px;
+}
+
+/* Buttons */
+.actions {
+  display: flex;
+  gap: 12px;
+  padding-top: 0;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  /* border: 2px solid #11181F; */
+}
+.btn {
+  height: 48px;
+  width: 48px;
+  padding: 0;
+  border-radius: 12px;
+  font-weight: 700;
+  border: 1px solid transparent;
+  cursor: pointer;
+  transition: transform 0.08s ease, box-shadow 0.15s ease, background 0.15s ease;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn mat-icon {
+  font-size: 20px;
+  width: 20px;
+  height: 20px;
+}
+.btn:active {
+  transform: translateY(1px);
+}
+.btn-ghost {
+  min-width: 100px;
+  background: transparent;
+  color: #db0000;
+  border-color: #db0000;
+}
+.btn-ghost:hover {
+  background: rgba(255, 122, 47, 0.08);
+}
+.btn-accent {
+  /* background: #ff7a2f;  */
+  min-width: 100px;
+  color: #ff5f00;
+  border: 1px solid #ff5f00;
+}
+.btn-accent:hover {
+  box-shadow: 0 0 0 4px rgba(255, 122, 47, 0.15);
+}
+.btn-outline {
+  font-size: 50px;
+  min-width: 100px;
+  color: #46e3ff;
+  border-color: #46e3ff;
+}
+
+/* Responsive buttons */
+@media (max-width: 768px) {
+  .actions {
+    gap: 10px;
+  }
+
+  .btn {
+    height: 44px;
+    width: 44px;
+  }
+
+  .btn mat-icon {
+    font-size: 18px;
+    width: 18px;
+    height: 18px;
+  }
+}
+
+@media (max-width: 480px) {
+  .actions {
+    gap: 8px;
+    flex-direction: row;
+    justify-content: space-around;
+  }
+
+  .btn {
+    height: 40px;
+    width: 40px;
+  }
+
+  .btn mat-icon {
+    font-size: 16px;
+    width: 16px;
+    height: 16px;
+  }
+}
+
+/* Table (Angular Material) */
+.full-width-table {
+  width: 100%;
+  border: 1px solid #11181f;
+  background-color: rgba(17, 24, 31, 0.5);
+  backdrop-filter: blur(10px);
+  border-collapse: collapse;
+  overflow-x: auto;
+}
+table {
+  color: #e6edf3;
+  min-width: 100%;
+}
+th[mat-header-cell] {
+  background-color: rgba(4, 8, 11, 0.8) !important;
+  color: #c7d4e2;
+  font-weight: 800;
+  letter-spacing: 0.2px;
+  border-bottom: 1px solid #11181f !important;
+  padding: 12px 8px;
+  font-size: 14px;
+}
+td[mat-cell] {
+  /* border-bottom: 1px solid #11181F !important;  */
+  padding: 12px 8px;
+  font-size: 14px;
+  color: #fff !important;
+}
+.full-width-table tr.mat-mdc-row:nth-child(odd) {
+  background-color: rgba(17, 24, 31, 0.5) !important;
+}
+.full-width-table tr.mat-mdc-row:nth-child(even) {
+  background-color: rgba(17, 24, 31, 0.8) !important;
+}
+.full-width-table tr.mat-mdc-row:hover {
+  background-color: #17202b !important;
+}
+
+/* Responsive table */
+@media (max-width: 768px) {
+  th[mat-header-cell],
+  td[mat-cell] {
+    padding: 8px 6px;
+    font-size: 13px;
+  }
+
+  .full-width-table {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  th[mat-header-cell],
+  td[mat-cell] {
+    padding: 6px 4px;
+    font-size: 12px;
+  }
+
+  .full-width-table {
+    font-size: 11px;
+  }
+
+  /* Hide less important columns on very small screens */
+  .full-width-table .mat-column-index {
+    display: none;
+  }
+}
+
+/* Paginator */
+.mat-mdc-paginator {
+  background-color: rgba(4, 8, 11, 0.8) !important;
+  border-top: 1px solid #11181f !important;
+  color: #c7d4e2 !important;
+}
+
+/* More specific selectors for Angular Material paginator */
+:host ::ng-deep .mat-mdc-paginator {
+  background-color: rgba(4, 8, 11, 0.8) !important;
+}
+
+:host ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-container {
+  background-color: rgba(4, 8, 11, 0.8) !important;
+}
+
+:host ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-page-size {
+  background-color: rgba(4, 8, 11, 0.8) !important;
+}
+
+:host ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-range-label {
+  background-color: rgba(4, 8, 11, 0.8) !important;
+}
+
+/* Additional specific selectors */
+:host ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-previous,
+:host ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-navigation-next {
+  background-color: rgba(4, 8, 11, 0.8) !important;
+}
+
+:host ::ng-deep .mat-mdc-paginator .mat-mdc-paginator-page-size-select {
+  background-color: rgba(4, 8, 11, 0.8) !important;
+}
+
+/* Force override with higher specificity */
+:host ::ng-deep .mat-mdc-paginator.mat-mdc-paginator {
+  background-color: rgba(4, 8, 11, 0.8) !important;
+}
+
+/* Responsive paginator */
+@media (max-width: 768px) {
+  .mat-mdc-paginator {
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .mat-mdc-paginator {
+    font-size: 11px;
+  }
+}

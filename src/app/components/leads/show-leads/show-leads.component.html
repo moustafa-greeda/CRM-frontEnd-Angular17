@@ -1,0 +1,250 @@
+<div class="client-management-container">
+  <!----------------------- Header Section ------------------>
+  <app-page-header
+    [title]="pageTitle"
+    [breadcrumb]="breadcrumb"
+    [actionButtons]="actionButtons"
+  ></app-page-header>
+
+  <!----------------------- Search Bar filter section ----------->
+  <section class="filter">
+    <!-- right section -->
+    <div class="filter-search-bar">
+      <div class="search-section">
+        <app-search-input
+          [placeholder]="getSearchPlaceholder()"
+          (search)="onSearch($event)"
+        ></app-search-input>
+      </div>
+    </div>
+    <!-- left section -->
+    <div class="parent-left">
+      <app-dropdown
+        [label]="
+          isLoadingLeadStatus
+            ? 'جاري التحميل...'
+            : isLeadStatusSelected
+            ? 'حالة العميل المحتمل'
+            : 'اختر حالة العميل'
+        "
+        [options]="leadStatusOptions"
+        [selectedOption]="leadStatusLookupId"
+        (optionSelected)="onLeadStatusChange($event)"
+      ></app-dropdown>
+
+      <!-- Create Lead Button -->
+      <button
+        class="btn button-color"
+        (click)="createLeadForSelectedClients()"
+        [disabled]="selectedCards.length === 0 || !isLeadStatusSelected"
+        title="إنشاء عميل محتمل للعملاء المحددين"
+      >
+        <i class="bi bi-plus-circle"></i>
+        إنشاء عميل محتمل ({{ selectedCards.length }})
+      </button>
+
+      <!-- count lead -->
+      <div class="countLead">
+        <p class="countLead-text">
+          {{
+            selectedCards.length > 0
+              ? selectedCards.length + " محدد من " + filteredClients.length
+              : filteredClients.length
+          }}
+          من {{ totalCount }} عميل
+        </p>
+        <i class="bi bi-person-fill"></i>
+      </div>
+    </div>
+  </section>
+
+  <!-- import and export -->
+  <div class="filter">
+    <!--parent import -->
+    <div class="parent-import">
+      <!----------------------- View Toggle Button ----------->
+      <div class="view-toggle-container">
+        <app-view-toggle
+          [viewMode]="viewMode"
+          (viewModeChange)="viewMode = $event"
+        ></app-view-toggle>
+      </div>
+      <!-- select all -->
+      <div class="select-all">
+        <p class="select-all-text">تحديد الكل</p>
+        <div class="checkbox-wrapper">
+          <input
+            type="checkbox"
+            class="custom-checkbox"
+            [checked]="isAllSelected"
+            (change)="onSelectAllChange($event)"
+          />
+        </div>
+      </div>
+
+      <!-- delet lead -->
+      <i class="bi bi-trash3"></i>
+    </div>
+    <!-- export section -->
+    <!-- <div class="export-section">
+      <button
+        class="btn btn-outline-success"
+        (click)="onExportSelected()"
+        [disabled]="selectedCards.length === 0"
+      >
+        <i class="bi bi-check-circle"></i>
+        تصدير المحدد ({{ selectedCards.length }})
+      </button>
+
+      <button
+        class="btn btn-outline-info"
+        (click)="onExportCurrentPage()"
+        [disabled]="filteredClients.length === 0"
+      >
+        <i class="bi bi-file-earmark-text"></i>
+        تصدير الصفحة الحالية ({{ filteredClients.length }})
+      </button>
+
+      <button
+        class="btn btn-outline-warning"
+        (click)="onExportAll()"
+        [disabled]="leads.length === 0"
+      >
+        <i class="bi bi-cloud-download"></i>
+        تصدير الكل ({{ totalCount }})
+      </button>
+    </div> -->
+
+    <!-- Custom Pagination Controls (cards only) -->
+    <div class="pagination-controls" *ngIf="viewMode === 'card'">
+      <div class="page-size-selector">
+        <label>عدد العناصر:</label>
+        <select (change)="onPageSizeChange($event)" [value]="pageSize">
+          <option value="10">10</option>
+          <option value="50">50</option>
+          <option value="100">100</option>
+          <option value="500">500</option>
+        </select>
+      </div>
+
+      <div class="pagination-info">
+        <span>صفحة {{ currentPage }} من {{ totalPages }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!------------------------- Client Cards Grid ---------------------->
+  <app-grid-cards
+    [isLoading]="false"
+    [error]="false"
+    *ngIf="!isLoading && !error && viewMode === 'card'"
+  >
+    <app-card
+      *ngFor="let client of filteredClients; trackBy: trackByClientId"
+      [data]="client"
+      [titleKey]="'name'"
+      [subTitleKey]="'jobTitle'"
+      [fields]="[
+        { label: 'البريد الإلكتروني', key: 'email', icon: 'bi bi-envelope' },
+        { label: 'الهاتف', key: 'phone', icon: 'bi bi-telephone-fill' }
+      ]"
+      [infoBoxes]="[
+        { label: 'اسم الصناعة', value: client.industeryName },
+        { label: 'اسم الشركة', value: client.companyName }
+      ]"
+      [selectable]="true"
+      [isSelected]="isCardSelected(client)"
+      (selectionChange)="onCardSelectionChange(client, $event)"
+    ></app-card>
+  </app-grid-cards>
+
+  <!------------------------- Table View (Reusable) ---------------------->
+  <div
+    class="table-view-container"
+    *ngIf="!isLoading && !error && viewMode === 'table'"
+  >
+    <app-table
+      [data]="filteredClients"
+      [columns]="tableColumns"
+      [selectedRows]="selectedCards"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      [totalCount]="totalCount"
+      [showIndex]="true"
+      (rowSelectionChange)="onTableRowSelection($event)"
+      (selectAllChange)="onTableSelectAll($event)"
+      (pageChange)="onTablePage($event)"
+      (pageSizeChange)="onTablePageSize($event)"
+      (view)="onViewClient($event)"
+      (edit)="onEditClient($event)"
+      (delete)="onDeleteClient($event)"
+    ></app-table>
+  </div>
+
+  <!-- Empty State -->
+  <div
+    class="empty-state"
+    *ngIf="!isLoading && filteredClients.length === 0 && viewMode === 'card'"
+  >
+    <div class="empty-state-content">
+      <h3>لا توجد عملاء</h3>
+      <p>لم يتم العثور على عملاء مطابقين لمعايير البحث</p>
+    </div>
+  </div>
+
+  <!-- Custom Pagination Navigation (cards only) -->
+  <div
+    class="pagination-navigation"
+    *ngIf="!isLoading && totalPages > 1 && viewMode === 'card'"
+  >
+    <div class="pagination-buttons">
+      <button
+        class="btn btn-outline-primary"
+        (click)="onPageChange(1)"
+        [disabled]="currentPage === 1"
+        title="الصفحة الأولى"
+      >
+        <i class="bi bi-chevron-double-left"></i>
+      </button>
+
+      <button
+        class="btn btn-outline-primary"
+        (click)="onPageChange(currentPage - 1)"
+        [disabled]="currentPage === 1"
+        title="الصفحة السابقة"
+      >
+        <i class="bi bi-chevron-left"></i>
+      </button>
+
+      <div class="page-numbers">
+        <button
+          *ngFor="let page of getPageNumbers()"
+          class="btn"
+          [class.btn-primary]="page === currentPage"
+          [class.btn-outline-primary]="page !== currentPage"
+          (click)="onPageChange(page)"
+        >
+          {{ page }}
+        </button>
+      </div>
+
+      <button
+        class="btn btn-outline-primary"
+        (click)="onPageChange(currentPage + 1)"
+        [disabled]="currentPage === totalPages"
+        title="الصفحة التالية"
+      >
+        <i class="bi bi-chevron-right"></i>
+      </button>
+
+      <button
+        class="btn btn-outline-primary"
+        (click)="onPageChange(totalPages)"
+        [disabled]="currentPage === totalPages"
+        title="الصفحة الأخيرة"
+      >
+        <i class="bi bi-chevron-double-right"></i>
+      </button>
+    </div>
+  </div>
+</div>

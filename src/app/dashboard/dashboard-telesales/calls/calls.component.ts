@@ -98,11 +98,6 @@ export class CallsComponent implements OnInit {
     // Get employee ID - try from cache first, then from API
     let employeeId = this.authService.getEmployeeId();
 
-    // If not found in cache, fetch from API using employee name
-    if (!employeeId) {
-      employeeId = await this.authService.getEmployeeIdAsync();
-    }
-
     if (!employeeId) {
       this.notify.error({
         title: 'خطأ',

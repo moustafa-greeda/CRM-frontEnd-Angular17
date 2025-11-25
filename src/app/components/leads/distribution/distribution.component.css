@@ -6,7 +6,6 @@
   display: flex;
   gap: 16px;
   flex-wrap: nowrap;
-  position: relative;
 }
 
 /* Toggle Button */
@@ -28,6 +27,11 @@
   transition: all 0.3s ease;
 }
 
+/* Ensure dropdown menus are not clipped by table container */
+.table-container .dropdown-menu {
+  position: absolute !important;
+}
+
 .sidebar-toggle:hover {
   background: var(--button-color);
   color: var(--white-color);
@@ -43,6 +47,19 @@
   flex: 0 0 25%;
   max-width: 25%;
   transition: all 0.3s ease;
+  position: relative;
+  animation: cardFadeIn 1.5s ease-out forwards;
+}
+
+@keyframes cardFadeIn {
+  0% {
+    opacity: 0;
+    transform: perspective(600px) translateX(500px);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(600px) translateX(0);
+  }
 }
 
 /* Collapsed sidebar */
@@ -277,6 +294,7 @@
 }
 
 .sidebar .full-content {
+  padding-top: 15px;
   display: flex;
   flex-direction: column;
   justify-content: space-between;

@@ -16,6 +16,14 @@ import { CountryCityService } from '../../core/services/common/country-city.serv
 import { StatusColorService } from '../../core/services/common/status-color.service';
 import { DateUtilsService } from '../../core/services/common/date-utils.service';
 import { DashboardSalseService } from './dashboard-salse.service';
+import { PakegsService } from '../../core/services/common/pakegs.service';
+import { IGetAllPacket } from '../../core/Models/common/iget-all-packet';
+
+type PacketOption = {
+  id: number | null;
+  name: string;
+  price?: number | null;
+};
 
 @Component({
   selector: 'app-dashboard-sales',
@@ -29,6 +37,7 @@ export class DashboardSalesComponent implements OnInit {
   leadStatusMap: Map<string, number> = new Map();
   leadsList: any[] = [];
   allLeadsCache: any[] = [];
+  allPackets: PacketOption[] = [];
 
   actionLabels = {
     edit: 'تعديل الميزانية',
@@ -44,6 +53,7 @@ export class DashboardSalesComponent implements OnInit {
     { key: 'currencyName', header: 'العملة' },
     { key: 'lastActionTime', header: 'آخر تفاعل', formatter: 'datetime' },
     { key: 'actionNote', header: 'ملاحظة الإجراء' },
+    { key: 'packet', header: 'الباقة' },
     { key: 'actions', header: 'الإجراءات' },
   ];
   // Filters
@@ -60,6 +70,35 @@ export class DashboardSalesComponent implements OnInit {
 
   get cityNames(): string[] {
     return (this.cityList || []).map((c: any) => c?.name).filter(Boolean);
+  }
+
+  get packetDropdownOptions(): PacketOption[] {
+    return [
+      { id: null, name: 'لم تحدد', price: null },
+      ...(this.allPackets || []),
+    ];
+  }
+
+  get defaultPacketOption(): PacketOption {
+    return { id: null, name: 'لم تحدد', price: null };
+  }
+
+  normalizePacketOption(
+    packet: {
+      id: number | string | null;
+      name: string;
+      price?: number | null;
+    } | null
+  ): PacketOption | null {
+    if (!packet) {
+      return null;
+    }
+
+    return {
+      id: this.normalizePacketIdValue(packet.id),
+      name: packet.name,
+      price: packet.price ?? null,
+    };
   }
 
   pageSize = 10;
@@ -96,6 +135,7 @@ export class DashboardSalesComponent implements OnInit {
   editingLeadId: number | null = null;
   selectedLeadForEdit: any = null;
   leadStatusOptions: string[] = [];
+
   // Use the service for status colors instead of inline map
   get leadStatusColorMap(): Record<string, string> {
     return this.statusColorService.getAllStatusColors();
@@ -206,6 +246,7 @@ export class DashboardSalesComponent implements OnInit {
     private _dashboardService: DashboardSalseService,
     private _authService: AuthService,
     private _leadStatusService: LeadStatusService,
+    private _pakegsService: PakegsService,
     private dialog: MatDialog,
     private notify: NotifyDialogService,
     private _countryCityService: CountryCityService,
@@ -280,10 +321,21 @@ export class DashboardSalesComponent implements OnInit {
     // Load countries
     this.loadCountries();
 
+    // Load packet options
+    this.loadAllPackets();
+
     // Load leads data
     if (username) {
       this.loadLeadsData(username);
     }
+  }
+  //========================================= load all packets ===========================================
+  loadAllPackets(): void {
+    // Subscribe to the packets observable
+    this._pakegsService.packets$.subscribe((packets) => {
+      this.allPackets = packets;
+      this.refreshPacketAssignments();
+    });
   }
   //========================================= search and filter =================================
   onCountrySelected(option: string): void {
@@ -307,6 +359,84 @@ export class DashboardSalesComponent implements OnInit {
     this.applyClientSideFilter();
   }
 
+  onPacketSelected(row: any, packet: PacketOption | null): void {
+    if (!row) {
+      return;
+    }
+
+    const previousPacketId = row.packetId ?? null;
+    const previousPacket = row.packet;
+
+    const packetIdValue =
+      packet?.id === undefined || packet?.id === null
+        ? null
+        : typeof packet.id === 'string'
+        ? Number(packet.id)
+        : packet.id;
+    const normalizedPacketId =
+      typeof packetIdValue === 'number' && !Number.isNaN(packetIdValue)
+        ? packetIdValue
+        : null;
+
+    row.packetId = normalizedPacketId;
+    row.packet = packet;
+
+    const assignmentId = row?.id ?? row?.leadId ?? row?.assignmentId;
+    if (!assignmentId || normalizedPacketId === null) {
+      row.packetId = previousPacketId;
+      row.packet = previousPacket;
+      this.notify.open({
+        type: 'error',
+        title: 'خطأ',
+        description: 'يجب اختيار باقة صالحة لتحديث الميزانية.',
+      });
+      return;
+    }
+
+    const selectedPacket =
+      this.allPackets.find(
+        (opt) => (opt.id ?? null) === (normalizedPacketId ?? null)
+      ) || null;
+    const packetPrice = Number(selectedPacket?.price ?? NaN);
+
+    this._dashboardService
+      .updateSalesBudget(assignmentId, normalizedPacketId)
+      .subscribe({
+        next: () => {
+          if (Number.isFinite(packetPrice)) {
+            row.budget = packetPrice;
+          }
+          const cached = this.allLeadsCache.find(
+            (lead) => (lead.leadId ?? lead.id) === assignmentId
+          );
+          if (cached) {
+            if (Number.isFinite(packetPrice)) {
+              cached.budget = packetPrice;
+            }
+            cached.packetId = normalizedPacketId;
+            cached.packet = packet;
+          }
+
+          this.notify.open({
+            type: 'success',
+            title: 'تم التحديث',
+            description: 'تم تحديث الميزانية بناءً على الباقة المختارة.',
+          });
+
+          this.refreshLeadsAfterBudgetChange();
+        },
+        error: () => {
+          row.packetId = previousPacketId;
+          row.packet = previousPacket;
+          this.notify.open({
+            type: 'error',
+            title: 'خطأ',
+            description: 'تعذر تحديث الميزانية، يرجى المحاولة لاحقاً.',
+          });
+        },
+      });
+  }
+
   onActionDateFilterSelected(option: string): void {
     this.selectedActionDateFilter = option || '--';
     this.currentPage = 1;
@@ -324,6 +454,102 @@ export class DashboardSalesComponent implements OnInit {
         this.countryList = [];
       },
     });
+  }
+
+  private normalizePacketIdValue(rawId: any): number | null {
+    if (rawId === null || rawId === undefined || rawId === '') {
+      return null;
+    }
+    const numericValue =
+      typeof rawId === 'string'
+        ? Number(rawId)
+        : typeof rawId === 'number'
+        ? rawId
+        : typeof rawId?.id === 'number'
+        ? rawId.id
+        : Number(rawId?.id ?? rawId);
+    return Number.isFinite(numericValue) ? numericValue : null;
+  }
+
+  private resolvePacketOption(
+    packetId: number | null,
+    fallbackName?: string,
+    fallbackPrice?: number | null
+  ): PacketOption | null {
+    if (packetId === null) {
+      return null;
+    }
+    const fromList = this.allPackets.find((opt) => opt.id === packetId);
+    if (fromList) {
+      return fromList;
+    }
+    if (fallbackName) {
+      return {
+        id: packetId,
+        name: fallbackName,
+        price: fallbackPrice ?? null,
+      };
+    }
+    return null;
+  }
+
+  private resolvePacketByBudget(budget: number | null): PacketOption | null {
+    if (budget === null || budget === undefined) {
+      return null;
+    }
+
+    const numericBudget = Number(budget);
+    if (!Number.isFinite(numericBudget)) {
+      return null;
+    }
+
+    const byIdMatch =
+      this.allPackets.find((opt) => Number(opt.id) === numericBudget) ?? null;
+    if (byIdMatch) {
+      return byIdMatch;
+    }
+
+    const byPriceMatch =
+      this.allPackets.find((opt) =>
+        Number.isFinite(Number(opt.price))
+          ? Number(opt.price) === numericBudget
+          : false
+      ) ?? null;
+
+    return byPriceMatch;
+  }
+
+  private attachPacketInfo(lead: any): any {
+    const rawPacketId = lead.packetId ?? lead.packet?.id ?? null;
+    const normalizedPacketId = this.normalizePacketIdValue(rawPacketId);
+    const packetName = lead.packetName || lead.packet?.name || null;
+    const packetPrice =
+      lead.packet?.price ?? lead.packetPrice ?? lead.productPrice ?? null;
+    const packetOption =
+      this.resolvePacketOption(
+        normalizedPacketId,
+        packetName ?? undefined,
+        packetPrice
+      ) ?? this.resolvePacketByBudget(lead?.budget ?? null);
+    const finalPacketId = packetOption?.id ?? normalizedPacketId;
+    return {
+      ...lead,
+      packetId: finalPacketId,
+      packet: packetOption,
+    };
+  }
+
+  private refreshPacketAssignments(): void {
+    if (this.leadsList?.length) {
+      this.leadsList = this.leadsList.map((lead) =>
+        this.attachPacketInfo(lead)
+      );
+    }
+    if (this.allLeadsCache?.length) {
+      this.allLeadsCache = this.allLeadsCache.map((lead) =>
+        this.attachPacketInfo(lead)
+      );
+    }
   }
 
   private loadCitiesByCountry(countryId: number): void {
@@ -403,6 +629,20 @@ export class DashboardSalesComponent implements OnInit {
 
     // Fetch first page with new page size
     const username = this._authService.getUsername() || '';
+    this.loadLeadsData(
+      username,
+      this.searchTerm,
+      this.selectedLeadStatusId,
+      true
+    );
+  }
+
+  private refreshLeadsAfterBudgetChange(): void {
+    const username = this._authService.getUsername();
+    if (!username) {
+      return;
+    }
+
     this.loadLeadsData(
       username,
       this.searchTerm,
@@ -507,7 +747,7 @@ export class DashboardSalesComponent implements OnInit {
               }
             }
 
-            return {
+            return this.attachPacketInfo({
               ...lead,
               assignmentId: lead.id, // persist assignment id from GetSalesTableData
               leadId: lead.leadId || lead.id,
@@ -518,7 +758,7 @@ export class DashboardSalesComponent implements OnInit {
               city: lead.city || '',
               country: lead.country || '',
               actionNote: lead.notes || lead.actionNote || '',
-            };
+            });
           });
 
           // Update cache
@@ -1070,7 +1310,12 @@ export class DashboardSalesComponent implements OnInit {
             {
               name: 'budget',
               label: 'الميزانية',
-              type: 'number',
+              // type: 'number',
+              type: 'select',
+              options: this.allPackets.map((packet) => ({
+                label: packet.name,
+                value: packet.id,
+              })),
               required: true,
               placeholder: 'أدخل الميزانية',
               colSpan: 3,
@@ -1081,6 +1326,7 @@ export class DashboardSalesComponent implements OnInit {
           budget: lead.budget,
         },
       },
+      // this.,
     });
 
     dialogRef.componentInstance.formSubmit.subscribe((formData) => {
@@ -1095,7 +1341,7 @@ export class DashboardSalesComponent implements OnInit {
       }
 
       this._dashboardService.updateSalesBudget(id, value).subscribe({
-        next: (res) => {
+        next: () => {
           // Update row and cache
           lead.budget = value;
           const cached = this.allLeadsCache.find(
@@ -1109,6 +1355,7 @@ export class DashboardSalesComponent implements OnInit {
             description: 'تم تحديث الميزانية بنجاح',
           });
           dialogRef.close();
+          this.refreshLeadsAfterBudgetChange();
         },
         error: (error) => {
           const msg =
@@ -1276,11 +1523,19 @@ export class DashboardSalesComponent implements OnInit {
             cachedLead.assignLeadId = assignLeadId;
           }
 
+          // If status is Confirmed, create assignment to account
+          if (newStatus === 'Confirmed') {
+            this.createAssignToAccount(lead);
+          }
+
           this.notify.open({
             type: 'success',
             title: 'نجح',
 
-            description: response.data || 'تم تحديث حالة العميل المحتمل بنجاح',
+            description:
+              newStatus === 'Confirmed'
+                ? 'تم تحويل العميل الي قسم الحسابات '
+                : 'تم تحديث حالة العميل المحتمل بنجاح',
           });
         } else {
           // API returned unsuccessful response
@@ -1331,6 +1586,48 @@ export class DashboardSalesComponent implements OnInit {
       type: 'error',
       title: 'خطأ',
       description: errorMsg || 'فشل تحديث حالة العميل المحتمل',
+    });
+  }
+
+  // ============================ Create Assign To Account ================================
+  private createAssignToAccount(lead: any): void {
+    const employeeId = this._authService.getEmployeeId();
+
+    if (!employeeId) {
+      console.error('Could not get employee ID');
+      return;
+    }
+
+    this.sendAssignToAccountRequest(lead, String(employeeId));
+  }
+
+  private sendAssignToAccountRequest(lead: any, assignedByEmp: string): void {
+    const leadId = lead.leadId;
+    const notes = lead.actionNote || lead.notes || '';
+    const budgetValue = Number(lead.budget) || 0;
+    const currency = lead.currencyName || '';
+    const isInWorkOrder = false;
+
+    const payload = {
+      assignedByEmp: assignedByEmp,
+      leadId: leadId,
+      notes: notes,
+      buddgetValue: budgetValue,
+      currncy: currency,
+      isInWorkOrder: isInWorkOrder,
+    };
+
+    this._dashboardService.createAssignToAccount(payload).subscribe({
+      next: (response) => {
+        if (response && response.succeeded !== false) {
+          // Successfully assigned to account
+          console.log('Successfully assigned to account:', response);
+        }
+      },
+      error: (error) => {
+        console.error('Error creating assign to account:', error);
+        // Don't show error to user as lead status was already updated successfully
+      },
     });
   }
 }

@@ -8,8 +8,13 @@
   <!-- grid cards -->
   <app-grid-cards [isLoading]="false" [error]="false">
     <app-card
-      *ngFor="let employee of employeesList$ | async; trackBy: trackByClientId"
+      *ngFor="
+        let employee of employeesList$ | async;
+        trackBy: trackByClientId;
+        index as i
+      "
       [data]="employee"
+      [index]="i"
       [selectable]="true"
       [titleKey]="'name'"
       [subTitleKey]="'departmentName'"

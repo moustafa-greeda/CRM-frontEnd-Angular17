@@ -60,16 +60,12 @@ export class LoginComponent {
                 ? res.data.roles
                 : ['Admin'];
 
-            // Store user data including userType
-            const userData = {
-              userType: res.data?.userType || res.data?.userTypeName,
-              userTypeName: res.data?.userTypeName,
-              ...res.data,
-            };
+            // Store user data directly from response (empId, empName, userType, etc.)
+            const userData = res.data;
 
-            // Store wellcomeMessage in localStorage for easy access
-            if (res.data?.wellcomeMessage) {
-              localStorage.setItem('username', res.data.wellcomeMessage);
+            // Store empName in localStorage for easy access
+            if (userData?.empName) {
+              localStorage.setItem('username', userData.empName);
             }
 
             // Use the enhanced auth service method with user data

@@ -51,7 +51,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   white-space: nowrap;
   cursor: pointer;
   border-radius: 10px;
-  border: 1px solid var(--primary-color);
+  border: 1px solid var(--input-border);
   background: rgba(17, 24, 31, 0.8);
 }
 
@@ -77,7 +77,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   display: none;
   backdrop-filter: blur(10px);
   border: 1px solid var(--primary-color);
-  background: rgba(17, 24, 31, 0.9);
+  background: rgba(17, 24, 31);
 }
 
 .custom-dropdown.open .dropdown-menu {

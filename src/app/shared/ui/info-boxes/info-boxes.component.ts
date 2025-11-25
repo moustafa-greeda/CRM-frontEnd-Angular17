@@ -21,7 +21,8 @@ export interface InfoBox {
   styles: `
   .info-boxes {
     display: flex;
-    gap: 30px;
+    // flex-direction: column;
+    // gap: 30px;
     justify-content: space-between;
     align-items: center;
     margin-top: 8px;
@@ -29,10 +30,16 @@ export interface InfoBox {
   }
 
   .client-source {
+    width: 47%;
+    min-height: 40px;
+    margin-bottom: 10px;
     padding: 5px 10px;
-    border-radius: 4px;
-    text-align: center;
+    border-radius: 0 15px 0 15px;
+    // text-align: center;
     background: transparent;
+    display: flex;
+    align-items: center;
+    // justify-content: center;
   }
 
 

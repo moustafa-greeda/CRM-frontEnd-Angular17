@@ -19,7 +19,7 @@ export class AuthGuard implements CanActivate {
     state: RouterStateSnapshot
   ): Observable<boolean> | Promise<boolean> | boolean {
     // Check if we're in browser environment first
-    if (typeof window === 'undefined') {
+    if (typeof window === 'undefined' || typeof sessionStorage === 'undefined') {
       return false;
     }
 

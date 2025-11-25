@@ -44,8 +44,8 @@ export class RoleGuard implements CanActivate {
           return role === 'TeleSalse';
         case 'Sales':
           return role === 'Sales';
-        case 'Account':
-          return role === 'Account';
+        case 'Accountant':
+          return role === 'Accountant';
         case 'Tech':
           return role === 'Tech';
         case 'Admin':

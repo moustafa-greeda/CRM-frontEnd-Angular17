@@ -140,8 +140,9 @@
     *ngIf="!isLoading && !error && viewMode === 'card'"
   >
     <app-card
-      *ngFor="let client of filteredClients; trackBy: trackByClientId"
+      *ngFor="let client of filteredClients; trackBy: trackByClientId; index as i"
       [data]="client"
+      [index]="i"
       [titleKey]="'name'"
       [subTitleKey]="'jobTitle'"
       [fields]="[

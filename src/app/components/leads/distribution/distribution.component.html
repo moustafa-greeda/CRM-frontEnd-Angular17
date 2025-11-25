@@ -70,24 +70,23 @@
   </div>
   <!-- ---------------------------- Distribution Layout -------------- -->
   <div class="distribution-layout">
-    <!-- ---------------------------- Sidebar Toggle Button -------------- -->
-    <button
-      class="sidebar-toggle"
-      (click)="toggleSidebar()"
-      [class.collapsed]="isSidebarCollapsed"
-    >
-      <i
-        class="bi"
-        [class.bi-chevron-right]="isSidebarCollapsed"
-        [class.bi-chevron-left]="!isSidebarCollapsed"
-      ></i>
-    </button>
-
-    <!-- ---------------------------- Sidebar -------------- -->
+    <!------------------------------ Sidebar -------------- -->
     <aside
       class="sidebar border-gradient"
       [class.collapsed]="isSidebarCollapsed"
     >
+      <!-- ---------------------------- Sidebar Toggle Button -------------- -->
+      <button
+        class="sidebar-toggle"
+        (click)="toggleSidebar()"
+        [class.collapsed]="isSidebarCollapsed"
+      >
+        <i
+          class="bi"
+          [class.bi-chevron-right]="isSidebarCollapsed"
+          [class.bi-chevron-left]="!isSidebarCollapsed"
+        ></i>
+      </button>
       <div class="collapsed-content" *ngIf="isSidebarCollapsed">
         <div class="collapsed-text">افتح للتخصيص</div>
       </div>

@@ -3,10 +3,9 @@
     <table class="data-table" [ngClass]="tableClass">
       <thead>
         <tr>
-          <th>
+          <th *ngIf="showCheckbox">
             <input
               type="checkbox"
-              *ngIf="showCheckbox"
               class="custom-checkbox"
               [checked]="isAllSelected()"
               (change)="onSelectAllChange($event)"
@@ -25,7 +24,9 @@
         <!-- No data message -->
         <tr *ngIf="data.length === 0" class="no-data-row">
           <td
-            [attr.colspan]="columns.length + (showIndex ? 2 : 1)"
+            [attr.colspan]="
+              columns.length + (showIndex ? 1 : 0) + (showCheckbox ? 1 : 0)
+            "
             class="no-data-cell"
           >
             <div class="no-data-content">
@@ -49,11 +50,10 @@
           (click)="onRowClick(row, $event)"
           [style.cursor]="'pointer'"
         >
-          <td>
+          <td *ngIf="showCheckbox">
             <input
               type="checkbox"
               class="custom-checkbox"
-              *ngIf="showCheckbox"
               [checked]="isRowSelected(row)"
               (change)="onRowSelectionChange(row, $event)"
             />
@@ -70,7 +70,6 @@
           >
             {{ getRowIndex(i) }}
           </td>
-
           <td *ngFor="let col of columns" [style.width]="col.width">
             <ng-container [ngSwitch]="col.key">
               <ng-container *ngSwitchCase="'dragHandle'">
@@ -102,14 +101,51 @@
                   {{ getLeadStatusDisplay(row.leadStatus) }}
                 </span>
               </ng-container>
+              <!-- packet column -->
+              <ng-container *ngSwitchCase="'packet'">
+                <div class="packet-cell">
+                  <!-- <select
+                    class="packet-select"
+                    [value]="getPacketValue(row)"
+                    (change)="onPacketChange(row, $event)"
+                    [disabled]="packetOptionsWithFallback.length === 0"
+                  >
+                    <option
+                      *ngFor="let packet of getPacketOptionsForRow(row)"
+                      [value]="serializePacketId(packet.id)"
+                    >
+                      {{ packet.name }}
+                    </option>
+                  </select>
+                  <span
+                    class="packet-selected-id"
+                    *ngIf="getPacketValue(row) !== 'null'"
+                  >
+                    {{ getPacketValue(row) }}
+                  </span> -->
+                  <span class="packet-label">
+                    {{ getPacketDisplayLabel(row) }}
+                    <ng-container
+                      *ngIf="getPacketDisplayPrice(row) as packetPrice"
+                    >
+                      <!-- <span class="packet-price">- {{ packetPrice }}</span> -->
+                    </ng-container>
+                  </span>
+                </div>
+              </ng-container>
+              <!-- budget column - display packet price instead of id -->
+              <ng-container *ngSwitchCase="'budget'">
+                <span>
+                  {{ row.packet?.price ?? row.budget ?? "-" }}
+                </span>
+              </ng-container>
 
               <ng-container *ngSwitchDefault>
                 <ng-container [ngSwitch]="col.key">
                   <ng-container *ngSwitchCase="'status'">
                     <span
                       class="status-chip"
-                      [class.active]="row[col.key] === 'نشط'"
-                      [class.inactive]="row[col.key] !== 'نشط'"
+                      [ngClass]="getInvoiceStatusClass(row[col.key])"
                     >
                       {{ row[col.key] || "-" }}
                     </span>
@@ -145,6 +181,8 @@
                           class="action-btn view-btn"
                           *ngIf="showView"
                           (click)="onView(row); openDropdownRowIndex = null"
+                          [title]="getActionTitle('view')"
+                          [attr.aria-label]="getActionTitle('view')"
                           style="margin: 4px 2px"
                         >
                           <i class="bi bi-eye"></i>
@@ -155,6 +193,8 @@
                           (click)="
                             onAddButton(row); openDropdownRowIndex = null
                           "
+                          [title]="getActionTitle('add')"
+                          [attr.aria-label]="getActionTitle('add')"
                           style="margin: 4px 2px"
                         >
                           <i class="bi bi-plus"></i>
@@ -163,6 +203,8 @@
                           class="action-btn edit-btn"
                           *ngIf="showEdit"
                           (click)="onEdit(row); openDropdownRowIndex = null"
+                          [title]="getActionTitle('edit')"
+                          [attr.aria-label]="getActionTitle('edit')"
                           style="margin: 4px 2px"
                         >
                           <i class="bi bi-pencil"></i>
@@ -171,6 +213,8 @@
                           class="action-btn delete-btn"
                           *ngIf="showDelete"
                           (click)="onDelete(row); openDropdownRowIndex = null"
+                          [title]="getActionTitle('delete')"
+                          [attr.aria-label]="getActionTitle('delete')"
                           style="margin: 4px 2px"
                         >
                           <i class="bi bi-trash"></i>
@@ -179,6 +223,8 @@
                           class="action-btn chat-btn"
                           *ngIf="showChat"
                           (click)="onChat(row); openDropdownRowIndex = null"
+                          [title]="getActionTitle('chat')"
+                          [attr.aria-label]="getActionTitle('chat')"
                           style="margin: 4px 2px"
                         >
                           <i class="bi bi-chat-left-text-fill"></i>
@@ -187,6 +233,8 @@
                           class="action-btn email-btn"
                           *ngIf="showEmail"
                           (click)="onEmail(row); openDropdownRowIndex = null"
+                          [title]="getActionTitle('email')"
+                          [attr.aria-label]="getActionTitle('email')"
                           style="margin: 4px 2px"
                         >
                           <i class="bi bi-envelope"></i>
@@ -197,6 +245,8 @@
                           (click)="
                             onNote(row, $event); openDropdownRowIndex = null
                           "
+                          [title]="getActionTitle('note')"
+                          [attr.aria-label]="getActionTitle('note')"
                           style="margin: 4px 2px"
                         >
                           <i class="bi bi-file-earmark-text"></i>
@@ -207,6 +257,8 @@
                           (click)="
                             onCall(row, $event); openDropdownRowIndex = null
                           "
+                          [title]="getActionTitle('call')"
+                          [attr.aria-label]="getActionTitle('call')"
                           style="margin: 4px 2px"
                         >
                           <i class="bi bi-telephone"></i>
@@ -217,6 +269,8 @@
                           (click)="
                             onMeeting(row, $event); openDropdownRowIndex = null
                           "
+                          [title]="getActionTitle('meeting')"
+                          [attr.aria-label]="getActionTitle('meeting')"
                           style="margin: 4px 2px"
                         >
                           <i class="bi bi-camera-video"></i>
@@ -227,6 +281,8 @@
                           (click)="
                             onFollowUp(row, $event); openDropdownRowIndex = null
                           "
+                          [title]="getActionTitle('followUp')"
+                          [attr.aria-label]="getActionTitle('followUp')"
                           style="margin: 4px 2px"
                         >
                           <i class="bi bi-arrow-repeat"></i>

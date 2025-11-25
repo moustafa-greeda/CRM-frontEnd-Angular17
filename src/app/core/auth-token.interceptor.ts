@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, PLATFORM_ID, Inject } from '@angular/core';
 import {
   HttpInterceptor,
   HttpRequest,
@@ -6,9 +6,12 @@ import {
   HttpEvent,
 } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { isPlatformBrowser } from '@angular/common';
 
 @Injectable()
 export class AuthTokenInterceptor implements HttpInterceptor {
+  constructor(@Inject(PLATFORM_ID) private platformId: Object) {}
+
   intercept(
     req: HttpRequest<any>,
     next: HttpHandler
@@ -18,7 +21,11 @@ export class AuthTokenInterceptor implements HttpInterceptor {
       return next.handle(req);
     }
 
-    const token = sessionStorage.getItem('token');
+    // Check if we're in browser environment before accessing sessionStorage
+    let token: string | null = null;
+    if (isPlatformBrowser(this.platformId)) {
+      token = sessionStorage.getItem('token');
+    }
 
     // لو مفيش توكن اطبع warning
     if (!token) {

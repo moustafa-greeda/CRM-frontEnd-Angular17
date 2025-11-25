@@ -34,7 +34,6 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "src/styles/main.css",
               "@angular/material/prebuilt-themes/indigo-pink.css",
-              "node_modules/ngx-toastr/toastr.css",
               "node_modules/ngx-spinner/animations/ball-scale-multiple.css",
               "node_modules/bootstrap-icons/font/bootstrap-icons.css"
             ],

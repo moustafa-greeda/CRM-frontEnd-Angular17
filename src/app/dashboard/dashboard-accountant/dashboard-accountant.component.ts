@@ -3,14 +3,14 @@ import { Router } from '@angular/router';
 import { AuthService } from '../../Auth/auth.service';
 
 @Component({
-  selector: 'app-dashboard-account',
-  templateUrl: './dashboard-account.component.html',
+  selector: 'app-dashboard-accountant',
+  templateUrl: './dashboard-accountant.component.html',
   styleUrls: [
-    './dashboard-account.component.css',
+    './dashboard-accountant.component.css',
     '../sharedStyleDashboard.css',
   ],
 })
-export class DashboardAccountComponent implements OnInit {
+export class DashboardAccountantComponent implements OnInit {
   userInfo: any = {};
   stats = {
     totalAccounts: 0,
@@ -39,17 +39,5 @@ export class DashboardAccountComponent implements OnInit {
       pendingApprovals: 8,
       revenue: 2500000,
     };
-  }
-
-  navigateToAccounts(): void {
-    this.router.navigate(['/dashboard/account/accounts']);
-  }
-
-  navigateToApprovals(): void {
-    this.router.navigate(['/dashboard/account/approvals']);
-  }
-
-  navigateToReports(): void {
-    this.router.navigate(['/dashboard/account/reports']);
   }
 }

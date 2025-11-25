@@ -10,6 +10,12 @@ import {
 } from '@angular/core';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 
+interface TablePacketOption {
+  id: number | string | null;
+  name: string;
+  price?: number | null;
+}
+
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
@@ -63,6 +69,20 @@ export class TableComponent implements AfterViewInit, OnDestroy {
     followUp?: string;
   } = {};
 
+  // Custom action titles (tooltips) for inline icons
+  @Input() actionTitles: {
+    view?: string;
+    edit?: string;
+    delete?: string;
+    add?: string;
+    chat?: string;
+    email?: string;
+    note?: string;
+    call?: string;
+    meeting?: string;
+    followUp?: string;
+  } = {};
+
   // Lead status editing properties
   @Input() leadStatusOptions: string[] = [];
   @Input() editingLeadId: number | null = null;
@@ -72,6 +92,9 @@ export class TableComponent implements AfterViewInit, OnDestroy {
   @Input() leadStatusColorMap: Record<string, string> = {};
   // Key used to uniquely identify rows when tracking selection
   @Input() rowIdentityKey: string = 'id';
+  // Optional packet selection dropdown
+  @Input() packetOptions: TablePacketOption[] = [];
+  @Input() defaultPacket: TablePacketOption | null = null;
 
   // Track last emitted event to prevent duplicates
   private lastEmittedPageIndex: number = -1;
@@ -121,6 +144,10 @@ export class TableComponent implements AfterViewInit, OnDestroy {
   @Output() statusChange = new EventEmitter<{ row: any; status: string }>();
   @Output() saveLeadStatus = new EventEmitter<any>();
   @Output() cancelLeadStatus = new EventEmitter<any>();
+  @Output() packetSelected = new EventEmitter<{
+    row: any;
+    packet: TablePacketOption | null;
+  }>();
   @Output() addButtonClick = new EventEmitter<any>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -422,6 +449,27 @@ export class TableComponent implements AfterViewInit, OnDestroy {
     );
   }
 
+  // Get action title (tooltip) for inline icons
+  getActionTitle(action: string): string {
+    const defaultTitles: Record<string, string> = {
+      view: 'عرض التفاصيل',
+      edit: 'تعديل',
+      delete: 'حذف',
+      add: 'إضافة',
+      chat: 'محادثة',
+      email: 'بريد إلكتروني',
+      note: 'ملاحظة',
+      call: 'مكالمة',
+      meeting: 'اجتماع',
+      followUp: 'متابعة',
+    };
+    return (
+      this.actionTitles[action as keyof typeof this.actionTitles] ||
+      defaultTitles[action] ||
+      ''
+    );
+  }
+
   // Get lead status options with current value included
   getLeadStatusOptionsWithCurrent(row: any): string[] {
     const currentStatus = row._draftLeadStatus || row.leadStatus;
@@ -489,5 +537,125 @@ export class TableComponent implements AfterViewInit, OnDestroy {
 
   onCancelLeadStatus(row: any): void {
     this.cancelLeadStatus.emit(row);
+  }
+
+  get packetOptionsWithFallback(): TablePacketOption[] {
+    const options = Array.isArray(this.packetOptions)
+      ? [...this.packetOptions]
+      : [];
+    if (
+      this.defaultPacket &&
+      !options.some(
+        (opt) =>
+          this.serializePacketId(opt.id) ===
+          this.serializePacketId(this.defaultPacket?.id)
+      )
+    ) {
+      return [this.defaultPacket, ...options];
+    }
+    return options;
+  }
+
+  getInvoiceStatusClass(status: string | null | undefined): string {
+    if (!status) {
+      return 'status-chip-neutral';
+    }
+
+    const normalized = status.toLowerCase().trim();
+
+    if (['مدفوعة', 'paid', 'paid-in-full'].includes(status)) {
+      return 'status-chip-paid';
+    }
+    if (['غير مدفوعة', 'unpaid', 'overdue', 'متأخرة'].includes(status)) {
+      return 'status-chip-unpaid';
+    }
+    if (['قيد المراجعة', 'under review', 'pending'].includes(status)) {
+      return 'status-chip-pending';
+    }
+    if (['ملغاة', 'cancelled', 'canceled'].includes(status)) {
+      return 'status-chip-cancelled';
+    }
+
+    return 'status-chip-neutral';
+  }
+
+  getPacketOptionsForRow(row: any): TablePacketOption[] {
+    const options = this.packetOptionsWithFallback.slice();
+    const rowPacket = row?.packet;
+    const rowPacketId = this.serializePacketId(
+      rowPacket?.id ?? row?.packetId ?? null
+    );
+    if (
+      rowPacket &&
+      !options.some((opt) => this.serializePacketId(opt.id) === rowPacketId)
+    ) {
+      options.unshift({
+        id: rowPacket.id ?? null,
+        name: rowPacket.name ?? 'لم تحدد',
+        price: rowPacket.price ?? null,
+      });
+    }
+    return options;
+  }
+
+  getPacketValue(row: any): string {
+    if (!row) return 'null';
+
+    const packetId = Number(row?.budget ?? null);
+
+    if (!Number.isFinite(packetId) || packetId === 0) {
+      return 'null';
+    }
+
+    return String(packetId);
+  }
+
+  serializePacketId(id: number | string | null | undefined): string {
+    if (id === null || id === undefined) {
+      return 'null';
+    }
+    return String(id);
+  }
+
+  onPacketChange(row: any, event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const selectedValue = select.value;
+    const packet =
+      this.packetOptions.find(
+        (opt) => this.serializePacketId(opt.id) === selectedValue
+      ) ||
+      this.defaultPacket ||
+      null;
+    this.packetSelected.emit({ row, packet });
+  }
+
+  getPacketDisplayLabel(row: any): string {
+    const label = row?.packet?.name || row?.packetName || null;
+    return label && String(label).trim().length > 0 ? String(label) : 'لم تحدد';
+  }
+
+  getPacketDisplayPrice(row: any): string | null {
+    if (!row) {
+      return null;
+    }
+    const priceSource = row.packet?.price ?? null;
+    if (
+      priceSource === null ||
+      priceSource === undefined ||
+      priceSource === ''
+    ) {
+      return null;
+    }
+    const numericPrice = Number(priceSource);
+    const priceText = Number.isFinite(numericPrice)
+      ? numericPrice.toLocaleString('en-US', { maximumFractionDigits: 2 })
+      : String(priceSource);
+    const currency =
+      row.currencyName ||
+      row.currency ||
+      row.currency_name ||
+      row.currencyCode ||
+      '';
+    return currency ? `${priceText} ${currency}` : priceText;
   }
 }

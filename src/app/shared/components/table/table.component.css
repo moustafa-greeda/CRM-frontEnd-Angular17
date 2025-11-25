@@ -12,8 +12,19 @@
   border-radius: 12px;
   border: 1px solid var(--border-color);
   -webkit-overflow-scrolling: touch;
+  animation: cardFadeIn 1.5s ease-out forwards;
 }
 
+@keyframes cardFadeIn {
+  0% {
+    opacity: 0;
+    transform: perspective(600px) translateY(500px);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(600px) translateX(0);
+  }
+}
 /* Ensure dropdown menus are not clipped by table container */
 .table-container .dropdown-menu {
   position: absolute !important;
@@ -95,6 +106,45 @@
   position: relative;
 }
 
+.packet-cell {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  align-items: stretch;
+}
+
+.packet-label {
+  font-size: 12px;
+  color: var(--white-color);
+  font-weight: 500;
+  text-align: center;
+  display: inline-flex;
+  gap: 4px;
+  justify-content: center;
+}
+
+.packet-price {
+  color: var(--secondary-color, #46e3ff);
+  font-weight: 600;
+}
+
+.packet-select {
+  width: 100%;
+  min-width: 100px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  background: rgba(17, 24, 31, 0.85);
+  color: var(--white-color);
+  font-size: 12px;
+  outline: none;
+  cursor: pointer;
+}
+
+.packet-select option {
+  color: #111;
+}
+
 /* Status chip */
 .status-chip {
   display: inline-flex;
@@ -110,6 +160,31 @@
   height: 8px;
   border-radius: 50%;
   background: var(--bg-error);
+}
+.status-chip-paid {
+  background: rgba(81, 192, 158, 0.1);
+  color: #fff;
+  border: 1px solid #51c09e;
+}
+.status-chip-unpaid {
+  background: rgba(239, 68, 68, 0.35);
+  color: #fff;
+  border: 1px solid #db0000;
+}
+.status-chip-pending {
+  background: rgba(250, 204, 21, 0.15);
+  color: #fff;
+  border: 1px solid rgba(250, 204, 21, 0.35);
+}
+.status-chip-cancelled {
+  background: rgba(107, 114, 128, 0.15);
+  color: #fff;
+  border: 1px solid rgba(107, 114, 128, 0.35);
+}
+.status-chip-neutral {
+  background: rgba(148, 163, 184, 0.15);
+  color: #fff;
+  border: 1px solid rgba(148, 163, 184, 0.35);
 }
 .status-chip.active {
   color: var(--secondary-color);
@@ -559,7 +634,8 @@
 .add-btn {
   color: var(--secondary-color);
   border-radius: 6px;
-  border: 1.5px solid var(--secondary-color);
+  border: 1.5px solid var(--secondary-color) !important;
+  /* border: 1.5px solid red !important; */
   background: rgba(69, 72, 72, 0.38);
 }
 

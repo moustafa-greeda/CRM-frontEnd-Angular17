@@ -27,18 +27,26 @@
         </li> -->
         <li>
           <a routerLink="/dashboard/admin/teleSales" routerLinkActive="active">
-            <span class="nav-text">المبيعات التليفونية</span>
+            <span class="nav-text">لوحة نحكم TeleSales</span>
             <i class="bi bi-telephone"></i>
-            <span class="tooltip" *ngIf="isCollapsed">المبيعات التليفونية</span>
+            <span class="tooltip" *ngIf="isCollapsed">TeleSales</span>
           </a>
         </li>
         <li>
           <a routerLink="/dashboard/admin/sales" routerLinkActive="active">
-            <span class="nav-text">المبيعات</span>
+            <span class="nav-text">لوحة نحكم Sales</span>
             <i class="bi bi-cash-coin"></i>
-            <span class="tooltip" *ngIf="isCollapsed">المبيعات</span>
+            <span class="tooltip" *ngIf="isCollapsed">Sales</span>
           </a>
         </li>
+        <li>
+          <a routerLink="/dashboard/admin/invoices" routerLinkActive="active">
+            <span class="nav-text">الفواتير</span>
+            <i class="bi bi-credit-card"></i>
+            <span class="tooltip" *ngIf="isCollapsed">الفواتير</span>
+          </a>
+        </li>
+
         <li>
           <a routerLink="/dashboard/admin/employee" routerLinkActive="active">
             <span class="nav-text">الموظفين</span>
@@ -120,27 +128,12 @@
           </a>
         </li>
         <li>
-          <a routerLink="/dashboard/telesales/leads" routerLinkActive="active">
-            العملاء المحتملين
-            <i class="bi bi-people"></i>
-          </a>
-        </li>
-        <li>
-          <a
-            routerLink="/dashboard/telesales/assigned-leads"
-            routerLinkActive="active"
-          >
-            العملاء المخصصة
-            <i class="bi bi-person-check"></i>
-          </a>
-        </li>
-        <li>
           <a routerLink="/dashboard/telesales/calls" routerLinkActive="active">
             المكالمات
             <i class="bi bi-telephone"></i>
           </a>
         </li>
-        <li>
+        <!-- <li>
           <a routerLink="/dashboard/telesales/tasks" routerLinkActive="active">
             المهام
             <i class="bi bi-list-task"></i>
@@ -181,7 +174,7 @@
             الإعدادات
             <i class="bi bi-gear"></i>
           </a>
-        </li>
+        </li> -->
       </ng-container>
 
       <!-- Sales Navigation -->
@@ -192,7 +185,7 @@
             <i class="bi bi-house-door"></i>
           </a>
         </li>
-        <li>
+        <!-- <li>
           <a routerLink="/dashboard/sales/deals"
             >الصفقات
             <i class="bi bi-cash-coin"></i>
@@ -215,24 +208,30 @@
             >التقارير
             <i class="bi bi-graph-up"></i>
           </a>
-        </li>
+        </li> -->
       </ng-container>
 
       <!-- Account Navigation -->
-      <ng-container *ngIf="isAccount()">
-        <li>
-          <a routerLink="/dashboard/account"
+      <ng-container *ngIf="isAccountant()">
+        <!-- <li>
+          <a routerLink="/dashboard/accountant"
             >الرئيسيه
             <i class="bi bi-house-door"></i>
           </a>
-        </li>
+        </li> -->
         <li>
-          <a routerLink="/dashboard/account/accounts"
-            >الحسابات
+          <a routerLink="/dashboard/accountant/invoices"
+            >اوامر تشغيل الفواتير
             <i class="bi bi-bank"></i>
           </a>
         </li>
         <li>
+          <a routerLink="/dashboard/accountant/invoices"
+            >الفواتير
+            <i class="bi bi-credit-card"></i>
+          </a>
+        </li>
+        <!-- <li>
           <a routerLink="/dashboard/account/approvals"
             >الموافقات
             <i class="bi bi-clipboard-check"></i>
@@ -249,7 +248,7 @@
             >التقارير المالية
             <i class="bi bi-graph-up"></i>
           </a>
-        </li>
+        </li> -->
       </ng-container>
 
       <!-- Tech Navigation -->

@@ -2,15 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { forkJoin } from 'rxjs';
 import { SalesService } from './sales.service';
 
-interface TopSalesperson {
-  id: number;
-  name: string;
-  profileImage: string;
-  totalSales: number;
-  totalDeals: number;
-  rank: number;
-}
-
 interface CurrencyEarning {
   currencyId: number;
   currencyName: string;
@@ -23,6 +14,13 @@ interface BudgetByCurrency {
   totalBudget: number;
   totalLeads: number;
   averageBudget: number;
+}
+
+interface ITop3Sales {
+  salesName: string;
+  totalLeads: number;
+  totalBudget: number;
+  profileImage?: string;
 }
 
 @Component({
@@ -38,10 +36,13 @@ export class SalesComponent implements OnInit {
     { label: 'المبيعات', path: '/dashboard/admin/sales' },
   ];
   stats: any[] = [];
+  topSalespeople: ITop3Sales[] = [];
   earnByCurrency: CurrencyEarning[] = [];
 
   ngOnInit(): void {
     this.loadStats();
+    // =========== GetTop3Sales===================
+    this.getTop3Sales();
   }
 
   private loadStats(): void {
@@ -157,33 +158,6 @@ export class SalesComponent implements OnInit {
     }).format(value ?? 0);
   }
 
-  topSalespeople: TopSalesperson[] = [
-    {
-      id: 1,
-      name: 'مريم محمد',
-      profileImage: './assets/img/avatar-male.svg',
-      totalSales: 225000,
-      totalDeals: 45,
-      rank: 1,
-    },
-    {
-      id: 2,
-      name: 'سارة حسن',
-      profileImage: './assets/img/avatar-male.svg',
-      totalSales: 190000,
-      totalDeals: 38,
-      rank: 2,
-    },
-    {
-      id: 3,
-      name: 'محمود حسن',
-      profileImage: './assets/img/avatar-male.svg',
-      totalSales: 175000,
-      totalDeals: 35,
-      rank: 3,
-    },
-  ];
-
   getMedalIcon(rank: number): string {
     switch (rank) {
       case 1:
@@ -203,5 +177,13 @@ export class SalesComponent implements OnInit {
       currency: 'SAR',
       minimumFractionDigits: 0,
     }).format(amount);
+  }
+  // ==================================== GetTop3Sales ===========================
+  getTop3Sales(): void {
+    this._salesService.GetTop3Sales().subscribe({
+      next: (res) => {
+        this.topSalespeople = res.data ?? [];
+      },
+    });
   }
 }

@@ -1,6 +1,5 @@
 .header-section {
   padding-top: 10px;
-  /* margin-bottom: 32px; */
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -18,7 +17,7 @@
   align-items: center;
   gap: 8px;
   font-size: 18px;
-  color: #888888;
+  color: #fff;
 }
 
 .breadcrumb-separator {
@@ -26,8 +25,9 @@
 }
 
 .breadcrumb-item.active {
-  color: var(--primary-color);
-  font-weight: 600;
+  color: var(--primary-color) !important;
+  font-size: 20px;
+  font-weight: 700;
 }
 
 .action-bar {

@@ -2,7 +2,7 @@
 <div class="charts-container">
   <div class="charts-grid-2">
     <!--------------------- مسار التحويل (Funnel) ------------------------->
-    <div class="funnel-wrapper border-card fade-in-left">
+    <!-- <div class="funnel-wrapper border-card fade-in-left">
       <span class="corner tl"></span>
       <span class="corner tr"></span>
       <span class="corner bl"></span>
@@ -11,7 +11,6 @@
         <h3 class="funnel-title">مسار التحويل (Funnel)</h3>
       </div>
       <div class="funnel-chart-container">
-        <!-- Y-Axis (Left) -->
         <div class="y-axis">
           <div class="y-axis-label">200</div>
           <div class="y-axis-label">180</div>
@@ -22,11 +21,9 @@
           <div class="y-axis-label">0</div>
         </div>
 
-        <!-- Chart Content -->
         <div class="funnel-content-wrapper border-card">
           <div class="custom-funnel">
             <div class="funnel-stage">
-              <!-- <div class="stage-label">Lead Capture</div> -->
               <div class="stage-bar-container">
                 <div
                   class="stage-bar"
@@ -44,7 +41,6 @@
               </div>
             </div>
             <div class="funnel-stage">
-              <!-- <div class="stage-label">Initial Contact</div> -->
               <div class="stage-bar-container">
                 <div
                   class="stage-bar"
@@ -62,7 +58,6 @@
               </div>
             </div>
             <div class="funnel-stage">
-              <!-- <div class="stage-label">Engagement</div> -->
               <div class="stage-bar-container">
                 <div
                   class="stage-bar"
@@ -80,7 +75,6 @@
               </div>
             </div>
             <div class="funnel-stage">
-              <!-- <div class="stage-label">Negotiation</div> -->
               <div class="stage-bar-container">
                 <div
                   class="stage-bar"
@@ -100,7 +94,6 @@
             </div>
           </div>
 
-          <!-- X-Axis (Bottom) -->
           <div class="x-axis">
             <div class="x-axis-tick">0</div>
             <div class="x-axis-tick">40</div>
@@ -112,6 +105,17 @@
           </div>
         </div>
       </div>
+    </div> -->
+
+    <!---------------------  Lead Status (حالة العميل)  ------------------------->
+    <div class="chart-card border-card fade-in-right">
+      <span class="corner tl"></span>
+      <span class="corner tr"></span>
+      <span class="corner bl"></span>
+      <span class="corner br"></span>
+      <ng-container *ngIf="!isLeadStatusLoading">
+        <canvasjs-chart [options]="leadStatusChartOption"></canvasjs-chart>
+      </ng-container>
     </div>
     <!---------------------  Revenue Trend (اتجاه الإيرادات)  ------------------------->
     <div class="chart-card border-card fade-in-right">
@@ -119,28 +123,35 @@
       <span class="corner tr"></span>
       <span class="corner bl"></span>
       <span class="corner br"></span>
-      <canvasjs-chart [options]="revenueTrendChartOption"></canvasjs-chart>
+      <ng-container *ngIf="!isRevenueTrendLoading">
+        <canvasjs-chart [options]="revenueTrendChartOption"></canvasjs-chart>
+      </ng-container>
     </div>
   </div>
 
-  <div class="charts-grid-3">
+  <!-- <div class="charts-grid-3"> -->
+  <div class="">
     <!---------------------  Weekly Performance (الأداء الأسبوعي)  ------------------------->
     <div class="chart-card border-card fade-in-left">
       <span class="corner tl"></span>
       <span class="corner tr"></span>
       <span class="corner bl"></span>
       <span class="corner br"></span>
-      <canvasjs-chart
-        [options]="weeklyPerformanceChartOptions"
-      ></canvasjs-chart>
+      <ng-container *ngIf="!isWeeklyPerformanceLoading">
+        <canvasjs-chart
+          [options]="weeklyPerformanceChartOptions"
+        ></canvasjs-chart>
+      </ng-container>
     </div>
     <!---------------------  Lead Status (حالة العميل)  ------------------------->
-    <div class="chart-card border-card fade-in-right">
+    <!-- <div class="chart-card border-card fade-in-right">
       <span class="corner tl"></span>
       <span class="corner tr"></span>
       <span class="corner bl"></span>
       <span class="corner br"></span>
-      <canvasjs-chart [options]="leadStatusChartOption"></canvasjs-chart>
-    </div>
+      <ng-container *ngIf="!isLeadStatusLoading">
+        <canvasjs-chart [options]="leadStatusChartOption"></canvasjs-chart>
+      </ng-container>
+    </div> -->
   </div>
 </div>

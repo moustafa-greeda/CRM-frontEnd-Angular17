@@ -8,9 +8,9 @@
     <!-- Breadcrumb -->
     <div class="breadcrumb" *ngIf="breadcrumb?.length">
       <ng-container *ngFor="let item of breadcrumb; let last = last">
-        <span class="breadcrumb-item" [class.active]="item.active">{{
-          item.label
-        }}</span>
+        <span class="breadcrumb-item" [class.active]="last">
+          {{ item.label }}
+        </span>
         <span class="breadcrumb-separator" *ngIf="!last">></span>
       </ng-container>
     </div>
@@ -25,7 +25,7 @@
         [title]="btn.tooltip"
         (click)="btn.click()"
       >
-        <span *ngIf="btn.label">{{ btn.label }}</span>
+        <span *ngIf="btn.label" class="breadcrumb-item">{{ btn.label }}</span>
         <i *ngIf="btn.iconClass" [class]="btn.iconClass"></i>
       </button>
     </div>

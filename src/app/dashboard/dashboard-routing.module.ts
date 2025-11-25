@@ -10,6 +10,15 @@ const routes: Routes = [
     pathMatch: 'full',
   },
   {
+    path: 'admin',
+    loadChildren: () =>
+      import('./dashboard-admin/dashboard-admin.module').then(
+        (m) => m.DashboardAdminModule
+      ),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['Admin', 'Customer'] },
+  },
+  {
     path: 'telesales',
     loadChildren: () =>
       import('./dashboard-telesales/dashboard-telesales.module').then(
@@ -28,13 +37,13 @@ const routes: Routes = [
     data: { roles: ['Sales'] },
   },
   {
-    path: 'account',
+    path: 'accountant',
     loadChildren: () =>
-      import('./dashboard-account/dashboard-account.module').then(
+      import('./dashboard-accountant/dashboard-accountant.module').then(
         (m) => m.DashboardAccountModule
       ),
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['Account'] },
+    data: { roles: ['Accountant'] },
   },
   {
     path: 'tech',
@@ -44,15 +53,6 @@ const routes: Routes = [
       ),
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['Tech'] },
-  },
-  {
-    path: 'admin',
-    loadChildren: () =>
-      import('./dashboard-admin/dashboard-admin.module').then(
-        (m) => m.DashboardAdminModule
-      ),
-    canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['Admin', 'Customer'] },
   },
   {
     path: 'customer',

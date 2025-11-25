@@ -15,7 +15,7 @@
 }
 
 .skeleton::after {
-  content: '';
+  content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(
@@ -222,7 +222,6 @@ canvasjs-chart svg {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  /* background: transparent !important; */
   background: rgba(17, 24, 31, 0.8);
   overflow: hidden;
   position: relative;

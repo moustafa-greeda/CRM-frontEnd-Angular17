@@ -1,3 +1,9 @@
+/* ============================================== Material Dialogs  ============================================== */
+
+.mat-dialog-container {
+  padding: 0 !important;
+}
+
 /* ========== Angular Material paginator/select customization  ========== */
 
 .mat-mdc-paginator {

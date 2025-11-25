@@ -110,7 +110,6 @@ export class DashboardSalseService {
   // ==================================== update sales budget ===========================================
   updateSalesBudget(id: number, budget: number): Observable<any> {
     const url = `${this.BASE_API_URL}/SalesDashbored/update-sales-budget/${id}`;
-    // API expects raw number in body with application/json
     return this.http.put(url, budget, {
       headers: { 'Content-Type': 'application/json' },
     });
@@ -134,5 +133,12 @@ export class DashboardSalseService {
     }
 
     return this.http.put(url, body);
+  }
+  // ===================================== Account/CreateAssignToAccount ===============================
+  createAssignToAccount(data: any): Observable<any> {
+    return this.http.post(
+      `${this.BASE_API_URL}/Account/CreateAssignToAccount`,
+      data
+    );
   }
 }

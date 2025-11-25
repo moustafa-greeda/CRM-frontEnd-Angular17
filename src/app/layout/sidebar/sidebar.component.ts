@@ -76,12 +76,12 @@ export class SidebarComponent implements OnInit {
   }
 
   // Check if the user is an Account
-  isAccount(): boolean {
+  isAccountant(): boolean {
     // Prioritize userType over roles
     if (this.userType) {
-      return this.userType === 'Account';
+      return this.userType === 'Accountant';
     }
-    return this.roles.includes('Account');
+    return this.roles.includes('Accountant');
   }
 
   // Check if the user is a Tech

@@ -4,9 +4,8 @@ import { isPlatformBrowser } from '@angular/common';
 import { Router } from '@angular/router';
 
 import { environment } from '../../environments/environment';
-import { Observable, BehaviorSubject, firstValueFrom } from 'rxjs';
+import { Observable, BehaviorSubject } from 'rxjs';
 import { Login } from '../core/Models/login/login';
-import { EmployeeService } from '../components/employee/employee/employee.service';
 
 @Injectable({
   providedIn: 'root',
@@ -21,10 +20,8 @@ export class AuthService {
   constructor(
     private http: HttpClient,
     private router: Router,
-    private employeeService: EmployeeService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {
-    // Check authentication status on service initialization
     this.checkAuthStatus();
   }
 
@@ -95,17 +92,8 @@ export class AuthService {
    * Get user type from sessionStorage
    */
   getUserType(): string | null {
-    if (!isPlatformBrowser(this.platformId)) {
-      return null;
-    }
-
-    try {
-      const userData = this.getUserData();
-      const userType = userData?.userType || userData?.userTypeName || null;
-      return userType;
-    } catch (error) {
-      return null;
-    }
+    const userData = this.getUserData();
+    return userData?.userType || null;
   }
 
   /**
@@ -154,6 +142,8 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       sessionStorage.removeItem('token');
       sessionStorage.removeItem('roles');
+      sessionStorage.removeItem('userData');
+      localStorage.removeItem('username');
     }
 
     this.isAuthenticatedSubject.next(false);
@@ -165,15 +155,20 @@ export class AuthService {
    */
 
   setAuthData(token: string, roles: string[], userData?: any): void {
-    if (isPlatformBrowser(this.platformId)) {
-      sessionStorage.setItem('token', token);
-      sessionStorage.setItem('roles', JSON.stringify(roles));
-      if (userData) {
-        sessionStorage.setItem('userData', JSON.stringify(userData));
-        // Store wellcomeMessage in localStorage for easy access
-        if (userData.wellcomeMessage) {
-          localStorage.setItem('username', userData.empName);
-        }
+    if (!isPlatformBrowser(this.platformId)) {
+      return;
+    }
+
+    sessionStorage.setItem('token', token);
+    sessionStorage.setItem('roles', JSON.stringify(roles));
+
+    if (userData) {
+      // Store user data directly from response (empId, empName, userType, etc.)
+      sessionStorage.setItem('userData', JSON.stringify(userData));
+
+      // Store empName in localStorage for easy access
+      if (userData.empName) {
+        localStorage.setItem('username', userData.empName);
       }
     }
 
@@ -181,118 +176,41 @@ export class AuthService {
   }
 
   /**
-   * Get username from localStorage
+   * Get username from localStorage or userData
    */
   getUsername(): string | null {
-    if (isPlatformBrowser(this.platformId)) {
-      return localStorage.getItem('username');
-    }
-    return null;
-  }
-
-  /**
-   * Get user email from sessionStorage or userData
-   */
-  getUserEmail(): string | null {
     if (!isPlatformBrowser(this.platformId)) {
       return null;
     }
-
-    try {
-      const userData = this.getUserData();
-      if (userData) {
-        // Try different possible property names for email
-        return (
-          userData.email ||
-          userData.Email ||
-          userData.login ||
-          userData.Login ||
-          userData.userEmail ||
-          null
-        );
-      }
-      return null;
-    } catch (error) {
-      console.error('Error getting user email:', error);
-      return null;
+    // Try localStorage first (for backward compatibility)
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername) {
+      return storedUsername;
     }
+    // Fallback to empName from userData
+    const userData = this.getUserData();
+    return userData?.empName || null;
+  }
+
+  /**
+   * Get user email from sessionStorage
+   */
+  getUserEmail(): string | null {
+    const userData = this.getUserData();
+    return userData?.email || userData?.Email || null;
   }
 
   /**
    * Get employee ID from session storage
+   * Uses empId from login response directly
    */
   getEmployeeId(): number | null {
-    if (isPlatformBrowser(this.platformId)) {
-      const userDataString = sessionStorage.getItem('userData');
-      if (userDataString) {
-        try {
-          const userData = JSON.parse(userDataString);
-          return userData?.id || userData?.employeeId || null;
-        } catch (error) {
-          console.error('Error parsing userData:', error);
-          return null;
-        }
-      }
-    }
-    return null;
-  }
-
-  /**
-   * Get employee ID from API by matching employee name from localStorage
-   */
-  async getEmployeeIdFromApi(): Promise<number | null> {
     if (!isPlatformBrowser(this.platformId)) {
       return null;
     }
 
-    try {
-      const empName = localStorage.getItem('username');
-      if (!empName) {
-        return null;
-      }
-
-      const response = await firstValueFrom(
-        this.employeeService.getAllEmployees()
-      );
-
-      if (response.succeeded && response.data && Array.isArray(response.data)) {
-        const employee = response.data.find(
-          (emp: any) => emp.name === empName || emp.Name === empName
-        );
-
-        if (employee && employee.id) {
-          // Save employee ID in userData for future use
-          const userData = this.getUserData();
-          if (userData) {
-            const updatedUserData = {
-              ...userData,
-              id: employee.id,
-              employeeId: employee.id,
-            };
-            sessionStorage.setItem('userData', JSON.stringify(updatedUserData));
-          }
-          return employee.id;
-        }
-      }
-      return null;
-    } catch (error) {
-      console.error('Error fetching employee ID from API:', error);
-      return null;
-    }
-  }
-
-  /**
-   * Get employee ID - tries from cache first, then from API
-   */
-  async getEmployeeIdAsync(): Promise<number | null> {
-    // First try to get from sessionStorage
-    const cachedId = this.getEmployeeId();
-    if (cachedId) {
-      return cachedId;
-    }
-
-    // If not found, fetch from API
-    return await this.getEmployeeIdFromApi();
+    const userData = this.getUserData();
+    return userData?.empId || null;
   }
 
   /**
@@ -306,8 +224,8 @@ export class AuthService {
         return '/dashboard/telesales';
       case 'Sales':
         return '/dashboard/sales';
-      case 'Account':
-        return '/dashboard/account';
+      case 'Accountant':
+        return '/dashboard/accountant/invoices';
       case 'Tech':
         return '/dashboard/tech';
       case 'Admin':
@@ -347,6 +265,8 @@ export class AuthService {
     if (isPlatformBrowser(this.platformId)) {
       sessionStorage.removeItem('token');
       sessionStorage.removeItem('roles');
+      sessionStorage.removeItem('userData');
+      localStorage.removeItem('username');
     }
     this.isAuthenticatedSubject.next(false);
   }

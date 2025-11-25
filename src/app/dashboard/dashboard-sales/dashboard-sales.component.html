@@ -56,6 +56,11 @@
       [leadStatusOptions]="leadStatusOptions"
       [leadStatusColorMap]="leadStatusColorMap"
       [alwaysEditLeadStatus]="true"
+      [packetOptions]="packetDropdownOptions"
+      [defaultPacket]="defaultPacketOption"
+      (packetSelected)="
+        onPacketSelected($event.row, normalizePacketOption($event.packet))
+      "
       (pageChange)="onPageChange($event)"
       (pageSizeChange)="onPageSizeChange($event)"
       (view)="onView($event)"
@@ -69,7 +74,8 @@
       (statusChange)="onStatusChange($event.row, $event.status)"
       (saveLeadStatus)="saveLeadStatus($event)"
       (cancelLeadStatus)="cancelLeadStatus($event)"
-    ></app-table>
+    >
+    </app-table>
   </div>
 
   <!--------------------------- Notifications and Recent Interactions ----------------------->

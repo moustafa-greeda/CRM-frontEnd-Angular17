@@ -9,7 +9,11 @@
 
   <!-- ==================================== GetTransferredLeadsToSales ============================ -->
   <div class="table-container">
-    <app-table [data]="transferredLeads" [columns]="transferredLeadsColumns">
+    <app-table
+      [data]="transferredLeads"
+      [columns]="transferredLeadsColumns"
+      [showIndex]="true"
+    >
     </app-table>
   </div>
 

@@ -1,0 +1,305 @@
+<div class="invoice-dialog-container">
+  <!-- Dialog Header -->
+  <div class="dialog-header">
+    <h2 class="dialog-title">
+      {{ data && data.isEdit ? "تعديل الفاتورة" : "فاتورة جديدة" }}
+    </h2>
+    <button type="button" class="close-btn" (click)="onCancel()" title="إغلاق">
+      <i class="bi bi-x-lg"></i>
+    </button>
+  </div>
+
+  <!-- Invoice Form -->
+  <form [formGroup]="invoiceForm" (ngSubmit)="onSubmit()" class="invoice-form">
+    <!-- Company Header Section -->
+    <div class="company-header">
+      <div class="left-side">
+        <div class="company-logo">
+          <!-- <div class="logo-icon"> -->
+          <img src="assets/logo.svg" alt="logo" />
+          <!-- </div> -->
+        </div>
+        <div class="company-info">
+          <p>29 شارع التسعين الجنوبي</p>
+          <p>التجمع الخامس - القاهرة حمر</p>
+          <p>الرمز البريدي 11800</p>
+          <p>info&#64;zavolf.com</p>
+          <p>+20 (100) 345 7788</p>
+        </div>
+      </div>
+      <!-- Right side -->
+      <div class="right-side">
+        <!-- Invoice Number and Date -->
+        <div class="invoice-header-row">
+          <div class="form-field">
+            <label>رقم الفاتورة</label>
+            <input
+              type="text"
+              formControlName="invoiceNumber"
+              class="form-input"
+              [class.error]="
+                invoiceForm.get('invoiceNumber')?.invalid &&
+                invoiceForm.get('invoiceNumber')?.touched
+              "
+            />
+          </div>
+          <div class="form-field">
+            <label>التاريخ</label>
+            <input
+              type="date"
+              formControlName="date"
+              class="form-input"
+              [class.error]="
+                invoiceForm.get('date')?.invalid &&
+                invoiceForm.get('date')?.touched
+              "
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Client Data Section -->
+    <div class="section">
+      <h3 class="section-title">بيانات العميل</h3>
+      <div class="form-grid">
+        <div class="form-field">
+          <label>الاسم الكامل</label>
+          <input
+            type="text"
+            formControlName="clientName"
+            class="form-input"
+            [class.error]="
+              invoiceForm.get('clientName')?.invalid &&
+              invoiceForm.get('clientName')?.touched
+            "
+          />
+        </div>
+        <div class="form-field">
+          <label>العنوان</label>
+          <input
+            type="text"
+            [value]="invoiceForm.get('clientAddress')?.value"
+            class="form-input"
+            readonly
+            tabindex="-1"
+          />
+        </div>
+        <div class="form-field">
+          <label>البريد الالكتروني</label>
+          <input
+            type="email"
+            formControlName="clientEmail"
+            class="form-input"
+            [class.error]="
+              invoiceForm.get('clientEmail')?.invalid &&
+              invoiceForm.get('clientEmail')?.touched
+            "
+          />
+        </div>
+        <div class="form-field phone-fields-group">
+          <label>رقم الهاتف</label>
+          <div class="phone-input-group">
+            <input
+              type="text"
+              formControlName="countryCode"
+              class="form-input country-code"
+              placeholder="+20"
+              [class.error]="
+                invoiceForm.get('countryCode')?.invalid &&
+                invoiceForm.get('countryCode')?.touched
+              "
+            />
+            <input
+              type="tel"
+              formControlName="clientPhone"
+              class="form-input phone-input"
+              placeholder="(120) 345 7788"
+              [class.error]="
+                invoiceForm.get('clientPhone')?.invalid &&
+                invoiceForm.get('clientPhone')?.touched
+              "
+            />
+          </div>
+          <small
+            class="hint"
+            *ngIf="
+              (invoiceForm.get('countryCode')?.invalid &&
+                invoiceForm.get('countryCode')?.touched) ||
+              (invoiceForm.get('clientPhone')?.invalid &&
+                invoiceForm.get('clientPhone')?.touched)
+            "
+          >
+            مطلوب
+          </small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Package Selection -->
+    <div class="section">
+      <div class="form-grid">
+        <div class="form-field">
+          <label>الباقة</label>
+          <app-dropdown
+            [options]="packetNames"
+            [label]="'اختر الباقة'"
+            (optionSelected)="onPackageSelected($event)"
+          ></app-dropdown>
+        </div>
+        <!-- Payment Method -->
+        <div class="form-field">
+          <label>طريقة الدفع</label>
+          <app-dropdown
+            [options]="paymnetNames"
+            [label]="'اختر طريقة الدفع'"
+            (optionSelected)="onPaymentMethodSelected($event)"
+          ></app-dropdown>
+        </div>
+      </div>
+    </div>
+
+    <!-- Service Details Table -->
+    <div class="section">
+      <div class="section-header">
+        <h3 class="section-title">تفاصيل الخدمة</h3>
+        <button type="button" class="btn-add-service" (click)="addService()">
+          إضافة خدمة
+        </button>
+      </div>
+      <div class="table-container">
+        <table class="services-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>الخدمة</th>
+              <th>الوصف</th>
+              <th>السعر</th>
+              <th>الكمية</th>
+              <th>الإجمالي</th>
+              <th>الإجراءات</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngIf="services.length === 0">
+              <td colspan="7" class="no-data">لا توجد خدمات مضافة</td>
+            </tr>
+            <tr *ngFor="let service of services; let i = index">
+              <td>{{ service.id }}</td>
+              <td>
+                <input
+                  type="text"
+                  [value]="service.serviceName"
+                  [readonly]="isServiceAPacket(service.serviceName)"
+                  [class.readonly]="isServiceAPacket(service.serviceName)"
+                  (input)="
+                    onServiceChange(i, 'serviceName', $any($event.target).value)
+                  "
+                  class="table-input"
+                />
+              </td>
+              <td>
+                <input
+                  rows="1"
+                  [value]="service.description || ''"
+                  (input)="
+                    onServiceChange(i, 'description', $any($event.target).value)
+                  "
+                  class="table-input description-input"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  [value]="service.price"
+                  [readonly]="isServiceAPacket(service.serviceName)"
+                  [class.readonly]="isServiceAPacket(service.serviceName)"
+                  (input)="
+                    onServiceChange(i, 'price', +$any($event.target).value)
+                  "
+                  class="table-input"
+                  step="0.01"
+                />
+              </td>
+              <td>
+                <input
+                  type="number"
+                  [value]="service.quantity || 1"
+                  min="1"
+                  (input)="
+                    onServiceChange(i, 'quantity', +$any($event.target).value)
+                  "
+                  class="table-input"
+                />
+              </td>
+              <td>
+                {{ service.total || service.price || 0 | number : "1.2-2" }} $
+              </td>
+              <td class="actions-cell">
+                <button
+                  type="button"
+                  class="action-btn delete-btn"
+                  (click)="removeService(i)"
+                  title="حذف"
+                >
+                  <i class="bi bi-trash"></i>
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Financial Summary -->
+    <div class="section">
+      <div class="financial-summary">
+        <div class="summary-row">
+          <span class="summary-label">الإجمالي</span>
+          <span class="summary-value"
+            >{{ getSubtotal() | number : "1.2-2" }} $</span
+          >
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">الخصم</span>
+          <span class="summary-value"
+            >{{ getDiscount() | number : "1.2-2" }} $</span
+          >
+        </div>
+        <div class="summary-row">
+          <span class="summary-label">ضريبة القيمة المضافة (VAT)</span>
+          <span class="summary-value">{{ getVAT() | number : "1.2-2" }} $</span>
+        </div>
+
+        <div class="summary-row total-row">
+          <span class="summary-label">المبلغ المستحق الدفع</span>
+          <span class="summary-value"
+            >{{ getTotalAmount() | number : "1.2-2" }} $</span
+          >
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes Section -->
+    <div class="section">
+      <div class="form-field">
+        <label>ملحوظة</label>
+        <textarea
+          formControlName="notes"
+          class="form-textarea"
+          rows="3"
+        ></textarea>
+      </div>
+    </div>
+
+    <!-- Form Actions -->
+    <div class="form-actions">
+      <button type="button" class="btn-cancel" (click)="onCancel()">
+        إلغاء
+      </button>
+      <button type="submit" class="btn-submit" [disabled]="invoiceForm.invalid">
+        {{ data && data.isEdit ? "تحديث" : "حفظ" }}
+      </button>
+    </div>
+  </form>
+</div>

@@ -1,0 +1,51 @@
+<div class="parent-container">
+  <!-- page header -->
+  <app-page-header
+    [title]="pageTitle"
+    [breadcrumb]="breadcrumb"
+  ></app-page-header>
+
+  <!-- count card -->
+  <!-- <app-count-card [stats]="stats"></app-count-card> -->
+
+  <!-- search and dropdown -->
+  <div class="search-container border-gradient">
+    <app-search-input
+      [placeholder]="searchPlaceholder"
+      (search)="onSearch($event)"
+    ></app-search-input>
+    <div class="dropdown-container">
+      <app-dropdown
+        label="اختر الحالة"
+        [options]="['مدفوعة', 'متأخرة', 'قيد المراجعة', 'غير مدفوعة', 'ملغاة']"
+        (optionSelected)="onOptionSelected($event)"
+      ></app-dropdown>
+    </div>
+  </div>
+  <!-- table -->
+  <div class="table-container mt-md">
+    <app-table
+      [data]="companyData"
+      [columns]="companyColumns"
+      [selectedRows]="selectedRows"
+      [showDataTable]="true"
+      [hasNoData]="companyData.length === 0"
+      [pageSize]="pageSize"
+      [showIndex]="true"
+      [showAdd]="true"
+      [showEdit]="true"
+      [showDelete]="true"
+      [actionTitles]="{
+        view: 'عرض تفاصيل الفاتورة',
+        add: 'إضافة فاتوره جديدة',
+        edit: 'تعديل بيانات الفاتورة',
+      }"
+      [currentPage]="currentPage"
+      [totalCount]="totalCount"
+      (addButtonClick)="onAddClick($event)"
+      (edit)="onEditDeal($event)"
+      (delete)="onDeleteDeal($event)"
+      (view)="onViewDeal($event)"
+    ></app-table>
+  </div>
+</div>

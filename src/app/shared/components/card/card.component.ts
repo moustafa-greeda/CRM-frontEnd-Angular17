@@ -11,7 +11,7 @@ export interface CardField {
   selector: 'app-card',
   template: `
     <!-- <div class="client-card border-gradient diagonal medium rounded-lg"> -->
-    <div class="client-card">
+    <div class="client-card" [style.animation-delay]="index * 0.3 + 's'">
       <!-- border -->
       <span class="corner tl"></span>
       <span class="corner tr"></span>
@@ -129,14 +129,32 @@ export interface CardField {
           0 10px 25px rgba(70, 227, 255, 0.2);
         background: var(--bg-light);
         transform: perspective(600px) rotateX(5deg) rotateY(-5deg);
-        transition: 0.4s ease;
+        transition: transform 0.4s ease, box-shadow 0.4s ease, opacity 0.4s ease;
+        opacity: 0;
+        animation: cardFadeIn 0.6s ease-out forwards;
       }
 
-      .client-card:hover {
-        transform: perspective(600px) rotateX(0) rotateY(0) scale(1.05);
+      @keyframes cardFadeIn {
+        0% {
+          opacity: 0;
+          transform: perspective(600px) rotateX(5deg) rotateY(-5deg)
+            translateX(-300px);
+        }
+        100% {
+          opacity: 1;
+          transform: perspective(600px) rotateX(5deg) rotateY(-5deg)
+            translateX(0);
+        }
+      }
+
+      /* 
+        Here's a fix using :host for hover effect:
+      */
+      :host(:hover) .client-card {
+        transform: perspective(600px) rotateX(0) rotateY(0) scale(1.05) !important;
         box-shadow: inset 2px 2px 10px rgba(255, 255, 255, 0.1),
           inset -2px -2px 4px rgba(0, 0, 0, 0.6),
-          0 4px 4px rgba(0, 234, 255, 0.4);
+          0 4px 4px rgba(0, 234, 255, 0.4) !important;
       }
 
       /* ✨ الزوايا الأربعة */
@@ -293,15 +311,24 @@ export interface CardField {
       .fields-container {
         margin: 8px 0;
         display: flex;
-        flex-direction: column;
+        justify-content: space-between;
+        align-items: stretch;
         gap: 8px;
       }
 
       .field-item {
+        flex: 1 1 calc(50% - 4px);
+        min-width: 0;
         display: flex;
+        // justify-content: flex-start;
         align-items: center;
+        text-align: start;
         gap: 10px;
         padding: 4px 0;
+      }
+
+      .field-item .icon-wrapper {
+        flex-shrink: 0;
       }
 
       .field-icon {
@@ -321,6 +348,9 @@ export interface CardField {
         display: flex;
         flex-direction: column;
         gap: 2px;
+        flex: 1;
+        min-width: 0;
+        overflow: hidden;
       }
 
       .field-label {
@@ -333,6 +363,9 @@ export interface CardField {
         font-size: 12px;
         color: var(--white-color);
         font-weight: 400;
+        word-wrap: break-word;
+        word-break: break-word;
+        overflow-wrap: break-word;
       }
 
       .email-container,
@@ -396,6 +429,7 @@ export class CardComponent {
   @Input() rating?: number;
   @Input() selectable: boolean = false;
   @Input() isSelected: boolean = false;
+  @Input() index: number = 0; // For stagger animation
 
   @Output() selectionChange = new EventEmitter<boolean>();
 

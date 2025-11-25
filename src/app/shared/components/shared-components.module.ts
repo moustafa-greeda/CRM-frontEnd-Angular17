@@ -17,6 +17,8 @@ import { ViewToggleComponent } from '../ui/view-toggle/view-toggle.component';
 import { SearchInputComponent } from '../ui/search-input/search-input.component';
 import { ButtonComponent } from '../ui/button/button.component';
 import { CountLeadComponent } from './count-lead/count-lead.component';
+// import {ContractEditorComponent} from './contract-editor/contract-editor.component'
+
 
 @NgModule({
   declarations: [
@@ -33,6 +35,7 @@ import { CountLeadComponent } from './count-lead/count-lead.component';
     ButtonComponent,
     CountLeadComponent,
     DropdownComponent,
+    // ContractEditorComponent
   ],
   imports: [
     CommonModule,

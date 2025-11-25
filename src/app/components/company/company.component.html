@@ -34,8 +34,9 @@
   <!-- grid cards -->
   <app-grid-cards [isLoading]="false" [error]="false">
     <app-card
-      *ngFor="let company of companyList$ | async; trackBy: trackByCompanyId"
+      *ngFor="let company of companyList$ | async; trackBy: trackByCompanyId; index as i"
       [data]="company"
+      [index]="i"
       [selectable]="true"
       [isSelected]="isCompanySelected(company)"
       (selectionChange)="onCardSelectionChange(company, $event)"

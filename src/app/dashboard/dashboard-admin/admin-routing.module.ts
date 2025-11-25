@@ -14,6 +14,7 @@ import { AuthGuard } from '../../core/guards/auth.guard';
 import { RoleGuard } from '../../core/guards/role.guard';
 import { SalesComponent } from '../../components/sales/sales.component';
 import { TeleSalesComponent } from '../../components/teleSales/teleSales.component';
+import { InvoicesComponent } from '../../components/invoices/invoices.component';
 
 const routes: Routes = [
   {
@@ -36,6 +37,12 @@ const routes: Routes = [
   {
     path: 'sales',
     component: SalesComponent,
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['Admin'] },
+  },
+  {
+    path: 'invoices',
+    component: InvoicesComponent,
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['Admin'] },
   },

@@ -1,8 +1,8 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { DashboardAccountComponent } from './dashboard-account.component';
-import { DashboardAccountRoutingModule } from './dashboard-account-routing.module';
+import { DashboardAccountantComponent } from './dashboard-accountant.component';
+import { DashboardAccountRoutingModule } from './dashboard-accountant-routing.module';
 import { SharedComponentsModule } from '../../shared/components/shared-components.module';
 import { MatTableModule } from '@angular/material/table';
 import { MatPaginatorModule } from '@angular/material/paginator';
@@ -14,9 +14,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { InvoiceWorkOrdersComponent } from './components/invoice-work-orders/InvoiceWorkOrders.component';
+import { InvoiceWorkOrdersDialogComponent } from './components/invoice-work-orders/invoice-work-orders-dialog/invoice-work-orders-dialog.component';
 
 @NgModule({
-  declarations: [DashboardAccountComponent],
+  declarations: [
+    DashboardAccountantComponent,
+    InvoiceWorkOrdersComponent,
+    InvoiceWorkOrdersDialogComponent,
+  ],
   imports: [
     CommonModule,
     FormsModule,

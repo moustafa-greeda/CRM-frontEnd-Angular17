@@ -2,10 +2,15 @@ import { Component, OnInit } from '@angular/core';
 import { MainChartService } from './main-chart.service';
 import {
   ICompanyStageChart,
-  IJobTitleChart,
   IrevenueChart,
   ITopIndustrychart,
 } from '../../../core/Models/main-chart/ichart';
+
+interface WeeklyPerformancePoint {
+  dayLabel: string;
+  suggestedCount: number;
+  confirmedWarmCount: number;
+}
 
 @Component({
   selector: 'app-sales-charts',
@@ -25,12 +30,17 @@ export class ChartsSalesComponent implements OnInit {
   revenueTrendMonthLabel: string | null = null;
 
   // Weekly Performance (الأداء الأسبوعي) - Bottom Right
-  weeklyPerformanceData: IJobTitleChart[] = [];
+  weeklyPerformanceData: WeeklyPerformancePoint[] = [];
   weeklyPerformanceChartOptions: any = {};
 
   // leadStatus (حالة العميل) - Bottom Left
   leadStatusData: ICompanyStageChart[] = [];
   leadStatusChartOption: any = {};
+
+  // Loading states for async charts
+  isRevenueTrendLoading = true;
+  isWeeklyPerformanceLoading = true;
+  isLeadStatusLoading = true;
 
   ngOnInit(): void {
     // =======================================  Conversion Funnel (مسار التحويل) ====================
@@ -47,36 +57,7 @@ export class ChartsSalesComponent implements OnInit {
     this.GetDailyRevenueChart();
 
     // ================================  Weekly Performance (الأداء الأسبوعي) ============================
-    this.weeklyPerformanceData = [
-      { jobTitle: 'السبت', jobTitleCount: 19, converted: 14 } as IJobTitleChart,
-      { jobTitle: 'الأحد', jobTitleCount: 21, converted: 15 } as IJobTitleChart,
-      {
-        jobTitle: 'الإثنين',
-        jobTitleCount: 22,
-        converted: 17,
-      } as IJobTitleChart,
-      {
-        jobTitle: 'الثلاثاء',
-        jobTitleCount: 8,
-        converted: 12,
-      } as IJobTitleChart,
-      {
-        jobTitle: 'الأربعاء',
-        jobTitleCount: 20,
-        converted: 15,
-      } as IJobTitleChart,
-      {
-        jobTitle: 'الخميس',
-        jobTitleCount: 20,
-        converted: 17,
-      } as IJobTitleChart,
-      {
-        jobTitle: 'الجمعة',
-        jobTitleCount: 28,
-        converted: 12,
-      } as IJobTitleChart,
-    ];
-    this.updateWeeklyPerformanceChart();
+    this.loadWeeklyPerformanceChart();
 
     // ================================  Lead Status (حالة العميل) ====================================
     // Initialize with empty array, will be populated from API
@@ -139,6 +120,7 @@ export class ChartsSalesComponent implements OnInit {
 
   // =============================== Revenue Trend Chart (اتجاه الإيرادات) ==============================
   private GetDailyRevenueChart(): void {
+    this.setChartLoading('revenue', true);
     this._ChartService.GetDailyRevenueChart().subscribe({
       next: (response) => {
         if (response?.succeeded && response?.data) {
@@ -161,11 +143,14 @@ export class ChartsSalesComponent implements OnInit {
           // Fallback: keep empty array if API fails
           this.updateRevenueTrendChart();
         }
+
+        this.setChartLoading('revenue', false);
       },
       error: (error) => {
         console.error('Failed to load daily revenue chart', error);
         // Fallback: keep empty array on error
         this.updateRevenueTrendChart();
+        this.setChartLoading('revenue', false);
       },
     });
   }
@@ -287,7 +272,60 @@ export class ChartsSalesComponent implements OnInit {
   }
 
   // ===============================  Weekly Performance Chart (الأداء الأسبوعي) ==============================
+  private loadWeeklyPerformanceChart(): void {
+    this.setChartLoading('weekly', true);
+    this._ChartService.GetWeekLeadPerformanceChart().subscribe({
+      next: (response) => {
+        if (response?.succeeded && response?.data) {
+          const days: string[] = response.data.days ?? [];
+          const suggested: number[] = response.data.suggestedCounts ?? [];
+          const confirmed: number[] = response.data.confirmedWarmCounts ?? [];
+
+          const hasArrayData =
+            Array.isArray(days) &&
+            days.length > 0 &&
+            ((Array.isArray(suggested) && suggested.length > 0) ||
+              (Array.isArray(confirmed) && confirmed.length > 0));
+
+          if (hasArrayData) {
+            this.weeklyPerformanceData = days.map((day, index) => ({
+              dayLabel: day || `اليوم ${index + 1}`,
+              suggestedCount: suggested[index] ?? 0,
+              confirmedWarmCount: confirmed[index] ?? 0,
+            }));
+          } else {
+            this.weeklyPerformanceData = [];
+          }
+        } else {
+          this.weeklyPerformanceData = [];
+        }
+
+        this.updateWeeklyPerformanceChart();
+        this.setChartLoading('weekly', false);
+      },
+      error: (error) => {
+        console.error('Failed to load weekly performance chart', error);
+        this.weeklyPerformanceData = [];
+        this.updateWeeklyPerformanceChart();
+        this.setChartLoading('weekly', false);
+      },
+    });
+  }
+
   private updateWeeklyPerformanceChart(): void {
+    const maxYAxisValue =
+      this.weeklyPerformanceData.length > 0
+        ? Math.max(
+            ...this.weeklyPerformanceData.map((item) =>
+              Math.max(item.suggestedCount, item.confirmedWarmCount)
+            )
+          )
+        : 0;
+    const calculatedMaximum =
+      maxYAxisValue > 0 ? Math.ceil(maxYAxisValue * 1.2) : 10;
+    const calculatedInterval =
+      calculatedMaximum > 0 ? Math.max(1, Math.ceil(calculatedMaximum / 5)) : 2;
+
     this.weeklyPerformanceChartOptions = {
       animationEnabled: true,
       backgroundColor: 'transparent',
@@ -300,6 +338,11 @@ export class ChartsSalesComponent implements OnInit {
         horizontalAlign: 'center',
       },
       axisX: {
+        title: 'أيام الأسبوع',
+        titleFontColor: '#FFFFFF',
+        titleFontSize: 14,
+        titleFontFamily: 'Arial, sans-serif',
+        titleFontWeight: 'bold',
         labelFontColor: '#FFFFFF',
         labelFontSize: 14,
         labelFontFamily: 'Arial, sans-serif',
@@ -310,6 +353,11 @@ export class ChartsSalesComponent implements OnInit {
         tickThickness: 0,
       },
       axisY: {
+        title: 'عدد العملاء',
+        titleFontColor: '#FFFFFF',
+        titleFontSize: 14,
+        titleFontFamily: 'Arial, sans-serif',
+        titleFontWeight: 'bold',
         labelFontColor: '#FFFFFF',
         labelFontSize: 14,
         labelFontFamily: 'Arial, sans-serif',
@@ -318,8 +366,9 @@ export class ChartsSalesComponent implements OnInit {
         gridColor: '#333',
         lineThickness: 0,
         tickThickness: 0,
-        interval: 8,
-        maximum: 32,
+        interval: calculatedInterval,
+        maximum: calculatedMaximum,
+        minimum: 0,
       },
       legend: {
         cursor: 'pointer',
@@ -344,9 +393,9 @@ export class ChartsSalesComponent implements OnInit {
           name: 'عملاء متوقعين',
           showInLegend: true,
           color: '#2A8899', // You cannot use CSS gradients for CanvasJS color, only solid colors or hex codes
-          dataPoints: this.weeklyPerformanceData.map((item: any) => ({
-            label: item.jobTitle,
-            y: item.jobTitleCount,
+          dataPoints: this.weeklyPerformanceData.map((item) => ({
+            label: item.dayLabel,
+            y: item.suggestedCount,
           })),
         },
         {
@@ -354,9 +403,9 @@ export class ChartsSalesComponent implements OnInit {
           name: 'تم التحويل',
           showInLegend: true,
           color: '#265A4A', // Again, use solid color hex code or CSS color string, no gradients
-          dataPoints: this.weeklyPerformanceData.map((item: any) => ({
-            label: item.jobTitle,
-            y: item.converted,
+          dataPoints: this.weeklyPerformanceData.map((item) => ({
+            label: item.dayLabel,
+            y: item.confirmedWarmCount,
           })),
         },
       ],
@@ -365,6 +414,7 @@ export class ChartsSalesComponent implements OnInit {
 
   // =============================== lead status Chart (حالة العميل ) ==============================
   private GetLeadStatusPercentages(): void {
+    this.setChartLoading('lead', true);
     this._ChartService.GetLeadStatusPercentagesAsync().subscribe({
       next: (response) => {
         if (response?.succeeded && response?.data) {
@@ -380,13 +430,29 @@ export class ChartsSalesComponent implements OnInit {
           // Fallback: keep empty array if API fails
           this.updateLeadStatusChart();
         }
+
+        this.setChartLoading('lead', false);
       },
       error: (error) => {
         console.error('Failed to load lead status percentages', error);
         // Fallback: keep empty array on error
         this.updateLeadStatusChart();
+        this.setChartLoading('lead', false);
       },
     });
+  }
+
+  private setChartLoading(
+    chart: 'revenue' | 'weekly' | 'lead',
+    state: boolean
+  ): void {
+    if (chart === 'revenue') {
+      this.isRevenueTrendLoading = state;
+    } else if (chart === 'weekly') {
+      this.isWeeklyPerformanceLoading = state;
+    } else {
+      this.isLeadStatusLoading = state;
+    }
   }
 
   private updateLeadStatusChart(): void {
@@ -397,7 +463,7 @@ export class ChartsSalesComponent implements OnInit {
       '#FFBE99',
       '#FFDFCC',
       '#00687A', // blue
-      '#53AD92',
+      '#33E0FF', //
       '#53AD92',
       '#99F0FF',
       '#CCF7FF',

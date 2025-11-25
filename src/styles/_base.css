@@ -5,8 +5,10 @@
    ============================================================================ */
 
 body {
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-    "Oxygen", "Ubuntu", "Cantarell", sans-serif;
+  /* font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
+    "Oxygen", "Ubuntu", "Cantarell", sans-serif; */
+  font-family: "Amiri", serif, "sans-serif";
+
   background: linear-gradient(
       rgba(0, 0, 0, var(--bg-dim)),
       rgba(0, 0, 0, var(--bg-dim))
@@ -17,7 +19,10 @@ body {
   display: flex;
   flex-direction: column;
   line-height: 1.6;
-  font-size: 16px;
+  font-size: 18px;
+  /*  */
+  font-weight: 400;
+  font-style: normal;
   overflow-x: hidden;
 }
 
@@ -107,6 +112,17 @@ button:focus {
 ::selection {
   background-color: var(--link-color);
   color: var(--color-white);
+}
+
+/* global selection colors */
+::selection {
+  background: transparent;
+  color: inherit; /* اختياري */
+}
+
+::-moz-selection {
+  background: transparent;
+  color: inherit; /* اختياري */
 }
 
 /* ========== Container ========== */

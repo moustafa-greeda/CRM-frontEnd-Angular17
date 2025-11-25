@@ -22,4 +22,10 @@ export class MainChartService {
       `${this.Base_Url}/AdminSalesDashboard/Chart-Dounat/GetLeadStatusPercentagesAsync`
     );
   }
+  //============================== Get Current Week Lead Chart ================================
+  GetWeekLeadPerformanceChart(): Observable<any> {
+    return this.http.get(
+      `${this.Base_Url}/AdminSalesDashboard/charts/GetCurrentWeekLeadChart`
+    );
+  }
 }

@@ -306,7 +306,8 @@ export class ChartsTeleSalesComponent implements OnInit {
 
       axisX: {
         title: 'اليوم',
-        labelFontColor: '#d2e1ff',
+        titleFontColor: '#51C09E',
+        labelFontColor: '#fff',
         labelFontSize: 13,
         labelFontFamily: 'Tajawal, sans-serif',
         gridThickness: 0,
@@ -323,11 +324,11 @@ export class ChartsTeleSalesComponent implements OnInit {
 
       axisY: {
         title: 'الساعة',
-        labelFontColor: '#d2e1ff',
+        titleFontColor: '#51C09E',
+        labelFontColor: '#fff',
         labelFontSize: 12,
         labelFontFamily: 'Tajawal, sans-serif',
         gridThickness: 0.6,
-        gridColor: 'rgba(255,255,255,0.12)',
         lineThickness: 0,
         tickThickness: 0,
         minimum: 0,
@@ -605,6 +606,7 @@ export class ChartsTeleSalesComponent implements OnInit {
         maximum: 100, // الحد الأقصى لنسبة النجاح
         minimum: 0, // الحد الأدنى لنسبة النجاح
         title: 'نسبة المكالمات الناجحة (%)',
+        titleFontColor: '#51C09E',
       },
       legend: {
         cursor: 'pointer',
@@ -628,7 +630,7 @@ export class ChartsTeleSalesComponent implements OnInit {
           type: 'column',
           name: 'مكالمات',
           showInLegend: true,
-          color: '#2ECC71',
+          color: '#51C09E',
           dataPoints: timeSlotDataWithSuccessRate.map((item) => ({
             label: item.time,
             y: item.calls, // هنا نعرض عدد المكالمات الإجمالية

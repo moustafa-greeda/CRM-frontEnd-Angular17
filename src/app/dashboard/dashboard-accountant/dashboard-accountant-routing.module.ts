@@ -2,6 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DashboardAccountantComponent } from './dashboard-accountant.component';
 import { InvoiceWorkOrdersComponent } from './components/invoice-work-orders/InvoiceWorkOrders.component';
+import { InvoicesComponent } from './components/invoices/invoices.component';
 
 const routes: Routes = [
   {
@@ -9,8 +10,12 @@ const routes: Routes = [
     component: DashboardAccountantComponent,
   },
   {
-    path: 'invoices',
+    path: 'invoicesWorkOrders',
     component: InvoiceWorkOrdersComponent,
+  },
+  {
+    path: 'invoices',
+    component: InvoicesComponent,
   },
 ];
 

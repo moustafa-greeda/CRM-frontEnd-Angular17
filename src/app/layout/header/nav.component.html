@@ -1,7 +1,7 @@
 <header class="header">
   <div class="user-profile">
-    <button class="menu-btn" (click)="toggleSidebar()">
-      <mat-icon>{{ isSidebarOpen ? "close" : "menu" }}</mat-icon>
+    <button class="menu-btn" (click)="toggleSidebar()" aria-label="Toggle menu">
+      <i class="bi" [ngClass]="getToggleIcon()" aria-hidden="true"></i>
     </button>
 
     <div class="user-details">

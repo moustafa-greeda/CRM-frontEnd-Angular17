@@ -55,7 +55,15 @@ a {
   text-decoration: none;
   color: inherit;
 }
-
+/* 
+i {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%; 
+   font-size: 18px;
+} */
 /* ========== Images ========== */
 img {
   max-width: 100%;

@@ -320,7 +320,6 @@ export interface CardField {
         flex: 1 1 calc(50% - 4px);
         min-width: 0;
         display: flex;
-        // justify-content: flex-start;
         align-items: center;
         text-align: start;
         gap: 10px;
@@ -331,7 +330,7 @@ export interface CardField {
         flex-shrink: 0;
       }
 
-      .field-icon {
+      field-icon {
         width: 20px;
         height: 20px;
         display: flex;
@@ -340,7 +339,7 @@ export interface CardField {
       }
 
       .field-icon i {
-        font-size: 14px;
+        font-size: 17px;
         color: var(--primary-color);
       }
 
@@ -354,13 +353,13 @@ export interface CardField {
       }
 
       .field-label {
-        font-size: 11px;
+        font-size: 15px;
         color: var(--primary-color);
         font-weight: 500;
       }
 
       .field-value {
-        font-size: 12px;
+        font-size: 13px;
         color: var(--white-color);
         font-weight: 400;
         word-wrap: break-word;

@@ -9,6 +9,10 @@ import { LeadStatusService } from '../../core/services/common/lead-status.servic
 import { FormUiComponent } from '../../shared/components/form-ui/form-ui.component';
 import { MatDialog } from '@angular/material/dialog';
 import { NotifyDialogService } from '../../shared/components/notify-dialog-host/notify-dialog.service';
+import {
+  DetailViewDialogComponent,
+  DetailViewDialogData,
+} from '../../shared/components/detail-view-dialog/detail-view-dialog.component';
 import { GetTeleSalesTableDataRequest } from '../../core/Models/teleSalse/get-tele-sales-table-data-request';
 import { ICountry } from '../../core/Models/common/icountry';
 import { ICity } from '../../core/Models/common/country-city.models';
@@ -1022,18 +1026,17 @@ export class DashboardSalesComponent implements OnInit {
 
   // Show all notifications/actions for a selected user
   onView(lead: any): void {
-    if (!lead) {
+    const id = lead?.leadId ?? lead?.id;
+    if (!id) {
+      console.warn('onView: No leadId or id found in lead object', lead);
       return;
     }
-
-    // Actions are keyed by the actual leadId, not the assignment id (row.id)
-    const keyLeadId = lead.leadId ?? lead.id;
 
     // Filter actions for this specific lead and map with action type info
     const leadActions =
       this.teleSalesActions?.data?.actionsGrouped?.flatMap((group: any) =>
         group.actions
-          .filter((action: any) => (action.leadId ?? action.id) === keyLeadId)
+          .filter((action: any) => (action.leadId ?? action.id) === id)
           .map((action: any) => ({
             ...action,
             actionTypeName: group.actionTypeName,
@@ -1050,12 +1053,60 @@ export class DashboardSalesComponent implements OnInit {
       return;
     }
 
-    // Store the actions and lead for the dialog
-    this.selectedLeadActions = leadActions;
-    this.selectedLead = lead;
+    // Format actions data for detail-view-dialog
+    const actionsData: Record<string, any> = {};
+    const fields: Array<{
+      key: string;
+      label: string;
+      type?: 'text' | 'url' | 'email' | 'phone' | 'date' | 'boolean' | 'json';
+    }> = [];
 
-    // Open the dialog
-    this.showLeadActionsDialog = true;
+    leadActions.forEach((action: any, index: number) => {
+      const actionNumber = index + 1;
+      const actionTypeName = this.getActionTypeNameById(action);
+      const actionDate = this.formatActionDate(action.actionDate);
+
+      // Create a formatted action string with each field on a separate line
+      const actionKey = `action_${actionNumber}`;
+      const actionLabel = `إجراء ${actionNumber} - ${actionTypeName}`;
+
+      // Format all attributes with each field on a separate line
+      let actionValue = `النوع: ${actionTypeName}\nالتاريخ: ${actionDate}`;
+      if (action.actionNotes) {
+        actionValue += `\nالملاحظات: ${action.actionNotes}`;
+      }
+
+      actionsData[actionKey] = actionValue;
+      fields.push({
+        key: actionKey,
+        label: actionLabel,
+        type: 'text' as const,
+      });
+    });
+
+    // Add lead information
+    actionsData['leadName'] = lead.contactName || lead.name || 'غير محدد';
+    actionsData['leadId'] = id;
+    actionsData['totalActions'] = leadActions.length;
+
+    fields.unshift(
+      { key: 'leadName', label: 'اسم العميل', type: 'text' as const },
+      { key: 'totalActions', label: 'إجمالي الإجراءات', type: 'text' as const }
+    );
+
+    const dialogData: DetailViewDialogData = {
+      title: `إجراءات ${lead.contactName || lead.name || 'العميل'}`,
+      data: actionsData,
+      fields: fields,
+    };
+
+    this.dialog.open(DetailViewDialogComponent, {
+      width: '900px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      data: dialogData,
+      panelClass: 'agreement-dialog',
+    });
   }
 
   // Get action type ID from type name

@@ -87,11 +87,9 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
     } else {
       // Set default invoice number and date for new invoice
       const today = new Date().toISOString().split('T')[0];
-      const invoiceNumber = this.generateInvoiceNumber();
 
       // Load account assignment data will populate clientName and clientEmail
       this.invoiceForm.patchValue({
-        invoiceNumber: invoiceNumber,
         date: today,
         clientAddress: '',
         isSameShippingAddress: true,
@@ -109,7 +107,6 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
 
   private initializeForm(): void {
     this.invoiceForm = this.fb.group({
-      invoiceNumber: ['', Validators.required],
       date: ['', Validators.required],
       clientName: ['', Validators.required],
       clientAddress: [''],
@@ -185,15 +182,6 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
       clientEmail: invoice.clientEmail,
       clientPhone: invoice.clientPhone,
     });
-  }
-
-  private generateInvoiceNumber(): string {
-    // Generate invoice number like MZ-00114
-    const prefix = 'MZ-';
-    const randomNum = Math.floor(Math.random() * 1000)
-      .toString()
-      .padStart(5, '0');
-    return `${prefix}${randomNum}`;
   }
 
   onSameAddressChange(event: any): void {

@@ -27,7 +27,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
     key: string;
     header: string;
     width?: string;
-    formatter?: 'date' | 'datetime';
+    formatter?: 'date' | 'datetime' | 'booleanYesNo';
   }[] = [];
   @Input() selectedRows: any[] = [];
   @Input() pageSize = 10;
@@ -509,6 +509,16 @@ export class TableComponent implements AfterViewInit, OnDestroy {
     }
 
     return value;
+  }
+
+  formatBooleanYesNo(value: any): string {
+    if (value === true) {
+      return 'نعم';
+    }
+    if (value === false) {
+      return 'لا';
+    }
+    return '-';
   }
 
   // Lead status editing methods

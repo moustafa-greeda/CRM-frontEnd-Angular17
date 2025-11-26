@@ -37,11 +37,7 @@ export class Step3Component extends BaseStepComponent implements OnInit {
     }
   }
 
-  /**
-   * Initialize the form with all required social media fields
-   * This form collects various social media platform information
-   * and additional details about the customer/employee
-   */
+  /* Initialize the form with all required social media fields*/
   private initializeForm(): void {
     this.form = this.fb.group({
       // Main social media toggle
@@ -52,14 +48,14 @@ export class Step3Component extends BaseStepComponent implements OnInit {
       webSiteUrl: [''], // Alternative website field used in HTML
 
       // Individual social media platform fields
-      instgram: ['', Validators.required], // Instagram username
-      snapchat: ['', Validators.required], // Snapchat username
-      facebook: ['', Validators.required], // Facebook profile
-      linkedin: ['', Validators.required], // LinkedIn profile
-      youtube: ['', Validators.required], // YouTube channel
-      tiktok: ['', Validators.required], // TikTok username
-      twitter: ['', Validators.required], // Twitter/X username
-      whatsapp: ['', Validators.required], // WhatsApp number
+      instgram: [''],
+      snapchat: [''],
+      facebook: [''],
+      linkedin: [''],
+      youtube: [''],
+      tiktok: [''],
+      twitter: [''],
+      whatsapp: [''],
     });
   }
 

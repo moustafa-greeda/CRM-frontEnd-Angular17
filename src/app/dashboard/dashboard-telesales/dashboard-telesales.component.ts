@@ -124,7 +124,7 @@ export class DashboardTelesalesComponent implements OnInit {
   leadStatusOptions: string[] = [];
   // Use the service for status colors instead of inline map
   get leadStatusColorMap(): Record<string, string> {
-    return this.statusColorService.getAllStatusColors();
+    return this.statusColorService?.getAllStatusColors() || {};
   }
 
   constructor(
@@ -777,8 +777,8 @@ export class DashboardTelesalesComponent implements OnInit {
       maxHeight: '90vh',
       data: dialogData,
       panelClass: 'agreement-dialog',
-      hasBackdrop: true,
-      backdropClass: 'agreement-dialog-backdrop',
+      // hasBackdrop: true,
+      // backdropClass: 'agreement-dialog-backdrop',
     });
   }
 

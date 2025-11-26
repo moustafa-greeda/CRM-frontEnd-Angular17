@@ -225,7 +225,7 @@ export class AuthService {
       case 'Sales':
         return '/dashboard/sales';
       case 'Accountant':
-        return '/dashboard/accountant/invoices';
+        return '/dashboard/accountant/invoicesWorkOrders';
       case 'Tech':
         return '/dashboard/tech';
       case 'Admin':

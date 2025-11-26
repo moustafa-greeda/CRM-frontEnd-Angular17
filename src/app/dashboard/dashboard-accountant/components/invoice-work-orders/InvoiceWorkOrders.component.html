@@ -34,7 +34,6 @@
       [showIndex]="true"
       [showAdd]="true"
       [showEdit]="true"
-      [showDelete]="true"
       [actionTitles]="{
         view: 'عرض تفاصيل الفاتورة',
         add: 'إضافة فاتوره جديدة',
@@ -44,7 +43,6 @@
       [totalCount]="totalCount"
       (addButtonClick)="onAddClick($event)"
       (edit)="onEditDeal($event)"
-      (delete)="onDeleteDeal($event)"
       (view)="onViewDeal($event)"
     ></app-table>
   </div>

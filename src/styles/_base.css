@@ -20,7 +20,6 @@ body {
   flex-direction: column;
   line-height: 1.6;
   font-size: 18px;
-  /*  */
   font-weight: 400;
   font-style: normal;
   overflow-x: hidden;
@@ -116,13 +115,15 @@ button:focus {
 
 /* global selection colors */
 ::selection {
-  background: transparent;
-  color: inherit; /* اختياري */
+  background: #fff;
+  color: #000;
 }
 
 ::-moz-selection {
-  background: transparent;
-  color: inherit; /* اختياري */
+  /* background: transparent;
+  color: inherit; */
+  background: #fff;
+  color: #000; /* اختياري */
 }
 
 /* ========== Container ========== */
@@ -136,7 +137,7 @@ button:focus {
 /* ========== Responsive Typography ========== */
 @media (max-width: 768px) {
   body {
-    font-size: 14px;
+    font-size: 16px;
   }
   h1 {
     font-size: 1.875rem;

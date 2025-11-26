@@ -413,6 +413,12 @@
                     >
                       {{ formatCellValue(row[col.key], "datetime") }}
                     </span>
+                    <span
+                      *ngIf="col.formatter === 'booleanYesNo'"
+                      class="boolean-field"
+                    >
+                      {{ formatBooleanYesNo(row[col.key]) }}
+                    </span>
                     <!-- Check if value is a URL -->
                     <a
                       *ngIf="

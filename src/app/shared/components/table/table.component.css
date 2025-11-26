@@ -124,7 +124,7 @@
 }
 
 .packet-price {
-  color: var(--secondary-color, #46e3ff);
+  color: var(--secondary-color);
   font-weight: 600;
 }
 
@@ -335,6 +335,7 @@
 
 .data-table th {
   padding: 20px 0px !important;
+  font-size: 15px;
   font-weight: 600;
   backdrop-filter: blur(10px) !important;
   background: var(--bg-table-header) !important;

@@ -153,10 +153,6 @@ export class InvoiceWorkOrdersComponent implements OnInit {
     console.log('Edit invoice', row);
   }
 
-  onDeleteDeal(row: any): void {
-    console.log('Delete invoice', row);
-  }
-
   onViewDeal(row: any): void {
     console.log('View invoice', row);
   }

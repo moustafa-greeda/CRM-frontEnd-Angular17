@@ -239,9 +239,15 @@
 
 .icon-wrapper i {
   color: #46e3ff;
-  font-size: 14px;
+  /* font-size: 14px; */
   z-index: 3;
   position: relative;
+  font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
 }
 
 /* Different icon sizes */

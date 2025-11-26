@@ -821,7 +821,12 @@ export class ShowLeadsComponent implements OnInit {
   /**
    * Table columns configuration for leads
    */
-  get tableColumns() {
+  get tableColumns(): {
+    key: string;
+    header: string;
+    width?: string;
+    formatter?: 'date' | 'datetime' | 'booleanYesNo';
+  }[] {
     return [
       { key: 'name', header: 'الاسم', width: '150px' },
       { key: 'jobTitle', header: 'المسمى الوظيفي', width: '120px' },
@@ -834,7 +839,8 @@ export class ShowLeadsComponent implements OnInit {
       {
         key: 'isHaveSoialMedia',
         header: 'لديه وسائل تواصل اجتماعي',
-        width: '120px',
+        width: '100px',
+        formatter: 'booleanYesNo' as const,
       },
     ];
   }

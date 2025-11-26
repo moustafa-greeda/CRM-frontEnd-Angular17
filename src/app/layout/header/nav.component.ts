@@ -7,7 +7,7 @@ import { PLATFORM_ID } from '@angular/core';
 @Component({
   selector: 'app-nav',
   templateUrl: './nav.component.html',
-  styleUrl: './nav.component.css',
+  styleUrls: ['./nav.component.css'],
 })
 export class HeaderComponent {
   constructor(
@@ -20,6 +20,7 @@ export class HeaderComponent {
   theme$ = this.themeService.theme$;
 
   @Input() isSidebarOpen: boolean = false;
+  @Input() isSidebarCollapsed: boolean = false;
   @Output() menuToggle = new EventEmitter<void>();
 
   toggleSidebar() {
@@ -52,5 +53,16 @@ export class HeaderComponent {
       return name.charAt(0).toUpperCase();
     }
     return '';
+  }
+
+  getToggleIcon(): string {
+    const isMobile =
+      typeof window !== 'undefined' ? window.innerWidth < 1200 : false;
+    if (isMobile) {
+      return this.isSidebarOpen ? 'bi-x-lg' : 'bi-list';
+    }
+    return this.isSidebarCollapsed
+      ? 'bi-chevron-double-right'
+      : 'bi-chevron-double-left';
   }
 }

@@ -16,12 +16,14 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { InvoiceWorkOrdersComponent } from './components/invoice-work-orders/InvoiceWorkOrders.component';
 import { InvoiceWorkOrdersDialogComponent } from './components/invoice-work-orders/invoice-work-orders-dialog/invoice-work-orders-dialog.component';
+import { InvoicesComponent } from './components/invoices/invoices.component';
 
 @NgModule({
   declarations: [
     DashboardAccountantComponent,
     InvoiceWorkOrdersComponent,
     InvoiceWorkOrdersDialogComponent,
+    InvoicesComponent,
   ],
   imports: [
     CommonModule,

@@ -101,6 +101,7 @@ export class InvoiceWorkOrdersComponent implements OnInit {
       }),
       budget: assignment.budget,
       currncy: assignment.currncy,
+      name: assignment.name, // Add package name
       amountDisplay: `${assignment.budget} ${assignment.currncy}`,
       status: assignment.isInWorkOrder
         ? ('قيد المراجعة' as const)
@@ -114,6 +115,7 @@ export class InvoiceWorkOrdersComponent implements OnInit {
       { key: 'clientPhone', header: 'رقم الهاتف' },
       { key: 'clientEmail', header: 'البريد الإلكتروني' },
       { key: 'issueDate', header: 'تاريخ الإصدار' },
+      { key: 'name', header: 'الباقة' },
       { key: 'budget', header: 'المبلغ', width: '70px' },
       { key: 'currncy', header: 'العملة', width: '70px' },
       // { key: 'status', header: 'الحالة' },
@@ -134,6 +136,7 @@ export class InvoiceWorkOrdersComponent implements OnInit {
       maxWidth: '90vw',
       maxHeight: '90vh',
       panelClass: 'agreement-dialog',
+      backdropClass: 'agreement-dialog-backdrop',
       data: {
         invoice: null,
         isEdit: false,

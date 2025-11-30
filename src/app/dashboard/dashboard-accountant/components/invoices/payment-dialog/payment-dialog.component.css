@@ -23,10 +23,9 @@
 .form-section {
   margin-bottom: 32px;
   padding: 20px;
-  background: rgba(15, 23, 42, 0.6);
-  /* background: rgba(16, 185, 129, 0.1); */
+  background: rgba(15, 23, 42, 0.3);
   border-radius: 8px;
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  border: 1px solid var(--secondary-border-color);
 }
 
 .section-title {
@@ -47,38 +46,6 @@
   flex-direction: column;
 }
 
-.form-field label {
-  font-size: 14px;
-  font-weight: 500;
-  margin-bottom: 8px;
-  color: var(--text-color, #ffffff);
-}
-
-.form-input {
-  padding: 12px 16px;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
-  border-radius: 8px;
-  color: var(--text-color, #ffffff);
-  font-size: 14px;
-  transition: all 0.3s ease;
-}
-
-.form-input:focus {
-  outline: none;
-  border-color: var(--secondary-color);
-  background: rgba(255, 255, 255, 0.08);
-}
-
-.form-input.error {
-  border-color: var(--bg-error);
-}
-
-.form-input[readonly] {
-  background: rgba(255, 255, 255, 0.03);
-  cursor: not-allowed;
-}
-
 .error-message {
   color: var(--bg-error);
   font-size: 12px;
@@ -95,7 +62,7 @@
 .payment-method-option {
   padding: 16px;
   background: rgba(255, 255, 255, 0.05);
-  border: 2px solid var(--border-color, rgba(255, 255, 255, 0.1));
+  border: 2px solid var(--secondary-border-color);
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.3s ease;
@@ -103,12 +70,13 @@
 
 .payment-method-option:hover {
   background: rgba(255, 255, 255, 0.08);
-  border-color: var(--secondary-color);
+  border-color: var(--secondary-border-color);
 }
 
 .payment-method-option.active {
+  box-shadow: 0 0 10px 0 var(--primary-color);
   background: rgba(16, 185, 129, 0.1);
-  border-color: var(--primary-color);
+  border-color: var(--secondary-border-color);
 }
 
 .method-header {
@@ -144,11 +112,9 @@
   justify-content: space-between;
   align-items: center;
   padding: 20px;
-  /* background: rgba(16, 185, 129, 0.15); */
   background: rgba(16, 185, 129, 0.1);
-
   border-radius: 8px;
-  border: 1px solid var(--primary-color);
+  border: 1px solid var(--secondary-border-color);
 }
 
 .amount-label {
@@ -163,64 +129,8 @@
   color: var(--primary-color);
 }
 
-.bank-info-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 20px;
-}
-
-.bank-info-item {
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 8px;
-  border: 1px solid var(--border-color, rgba(255, 255, 255, 0.1));
-}
-
-.info-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 12px;
-}
-
-.info-header label {
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--text-color, #ffffff);
-  margin: 0;
-}
-
-.copy-btn {
-  background: transparent;
-  border: none;
-  color: var(--primary-color, #10b981);
-  cursor: pointer;
-  padding: 4px 8px;
-  border-radius: 4px;
-  transition: all 0.2s ease;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.copy-btn:hover {
-  background: rgba(16, 185, 129, 0.1);
-}
-
-.copy-btn i {
-  font-size: 16px;
-}
-
-.info-value {
-  font-size: 14px;
-  color: var(--text-color, #ffffff);
-  word-break: break-all;
-  font-family: "Courier New", monospace;
-}
-
 /* Credit Card Section */
 .credit-card-section {
-  background: rgba(16, 185, 129, 0.1);
   background: rgba(15, 23, 42, 0.3);
 }
 
@@ -301,13 +211,14 @@
   font-size: 16px;
   font-weight: 500;
   cursor: pointer;
-  transition: all 0.3s ease;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
   min-width: 200px;
 }
 
 .btn-cancel:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px 0 var(--bg-error);
   background: rgba(255, 255, 255, 0.05);
-  border-color: var(--border-color, rgba(255, 255, 255, 0.3));
 }
 
 .post-payment-message {

@@ -1,5 +1,4 @@
 <div class="notifications-panel">
-  <!-- رأس اللوحة -->
   <div class="panel-header">
     <div class="panel-title">
       <h3>الاشعارات و التنبيه</h3>
@@ -35,10 +34,7 @@
     </div>
 
     <!-- حالة لا توجد بيانات -->
-    <div
-      *ngIf="notifications.length === 0 && !loadingNotifications"
-      class="no-data-state"
-    >
+    <div *ngIf="notifications.length === 0" class="no-data-state">
       <i class="bi bi-bell-slash"></i>
       <span>لا توجد إشعارات متاحة</span>
     </div>

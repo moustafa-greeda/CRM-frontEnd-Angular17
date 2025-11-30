@@ -9,9 +9,9 @@ import {
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../../Auth/auth.service';
-import { SidebarItem } from './sidebar.model';
 import { SidebarService } from './sidebar.service';
 import { UserRole } from '../../core/Models/user/user.model';
+import { SidebarItem } from '../../core/Models/sidbar/menu-item.model';
 
 @Component({
   selector: 'app-sidebar',

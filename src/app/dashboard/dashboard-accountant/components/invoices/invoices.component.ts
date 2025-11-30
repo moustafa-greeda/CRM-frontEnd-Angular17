@@ -35,6 +35,9 @@ export class InvoicesComponent {
   summaryColumns: any[] = [];
   noDataMessage = 'اختر فاتورة من القائمة أو استخدم البحث لعرض التفاصيل';
   hasActiveFilter = false;
+  showTablePayments: boolean = false;
+  payments: any[] = [];
+  paymentsColumns: any[] = [];
 
   constructor(
     private _invoicesService: InvoicesService,
@@ -87,6 +90,15 @@ export class InvoicesComponent {
       { key: 'remaining', header: 'المبلغ المتبقي' },
       { key: 'paymentStatus', header: 'حالة الدفع' },
       { key: 'actions', header: 'الإجراءات' },
+    ];
+    this.paymentsColumns = [
+      { key: 'invoiceId', header: 'رقم الفاتورة' },
+      { key: 'paymentMethod', header: 'طريقة الدفع' },
+      { key: 'paymentDetails', header: 'تفاصيل الدفع' },
+      { key: 'paidAmount', header: 'المبلغ المدفوع' },
+      { key: 'remaining', header: 'المبلغ المتبقي' },
+      { key: 'paymentStatus', header: 'حالة الدفع' },
+      { key: 'paymentDate', header: 'تاريخ الدفع' },
     ];
   }
   onSearch(value: string): void {
@@ -150,6 +162,8 @@ export class InvoicesComponent {
       } as PaymentDialogData,
       disableClose: true,
       panelClass: 'agreement-dialog',
+      backdropClass: 'agreement-dialog-backdrop',
+      hasBackdrop: true,
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -179,5 +193,17 @@ export class InvoicesComponent {
         }
       }
     });
+  }
+  // ==================================== Payment Handler ====================================
+  onShowTablePayments(row: any): void {
+    this.showTablePayments = true;
+  }
+  onHideTablePayments(): void {
+    this.showTablePayments = false;
+  }
+  onLoadPayments(): void {
+    // this._paymentsService.getAllPayments().subscribe((res) => {
+    //   this.payments = res?.data ?? [];
+    // });
   }
 }

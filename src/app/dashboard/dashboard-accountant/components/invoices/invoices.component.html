@@ -44,12 +44,13 @@
         عرض كل الفواتير
       </button>
     </div>
-    <div class="right-section">
+    <div class="table-container right-section">
       <app-table
         [data]="filteredInvoices"
         [columns]="columns"
         [showIndex]="true"
         [showEdit]="true"
+        [showView]="true"
         [selectedRows]="selectedRows"
         [showDataTable]="true"
         [actionTitles]="{
@@ -60,9 +61,20 @@
         [pageSize]="pageSize"
         [currentPage]="currentPage"
         [totalCount]="totalCount"
+        (view)="onShowTablePayments($event)"
         (edit)="onEditDeal($event)"
         [noDataMessage]="noDataMessage"
       ></app-table>
     </div>
+  </div>
+  <!-- payment table -->
+  <div *ngIf="showTablePayments" class="table-container mt-md">
+    <app-table
+      [data]="payments"
+      [columns]="paymentsColumns"
+      [showDataTable]="true"
+      [showIndex]="true"
+      [hasNoData]="payments.length === 0"
+    ></app-table>
   </div>
 </div>

@@ -6,3 +6,10 @@ export type MenuItem = {
   icon: string;
   roles?: AppRole[]; // Optional roles for filtering
 };
+
+export interface SidebarItem {
+  title: string;
+  icon: string;
+  route: string;
+  tooltip?: string;
+}

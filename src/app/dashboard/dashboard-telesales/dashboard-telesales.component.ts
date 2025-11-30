@@ -1,6 +1,5 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { forkJoin, of } from 'rxjs';
-import { switchMap, catchError } from 'rxjs/operators';
 import {
   ITeleSalseActionResponse,
   ITeleSalseActionRequest,
@@ -44,7 +43,7 @@ export class DashboardTelesalesComponent implements OnInit {
   listLeadStatus: any[] = [];
   leadStatusMap: Map<string, number> = new Map();
   leadsList: any[] = [];
-  salesList: any[] = [];
+  // leadsList: any[] = [];
   currencyList: any[] = [];
   callStatusList: ICallStatus[] = [];
   actionLabels = {
@@ -56,6 +55,7 @@ export class DashboardTelesalesComponent implements OnInit {
     { key: 'contactName', header: 'الاسم' },
     { key: 'assigndate', header: 'تاريخ التعيين', formatter: 'date' },
     { key: 'leadStatus', header: 'حالة العميل المحتمل' },
+    { key: 'phoneNumber', header: 'الهاتف' },
     { key: 'country', header: 'الدولة' },
     { key: 'city', header: 'المدينة' },
     { key: 'lastActionTime', header: 'آخر تفاعل', formatter: 'datetime' },
@@ -225,7 +225,7 @@ export class DashboardTelesalesComponent implements OnInit {
     this.loadCountries();
 
     // Load sales list
-    this.getSalesList();
+    this.getleadsList();
 
     // Load currency list
     this.getCurrencyList();
@@ -362,10 +362,10 @@ export class DashboardTelesalesComponent implements OnInit {
   }
 
   // ========================================= get sales list =================================
-  getSalesList(): void {
+  getleadsList(): void {
     this._salesService.getAllSales().subscribe({
       next: (response) => {
-        this.salesList = response.data;
+        this.leadsList = response.data;
       },
     });
   }
@@ -458,6 +458,7 @@ export class DashboardTelesalesComponent implements OnInit {
       leadStatus: this.selectedLeadStatusName || '',
       country: this.selectedCountry || '',
       city: this.selectedCity || '',
+
       lastActionTime: '', // Keep for backward compatibility if needed
       actionNote: '',
       actionDateFilter: dateFilter, // Pass date filter number (0, 1, or 2) to API
@@ -1111,15 +1112,15 @@ export class DashboardTelesalesComponent implements OnInit {
 
   openAssignLeadToSalesDialog(lead: any): void {
     // Ensure data is loaded - reload if empty
-    if (!this.salesList || this.salesList.length === 0) {
-      this.getSalesList();
+    if (!this.leadsList || this.leadsList.length === 0) {
+      this.getleadsList();
     }
     if (!this.currencyList || this.currencyList.length === 0) {
       this.getCurrencyList();
     }
 
-    // Convert salesList to FormUiComponent expected format: { value, label }[]
-    const salesOptions = (this.salesList || []).map((sales: any) => ({
+    // Convert leadsList to FormUiComponent expected format: { value, label }[]
+    const salesOptions = (this.leadsList || []).map((sales: any) => ({
       value: sales.id,
       label: sales.name,
     }));

@@ -18,6 +18,7 @@ import { InvoiceWorkOrdersComponent } from './components/invoice-work-orders/Inv
 import { InvoiceWorkOrdersDialogComponent } from './components/invoice-work-orders/invoice-work-orders-dialog/invoice-work-orders-dialog.component';
 import { InvoicesComponent } from './components/invoices/invoices.component';
 import { PaymentDialogComponent } from './components/invoices/payment-dialog/payment-dialog.component';
+import { PaymentsComponent } from './components/payments/payments.component';
 
 @NgModule({
   declarations: [
@@ -26,6 +27,7 @@ import { PaymentDialogComponent } from './components/invoices/payment-dialog/pay
     InvoiceWorkOrdersDialogComponent,
     InvoicesComponent,
     PaymentDialogComponent,
+    PaymentsComponent,
   ],
   imports: [
     CommonModule,

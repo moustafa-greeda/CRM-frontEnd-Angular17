@@ -17,14 +17,6 @@ export class PaymentDialogComponent implements OnInit {
   selectedPaymentMethod: string = 'تحويل بنكي';
   showCreditCard: boolean = false;
 
-  // Bank details (these would typically come from a service/config)
-  bankDetails = {
-    bankName: 'البنك الأهلي السعودي',
-    accountName: 'شركة المدفوعات المتقدمة',
-    accountNumber: 'SA123456789012360012',
-    swiftCode: 'NCBHSASAE',
-  };
-
   // Calculate remaining amount
   get remainingAmount(): number {
     const total = this.paymentForm?.get('totalAmount')?.value || 0;
@@ -60,6 +52,11 @@ export class PaymentDialogComponent implements OnInit {
       paidAmount: [0, [Validators.required, Validators.min(0)]],
       totalAmount: [0, [Validators.required, Validators.min(0)]],
       paymentMethod: ['تحويل بنكي', Validators.required],
+      // Bank transfer fields
+      bankName: [''],
+      accountName: [''],
+      accountNumber: [''],
+      swiftCode: [''],
       // Credit card fields
       cardNumber: [''],
       cardHolderName: [''],
@@ -74,12 +71,6 @@ export class PaymentDialogComponent implements OnInit {
     this.paymentForm.patchValue({ paymentMethod: method });
   }
 
-  copyToClipboard(text: string): void {
-    navigator.clipboard.writeText(text).then(() => {
-      // You can add a toast notification here
-    });
-  }
-
   onSubmit(): void {
     if (this.paymentForm.valid) {
       const formValue = this.paymentForm.value;
@@ -90,6 +81,12 @@ export class PaymentDialogComponent implements OnInit {
         totalAmount: formValue.totalAmount,
         paymentMethod: formValue.paymentMethod,
         remaining: this.remainingAmount,
+        ...(this.selectedPaymentMethod === 'تحويل بنكي' && {
+          bankName: formValue.bankName,
+          accountName: formValue.accountName,
+          accountNumber: formValue.accountNumber,
+          swiftCode: formValue.swiftCode,
+        }),
         ...(this.showCreditCard && {
           cardNumber: formValue.cardNumber,
           cardHolderName: formValue.cardHolderName,

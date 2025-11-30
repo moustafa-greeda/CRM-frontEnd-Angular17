@@ -1,4 +1,4 @@
-import { SidebarItem } from '../sidebar.model';
+import { SidebarItem } from '../../../core/Models/sidbar/menu-item.model';
 
 export const TechMenu: SidebarItem[] = [
   {

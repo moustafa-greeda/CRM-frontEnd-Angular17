@@ -5,6 +5,7 @@ export interface GetTeleSalesTableDataRequest {
   leadStatus: string;
   country?: string;
   city: string;
+  phoneNumber?: string;
   lastActionTime: string;
   actionNote: string;
   actionDateFilter?: number; // 0 = Today, 1 = This Week, 2 = This Month

@@ -1,4 +1,4 @@
-import { SidebarItem } from '../sidebar.model';
+import { SidebarItem } from '../../../core/Models/sidbar/menu-item.model';
 
 export const AccountantMenu: SidebarItem[] = [
   {
@@ -11,4 +11,9 @@ export const AccountantMenu: SidebarItem[] = [
     icon: 'bi bi-credit-card',
     route: '/dashboard/accountant/invoices',
   },
+  // {
+  //   title: 'الدفعات',
+  //   icon: 'bi bi-cash-coin',
+  //   route: '/dashboard/accountant/payments',
+  // },
 ];

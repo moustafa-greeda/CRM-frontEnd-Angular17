@@ -116,66 +116,45 @@
           <span class="amount-label">المبلغ المطلوب سداده</span>
           <span class="amount-value">{{ remainingAmount }} ريال</span>
         </div>
-
-        <div class="bank-info-grid">
-          <div class="bank-info-item">
-            <div class="info-header">
-              <label>اسم البنك</label>
-              <button
-                type="button"
-                class="copy-btn"
-                (click)="copyToClipboard(bankDetails.bankName)"
-                title="نسخ"
-              >
-                <i class="bi bi-files"></i>
-              </button>
-            </div>
-            <div class="info-value">{{ bankDetails.bankName }}</div>
+        <div class="form-grid">
+          <div class="form-field">
+            <label>اسم البنك</label>
+            <input
+              type="text"
+              formControlName="bankName"
+              placeholder="اسم البنك"
+              class="form-input"
+            />
           </div>
 
-          <div class="bank-info-item">
-            <div class="info-header">
-              <label>اسم الحساب</label>
-              <button
-                type="button"
-                class="copy-btn"
-                (click)="copyToClipboard(bankDetails.accountName)"
-                title="نسخ"
-              >
-                <i class="bi bi-files"></i>
-              </button>
-            </div>
-            <div class="info-value">{{ bankDetails.accountName }}</div>
+          <div class="form-field">
+            <label>اسم الحساب</label>
+            <input
+              type="text"
+              formControlName="accountName"
+              placeholder="اسم الحساب"
+              class="form-input"
+            />
           </div>
 
-          <div class="bank-info-item">
-            <div class="info-header">
-              <label>رقم الحساب (IBAN)</label>
-              <button
-                type="button"
-                class="copy-btn"
-                (click)="copyToClipboard(bankDetails.accountNumber)"
-                title="نسخ"
-              >
-                <i class="bi bi-files"></i>
-              </button>
-            </div>
-            <div class="info-value">{{ bankDetails.accountNumber }}</div>
+          <div class="form-field">
+            <label>رقم الحساب (IBAN)</label>
+            <input
+              type="text"
+              formControlName="accountNumber"
+              placeholder="ادخل رقم الحساب (IBAN)"
+              class="form-input"
+            />
           </div>
 
-          <div class="bank-info-item">
-            <div class="info-header">
-              <label>رمز السويفت</label>
-              <button
-                type="button"
-                class="copy-btn"
-                (click)="copyToClipboard(bankDetails.swiftCode)"
-                title="نسخ"
-              >
-                <i class="bi bi-files"></i>
-              </button>
-            </div>
-            <div class="info-value">{{ bankDetails.swiftCode }}</div>
+          <div class="form-field">
+            <label>رمز السويفت</label>
+            <input
+              type="text"
+              formControlName="swiftCode"
+              placeholder="ادخل رمز السويفت"
+              class="form-input"
+            />
           </div>
         </div>
       </div>
@@ -210,7 +189,7 @@
           <div class="form-field">
             <label>تاريخ الانتهاء</label>
             <input
-              type="text"
+              type="date"
               formControlName="expiryDate"
               placeholder="MM/YY"
               class="form-input"

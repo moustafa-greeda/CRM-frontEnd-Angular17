@@ -33,12 +33,12 @@ import { StatusColorService } from '../../../core/services/common/status-color.s
       .dropdown-select {
         width: 100%;
         min-width: 70px;
-        padding: 8px 12px;
+        padding: 8px;
         border: 1px solid var(--primary-color);
         border-radius: 6px;
         background: rgba(17, 24, 31, 0.95);
         color: white;
-        font-size: 14px;
+        font-size: 12px;
         outline: none;
         transition: all 0.2s ease;
       }

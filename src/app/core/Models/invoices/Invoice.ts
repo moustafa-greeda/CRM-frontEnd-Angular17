@@ -1,11 +1,15 @@
 export interface Iinvoice {
   id?: string | number;
+  invoiceNumber?: string;
   clientName: string;
   clientEmail: string;
   clientPhone: string;
   issueDate?: string;
   budget: number;
+  name?: string;
+  pakect?: string; // Package name for table display
   currncy: string;
+  amountDisplay?: string;
   status?: 'مدفوعة' | 'متأخرة' | 'قيد المراجعة' | 'غير مدفوعة' | 'ملغاة';
 }
 
@@ -15,6 +19,7 @@ export interface IAccountAssignment {
   leadId: number;
   budget: number;
   currncy: string;
+  name: string;
   isInWorkOrder: boolean;
   contactName: string;
   contactEmail: string;

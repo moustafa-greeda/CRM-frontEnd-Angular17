@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { InvoicesService } from './invoices.service';
-import { Iinvoice } from '../../core/Models/invoices/Invoice';
+import { InvoicesService } from '../../dashboard/dashboard-accountant/components/invoices/invoices.service';
+import { IGetAllInvoiceData } from '../../core/Models/invoices/Invoice';
 import { InvoiceDialogComponent } from './invoice-dialog/invoice-dialog.component';
 
 @Component({
@@ -22,9 +22,10 @@ export class InvoicesComponent implements OnInit {
     { label: 'الرئيسية', link: '/dashboard/admin' },
     { label: 'الفواتير', link: '/dashboard/admin/invoices' },
   ];
+  invoices: IGetAllInvoiceData[] = [];
   companyColumns: Array<{ key: string; header: string; width?: string }> = [];
-  companyData: Iinvoice[] = [];
-  selectedRows: Iinvoice[] = [];
+  companyData: IGetAllInvoiceData[] = [];
+  selectedRows: IGetAllInvoiceData[] = [];
   pageSize = 10;
   currentPage = 1;
   totalCount = 0;
@@ -58,6 +59,7 @@ export class InvoicesComponent implements OnInit {
 
   ngOnInit(): void {
     this.initializeTableColumns();
+    // subscribe to invoices
   }
 
   private initializeTableColumns(): void {

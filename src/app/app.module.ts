@@ -52,7 +52,6 @@ import { CitiesComponent } from './components/cities/cities.component';
 import { CountriesComponent } from './components/countries/countries.component';
 import { WizardComponent } from './components/leads/wizard/wizard.component';
 import { ShowLeadsComponent } from './components/leads/show-leads/show-leads.component';
-import { TabelDealsComponent } from './components/deals/tabel-deals/tabel-deals.component';
 import { DistributionComponent } from './components/leads/distribution/distribution.component';
 import { EmployeeComponent } from './components/employee/employee/employee.component';
 import { CompanyComponent } from './components/company/company.component';
@@ -99,7 +98,6 @@ const FEATURE_COMPONENTS = [
   CountriesComponent,
   WizardComponent,
   ShowLeadsComponent,
-  TabelDealsComponent,
   DistributionComponent,
   EmployeeComponent,
   CompanyComponent,

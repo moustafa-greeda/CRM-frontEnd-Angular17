@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
-import { forkJoin } from 'rxjs';
+import { forkJoin, of } from 'rxjs';
+import { catchError } from 'rxjs/operators';
 import {
   ITeleSalseActionResponse,
   ITeleSalseActionRequest,
@@ -264,15 +265,25 @@ export class DashboardSalesComponent implements OnInit {
     const username = this._authService.getUsername();
 
     forkJoin({
-      totalLeadsAssignments: this._dashboardService.LeadAssignmentsCountSales(),
-      closedLeads: this._dashboardService.GetMyClosedLeads(),
-      TotalMoney: this._dashboardService.GetTotalMoney(),
-      AverageCallDuration: this._dashboardService.GetWaitingForFollowUp(),
+      totalLeadsAssignments: this._dashboardService
+        .LeadAssignmentsCountSales()
+        .pipe(catchError(() => of({ data: { count: 0 } }))),
+      closedLeads: this._dashboardService
+        .GetMyClosedLeads()
+        .pipe(catchError(() => of({ data: { closedLeadsCount: 0 } }))),
+      TotalMoney: this._dashboardService
+        .GetTotalMoney()
+        .pipe(catchError(() => of({ data: { budgets: [] } }))),
+      AverageCallDuration: this._dashboardService
+        .GetWaitingForFollowUp()
+        .pipe(catchError(() => of({ data: { leadAssignmentsCount: 0 } }))),
     }).subscribe((res) => {
-      const budgets = res.TotalMoney.data.budgets as Array<{
-        totalBudget: number;
-        currency: string;
-      }>;
+      const budgets = Array.isArray(res.TotalMoney?.data?.budgets)
+        ? (res.TotalMoney.data.budgets as Array<{
+            totalBudget: number;
+            currency: string;
+          }>)
+        : [];
       const totalBudget = budgets.reduce(
         (acc: number, budget: { totalBudget: number }) =>
           acc + budget.totalBudget,
@@ -287,22 +298,22 @@ export class DashboardSalesComponent implements OnInit {
       this.stats = [
         {
           title: 'اجمالي العملاء',
-          count: res.totalLeadsAssignments.data.count,
+          count: res.totalLeadsAssignments?.data?.count ?? 0,
           icon: 'bi bi-person-lines-fill',
         },
         {
           title: 'الصفقات المغلقة',
-          count: res.closedLeads.data.closedLeadsCount,
+          count: res.closedLeads?.data?.closedLeadsCount ?? 0,
           icon: 'bi bi-exclamation-triangle',
         },
         {
           title: 'القيمة الإجمالية',
-          count: `${budgetDetails} | الإجمالي: ${totalBudget}`, // Combined budgets and total
+          count: `${budgetDetails} | الإجمالي: ${totalBudget}`,
           icon: 'bi bi-cash-coin',
         },
         {
           title: 'في انتظار المتابعة',
-          count: res.AverageCallDuration.data.leadAssignmentsCount,
+          count: res.AverageCallDuration?.data?.leadAssignmentsCount ?? 0,
           icon: 'bi bi-bar-chart',
         },
       ];

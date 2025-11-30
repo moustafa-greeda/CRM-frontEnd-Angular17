@@ -17,6 +17,7 @@ import { MatNativeDateModule } from '@angular/material/core';
 import { InvoiceWorkOrdersComponent } from './components/invoice-work-orders/InvoiceWorkOrders.component';
 import { InvoiceWorkOrdersDialogComponent } from './components/invoice-work-orders/invoice-work-orders-dialog/invoice-work-orders-dialog.component';
 import { InvoicesComponent } from './components/invoices/invoices.component';
+import { PaymentDialogComponent } from './components/invoices/payment-dialog/payment-dialog.component';
 
 @NgModule({
   declarations: [
@@ -24,6 +25,7 @@ import { InvoicesComponent } from './components/invoices/invoices.component';
     InvoiceWorkOrdersComponent,
     InvoiceWorkOrdersDialogComponent,
     InvoicesComponent,
+    PaymentDialogComponent,
   ],
   imports: [
     CommonModule,

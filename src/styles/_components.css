@@ -238,7 +238,7 @@
 }
 
 .icon-wrapper i {
-  color: #46e3ff;
+  color: var(--primary-color);
   /* font-size: 14px; */
   z-index: 3;
   position: relative;

@@ -12,6 +12,7 @@ import { SalesComponent } from '../../components/sales/sales.component';
 import { ChartsSalesComponent } from '../../components/sales/first-charts/first-charts.component';
 import { InvoicesComponent } from '../../components/invoices/invoices.component';
 import { InvoiceDialogComponent } from '../../components/invoices/invoice-dialog/invoice-dialog.component';
+import { TabelDealsComponent } from '../../components/deals/tabel-deals.component';
 
 @NgModule({
   declarations: [
@@ -22,6 +23,7 @@ import { InvoiceDialogComponent } from '../../components/invoices/invoice-dialog
     ChartsSalesComponent,
     InvoicesComponent,
     InvoiceDialogComponent,
+    TabelDealsComponent,
   ],
   imports: [
     CommonModule,

@@ -13,29 +13,11 @@ export class EmployeeService {
 
   constructor(private http: HttpClient) {}
 
-  // =============================== get auth headers ===================
-  private getAuthHeaders(): HttpHeaders {
-    const token =
-      localStorage.getItem('token') || sessionStorage.getItem('token');
-
-    let headers = new HttpHeaders({
-      Accept: '*/*',
-    });
-
-    if (token) {
-      headers = headers.set('Authorization', `Bearer ${token}`);
-    }
-
-    // Don't set Content-Type - let Angular handle it for FormData
-    return headers;
-  }
-
   // =============================== get employees ===================
   getAllEmployees(): Observable<ApiResponse<IEmployee[]>> {
-    const headers = this.getAuthHeaders();
+    // const headers = this.getAuthHeaders();
     return this.http.get<ApiResponse<IEmployee[]>>(
-      `${this.BASE_API_URL}/Employee/GetAllEmployee`,
-      { headers }
+      `${this.BASE_API_URL}/Employee/GetAllEmployee`
     );
   }
 
@@ -55,7 +37,6 @@ export class EmployeeService {
   // =============================== create FormData ===================
   private createFormData(employee: IEmployee): FormData {
     const fd = new FormData();
-    // Keep exact field names/order expected by backend
     this.append(fd, 'empCode', employee.empCode);
     this.append(fd, 'Name', employee.name); // Capital N
     this.append(fd, 'email', employee.email);
@@ -78,7 +59,8 @@ export class EmployeeService {
   // =============================== helpers ===================
   private formatDate(value?: string): string {
     if (!value) return '';
-    return new Date(value).toISOString().split('T')[0];
+    // return new Date(value).toISOString().split('T')[0];
+    return value.split('T')[0]; // أسلم وأفضل
   }
 
   private append(fd: FormData, key: string, value?: string): void {

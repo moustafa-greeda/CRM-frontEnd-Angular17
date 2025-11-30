@@ -10,6 +10,7 @@
   --primary-color: #46e3ff;
   --primary-color-dark: #2A8899;
   --secondary-color: #51c09e;
+  /* --secondary-color: #2debfc; */
   --bg-light: rgba(17, 24, 31, 0.8);
   --bg-dark: #172431;
   --bg-color: var(--bg-dark);
@@ -33,9 +34,10 @@
 
   /* button */
   --button-color: #2A8899;
-  --white-color: #fff;
+  /* --white-color: #fff; */
+  --white-color: #f2f2f2;
   --link-color: #fff;
-  --button-hover-color: #46e3ff;
+  --button-hover-color: linear-gradient(90deg, #008299 0%, #002b33 100%);;
   --button-hover-shadow: 0 0 5px 3px var(--button-hover-color);
 
   --card-bg: #ffffff;
@@ -55,7 +57,8 @@
   --text-inverse: #fff;
 
   /* ========== Border Colors ========== */
-  --border-color: #46e3ff;
+  /* --border-color: #51C09E; */
+  --border-color: #46E3FF;
   --border-dark: #404040;
   --border-light: rgba(255, 255, 255, 0.1);
 

@@ -1,10 +1,10 @@
 import { Component, OnInit } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
-import { ActionButton } from '../../../shared/interfaces/action-button.interface';
-import { BreadcrumbItem } from '../../../shared/interfaces/breadcrumb-item.interface';
-import { formUiConfig } from '../../../shared/interfaces/formUi.interface';
-import { FormUiComponent } from '../../../shared/components/form-ui/form-ui.component';
-import { FORM_UI_CONFIG } from '../../../shared/configs/agreement-form.config';
+import { ActionButton } from '../../shared/interfaces/action-button.interface';
+import { BreadcrumbItem } from '../../shared/interfaces/breadcrumb-item.interface';
+import { formUiConfig } from '../../shared/interfaces/formUi.interface';
+import { FormUiComponent } from '../../shared/components/form-ui/form-ui.component';
+import { FORM_UI_CONFIG } from '../../shared/configs/agreement-form.config';
 
 @Component({
   selector: 'app-tabel-deals',

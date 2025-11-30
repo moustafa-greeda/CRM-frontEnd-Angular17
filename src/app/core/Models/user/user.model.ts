@@ -8,3 +8,12 @@ export interface User {
   userTypeName?: string;
   userType?: string;
 }
+
+export enum UserRole {
+  Admin = 'Admin',
+  TeleSales = 'TeleSales',
+  Sales = 'Sales',
+  Accountant = 'Accountant',
+  Tech = 'Tech',
+  Customer = 'Customer',
+}

@@ -13,10 +13,10 @@ export class AppComponent {
   constructor(
     private readonly themeService: ThemeService,
     // services
-    private pakegsService: PakegsService
+    private _pakegsService: PakegsService
   ) {}
 
   ngOnInit() {
-    this.pakegsService.loadPackets();
+    this._pakegsService.loadPackets();
   }
 }

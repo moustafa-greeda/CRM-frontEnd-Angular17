@@ -1,0 +1,24 @@
+/* ================================ Search and Dropdown ================================ */
+.search-container {
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-container app-search-input {
+  flex: 1 1 0;
+}
+
+.search-container .dropdown-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.search-container .dropdown-container app-dropdown {
+  flex: 1 1 100px;
+}

@@ -302,7 +302,8 @@ export interface CardField {
       }
 
       .client-name {
-        color: var(--secondary-color);
+        color: var(--primary-color);
+        text-shadow: 0 0 10px var(--primary-color-dark);
         font-size: 18px;
         font-weight: 700;
         margin: 0 0 8px 0;

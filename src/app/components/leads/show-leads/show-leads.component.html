@@ -85,36 +85,6 @@
       <!-- delet lead -->
       <i class="bi bi-trash3"></i>
     </div>
-    <!-- export section -->
-    <!-- <div class="export-section">
-      <button
-        class="btn btn-outline-success"
-        (click)="onExportSelected()"
-        [disabled]="selectedCards.length === 0"
-      >
-        <i class="bi bi-check-circle"></i>
-        تصدير المحدد ({{ selectedCards.length }})
-      </button>
-
-      <button
-        class="btn btn-outline-info"
-        (click)="onExportCurrentPage()"
-        [disabled]="filteredClients.length === 0"
-      >
-        <i class="bi bi-file-earmark-text"></i>
-        تصدير الصفحة الحالية ({{ filteredClients.length }})
-      </button>
-
-      <button
-        class="btn btn-outline-warning"
-        (click)="onExportAll()"
-        [disabled]="leads.length === 0"
-      >
-        <i class="bi bi-cloud-download"></i>
-        تصدير الكل ({{ totalCount }})
-      </button>
-    </div> -->
-
     <!-- Custom Pagination Controls (cards only) -->
     <div class="pagination-controls" *ngIf="viewMode === 'card'">
       <div class="page-size-selector">
@@ -140,7 +110,11 @@
     *ngIf="!isLoading && !error && viewMode === 'card'"
   >
     <app-card
-      *ngFor="let client of filteredClients; trackBy: trackByClientId; index as i"
+      *ngFor="
+        let client of filteredClients;
+        trackBy: trackByClientId;
+        index as i
+      "
       [data]="client"
       [index]="i"
       [titleKey]="'name'"

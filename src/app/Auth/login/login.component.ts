@@ -41,7 +41,6 @@ export class LoginComponent {
 
     this.service.login(model).subscribe({
       next: (res) => {
-        // إظهار dialog نجاح
         this.notify.success({
           title: 'تم تسجيل الدخول',
           description: 'أهلاً بك!',
@@ -104,11 +103,9 @@ export class LoginComponent {
           this.errorMessage = `حدث خطأ أثناء تسجيل الدخول (${err.status}).`;
         }
 
-        // ✅ إظهار dialog خطأ
         this.notify.error({
           title: 'فشل تسجيل الدخول',
           description: this.errorMessage,
-          // imageUrl: 'assets/logo_elbatt.png',
           soundUrl: 'assets/sound/Failure_Alert.mp3',
         });
       },

@@ -1,0 +1,260 @@
+<div class="payment-dialog">
+  <div class="payment-header">
+    <h2>قم بإدخال بيانات الدفع للتحقق وإتمام العملية.</h2>
+  </div>
+
+  <form [formGroup]="paymentForm" (ngSubmit)="onSubmit()">
+    <!-- Invoice Details Section -->
+    <div class="form-section">
+      <h3 class="section-title">تفاصيل الفاتورة</h3>
+      <div class="form-grid">
+        <div class="form-field">
+          <label>رقم الفاتورة</label>
+          <input
+            type="text"
+            formControlName="invoiceNumber"
+            placeholder="ادخل رقم الفاتورة"
+            class="form-input"
+            [class.error]="
+              paymentForm.get('invoiceNumber')?.invalid &&
+              paymentForm.get('invoiceNumber')?.touched
+            "
+          />
+          <small
+            class="error-message"
+            *ngIf="
+              paymentForm.get('invoiceNumber')?.invalid &&
+              paymentForm.get('invoiceNumber')?.touched
+            "
+          >
+            رقم الفاتورة مطلوب
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label>المبلغ المدفوع</label>
+          <input
+            type="number"
+            formControlName="paidAmount"
+            placeholder="ادخل المبلغ المدفوع"
+            class="form-input"
+            [class.error]="
+              paymentForm.get('paidAmount')?.invalid &&
+              paymentForm.get('paidAmount')?.touched
+            "
+            min="0"
+          />
+          <small
+            class="error-message"
+            *ngIf="
+              paymentForm.get('paidAmount')?.invalid &&
+              paymentForm.get('paidAmount')?.touched
+            "
+          >
+            المبلغ المدفوع مطلوب
+          </small>
+        </div>
+
+        <div class="form-field">
+          <label>المبلغ الإجمالي</label>
+          <input
+            type="number"
+            formControlName="totalAmount"
+            placeholder="ادخل المبلغ الإجمالي"
+            class="form-input"
+            [class.error]="
+              paymentForm.get('totalAmount')?.invalid &&
+              paymentForm.get('totalAmount')?.touched
+            "
+            min="0"
+            readonly
+          />
+        </div>
+      </div>
+    </div>
+
+    <!-- Payment Method Section -->
+    <div class="form-section">
+      <h3 class="section-title">طريقة الدفع</h3>
+      <div class="payment-methods">
+        <div
+          class="payment-method-option"
+          [class.active]="selectedPaymentMethod === 'تحويل بنكي'"
+          (click)="onPaymentMethodChange('تحويل بنكي')"
+        >
+          <div class="method-header">
+            <i class="bi bi-bank"></i>
+            <span>تحويل بنكي</span>
+            <i
+              class="bi bi-chevron-down"
+              *ngIf="selectedPaymentMethod === 'تحويل بنكي'"
+            ></i>
+          </div>
+        </div>
+
+        <div
+          class="payment-method-option credit-card-option"
+          [class.active]="selectedPaymentMethod === 'بطاقة ائتمان'"
+          (click)="onPaymentMethodChange('بطاقة ائتمان')"
+        >
+          <div class="method-header">
+            <i class="bi bi-credit-card"></i>
+            <span>بطاقة الائتمان</span>
+            <i
+              class="bi bi-chevron-down"
+              *ngIf="selectedPaymentMethod === 'بطاقة ائتمان'"
+            ></i>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bank Transfer Details -->
+    <div class="form-section" *ngIf="selectedPaymentMethod === 'تحويل بنكي'">
+      <div class="bank-details">
+        <div class="amount-required">
+          <span class="amount-label">المبلغ المطلوب سداده</span>
+          <span class="amount-value">{{ remainingAmount }} ريال</span>
+        </div>
+
+        <div class="bank-info-grid">
+          <div class="bank-info-item">
+            <div class="info-header">
+              <label>اسم البنك</label>
+              <button
+                type="button"
+                class="copy-btn"
+                (click)="copyToClipboard(bankDetails.bankName)"
+                title="نسخ"
+              >
+                <i class="bi bi-files"></i>
+              </button>
+            </div>
+            <div class="info-value">{{ bankDetails.bankName }}</div>
+          </div>
+
+          <div class="bank-info-item">
+            <div class="info-header">
+              <label>اسم الحساب</label>
+              <button
+                type="button"
+                class="copy-btn"
+                (click)="copyToClipboard(bankDetails.accountName)"
+                title="نسخ"
+              >
+                <i class="bi bi-files"></i>
+              </button>
+            </div>
+            <div class="info-value">{{ bankDetails.accountName }}</div>
+          </div>
+
+          <div class="bank-info-item">
+            <div class="info-header">
+              <label>رقم الحساب (IBAN)</label>
+              <button
+                type="button"
+                class="copy-btn"
+                (click)="copyToClipboard(bankDetails.accountNumber)"
+                title="نسخ"
+              >
+                <i class="bi bi-files"></i>
+              </button>
+            </div>
+            <div class="info-value">{{ bankDetails.accountNumber }}</div>
+          </div>
+
+          <div class="bank-info-item">
+            <div class="info-header">
+              <label>رمز السويفت</label>
+              <button
+                type="button"
+                class="copy-btn"
+                (click)="copyToClipboard(bankDetails.swiftCode)"
+                title="نسخ"
+              >
+                <i class="bi bi-files"></i>
+              </button>
+            </div>
+            <div class="info-value">{{ bankDetails.swiftCode }}</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Credit Card Details -->
+    <div class="form-section credit-card-section" *ngIf="showCreditCard">
+      <div class="credit-card-form">
+        <p class="card-instruction">املأ تفاصيل البطاقة</p>
+        <div class="form-grid">
+          <div class="form-field">
+            <label>رقم البطاقة</label>
+            <input
+              type="text"
+              formControlName="cardNumber"
+              placeholder="1234 5678 9012 3456"
+              class="form-input"
+              maxlength="19"
+            />
+          </div>
+
+          <div class="form-field">
+            <label>اسم حامل البطاقة</label>
+            <input
+              type="text"
+              formControlName="cardHolderName"
+              placeholder="اسم حامل البطاقة"
+              class="form-input"
+            />
+          </div>
+
+          <div class="form-field">
+            <label>تاريخ الانتهاء</label>
+            <input
+              type="text"
+              formControlName="expiryDate"
+              placeholder="MM/YY"
+              class="form-input"
+              maxlength="5"
+            />
+          </div>
+
+          <div class="form-field">
+            <label>CVV</label>
+            <input
+              type="text"
+              formControlName="cvv"
+              placeholder="123"
+              class="form-input"
+              maxlength="3"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Important Instructions -->
+    <div class="form-section instructions-section">
+      <h3 class="section-title">تعليمات مهمة:</h3>
+      <ul class="instructions-list">
+        <li>استخدم رقم الفاتورة كمرجع للتحويل.</li>
+        <li>احتفظ بإيصال التحويل البنكي.</li>
+        <li>قد يستغرق التحويل 1-3 أيام عمل.</li>
+      </ul>
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="form-actions">
+      <button type="submit" class="btn-submit" [disabled]="paymentForm.invalid">
+        إتمام الدفع
+      </button>
+      <button type="button" class="btn-cancel" (click)="onCancel()">
+        إلغاء
+      </button>
+    </div>
+
+    <!-- Post-Payment Message -->
+    <p class="post-payment-message">
+      بعد إتمام الدفع، سيتم تحديث الفاتورة بالحالة الجديدة.
+    </p>
+  </form>
+</div>

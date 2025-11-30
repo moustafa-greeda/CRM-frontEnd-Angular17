@@ -7,7 +7,7 @@ import { CountriesComponent } from '../../components/countries/countries.compone
 import { CitiesComponent } from '../../components/cities/cities.component';
 import { WizardComponent } from '../../components/leads/wizard/wizard.component';
 import { ShowLeadsComponent } from '../../components/leads/show-leads/show-leads.component';
-import { TabelDealsComponent } from '../../components/deals/tabel-deals/tabel-deals.component';
+import { TabelDealsComponent } from '../../components/deals/tabel-deals.component';
 import { DistributionComponent } from '../../components/leads/distribution/distribution.component';
 import { ExportedDataComponent } from '../../components/exported-data/exported-data.component';
 import { AuthGuard } from '../../core/guards/auth.guard';

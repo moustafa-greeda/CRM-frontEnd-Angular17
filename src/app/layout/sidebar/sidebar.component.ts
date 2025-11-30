@@ -9,6 +9,9 @@ import {
 } from '@angular/core';
 import { isPlatformBrowser } from '@angular/common';
 import { AuthService } from '../../Auth/auth.service';
+import { SidebarItem } from './sidebar.model';
+import { SidebarService } from './sidebar.service';
+import { UserRole } from '../../core/Models/user/user.model';
 
 @Component({
   selector: 'app-sidebar',
@@ -16,6 +19,8 @@ import { AuthService } from '../../Auth/auth.service';
   styleUrls: ['./sidebar.component.css'],
 })
 export class SidebarComponent implements OnInit {
+  menuItems: SidebarItem[] = [];
+
   @Input() isCollapsed: boolean = false;
   @Output() toggleCollapse = new EventEmitter<void>();
   roles: string[] = [];
@@ -28,6 +33,7 @@ export class SidebarComponent implements OnInit {
 
   constructor(
     private authService: AuthService,
+    private sidebarService: SidebarService,
     @Inject(PLATFORM_ID) private platformId: Object
   ) {}
 
@@ -35,66 +41,7 @@ export class SidebarComponent implements OnInit {
     if (isPlatformBrowser(this.platformId)) {
       this.roles = this.authService.getUserRoles();
       this.userType = this.authService.getUserType();
+      this.menuItems = this.sidebarService.getMenu(this.userType as UserRole);
     }
-  }
-
-  // Check if the user is an Admin
-  isAdmin(): boolean {
-    // Prioritize userType over roles
-    if (this.userType) {
-      return this.userType === 'Admin';
-    }
-    return this.roles.includes('Admin');
-  }
-
-  // Check if the user is a User
-  isUser(): boolean {
-    return this.roles.includes('User');
-  }
-
-  // Check if the user is a Customer
-  isCustomer(): boolean {
-    return this.roles.includes('Customer');
-  }
-
-  // Check if the user is a TeleSales
-  isTeleSales(): boolean {
-    // Prioritize userType over roles
-    if (this.userType) {
-      return this.userType === 'TeleSales';
-    }
-    return this.roles.includes('TeleSalse');
-  }
-
-  // Check if the user is a Sales
-  isSales(): boolean {
-    // Prioritize userType over roles
-    if (this.userType) {
-      return this.userType === 'Sales';
-    }
-    return this.roles.includes('Sales');
-  }
-
-  // Check if the user is an Account
-  isAccountant(): boolean {
-    // Prioritize userType over roles
-    if (this.userType) {
-      return this.userType === 'Accountant';
-    }
-    return this.roles.includes('Accountant');
-  }
-
-  // Check if the user is a Tech
-  isTech(): boolean {
-    // Prioritize userType over roles
-    if (this.userType) {
-      return this.userType === 'Tech';
-    }
-    return this.roles.includes('Tech');
-  }
-
-  // Toggle the employee submenu
-  toggleEmployee() {
-    this.employeeOpen = !this.employeeOpen;
   }
 }

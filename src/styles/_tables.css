@@ -3,6 +3,59 @@
    ============================================================================
    Table styles and responsive table utilities.
    ============================================================================ */
+.enhanced-table {
+  width: 100%;
+  border-collapse: separate;
+  border-spacing: 0;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 12px;
+  overflow: auto;
+  box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+  backdrop-filter: blur(8px);
+}
+
+.enhanced-table thead {
+  background: rgba(0, 255, 255, 0.1);
+}
+
+.enhanced-table th {
+  padding: 5px;
+  color: var(--white-color);
+  font-size: 12x;
+  font-weight: bold;
+  border-bottom: 1px solid rgba(0, 255, 255, 0.15);
+  text-align: center;
+}
+
+.enhanced-table tbody tr:nth-child(odd) {
+  background: var(--table-bg-dark) !important;
+}
+.enhanced-table tbody tr:nth-child(even) {
+  background: var(--table-bg-light) !important;
+}
+.enhanced-table td {
+  padding: 12px 10px;
+  font-size: 14px;
+  text-align: center;
+  color: var(--white-color);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  transition: 0.25s ease;
+}
+
+.enhanced-table tbody tr:last-child td {
+  border-bottom: none;
+}
+
+.enhanced-table tbody tr:hover {
+  background: rgba(0, 255, 255, 0.07);
+  cursor: pointer;
+  transform: scale(1.01);
+  transition: 0.2s ease-in-out;
+}
+
+.enhanced-table tbody tr:hover td {
+  color: var(--white-color);
+}
 
 /* ========== Material Table Responsive ========== */
 @media (max-width: 600px) {
@@ -38,8 +91,3 @@
 .table-hover tbody tr:hover {
   background-color: rgba(70, 227, 255, 0.1);
 }
-
-
-
-
-

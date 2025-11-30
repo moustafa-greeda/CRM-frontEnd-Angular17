@@ -15,12 +15,6 @@ export class PakegsService {
   packets$ = this.packetsSubject.asObservable();
   constructor(private http: HttpClient) {}
   // ================================ get all packets ===========================================
-  // getAllPackets(): Observable<ApiResponse<IGetAllPacket[]>> {
-  //   return this.http.get<ApiResponse<IGetAllPacket[]>>(
-  //     `${this.baseUrl}/SalesDashbored/GetProductBox`
-  //   );
-  // }
-
   loadPackets(): void {
     this.http
       .get<ApiResponse<IGetAllPacket[]>>(

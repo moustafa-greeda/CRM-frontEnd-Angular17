@@ -22,6 +22,7 @@
 @import "./_dropdowns.css";
 @import "./_tables.css";
 @import "./_components.css";
+@import "./_shearchComponent.css";
 
 /* ========== 5. Third-party Customization ========== */
 @import "./_material.css";

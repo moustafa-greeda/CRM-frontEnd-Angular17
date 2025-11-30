@@ -30,7 +30,11 @@
             class="no-data-cell"
           >
             <div class="no-data-content">
-              <i class="bi bi-inbox"></i>
+              <img
+                src="assets/img/search-man.gif"
+                alt="لا توجد بيانات"
+                class="no-data-image runner"
+              />
               <h3 *ngIf="!noDataMessage">لا توجد بيانات</h3>
               <p *ngIf="!noDataMessage">لم يتم العثور على أي عناصر لعرضها</p>
               <p *ngIf="noDataMessage" class="custom-no-data-message">

@@ -5,9 +5,7 @@ import {
   ILeadsSearchParams,
 } from '../../../core/Models/leads/ileads';
 import { LeadsService } from '../leads.service';
-import { TableExportService } from '../../../core/services/common/table-export.service';
 import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
-import * as XLSX from 'xlsx';
 import { Router } from '@angular/router';
 import { NotifyDialogService } from '../../../shared/components/notify-dialog-host/notify-dialog.service';
 import { LeadStatusService } from '../../../core/services/common/lead-status.service';
@@ -49,7 +47,7 @@ export class ShowLeadsComponent implements OnInit {
   error: string | null = null;
   selectedCards: ILeads[] = [];
   isAllSelected: boolean = false;
-  leadStatusLookupId: string = ''; // Will be set after API call
+  leadStatusLookupId: string = '';
   leadStatusOptions: string[] = [];
   leadStatusList: ILeadStatus[] = [];
   isLoadingLeadStatus: boolean = false;
@@ -69,7 +67,6 @@ export class ShowLeadsComponent implements OnInit {
 
   constructor(
     private leadsService: LeadsService,
-    private exportService: TableExportService,
     private router: Router,
     private notify: NotifyDialogService,
     private leadStatusService: LeadStatusService
@@ -89,12 +86,12 @@ export class ShowLeadsComponent implements OnInit {
     },
     {
       iconClass: 'bi bi-box-arrow-in-up',
-      click: () => console.log('Upload'),
+      click: () => this.notifyUnavailableFeature('رفع ملف'),
       tooltip: 'Upload',
     },
     {
       iconClass: 'bi bi-box-arrow-right',
-      click: () => console.log('Download'),
+      click: () => this.notifyUnavailableFeature('تنزيل ملف'),
       tooltip: 'Download',
     },
   ];
@@ -140,8 +137,7 @@ export class ShowLeadsComponent implements OnInit {
         }
         this.isLoadingLeadStatus = false;
       },
-      error: (error) => {
-        console.error('Error loading lead status options:', error);
+      error: () => {
         this.isLoadingLeadStatus = false;
         // Fallback to default options
         this.leadStatusOptions = ['تم التحويل', 'لم يتم التحويل'];
@@ -221,8 +217,7 @@ export class ShowLeadsComponent implements OnInit {
         }
         this.isLoading = false;
       },
-      error: (error: any) => {
-        console.error('Error loading leads:', error);
+      error: () => {
         this.error = 'فشل في تحميل بيانات العملاء';
         this.leads = [];
         this.filteredClients = [];
@@ -457,103 +452,27 @@ export class ShowLeadsComponent implements OnInit {
   }
 
   onImport(): void {
-    console.log('Import clicked');
+    this.notifyUnavailableFeature('الاستيراد');
   }
 
-  onExport(): void {
-    if (this.filteredClients.length > 0) {
-      this.exportService.exportCurrentPage(this.filteredClients, {
-        fileName: 'العملاء',
-        showSpinner: true,
-        spinnerMessage: 'جاري التصدير...',
-      });
-    }
+  onEditClient(_: ILeads): void {
+    this.notifyUnavailableFeature('تعديل العميل');
   }
 
-  onFileSelected(event: any): void {
-    const file = event.target.files[0];
-    if (file) {
-      this.importFromExcel(file);
-    }
+  onDeleteClient(_: ILeads): void {
+    this.notifyUnavailableFeature('حذف العميل');
   }
 
-  private importFromExcel(file: File): void {
-    const reader = new FileReader();
-    reader.onload = (e: any) => {
-      try {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const sheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[sheetName];
-        const jsonData = XLSX.utils.sheet_to_json(worksheet);
-
-        // Convert imported data to ILeads format
-        const importedLeads: ILeads[] = jsonData.map(
-          (item: any, index: number) => ({
-            id: item['المعرف'] || item['id'] || Date.now() + index,
-            name: item['الاسم'] || item['name'] || '',
-            jobTitle: item['المسمى الوظيفي'] || item['jobTitle'] || null,
-            email: item['البريد الإلكتروني'] || item['email'] || null,
-            phone: item['رقم الهاتف'] || item['phone'] || '',
-            companyName: item['اسم الشركة'] || item['companyName'] || null,
-            industeryName:
-              item['اسم الصناعة'] ||
-              item['industryName'] ||
-              item['industeryName'] ||
-              '',
-            locationName: item['الموقع'] || item['locationName'] || '',
-            webSiteUrl:
-              item['رابط الموقع'] ||
-              item['webSiteUrl'] ||
-              item['websiteUrl'] ||
-              '',
-            isHaveSoialMedia:
-              item['لديه وسائل تواصل اجتماعي'] ||
-              item['isHaveSoialMedia'] ||
-              false,
-            socialMediaLink:
-              item['روابط وسائل التواصل الاجتماعي'] ||
-              item['socialMediaLink'] ||
-              '',
-          })
-        );
-
-        // Add imported leads to existing data
-        this.leads = [...this.leads, ...importedLeads];
-        this.filteredClients = [...this.leads];
-
-        // Show success message
-        alert(`تم استيراد ${importedLeads.length} عميل بنجاح!`);
-      } catch (error) {
-        console.error('Error importing file:', error);
-        alert('حدث خطأ أثناء استيراد الملف. تأكد من صحة تنسيق الملف.');
-      }
-    };
-    reader.readAsArrayBuffer(file);
-  }
-
-  onEditClient(client: ILeads): void {
-    // TODO: Implement edit client functionality
-    console.log('Edit client:', client);
-  }
-
-  onDeleteClient(client: ILeads): void {
-    // TODO: Implement delete client functionality
-    console.log('Delete client:', client);
-  }
-
-  onViewClient(client: ILeads): void {
-    // TODO: Implement view client functionality
-    console.log('View client:', client);
+  onViewClient(_: ILeads): void {
+    this.notifyUnavailableFeature('عرض العميل');
   }
 
   trackByClientId(index: number, client: ILeads): number {
     return client.id;
   }
 
-  onMoreOptions(client: ILeads): void {
-    // TODO: Implement more options menu (dropdown, context menu, etc.)
-    console.log('More options for client:', client);
+  onMoreOptions(_: ILeads): void {
+    this.notifyUnavailableFeature('المزيد من الخيارات');
   }
 
   onCardSelectionChange(client: ILeads, isSelected: boolean): void {
@@ -619,116 +538,6 @@ export class ShowLeadsComponent implements OnInit {
   }
 
   // Export methods
-  onExportSelected(): void {
-    if (!this.selectedCards || this.selectedCards.length === 0) {
-      this.notify.error({
-        title: 'تنبيه',
-        description: 'يرجى تحديد العملاء المراد تصديرها',
-      });
-      return;
-    }
-
-    try {
-      this.exportService.exportSelectedRows(this.selectedCards, {
-        fileName: 'العملاء المحددين',
-        showSpinner: true,
-        spinnerMessage: 'جاري تصدير العملاء المحددين...',
-      });
-    } catch (error) {
-      console.error('Error exporting selected leads:', error);
-      this.notify.error({
-        title: 'خطأ',
-        description: 'حدث خطأ أثناء تصدير العملاء المحددين',
-        autoCloseMs: 3000,
-      });
-    }
-  }
-
-  onExportCurrentPage(): void {
-    if (this.filteredClients.length > 0) {
-      this.exportService.exportCurrentPage(this.filteredClients, {
-        fileName: 'صفحة العملاء الحالية',
-        showSpinner: true,
-        spinnerMessage: 'جاري تصدير صفحة العملاء الحالية...',
-      });
-    }
-  }
-
-  onExportAll(): void {
-    // Load all data from API without pagination
-    this.isLoading = true;
-    const searchParams: ILeadsSearchParams = {
-      pageIndex: 1,
-      pageSize: this.totalCount,
-      sortField: this.getSortField(),
-      sortDirection: this.getSortDirection(),
-    };
-
-    // Add search parameters if exists
-    if (this.searchTerm && this.searchTerm.trim()) {
-      const trimmedTerm = this.searchTerm.trim();
-      switch (this.selectedFilter) {
-        case 'name':
-          searchParams.name = trimmedTerm;
-          break;
-        case 'companyName':
-          searchParams.companyName = trimmedTerm;
-          break;
-        case 'email':
-          searchParams.email = trimmedTerm;
-          break;
-        case 'phone':
-          searchParams.phone = trimmedTerm;
-          break;
-        case 'position':
-          searchParams.jobTitle = trimmedTerm;
-          break;
-        case 'recent':
-        default:
-          searchParams.searchKeyword = trimmedTerm;
-          break;
-      }
-    }
-
-    this.leadsService.SearchLeads(searchParams).subscribe({
-      next: (response: ILeadsResponse) => {
-        this.isLoading = false;
-        if (response.succeeded && response.data && response.data.items) {
-          const allLeads = response.data.items;
-          if (allLeads.length > 0) {
-            this.exportService.exportAllData(allLeads, {
-              fileName: 'جميع العملاء',
-              showSpinner: true,
-              spinnerMessage: 'جاري تصدير جميع العملاء...',
-            });
-          } else {
-            this.notify.error({
-              title: 'تنبيه',
-              description: 'لا توجد بيانات للتصدير',
-              autoCloseMs: 3000,
-            });
-          }
-        } else {
-          this.isLoading = false;
-          this.notify.error({
-            title: 'خطأ',
-            description: 'فشل في جلب البيانات للتصدير',
-            autoCloseMs: 3000,
-          });
-        }
-      },
-      error: (error: any) => {
-        this.isLoading = false;
-        console.error('Error loading all leads for export:', error);
-        this.notify.error({
-          title: 'خطأ',
-          description: 'حدث خطأ أثناء جلب البيانات للتصدير',
-          autoCloseMs: 3000,
-        });
-      },
-    });
-  }
-
   // ================================= CreateLead Methods ===========================
 
   /**
@@ -743,14 +552,13 @@ export class ShowLeadsComponent implements OnInit {
     const leadStatusId = selectedStatus?.id || 1; // Default to 1 if not found
 
     this.leadsService.CreateLead(client.id, leadStatusId).subscribe({
-      next: (response) => {
-        console.log(
-          `Lead created successfully for client: ${client.name}`,
-          response
-        );
-      },
-      error: (error) => {
-        console.error(`Error creating lead for client: ${client.name}`, error);
+      next: () => {},
+      error: () => {
+        this.notify.open({
+          type: 'error',
+          title: 'خطأ',
+          description: `تعذر إنشاء عميل محتمل لـ ${client.name}`,
+        });
       },
     });
   }
@@ -828,20 +636,26 @@ export class ShowLeadsComponent implements OnInit {
     formatter?: 'date' | 'datetime' | 'booleanYesNo';
   }[] {
     return [
-      { key: 'name', header: 'الاسم', width: '150px' },
-      { key: 'jobTitle', header: 'المسمى الوظيفي', width: '120px' },
-      { key: 'email', header: 'البريد الإلكتروني', width: '200px' },
-      { key: 'phone', header: 'رقم الهاتف', width: '120px' },
-      { key: 'companyName', header: 'اسم الشركة', width: '150px' },
-      { key: 'industeryName', header: 'الصناعة', width: '120px' },
-      // { key: 'locationName', header: 'الموقع', width: '120px' },
-      // { key: 'webSiteUrl', header: 'رابط الموقع', width: '120px' },
+      { key: 'name', header: 'الاسم' },
+      { key: 'jobTitle', header: 'المسمى الوظيفي' },
+      { key: 'email', header: 'البريد الإلكتروني' },
+      { key: 'phone', header: 'رقم الهاتف' },
+      { key: 'companyName', header: 'اسم الشركة' },
+      { key: 'industeryName', header: 'الصناعة' },
+
       {
         key: 'isHaveSoialMedia',
         header: 'لديه وسائل تواصل اجتماعي',
-        width: '100px',
+
         formatter: 'booleanYesNo' as const,
       },
     ];
+  }
+
+  private notifyUnavailableFeature(action: string): void {
+    this.notify.error({
+      title: 'تنبيه',
+      description: `${action} غير متاحة حالياً.`,
+    });
   }
 }

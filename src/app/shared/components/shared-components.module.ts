@@ -19,7 +19,6 @@ import { ButtonComponent } from '../ui/button/button.component';
 import { CountLeadComponent } from './count-lead/count-lead.component';
 // import {ContractEditorComponent} from './contract-editor/contract-editor.component'
 
-
 @NgModule({
   declarations: [
     CountCardComponent,

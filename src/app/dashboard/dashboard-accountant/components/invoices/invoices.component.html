@@ -1,1 +1,68 @@
-<p>invoices works!</p>
+<div class="parent-container">
+  <!-- page header -->
+  <app-page-header
+    [title]="pageTitle"
+    [breadcrumb]="breadcrumb"
+  ></app-page-header>
+  <!-- search and dropdown -->
+  <div class="search-container border-gradient">
+    <app-search-input
+      [placeholder]="searchPlaceholder"
+      (search)="onSearch($event)"
+    ></app-search-input>
+  </div>
+  <!-- content -->
+  <div class="content mt-md">
+    <div class="left-section">
+      <table class="app-table enhanced-table">
+        <thead>
+          <tr>
+            <th>رقم الفاتورة</th>
+            <th>اسم العميل</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let invoice of invoices; let i = index"
+            (click)="onSummaryRowClick(invoice)"
+            [class.active]="
+              filteredInvoices.length === 1 &&
+              filteredInvoices[0]?.id === invoice.id
+            "
+          >
+            <td>{{ invoice.id }}</td>
+            <td>{{ invoice.clientName }}</td>
+          </tr>
+          <tr *ngIf="invoices.length === 0">
+            <td colspan="2" class="no-summary-data">
+              لا توجد فواتير متاحة حالياً
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <button class="btn btn-primary btn-lg" (click)="clearSummaryFilter()">
+        عرض كل الفواتير
+      </button>
+    </div>
+    <div class="right-section">
+      <app-table
+        [data]="filteredInvoices"
+        [columns]="columns"
+        [showIndex]="true"
+        [showEdit]="true"
+        [selectedRows]="selectedRows"
+        [showDataTable]="true"
+        [actionTitles]="{
+        add: 'إضافة دفعة جديدة',
+        edit: 'تعديل بيانات الدفعة',
+      }"
+        [hasNoData]="filteredInvoices.length === 0"
+        [pageSize]="pageSize"
+        [currentPage]="currentPage"
+        [totalCount]="totalCount"
+        (edit)="onEditDeal($event)"
+        [noDataMessage]="noDataMessage"
+      ></app-table>
+    </div>
+  </div>
+</div>

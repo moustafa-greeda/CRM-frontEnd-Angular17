@@ -40,3 +40,20 @@ export interface IAddInvoiceRequest {
     quantity: number;
   }>;
 }
+
+// ------------------------ Interface for GetAllInvoiceData
+export interface IGetAllInvoiceData {
+  totalCount: number;
+  items: IGetAllInvoiceDataItem[];
+}
+export interface IGetAllInvoiceDataItem {
+  id?: string | number;
+  clientName: string;
+  clientEmail: string;
+  clientPhone: string;
+  totalprices: number;
+  paymentMethod: string;
+  paidAmount: number;
+  remaining: number;
+  paymentStatus: string;
+}

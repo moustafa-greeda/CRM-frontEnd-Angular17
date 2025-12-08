@@ -24,11 +24,14 @@
   --navbar-bg: #ffffff;
   --navbar-text: #1e293b;
   /******** table *************/
-  --bg-table-header: rgba(70, 227, 255, 0.08);
+  --bg-table-header: linear-gradient(180deg, #008299 0%, #002b33 20% , #002b33 80%, #008299 100%);
   --table-bg-dark: rgba(17, 24, 31, 0.2);
   --table-bg-light: rgba(17, 24, 31, 0.8);
 
-  --bg-image: url('../assets/main-bg.svg');
+  /* --bg-image: url('../assets/main-bg.svg'); */
+    --bg-image: url('../assets/main-bg-2.svg');
+    /* --bg-image-table: url('../assets/frame-table.svg'); */
+
    --bg-dim: 0.35;
   --bg-overlay: rgba(0, 0, 0, 0.35);
 

@@ -187,6 +187,34 @@ select.form-input.error {
   min-height: 80px;
 }
 
+/* Validation Error Messages */
+.hint {
+  display: block !important;
+  font-size: 12px;
+  color: #ef4444 !important;
+  margin-top: 4px;
+  font-weight: 400;
+  visibility: visible !important;
+  opacity: 1 !important;
+}
+
+/* Dropdown Error Styling */
+.dropdown-error ::ng-deep .custom-dropdown .dropdown-trigger {
+  border-color: #ef4444 !important;
+  border-width: 1px !important;
+}
+
+.dropdown-error ::ng-deep .custom-dropdown .dropdown-trigger:focus,
+.dropdown-error ::ng-deep .custom-dropdown .dropdown-trigger:hover {
+  border-color: #ef4444 !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
+}
+
+/* Global style for dropdown error (if ng-deep doesn't work) */
+:host ::ng-deep .dropdown-error .custom-dropdown .dropdown-trigger {
+  border-color: #ef4444 !important;
+}
+
 /* Services Table */
 .table-container {
   overflow-x: auto;

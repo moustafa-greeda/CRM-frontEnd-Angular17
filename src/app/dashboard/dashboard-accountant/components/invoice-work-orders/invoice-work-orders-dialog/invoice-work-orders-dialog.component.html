@@ -67,7 +67,11 @@
           <label>العنوان</label>
           <input
             type="text"
-            [value]="invoiceForm.get('clientAddress')?.value"
+            [value]="
+              invoiceForm.get('clientAddress')?.value
+                ? invoiceForm.get('clientAddress')?.value
+                : 'لا يوجد عنوان'
+            "
             class="form-input"
             readonly
             tabindex="-1"
@@ -129,20 +133,46 @@
       <div class="form-grid">
         <div class="form-field">
           <label>الباقة</label>
-          <app-dropdown
-            [options]="packetNames"
-            [label]="'اختر الباقة'"
-            (optionSelected)="onPackageSelected($event)"
-          ></app-dropdown>
+          <input
+            type="text"
+            formControlName="pacekts"
+            class="form-input"
+            placeholder="الباقة"
+            [class.error]="
+              invoiceForm.get('pacekts')?.invalid &&
+              invoiceForm.get('pacekts')?.touched
+            "
+          />
         </div>
         <!-- Payment Method -->
         <div class="form-field">
           <label>طريقة الدفع</label>
-          <app-dropdown
-            [options]="paymnetNames"
-            [label]="'اختر طريقة الدفع'"
-            (optionSelected)="onPaymentMethodSelected($event)"
-          ></app-dropdown>
+          <div
+            [class.dropdown-error]="
+              invoiceForm.get('paymentMethod')?.invalid &&
+              (formSubmitted ||
+                invoiceForm.get('paymentMethod')?.touched ||
+                invoiceForm.get('paymentMethod')?.dirty)
+            "
+          >
+            <app-dropdown
+              [label]="'اختر طريقة الدفع'"
+              [options]="paymnetNames"
+              [selectedOption]="selectedPaymentMethod"
+              (optionSelected)="onPaymentMethodSelected($event)"
+            ></app-dropdown>
+          </div>
+          <small
+            class="hint"
+            *ngIf="
+              invoiceForm.get('paymentMethod')?.invalid &&
+              (formSubmitted ||
+                invoiceForm.get('paymentMethod')?.touched ||
+                invoiceForm.get('paymentMethod')?.dirty)
+            "
+          >
+            يجب اختيار طريقة الدفع
+          </small>
         </div>
       </div>
     </div>
@@ -285,7 +315,7 @@
       <button type="button" class="btn-cancel" (click)="onCancel()">
         إلغاء
       </button>
-      <button type="submit" class="btn-submit" [disabled]="invoiceForm.invalid">
+      <button type="submit" class="btn-submit">
         {{ data && data.isEdit ? "تحديث" : "حفظ" }}
       </button>
     </div>

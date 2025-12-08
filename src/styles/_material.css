@@ -65,7 +65,6 @@
   color: #fff !important;
 }
 
-/*---------------------------------------------------------------------------- */
 /* ================== Global Custom Paginator ================== */
 .custom-paginator {
   width: 100%;
@@ -80,7 +79,7 @@
   align-items: center;
   background: rgba(17, 24, 31, 0.95) !important;
   border: 1px solid rgba(70, 227, 255, 0.2) !important;
-  border-radius: 10px;
+  border-radius: 45px;
   box-shadow: 0 -2px 8px rgba(0, 0, 0, 0.3) !important;
   backdrop-filter: blur(10px) !important;
 }
@@ -139,7 +138,7 @@
 
 .mat-mdc-paginator-page-size-select {
   width: 120px;
-  min-height: 36px;
+  min-height: 20px !important;
   background: rgba(70, 227, 255, 0.1);
   border: 1px solid var(--primary-color);
   border-radius: 6px;

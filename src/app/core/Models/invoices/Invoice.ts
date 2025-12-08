@@ -1,15 +1,12 @@
 export interface Iinvoice {
   id?: string | number;
-  invoiceNumber?: string;
   clientName: string;
   clientEmail: string;
   clientPhone: string;
   issueDate?: string;
   budget: number;
   name?: string;
-  pakect?: string; // Package name for table display
   currncy: string;
-  amountDisplay?: string;
   status?: 'مدفوعة' | 'متأخرة' | 'قيد المراجعة' | 'غير مدفوعة' | 'ملغاة';
 }
 
@@ -21,6 +18,7 @@ export interface IAccountAssignment {
   currncy: string;
   name: string;
   isInWorkOrder: boolean;
+  targetProductId?: number;
   contactName: string;
   contactEmail: string;
   contactPhone: string;
@@ -61,4 +59,42 @@ export interface IGetAllInvoiceDataItem {
   paidAmount: number;
   remaining: number;
   paymentStatus: string;
+}
+
+// ------------------------ Interface for Add Invoice Response ------------------------------
+export interface IAddInvoiceResponse {
+  id: number;
+  total: number;
+  pdfPath: string;
+  message: string;
+}
+
+// ------------------------ Interface for Payment ------------------------------
+export enum PaymentMethod {
+  Cash = 0,
+  BankTransfer = 1,
+  Visa = 2,
+}
+
+export interface IPayment {
+  id?: number;
+  invoiceId?: number;
+  amountPaid: number;
+  paymentMethod: PaymentMethod;
+  isPaid: boolean;
+  // Cash
+  cashReceiptNumber?: string;
+  cashReceivedBy?: string;
+  // Bank Transfer
+  bankName?: string;
+  swiftCode?: string;
+  transferReceiptNumber?: string;
+  // Credit Card
+  visaCardNumber?: string;
+  authorizationCode?: string;
+  visaOwnerName?: string;
+  // Customer Info
+  customerName?: string;
+  // General
+  totalAmount: number;
 }

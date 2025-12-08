@@ -6,6 +6,7 @@ import { ApiResponse } from '../../../../core/Models/api-response.model';
 import {
   IAccountAssignment,
   IAddInvoiceRequest,
+  IAddInvoiceResponse,
 } from '../../../../core/Models/invoices/Invoice';
 
 @Injectable({
@@ -13,6 +14,7 @@ import {
 })
 export class InvoicesWorkOrdersService {
   private BASE_API_URL = environment.apiUrl;
+
   constructor(private http: HttpClient) {}
 
   // ===================================== Get All Account Assignments ===========================================
@@ -25,10 +27,17 @@ export class InvoicesWorkOrdersService {
   // ===================================== Account add  invoice ===========================================
   addInvoice(
     invoice: IAddInvoiceRequest
-  ): Observable<ApiResponse<IAddInvoiceRequest>> {
-    return this.http.post<ApiResponse<IAddInvoiceRequest>>(
+  ): Observable<ApiResponse<IAddInvoiceResponse>> {
+    return this.http.post<ApiResponse<IAddInvoiceResponse>>(
       `${this.BASE_API_URL}/Account/generate-invoice`,
       invoice
+    );
+  }
+  // =============================================== UpdateIsWorkOrder =================================
+  updateIsWorkOrder(): Observable<ApiResponse<any>> {
+    return this.http.put<ApiResponse<any>>(
+      `${this.BASE_API_URL}/Account/UpdateIsWorkOrder`,
+      {}
     );
   }
 }

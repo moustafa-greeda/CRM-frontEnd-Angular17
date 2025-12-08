@@ -15,10 +15,7 @@
             formControlName="invoiceNumber"
             placeholder="ادخل رقم الفاتورة"
             class="form-input"
-            [class.error]="
-              paymentForm.get('invoiceNumber')?.invalid &&
-              paymentForm.get('invoiceNumber')?.touched
-            "
+            readonly
           />
           <small
             class="error-message"
@@ -30,31 +27,6 @@
             رقم الفاتورة مطلوب
           </small>
         </div>
-
-        <div class="form-field">
-          <label>المبلغ المدفوع</label>
-          <input
-            type="number"
-            formControlName="paidAmount"
-            placeholder="ادخل المبلغ المدفوع"
-            class="form-input"
-            [class.error]="
-              paymentForm.get('paidAmount')?.invalid &&
-              paymentForm.get('paidAmount')?.touched
-            "
-            min="0"
-          />
-          <small
-            class="error-message"
-            *ngIf="
-              paymentForm.get('paidAmount')?.invalid &&
-              paymentForm.get('paidAmount')?.touched
-            "
-          >
-            المبلغ المدفوع مطلوب
-          </small>
-        </div>
-
         <div class="form-field">
           <label>المبلغ الإجمالي</label>
           <input
@@ -76,7 +48,61 @@
     <!-- Payment Method Section -->
     <div class="form-section">
       <h3 class="section-title">طريقة الدفع</h3>
-      <div class="payment-methods">
+
+      <!-- Cash Payment Method -->
+      <div class="payment-method-wrapper">
+        <div
+          class="payment-method-option"
+          [class.active]="selectedPaymentMethod === 'cash'"
+          (click)="onPaymentMethodChange('cash')"
+        >
+          <div class="method-header">
+            <i class="bi bi-cash"></i>
+            <span>كاش</span>
+            <i
+              class="bi bi-chevron-down"
+              *ngIf="selectedPaymentMethod === 'cash'"
+            ></i>
+          </div>
+        </div>
+        <!-- Cash Details -->
+        <div
+          class="payment-method-fields"
+          *ngIf="selectedPaymentMethod === 'cash'"
+        >
+          <div class="amount-required">
+            <span class="amount-label">المبلغ المطلوب سداده</span>
+            <span class="amount-value">{{ remainingAmount }}</span>
+          </div>
+          <div class="form-grid">
+            <div class="form-field">
+              <label>رقم الإيصال</label>
+              <input
+                type="text"
+                formControlName="cashReceiptNumber"
+                placeholder="ادخل رقم الإيصال"
+                class="form-input"
+                [class.error]="
+                  paymentForm.get('cashReceiptNumber')?.invalid &&
+                  paymentForm.get('cashReceiptNumber')?.touched
+                "
+              />
+              <small
+                class="error-message"
+                *ngIf="
+                  paymentForm.get('cashReceiptNumber')?.invalid &&
+                  paymentForm.get('cashReceiptNumber')?.touched
+                "
+              >
+                رقم الإيصال مطلوب
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bank Transfer Payment Method -->
+      <div class="payment-method-wrapper">
         <div
           class="payment-method-option"
           [class.active]="selectedPaymentMethod === 'تحويل بنكي'"
@@ -91,7 +117,168 @@
             ></i>
           </div>
         </div>
+        <!-- Bank Transfer Details -->
+        <div
+          class="payment-method-fields"
+          *ngIf="selectedPaymentMethod === 'تحويل بنكي'"
+        >
+          <div class="amount-required">
+            <span class="amount-label">المبلغ المطلوب سداده</span>
+            <span class="amount-value">{{ remainingAmount }} ريال</span>
+          </div>
+          <div class="form-grid">
+            <div class="form-field">
+              <label>المبلغ المدفوع</label>
+              <input
+                type="number"
+                formControlName="paidAmount"
+                placeholder="ادخل المبلغ المدفوع"
+                class="form-input"
+                [class.error]="
+                  paymentForm.get('paidAmount')?.invalid &&
+                  paymentForm.get('paidAmount')?.touched
+                "
+                min="0"
+              />
+              <small
+                class="error-message"
+                *ngIf="
+                  paymentForm.get('paidAmount')?.invalid &&
+                  paymentForm.get('paidAmount')?.touched
+                "
+              >
+                المبلغ المدفوع مطلوب
+              </small>
+            </div>
+            <div class="form-field">
+              <label>المبلغ المتبقي</label>
+              <input
+                type="number"
+                value="{{ remainingAmount }}"
+                placeholder="المبلغ المتبقي"
+                class="form-input"
+                readonly
+              />
+            </div>
+            <div class="form-field">
+              <label>اسم البنك</label>
+              <input
+                type="text"
+                formControlName="bankName"
+                placeholder="اسم البنك"
+                class="form-input"
+                [class.error]="
+                  paymentForm.get('bankName')?.invalid &&
+                  paymentForm.get('bankName')?.touched
+                "
+              />
+              <small
+                class="error-message"
+                *ngIf="
+                  paymentForm.get('bankName')?.invalid &&
+                  paymentForm.get('bankName')?.touched
+                "
+              >
+                اسم البنك مطلوب
+              </small>
+            </div>
 
+            <div class="form-field">
+              <label>اسم الحساب</label>
+              <input
+                type="text"
+                formControlName="accountName"
+                placeholder="اسم الحساب"
+                class="form-input"
+                [class.error]="
+                  paymentForm.get('accountName')?.invalid &&
+                  paymentForm.get('accountName')?.touched
+                "
+              />
+              <small
+                class="error-message"
+                *ngIf="
+                  paymentForm.get('accountName')?.invalid &&
+                  paymentForm.get('accountName')?.touched
+                "
+              >
+                اسم الحساب مطلوب
+              </small>
+            </div>
+
+            <div class="form-field">
+              <label>رقم الحساب (IBAN)</label>
+              <input
+                type="text"
+                formControlName="accountNumber"
+                placeholder="ادخل رقم الحساب (IBAN)"
+                class="form-input"
+                [class.error]="
+                  paymentForm.get('accountNumber')?.invalid &&
+                  paymentForm.get('accountNumber')?.touched
+                "
+              />
+              <small
+                class="error-message"
+                *ngIf="
+                  paymentForm.get('accountNumber')?.invalid &&
+                  paymentForm.get('accountNumber')?.touched
+                "
+              >
+                رقم الحساب مطلوب
+              </small>
+            </div>
+
+            <div class="form-field">
+              <label>رمز السويفت</label>
+              <input
+                type="text"
+                formControlName="swiftCode"
+                placeholder="ادخل رمز السويفت"
+                class="form-input"
+                [class.error]="
+                  paymentForm.get('swiftCode')?.invalid &&
+                  paymentForm.get('swiftCode')?.touched
+                "
+              />
+              <small
+                class="error-message"
+                *ngIf="
+                  paymentForm.get('swiftCode')?.invalid &&
+                  paymentForm.get('swiftCode')?.touched
+                "
+              >
+                رمز السويفت مطلوب
+              </small>
+            </div>
+            <div class="form-field">
+              <label>رقم الحوالة</label>
+              <input
+                type="text"
+                formControlName="transferReceiptNumber"
+                placeholder="ادخل رقم الحوالة "
+                class="form-input"
+                [class.error]="
+                  paymentForm.get('transferReceiptNumber')?.invalid &&
+                  paymentForm.get('transferReceiptNumber')?.touched
+                "
+              />
+              <small
+                class="error-message"
+                *ngIf="
+                  paymentForm.get('transferReceiptNumber')?.invalid &&
+                  paymentForm.get('transferReceiptNumber')?.touched
+                "
+              >
+                رقم الحوالة مطلوب
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Credit Card Payment Method -->
+      <div class="payment-method-wrapper">
         <div
           class="payment-method-option credit-card-option"
           [class.active]="selectedPaymentMethod === 'بطاقة ائتمان'"
@@ -106,106 +293,137 @@
             ></i>
           </div>
         </div>
-      </div>
-    </div>
+        <!-- Credit Card Details -->
+        <div
+          class="payment-method-fields"
+          *ngIf="selectedPaymentMethod === 'بطاقة ائتمان'"
+        >
+          <div class="credit-card-form">
+            <p class="card-instruction">املأ تفاصيل البطاقة</p>
+            <div class="form-grid">
+              <div class="form-field">
+                <label>المبلغ المدفوع</label>
+                <input
+                  type="number"
+                  formControlName="paidAmount"
+                  placeholder="ادخل المبلغ المدفوع"
+                  class="form-input"
+                  [class.error]="
+                    paymentForm.get('paidAmount')?.invalid &&
+                    paymentForm.get('paidAmount')?.touched
+                  "
+                  min="0"
+                />
+                <small
+                  class="error-message"
+                  *ngIf="
+                    paymentForm.get('paidAmount')?.invalid &&
+                    paymentForm.get('paidAmount')?.touched
+                  "
+                >
+                  المبلغ المدفوع مطلوب
+                </small>
+              </div>
+              <div class="form-field">
+                <label>المبلغ المتبقي</label>
+                <input
+                  type="number"
+                  value="{{ remainingAmount }}"
+                  placeholder="المبلغ المتبقي"
+                  class="form-input"
+                  readonly
+                />
+              </div>
+              <div class="form-field">
+                <label>رقم البطاقة</label>
+                <input
+                  type="text"
+                  formControlName="visaCardNumber"
+                  placeholder="1234567890123456"
+                  class="form-input"
+                  maxlength="16"
+                  pattern="[0-9]*"
+                  (input)="onCardNumberInput($event)"
+                  [class.error]="
+                    paymentForm.get('visaCardNumber')?.invalid &&
+                    paymentForm.get('visaCardNumber')?.touched
+                  "
+                />
+                <small
+                  class="error-message"
+                  *ngIf="
+                    paymentForm.get('visaCardNumber')?.invalid &&
+                    paymentForm.get('visaCardNumber')?.touched
+                  "
+                >
+                  <span
+                    *ngIf="paymentForm.get('visaCardNumber')?.errors?.['required']"
+                  >
+                    رقم البطاقة مطلوب
+                  </span>
+                  <span
+                    *ngIf="
+                      paymentForm.get('visaCardNumber')?.errors?.['minlength'] ||
+                      paymentForm.get('visaCardNumber')?.errors?.['maxlength']
+                    "
+                  >
+                    يجب أن يكون رقم البطاقة 16 رقم بالضبط
+                  </span>
+                  <span
+                    *ngIf="paymentForm.get('visaCardNumber')?.errors?.['pattern']"
+                  >
+                    يجب أن يحتوي رقم البطاقة على أرقام فقط
+                  </span>
+                </small>
+              </div>
 
-    <!-- Bank Transfer Details -->
-    <div class="form-section" *ngIf="selectedPaymentMethod === 'تحويل بنكي'">
-      <div class="bank-details">
-        <div class="amount-required">
-          <span class="amount-label">المبلغ المطلوب سداده</span>
-          <span class="amount-value">{{ remainingAmount }} ريال</span>
-        </div>
-        <div class="form-grid">
-          <div class="form-field">
-            <label>اسم البنك</label>
-            <input
-              type="text"
-              formControlName="bankName"
-              placeholder="اسم البنك"
-              class="form-input"
-            />
-          </div>
+              <div class="form-field">
+                <label>اسم حامل البطاقة</label>
+                <input
+                  type="text"
+                  formControlName="visaOwnerName"
+                  placeholder="اسم حامل البطاقة"
+                  class="form-input"
+                  [class.error]="
+                    paymentForm.get('visaOwnerName')?.invalid &&
+                    paymentForm.get('visaOwnerName')?.touched
+                  "
+                />
+                <small
+                  class="error-message"
+                  *ngIf="
+                    paymentForm.get('visaOwnerName')?.invalid &&
+                    paymentForm.get('visaOwnerName')?.touched
+                  "
+                >
+                  اسم حامل البطاقة مطلوب
+                </small>
+              </div>
 
-          <div class="form-field">
-            <label>اسم الحساب</label>
-            <input
-              type="text"
-              formControlName="accountName"
-              placeholder="اسم الحساب"
-              class="form-input"
-            />
-          </div>
-
-          <div class="form-field">
-            <label>رقم الحساب (IBAN)</label>
-            <input
-              type="text"
-              formControlName="accountNumber"
-              placeholder="ادخل رقم الحساب (IBAN)"
-              class="form-input"
-            />
-          </div>
-
-          <div class="form-field">
-            <label>رمز السويفت</label>
-            <input
-              type="text"
-              formControlName="swiftCode"
-              placeholder="ادخل رمز السويفت"
-              class="form-input"
-            />
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Credit Card Details -->
-    <div class="form-section credit-card-section" *ngIf="showCreditCard">
-      <div class="credit-card-form">
-        <p class="card-instruction">املأ تفاصيل البطاقة</p>
-        <div class="form-grid">
-          <div class="form-field">
-            <label>رقم البطاقة</label>
-            <input
-              type="text"
-              formControlName="cardNumber"
-              placeholder="1234 5678 9012 3456"
-              class="form-input"
-              maxlength="19"
-            />
-          </div>
-
-          <div class="form-field">
-            <label>اسم حامل البطاقة</label>
-            <input
-              type="text"
-              formControlName="cardHolderName"
-              placeholder="اسم حامل البطاقة"
-              class="form-input"
-            />
-          </div>
-
-          <div class="form-field">
-            <label>تاريخ الانتهاء</label>
-            <input
-              type="date"
-              formControlName="expiryDate"
-              placeholder="MM/YY"
-              class="form-input"
-              maxlength="5"
-            />
-          </div>
-
-          <div class="form-field">
-            <label>CVV</label>
-            <input
-              type="text"
-              formControlName="cvv"
-              placeholder="123"
-              class="form-input"
-              maxlength="3"
-            />
+              <div class="form-field">
+                <label>CVV</label>
+                <input
+                  type="text"
+                  formControlName="authorizationCode"
+                  placeholder="123"
+                  class="form-input"
+                  maxlength="3"
+                  [class.error]="
+                    paymentForm.get('authorizationCode')?.invalid &&
+                    paymentForm.get('authorizationCode')?.touched
+                  "
+                />
+                <small
+                  class="error-message"
+                  *ngIf="
+                    paymentForm.get('authorizationCode')?.invalid &&
+                    paymentForm.get('authorizationCode')?.touched
+                  "
+                >
+                  CVV مطلوب
+                </small>
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -223,9 +441,7 @@
 
     <!-- Action Buttons -->
     <div class="form-actions">
-      <button type="submit" class="btn-submit" [disabled]="paymentForm.invalid">
-        إتمام الدفع
-      </button>
+      <button type="submit" class="btn-submit">إتمام الدفع</button>
       <button type="button" class="btn-cancel" (click)="onCancel()">
         إلغاء
       </button>

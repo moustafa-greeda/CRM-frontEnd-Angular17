@@ -60,6 +60,7 @@ import { ExportedDataComponent } from './components/exported-data/exported-data.
 import { SharedComponentsModule } from './shared/components/shared-components.module';
 import { StepsModule } from './components/leads/wizard/steps/steps.module';
 import { CompanyWizardModule } from './shared/components/company-wizard/company-wizard.module';
+import { PdfPreviewDialogModule } from './shared/components/pdf-preview-dialog/pdf-preview-dialog.module';
 
 import { SpinnerInterceptor } from './core/loader/spinner.interceptor';
 import { AuthTokenInterceptor } from './core/auth-token.interceptor';
@@ -135,6 +136,7 @@ const SHARED_PRESENTATIONAL_COMPONENTS = [
     StepsModule,
     SharedComponentsModule,
     CompanyWizardModule,
+    PdfPreviewDialogModule,
   ],
   providers: [
     provideClientHydration(),

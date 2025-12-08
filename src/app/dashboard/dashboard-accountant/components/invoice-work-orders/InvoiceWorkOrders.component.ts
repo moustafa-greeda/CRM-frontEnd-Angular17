@@ -147,8 +147,9 @@ export class InvoiceWorkOrdersComponent implements OnInit {
     });
 
     dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        console.log('Invoice data:', result);
+      if (result && result.refresh) {
+        // Reload account assignments to reflect the changes
+        this.loadAccountAssignments();
       }
     });
   }

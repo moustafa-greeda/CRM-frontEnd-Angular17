@@ -13,7 +13,7 @@
   </div>
   <!-- content -->
   <div class="content mt-md">
-    <div class="left-section">
+    <div class="right-section">
       <table class="app-table enhanced-table">
         <thead>
           <tr>
@@ -40,11 +40,15 @@
           </tr>
         </tbody>
       </table>
-      <button class="btn btn-primary btn-lg" (click)="clearSummaryFilter()">
+      <button
+        class="btn btn-primary btn-lg"
+        *ngIf="invoices.length > 0"
+        (click)="clearSummaryFilter()"
+      >
         عرض كل الفواتير
       </button>
     </div>
-    <div class="table-container right-section">
+    <div class="table-container left-section">
       <app-table
         [data]="filteredInvoices"
         [columns]="columns"
@@ -68,13 +72,55 @@
     </div>
   </div>
   <!-- payment table -->
-  <div *ngIf="showTablePayments" class="table-container mt-md">
-    <app-table
-      [data]="payments"
-      [columns]="paymentsColumns"
-      [showDataTable]="true"
-      [showIndex]="true"
-      [hasNoData]="payments.length === 0"
-    ></app-table>
-  </div>
+  <ng-container *ngIf="showTablePayments">
+    <!-- cash payments -->
+    <ng-container *ngIf="hasCashPayments()">
+      <h2 class="title-payments">الدفعات النقدية</h2>
+      <app-table
+        [data]="cashPayments"
+        [columns]="paymentsCashColumns"
+        [showDataTable]="true"
+        [showIndex]="true"
+        [hasNoData]="cashPayments.length === 0"
+      ></app-table>
+    </ng-container>
+    <!-- bank transfer payments -->
+    <ng-container *ngIf="hasBankTransferPayments()">
+      <h2 class="title-payments">الدفعات البنكية</h2>
+      <app-table
+        [data]="bankTransferPayments"
+        [columns]="paymentsBankTransferColumns"
+        [showDataTable]="true"
+        [showIndex]="true"
+        [hasNoData]="bankTransferPayments.length === 0"
+      ></app-table>
+    </ng-container>
+    <!-- visa payments -->
+    <ng-container *ngIf="hasVisaPayments()">
+      <h2 class="title-payments">دفعات البطاقة الائتمانية</h2>
+      <app-table
+        [data]="visaPayments"
+        [columns]="paymentsVisaColumns"
+        [showDataTable]="true"
+        [showIndex]="true"
+        [hasNoData]="visaPayments.length === 0"
+      ></app-table>
+    </ng-container>
+  </ng-container>
+  <ng-container *ngIf="showTablePayments">
+    <!-- if no payments show empty table -->
+    <ng-container
+      *ngIf="
+        !hasCashPayments() && !hasBankTransferPayments() && !hasVisaPayments()
+      "
+    >
+      <app-table
+        [data]="[]"
+        [columns]="[]"
+        [showDataTable]="true"
+        [hasNoData]="true"
+        [noDataMessage]="'لا توجد بيانات دفعات لعرضها'"
+      ></app-table>
+    </ng-container>
+  </ng-container>
 </div>

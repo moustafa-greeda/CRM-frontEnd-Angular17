@@ -1,6 +1,7 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, OnInit, ChangeDetectorRef } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MatDialog } from '@angular/material/dialog';
 import {
   IAccountAssignment,
   IAddInvoiceRequest,
@@ -9,6 +10,10 @@ import {
 import { PakegsService } from '../../../../../core/services/common/pakegs.service';
 import { InvoicesWorkOrdersService } from '../invoicesWorkOrders.service';
 import { NotifyDialogService } from '../../../../../shared/components/notify-dialog-host/notify-dialog.service';
+import {
+  PdfPreviewDialogComponent,
+  PdfPreviewDialogData,
+} from '../../../../../shared/components/pdf-preview-dialog/pdf-preview-dialog.component';
 
 export interface InvoiceService {
   id: number;
@@ -40,30 +45,22 @@ export interface InvoiceDialogData {
 export class InvoiceWorkOrdersDialogComponent implements OnInit {
   invoiceForm!: FormGroup;
   services: InvoiceService[] = [];
+  formSubmitted: boolean = false;
 
   allPackets: PacketOption[] = [];
   accountAssignments: IAccountAssignment[] = [];
   selectedAccountAssignment: IAccountAssignment | null = null;
-  isSameAddress = false;
-
-  // Getter to transform packets to string array for dropdown
-  // Exclude already selected packets
-  get packetNames(): string[] {
-    const selectedPacketNames = this.services
-      .map((s) => s.serviceName)
-      .filter((name) => this.allPackets.some((p) => p.name === name));
-    return this.allPackets
-      .map((p) => p.name)
-      .filter((name) => !selectedPacketNames.includes(name));
-  }
-
-  // Getter to transform account assignments to string array for dropdown
-  get accountAssignmentNames(): string[] {
-    return this.accountAssignments.map((a) => a.contactName);
-  }
 
   get paymnetNames(): string[] {
     return ['كاش', 'قسط'];
+  }
+
+  get selectedPaymentMethod(): string {
+    const value = this.invoiceForm.get('paymentMethod')?.value;
+    if (!value || value === '') {
+      return '';
+    }
+    return value === '1' ? 'قسط' : 'كاش';
   }
 
   constructor(
@@ -72,7 +69,8 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
     private InvoicesWorkOrdersService: InvoicesWorkOrdersService,
     public dialogRef: MatDialogRef<InvoiceWorkOrdersDialogComponent>,
     private notify: NotifyDialogService,
-
+    private dialog: MatDialog,
+    private cdr: ChangeDetectorRef,
     @Inject(MAT_DIALOG_DATA) public data: InvoiceDialogData
   ) {
     this.initializeForm();
@@ -95,11 +93,9 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
         isSameShippingAddress: true,
         countryCode: '+20',
         clientPhone: '',
-        selectedPackage: '',
-        paymentMethod: '0',
+        paymentMethod: '',
         notes: '',
       });
-      this.isSameAddress = true;
       // Add fake services data
       this.addFakeServices();
     }
@@ -111,12 +107,12 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
       clientName: ['', Validators.required],
       clientAddress: [''],
       isSameShippingAddress: [false],
-      clientEmail: ['', [Validators.required, Validators.email]],
+      clientEmail: [''],
       countryCode: ['+20', Validators.required],
       clientPhone: ['', Validators.required],
-      selectedPackage: ['', Validators.required],
-      paymentMethod: ['0', Validators.required],
+      paymentMethod: ['', Validators.required],
       notes: [''],
+      pacekts: [''], // Read-only field from API (enabled for updates, readonly in template)
     });
   }
 
@@ -125,6 +121,11 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
     // Subscribe to the packets observable
     this._pakegsService.packets$.subscribe((packets) => {
       this.allPackets = packets;
+
+      // If assignment is already selected and packets are loaded, add packet to services
+      if (this.selectedAccountAssignment?.name && packets.length > 0) {
+        this.addPacketToServices(this.selectedAccountAssignment.name);
+      }
     });
   }
 
@@ -156,38 +157,28 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
     });
   }
 
-  onAccountAssignmentSelected(contactName: string): void {
-    const assignment = this.accountAssignments.find(
-      (a) => a.contactName === contactName
-    );
-    if (assignment) {
-      this.setSelectedAssignment(assignment);
-    }
-  }
-
   private setSelectedAssignment(assignment: IAccountAssignment): void {
     this.selectedAccountAssignment = assignment;
     // Populate form with account assignment data
     this.invoiceForm.patchValue({
       clientName: assignment.contactName,
-      clientEmail: assignment.contactEmail,
+      clientEmail: assignment.contactEmail || '',
       clientPhone: assignment.contactPhone || '',
+      pacekts: assignment.name,
     });
+
+    // Add the packet to services table if it exists in allPackets
+    if (assignment.name && this.allPackets.length > 0) {
+      this.addPacketToServices(assignment.name);
+    }
   }
 
   private loadInvoiceData(invoice: Iinvoice): void {
     this.invoiceForm.patchValue({
       date: invoice.issueDate,
       clientName: invoice.clientName,
-      clientEmail: invoice.clientEmail,
+      clientEmail: invoice.clientEmail || '',
       clientPhone: invoice.clientPhone,
-    });
-  }
-
-  onSameAddressChange(event: any): void {
-    this.isSameAddress = event.target.checked;
-    this.invoiceForm.patchValue({
-      isSameShippingAddress: event.target.checked,
     });
   }
 
@@ -205,19 +196,16 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
       total: 0,
     };
     this.services.push(newService);
-    this.calculateTotals();
   }
 
   // Add fake services data on initialization
   addFakeServices(): void {
     const fakeServices: InvoiceService[] = [];
     this.services = fakeServices;
-    this.calculateTotals();
   }
 
   removeService(index: number): void {
     this.services.splice(index, 1);
-    this.calculateTotals();
   }
 
   onServiceChange(index: number, field: string, value: any): void {
@@ -238,18 +226,12 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
         const quantity = Number(this.services[index].quantity) || 1;
         this.services[index].total = price * quantity;
       }
-
-      this.calculateTotals();
     }
   }
 
   // Check if a service is a packet (bundle)
   isServiceAPacket(serviceName: string): boolean {
     return this.allPackets.some((p) => p.name === serviceName);
-  }
-
-  calculateTotals(): void {
-    // Calculate totals will be handled in the template
   }
 
   getSubtotal(): number {
@@ -272,15 +254,23 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
   }
   // ========================================== add invoice ===========================================
   onSubmit(): void {
+    // Mark form as submitted first
+    this.formSubmitted = true;
+
+    // Force validation check
+    this.markFormGroupTouched();
+
+    // Force change detection to update the view
+    this.cdr.detectChanges();
+
+    // Check validity after marking as touched
     if (this.invoiceForm.valid) {
       const addInvoiceRequest: IAddInvoiceRequest = {
-        // amount: this.selectedAccountAssignment?.budget || 0,
-        amount: this.getTotalAmount(),
+        amount: this.selectedAccountAssignment?.targetProductId || 0,
         clientId: this.selectedAccountAssignment?.leadId || 0,
         clientName: this.invoiceForm.value.clientName,
         clientPhone: this.invoiceForm.value.clientPhone,
-        clientEmail: this.invoiceForm.value.clientEmail,
-        // clientCity: this.invoiceForm.value.clientCity,
+        clientEmail: this.invoiceForm.value.clientEmail || '',
         clientCity: '-',
         totalprices: this.getTotalAmount(),
         leadDataId: this.selectedAccountAssignment?.leadId || 0,
@@ -299,19 +289,32 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
             title: 'تم الحفظ',
             description: response?.message || 'تم تسجيل الفاتورة بنجاح',
           });
+
+          // Open PDF preview dialog if pdfPath exists
+          const pdfPath = response?.data?.pdfPath;
+          if (pdfPath) {
+            this.openPdfPreview(pdfPath);
+          }
+
+          // Step 1: Update work order status first
+          this.InvoicesWorkOrdersService.updateIsWorkOrder().subscribe({
+            next: () => {
+              // Step 2: After updateIsWorkOrder completes successfully, reload account assignments
+              this.loadAccountAssignments();
+            },
+            error: (error) => {
+              console.error('Error updating work order:', error);
+            },
+            complete: () => {
+              // Close dialog after all operations complete and return true to trigger refresh in parent
+              this.dialogRef.close({ success: true, refresh: true });
+            },
+          });
         },
         error: (error) => {
           console.error('Error adding invoice:', error);
-          this.notify.open({
-            type: 'error',
-            title: 'خطأ',
-            description: error?.message || 'تعذر حفظ الفاتورة',
-          });
         },
       });
-      this.dialogRef.close();
-    } else {
-      this.markFormGroupTouched();
     }
   }
 
@@ -351,13 +354,11 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
       if (!existingService) {
         // Add new service if it doesn't exist
         this.services.push(newService);
-        this.calculateTotals();
       } else {
         // Update existing service price and recalculate total
         existingService.price = selectedPacket.price || 0;
         const quantity = existingService.quantity || 1;
         existingService.total = (selectedPacket.price || 0) * quantity;
-        this.calculateTotals();
       }
     }
   }
@@ -365,13 +366,93 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
   // ========================================== payment method selected ===========================================
   onPaymentMethodSelected(option: string): void {
     const paymentValue = option === 'قسط' ? '1' : '0';
-    this.invoiceForm.patchValue({ paymentMethod: paymentValue });
+    const control = this.invoiceForm.get('paymentMethod');
+    if (control) {
+      control.setValue(paymentValue);
+      control.markAsTouched();
+      control.markAsDirty();
+      control.updateValueAndValidity();
+    }
   }
 
   private markFormGroupTouched(): void {
     Object.keys(this.invoiceForm.controls).forEach((key) => {
       const control = this.invoiceForm.get(key);
-      control?.markAsTouched();
+      if (control) {
+        control.markAsTouched();
+        control.markAsDirty();
+        control.updateValueAndValidity({ emitEvent: true });
+      }
+    });
+    this.invoiceForm.updateValueAndValidity({ emitEvent: true });
+  }
+
+  getFormErrors(): any {
+    const errors: any = {};
+    Object.keys(this.invoiceForm.controls).forEach((key) => {
+      const control = this.invoiceForm.get(key);
+      if (control && control.errors) {
+        errors[key] = control.errors;
+      }
+    });
+    return errors;
+  }
+
+  shouldShowError(controlName: string): boolean {
+    const control = this.invoiceForm.get(controlName);
+    if (!control) return false;
+    const shouldShow =
+      control.invalid &&
+      (this.formSubmitted || control.touched || control.dirty);
+    return shouldShow;
+  }
+
+  // ========================================== Add Packet to Services ===========================================
+  private addPacketToServices(packetName: string): void {
+    // Check if packet already exists in services
+    const existingService = this.services.find(
+      (s) => s.serviceName === packetName
+    );
+
+    if (existingService) {
+      // Packet already exists, no need to add again
+      return;
+    }
+
+    // Find the packet in allPackets
+    const packet = this.allPackets.find((p) => p.name === packetName);
+    if (packet) {
+      // Add packet as a service in the table
+      const newService: InvoiceService = {
+        id:
+          this.services.length > 0
+            ? Math.max(...this.services.map((s) => s.id)) + 1
+            : 1,
+        serviceName: packet.name,
+        price: packet.price || 0,
+        description: packet.description || '',
+        quantity: 1,
+        total: packet.price || 0,
+      };
+
+      this.services.push(newService);
+    }
+  }
+
+  // ========================================== Open PDF Preview ===========================================
+  private openPdfPreview(pdfPath: string): void {
+    const dialogData: PdfPreviewDialogData = {
+      pdfPath: pdfPath,
+      title: 'معاينة الفاتورة',
+    };
+
+    this.dialog.open(PdfPreviewDialogComponent, {
+      width: '90vw',
+      maxWidth: '1200px',
+      height: '90vh',
+      maxHeight: '800px',
+      data: dialogData,
+      panelClass: 'pdf-preview-dialog-container',
     });
   }
 }

@@ -391,7 +391,6 @@ export class DistributionComponent implements OnInit {
         type: 'error',
         title: 'حد التخصيص',
         description: `لا يمكن تخصيص أكثر من ${maxAssignments} عنصر للموظف الواحد`,
-        autoCloseMs: 3000,
       });
       return;
     }
@@ -425,7 +424,6 @@ export class DistributionComponent implements OnInit {
         description: `العناصر التالية مُخصصة بالفعل: ${alreadyAssigned.join(
           ', '
         )}`,
-        autoCloseMs: 3000,
       });
     }
 

@@ -2,29 +2,43 @@
 .table-container {
   position: relative;
   margin: 0px auto;
+  padding: 50px 35px;
   width: 100%;
-  min-width: 800px; /* Minimum width for the table container */
-  height: 70vh; /* Fixed height */
+  min-width: 800px;
+  min-height: 50vh;
+  max-height: 70vh;
   display: flex;
   flex-direction: column;
-  overflow-x: hidden; /* Hide horizontal scrollbar */
-  overflow-y: visible; /* Allow vertical overflow for dropdowns */
-  border-radius: 12px;
-  border: 1px solid var(--border-color);
+  overflow-x: auto;
+  /* overflow-y: visible; */
+  border-radius: 20px;
+  /* border: 1px solid var(--border-color); */
   -webkit-overflow-scrolling: touch;
-  animation: cardFadeIn 1.5s ease-out forwards;
+  animation: tableFadeIn 1.5s ease-out forwards;
+}
+.table-bg-frame {
+  position: relative;
+  width: 100%;
+  height: auto;
 }
 
-@keyframes cardFadeIn {
-  0% {
-    opacity: 0;
-    transform: perspective(600px) translateY(500px);
-  }
-  100% {
-    opacity: 1;
-    transform: perspective(600px) translateX(0);
-  }
+.table-frame-left,
+.table-frame-right {
+  position: absolute;
+  top: 0;
+  height: 100%;
+  z-index: 0;
+  pointer-events: none;
+  animation: tableFadeIn 1.5s ease-out forwards;
 }
+
+.table-frame-left {
+  left: 0px;
+}
+.table-frame-right {
+  right: 0;
+}
+
 /* Ensure dropdown menus are not clipped by table container */
 .table-container .dropdown-menu {
   position: absolute !important;
@@ -45,16 +59,18 @@
 /* Table scroll wrapper */
 .table-scroll-wrapper {
   flex: 1;
-  overflow-y: auto; /* Only vertical scroll */
-  overflow-x: hidden; /* Hide horizontal scrollbar */
-  max-height: calc(80vh - 60px); /* Account for paginator height */
-  border-radius: 12px;
+  overflow-y: auto;
+  overflow-x: auto; /* Show horizontal scrollbar when table is wider than container */
+  max-height: calc(80vh - 60px);
+  border-radius: 45px;
+  /* border-top-left-radius: 45px;
+  border-top-right-radius: 45px; */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
   background: var(--bg-light);
   position: relative;
-  min-width: 800px; /* Minimum width for the table */
-  scroll-behavior: smooth; /* Smooth scrolling */
-  -webkit-overflow-scrolling: touch; /* iOS smooth scrolling */
+  min-width: 800px;
+  scroll-behavior: smooth;
+  -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
 }
@@ -565,8 +581,8 @@
   flex-direction: column;
   gap: 3px;
   z-index: 10000 !important;
-  min-width: 120px;
-  max-width: 140px;
+  min-width: 160px;
+  max-width: 200px;
   max-height: 350px;
   overflow-y: auto;
   visibility: visible !important;
@@ -822,6 +838,46 @@
 }
 
 /************************* Responsive action buttons *************************/
+@media (max-width: 1024px) {
+  /* Table Container - Responsive with scroll */
+  .table-container {
+    padding: 24px 16px;
+    min-width: 0; /* Allow container to shrink */
+    overflow-x: auto; /* Show horizontal scrollbar when needed */
+  }
+
+  .table-scroll-wrapper {
+    min-width: 0; /* Override 800px min-width */
+    overflow-x: auto; /* Enable horizontal scroll */
+  }
+
+  .data-table {
+    min-width: 600px; /* Keep minimum readable width */
+  }
+
+  .table-bg-frame {
+    position: relative;
+    width: 100%;
+    height: auto;
+  }
+
+  .table-frame-left,
+  .table-frame-right {
+    position: absolute;
+    top: 0;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    animation: tableFadeIn 1.5s ease-out forwards;
+  }
+
+  .table-frame-left {
+    left: 0px;
+  }
+  .table-frame-right {
+    right: 0px;
+  }
+}
 @media (max-width: 768px) {
   .action-buttons {
     gap: 4px;
@@ -997,3 +1053,5 @@
     transform: scale(1.5) scaleX(1) translateY(0px);
   }
 }
+
+/*  */

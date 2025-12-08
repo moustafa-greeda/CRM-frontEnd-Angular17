@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { forkJoin, of } from 'rxjs';
+import { switchMap, catchError } from 'rxjs/operators';
 import {
   ITeleSalseActionResponse,
   ITeleSalseActionRequest,
@@ -43,7 +44,7 @@ export class DashboardTelesalesComponent implements OnInit {
   listLeadStatus: any[] = [];
   leadStatusMap: Map<string, number> = new Map();
   leadsList: any[] = [];
-  // leadsList: any[] = [];
+  salesList: any[] = [];
   currencyList: any[] = [];
   callStatusList: ICallStatus[] = [];
   actionLabels = {
@@ -55,7 +56,6 @@ export class DashboardTelesalesComponent implements OnInit {
     { key: 'contactName', header: 'الاسم' },
     { key: 'assigndate', header: 'تاريخ التعيين', formatter: 'date' },
     { key: 'leadStatus', header: 'حالة العميل المحتمل' },
-    { key: 'phoneNumber', header: 'الهاتف' },
     { key: 'country', header: 'الدولة' },
     { key: 'city', header: 'المدينة' },
     { key: 'lastActionTime', header: 'آخر تفاعل', formatter: 'datetime' },
@@ -124,7 +124,7 @@ export class DashboardTelesalesComponent implements OnInit {
   leadStatusOptions: string[] = [];
   // Use the service for status colors instead of inline map
   get leadStatusColorMap(): Record<string, string> {
-    return this.statusColorService?.getAllStatusColors() || {};
+    return this.statusColorService.getAllStatusColors();
   }
 
   constructor(
@@ -139,7 +139,6 @@ export class DashboardTelesalesComponent implements OnInit {
     private dateUtils: DateUtilsService,
     private _salesService: GetAllSalesService,
     private _currencyService: CurruncyService,
-    private _callsService: CallsService,
     private _callDialogService: CallDialogService,
     private cdr: ChangeDetectorRef
   ) {}
@@ -225,7 +224,7 @@ export class DashboardTelesalesComponent implements OnInit {
     this.loadCountries();
 
     // Load sales list
-    this.getleadsList();
+    this.getSalesList();
 
     // Load currency list
     this.getCurrencyList();
@@ -362,10 +361,10 @@ export class DashboardTelesalesComponent implements OnInit {
   }
 
   // ========================================= get sales list =================================
-  getleadsList(): void {
+  getSalesList(): void {
     this._salesService.getAllSales().subscribe({
       next: (response) => {
-        this.leadsList = response.data;
+        this.salesList = response.data;
       },
     });
   }
@@ -458,7 +457,6 @@ export class DashboardTelesalesComponent implements OnInit {
       leadStatus: this.selectedLeadStatusName || '',
       country: this.selectedCountry || '',
       city: this.selectedCity || '',
-
       lastActionTime: '', // Keep for backward compatibility if needed
       actionNote: '',
       actionDateFilter: dateFilter, // Pass date filter number (0, 1, or 2) to API
@@ -778,8 +776,8 @@ export class DashboardTelesalesComponent implements OnInit {
       maxHeight: '90vh',
       data: dialogData,
       panelClass: 'agreement-dialog',
-      // hasBackdrop: true,
-      // backdropClass: 'agreement-dialog-backdrop',
+      hasBackdrop: true,
+      backdropClass: 'agreement-dialog-backdrop',
     });
   }
 
@@ -912,8 +910,8 @@ export class DashboardTelesalesComponent implements OnInit {
       3: {
         name: 'اجتماع',
         icon: 'bi-camera-video',
-        label: 'الملاحظة',
-        placeholder: 'أدخل ملاحظات الاجتماع...',
+        label: 'لينك الاجتماع',
+        placeholder: 'أدخل لينك الاجتماع...',
         type: 'meeting',
       },
       4: {
@@ -968,6 +966,8 @@ export class DashboardTelesalesComponent implements OnInit {
           actionNotes: '',
         },
       },
+      hasBackdrop: true,
+      backdropClass: 'agreement-dialog-backdrop',
     });
 
     // Listen to formSubmit event
@@ -1112,15 +1112,15 @@ export class DashboardTelesalesComponent implements OnInit {
 
   openAssignLeadToSalesDialog(lead: any): void {
     // Ensure data is loaded - reload if empty
-    if (!this.leadsList || this.leadsList.length === 0) {
-      this.getleadsList();
+    if (!this.salesList || this.salesList.length === 0) {
+      this.getSalesList();
     }
     if (!this.currencyList || this.currencyList.length === 0) {
       this.getCurrencyList();
     }
 
-    // Convert leadsList to FormUiComponent expected format: { value, label }[]
-    const salesOptions = (this.leadsList || []).map((sales: any) => ({
+    // Convert salesList to FormUiComponent expected format: { value, label }[]
+    const salesOptions = (this.salesList || []).map((sales: any) => ({
       value: sales.id,
       label: sales.name,
     }));

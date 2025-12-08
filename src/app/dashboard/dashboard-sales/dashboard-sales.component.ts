@@ -22,7 +22,6 @@ import { StatusColorService } from '../../core/services/common/status-color.serv
 import { DateUtilsService } from '../../core/services/common/date-utils.service';
 import { DashboardSalseService } from './dashboard-salse.service';
 import { PakegsService } from '../../core/services/common/pakegs.service';
-import { IGetAllPacket } from '../../core/Models/common/iget-all-packet';
 
 type PacketOption = {
   id: number | null;
@@ -1668,7 +1667,6 @@ export class DashboardSalesComponent implements OnInit {
     const notes = lead.actionNote || lead.notes || '';
     const budgetValue = Number(lead.budget) || 0;
     const currency = lead.currencyName || '';
-    const isInWorkOrder = false;
 
     const payload = {
       assignedByEmp: assignedByEmp,
@@ -1676,7 +1674,6 @@ export class DashboardSalesComponent implements OnInit {
       notes: notes,
       buddgetValue: budgetValue,
       currncy: currency,
-      isInWorkOrder: isInWorkOrder,
     };
 
     this._dashboardService.createAssignToAccount(payload).subscribe({

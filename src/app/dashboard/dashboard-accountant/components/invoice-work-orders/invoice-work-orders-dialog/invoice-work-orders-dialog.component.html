@@ -210,11 +210,20 @@
                   [value]="service.serviceName"
                   [readonly]="isServiceAPacket(service.serviceName)"
                   [class.readonly]="isServiceAPacket(service.serviceName)"
+                  [class.error]="service.touched && service.serviceNameError"
                   (input)="
                     onServiceChange(i, 'serviceName', $any($event.target).value)
                   "
+                  (blur)="validateService(i)"
                   class="table-input"
+                  placeholder="اسم الخدمة"
                 />
+                <small
+                  class="service-error-hint"
+                  *ngIf="service.touched && service.serviceNameError"
+                >
+                  اسم الخدمة مطلوب
+                </small>
               </td>
               <td>
                 <input
@@ -232,23 +241,42 @@
                   [value]="service.price"
                   [readonly]="isServiceAPacket(service.serviceName)"
                   [class.readonly]="isServiceAPacket(service.serviceName)"
+                  [class.error]="service.touched && service.priceError"
                   (input)="
                     onServiceChange(i, 'price', +$any($event.target).value)
                   "
+                  (blur)="validateService(i)"
                   class="table-input"
                   step="0.01"
+                  min="0.01"
+                  placeholder="0.00"
                 />
+                <small
+                  class="service-error-hint"
+                  *ngIf="service.touched && service.priceError"
+                >
+                  السعر يجب أن يكون أكبر من 0
+                </small>
               </td>
               <td>
                 <input
                   type="number"
                   [value]="service.quantity || 1"
                   min="1"
+                  [class.error]="service.touched && service.quantityError"
                   (input)="
                     onServiceChange(i, 'quantity', +$any($event.target).value)
                   "
+                  (blur)="validateService(i)"
                   class="table-input"
+                  placeholder="1"
                 />
+                <small
+                  class="service-error-hint"
+                  *ngIf="service.touched && service.quantityError"
+                >
+                  الكمية يجب أن تكون على الأقل 1
+                </small>
               </td>
               <td>
                 {{ service.total || service.price || 0 | number : "1.2-2" }} $

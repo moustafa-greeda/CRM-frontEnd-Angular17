@@ -98,6 +98,14 @@
 }
 
 /* ============================== responsive ============================== */
+@media (max-width: 1400px) {
+  .content {
+    flex-direction: column;
+  }
+  .right-section {
+    max-width: 25% !important;
+  }
+}
 @media (max-width: 1024px) {
   .content {
     flex-direction: column;
@@ -114,6 +122,6 @@
     flex-direction: column;
   }
   .right-section {
-    max-width: 100%;
+    max-width: 100% !important;
   }
 }

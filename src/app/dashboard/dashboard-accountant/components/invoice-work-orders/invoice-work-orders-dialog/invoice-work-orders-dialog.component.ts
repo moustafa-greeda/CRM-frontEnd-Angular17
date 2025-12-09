@@ -22,6 +22,11 @@ export interface InvoiceService {
   description?: string;
   quantity: number;
   total: number;
+  // Validation states
+  serviceNameError?: boolean;
+  priceError?: boolean;
+  quantityError?: boolean;
+  touched?: boolean;
 }
 
 export interface PacketOption {
@@ -189,11 +194,15 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
         this.services.length > 0
           ? Math.max(...this.services.map((s) => s.id)) + 1
           : 1,
-      serviceName: 'خدمة جديدة',
+      serviceName: '',
       price: 0,
       description: '',
       quantity: 1,
       total: 0,
+      serviceNameError: false,
+      priceError: false,
+      quantityError: false,
+      touched: false,
     };
     this.services.push(newService);
   }
@@ -220,6 +229,12 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
 
       (this.services[index] as any)[field] = value;
 
+      // Mark as touched
+      this.services[index].touched = true;
+
+      // Validate and update error states
+      this.validateService(index);
+
       // Calculate total based on price and quantity
       if (field === 'price' || field === 'quantity') {
         const price = Number(this.services[index].price) || 0;
@@ -227,6 +242,47 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
         this.services[index].total = price * quantity;
       }
     }
+  }
+
+  validateService(index: number): void {
+    const service = this.services[index];
+    if (!service) return;
+
+    // Validate service name
+    service.serviceNameError =
+      !service.serviceName || service.serviceName.trim() === '';
+
+    // Validate price (must be greater than 0)
+    service.priceError = !service.price || Number(service.price) <= 0;
+
+    // Validate quantity (must be at least 1)
+    service.quantityError = !service.quantity || Number(service.quantity) < 1;
+  }
+
+  validateAllServices(): boolean {
+    let isValid = true;
+    this.services.forEach((service, index) => {
+      service.touched = true;
+      this.validateService(index);
+      if (
+        service.serviceNameError ||
+        service.priceError ||
+        service.quantityError
+      ) {
+        isValid = false;
+      }
+    });
+    return isValid;
+  }
+
+  hasServiceErrors(index: number): boolean {
+    const service = this.services[index];
+    if (!service || !service.touched) return false;
+    return !!(
+      service.serviceNameError ||
+      service.priceError ||
+      service.quantityError
+    );
   }
 
   // Check if a service is a packet (bundle)
@@ -260,11 +316,14 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
     // Force validation check
     this.markFormGroupTouched();
 
+    // Validate all services
+    const servicesValid = this.validateAllServices();
+
     // Force change detection to update the view
     this.cdr.detectChanges();
 
     // Check validity after marking as touched
-    if (this.invoiceForm.valid) {
+    if (this.invoiceForm.valid && servicesValid) {
       const addInvoiceRequest: IAddInvoiceRequest = {
         amount: this.selectedAccountAssignment?.targetProductId || 0,
         clientId: this.selectedAccountAssignment?.leadId || 0,
@@ -315,6 +374,15 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
           console.error('Error adding invoice:', error);
         },
       });
+    } else {
+      // Show error message if services are invalid
+      if (!servicesValid) {
+        this.notify.open({
+          type: 'error',
+          title: 'خطأ في التحقق',
+          description: 'يرجى التحقق من صحة بيانات الخدمات المضافة',
+        });
+      }
     }
   }
 
@@ -433,6 +501,10 @@ export class InvoiceWorkOrdersDialogComponent implements OnInit {
         description: packet.description || '',
         quantity: 1,
         total: packet.price || 0,
+        serviceNameError: false,
+        priceError: false,
+        quantityError: false,
+        touched: false,
       };
 
       this.services.push(newService);

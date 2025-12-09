@@ -1658,8 +1658,20 @@ export class DashboardSalesComponent implements OnInit {
       console.error('Could not get employee ID');
       return;
     }
-
+    if (!lead.budget || lead.budget == 0) {
+      this.notify.open({
+        type: 'error',
+        title: ' (يرجي ادخال الميزانية قبل التعيين)خطأ',
+        description: 'يرجي الذهاب الي الاجراءات > تعديل الميزانية',
+      });
+      return;
+    }
     this.sendAssignToAccountRequest(lead, String(employeeId));
+  }
+
+  // Public method to handle assign to accountant button click
+  onAssignToAccountant(lead: any): void {
+    this.createAssignToAccount(lead);
   }
 
   private sendAssignToAccountRequest(lead: any, assignedByEmp: string): void {
@@ -1680,12 +1692,65 @@ export class DashboardSalesComponent implements OnInit {
       next: (response) => {
         if (response && response.succeeded !== false) {
           // Successfully assigned to account
-          console.log('Successfully assigned to account:', response);
+          // Now update lead status to 'Confirmed'
+          this.updateLeadStatusToConfirmed(lead, assignedByEmp);
         }
       },
       error: (error) => {
         console.error('Error creating assign to account:', error);
-        // Don't show error to user as lead status was already updated successfully
+        this.notify.open({
+          type: 'error',
+          title: 'خطأ',
+          description: 'تعذر تعيين العميل للمحاسب',
+        });
+      },
+    });
+  }
+
+  private updateLeadStatusToConfirmed(lead: any, assignedByEmp: string): void {
+    const leadId = lead.leadId ?? lead.id;
+    const assignLeadId =
+      lead.id || Number(assignedByEmp) || this._authService.getEmployeeId();
+
+    // Build payload for editLeadStatus
+    const statusPayload: any = {
+      assignmentId: lead.assignmentId ?? lead.id,
+      leadId: leadId,
+      assignLeadId: assignLeadId,
+      leadStatus: 'Confirmed',
+    };
+
+    this._dashboardService.editLeadStatus(statusPayload).subscribe({
+      next: (response) => {
+        // Check if response indicates success
+        if (response && response.succeeded !== false) {
+          // Successfully updated lead status to Confirmed
+          this.notify.open({
+            type: 'success',
+            title: 'تم التعيين',
+            description: 'تم تعيين العميل للمحاسب',
+          });
+          // Reload leads to reflect changes
+          const username = this._authService.getUsername();
+          if (username) {
+            this.loadLeadsData(username);
+          }
+        }
+      },
+      error: (error) => {
+        console.error('Error updating lead status to Confirmed:', error);
+        // Still show success for assign to account, but warn about status update
+        this.notify.open({
+          type: 'error',
+          title: 'تم التعيين',
+          description:
+            'تم تعيين العميل للمحاسب، لكن تعذر تحديث الحالة إلى Confirmed',
+        });
+        // Reload leads anyway
+        const username = this._authService.getUsername();
+        if (username) {
+          this.loadLeadsData(username);
+        }
       },
     });
   }

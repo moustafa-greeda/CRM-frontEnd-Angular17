@@ -148,7 +148,7 @@ export class PaymentDialogComponent implements OnInit {
     // Add required validators based on payment method
     if (paymentMethodEnum === PaymentMethod.Cash) {
       // Cash fields required
-      cashReceiptNumberControl?.setValidators([Validators.required]);
+      // cashReceiptNumberControl?.setValidators([Validators.required]);
       // paidAmount not required for Cash (will be set to totalAmount automatically)
       paidAmountControl?.setValidators([Validators.min(0)]);
     } else if (paymentMethodEnum === PaymentMethod.BankTransfer) {

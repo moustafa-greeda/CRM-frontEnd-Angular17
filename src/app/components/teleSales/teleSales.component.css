@@ -1,5 +1,7 @@
 .table-container {
   margin-top: 30px;
+  width: 100%;
+  overflow-x: auto;
 }
 
 /* Override stats-grid to show 4 cards per row (25% each) */
@@ -75,16 +77,240 @@
   animation: enhancedFadeUp 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s both !important;
 }
 
+/* Top Salespeople Section Responsive */
+.top-salespeople-section {
+  margin-top: 30px;
+  padding: 20px;
+}
+
+.section-title {
+  font-size: 24px;
+  margin-bottom: 25px;
+}
+
+.salespeople-list {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.salesperson-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.profile-section {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  flex: 1;
+  min-width: 200px;
+}
+
+.profile-image-wrapper {
+  width: 80px;
+  height: 80px;
+  flex-shrink: 0;
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.salesperson-name {
+  font-size: 20px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+  padding: 10px 20px;
+  min-width: 150px;
+}
+
+.stat-label {
+  font-size: 18px;
+}
+
+.stat-value {
+  font-size: 16px;
+  text-align: center;
+}
+
 /* Responsive: 2 cards per row on tablets */
 @media (max-width: 1024px) {
   ::ng-deep .stats-grid {
-    grid-template-columns: repeat(2, 1fr) !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+  }
+
+  .section-title {
+    font-size: 22px;
+  }
+
+  .salesperson-content {
+    gap: 15px;
+  }
+
+  .profile-section {
+    gap: 12px;
+  }
+
+  .profile-image-wrapper {
+    width: 70px;
+    height: 70px;
+  }
+
+  .salesperson-name {
+    font-size: 18px;
+  }
+
+  .stat-item {
+    min-width: 120px;
+    padding: 8px 15px;
   }
 }
 
-/* Responsive: 1 card per row on mobile */
+/* Responsive: Mobile devices */
 @media (max-width: 768px) {
   ::ng-deep .stats-grid {
-    grid-template-columns: 1fr !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+
+  .table-container {
+    margin-top: 20px;
+    padding: 0 10px;
+  }
+
+  .top-salespeople-section {
+    margin-top: 20px;
+    padding: 15px;
+  }
+
+  .section-title {
+    font-size: 20px;
+    margin-bottom: 20px;
+    text-align: center;
+  }
+
+  .salespeople-list {
+    gap: 12px;
+  }
+
+  .salesperson-card {
+    padding: 10px;
+  }
+
+  .salesperson-content {
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .profile-section {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+  }
+
+  .profile-image-wrapper {
+    width: 60px;
+    height: 60px;
+  }
+
+  .salesperson-name {
+    font-size: 16px;
+    text-align: center;
+    width: 100%;
+  }
+
+  .stat-item {
+    width: 100%;
+    min-width: 100%;
+    padding: 10px;
+  }
+
+  .stat-label {
+    font-size: 16px;
+  }
+
+  .stat-value {
+    font-size: 14px;
+  }
+
+  .medal-badge {
+    width: 30px;
+    height: 30px;
+  }
+
+  .medal-number {
+    font-size: 9px;
+  }
+}
+
+/* Responsive: Small mobile devices */
+@media (max-width: 480px) {
+  .top-salespeople-section {
+    padding: 10px;
+  }
+
+  .section-title {
+    font-size: 18px;
+    margin-bottom: 15px;
+  }
+
+  .salesperson-card {
+    padding: 8px;
+  }
+
+  .profile-image-wrapper {
+    width: 50px;
+    height: 50px;
+  }
+
+  .salesperson-name {
+    font-size: 14px;
+  }
+
+  .stat-label {
+    font-size: 14px;
+  }
+
+  .stat-value {
+    font-size: 12px;
+  }
+
+  .medal-badge {
+    width: 25px;
+    height: 25px;
+  }
+
+  .medal-number {
+    font-size: 8px;
+  }
+}
+
+/* Responsive: Dashboard info padding */
+@media (max-width: 768px) {
+  .dashboard-info {
+    padding: 15px 10px;
+  }
+}
+
+@media (max-width: 480px) {
+  .dashboard-info {
+    padding: 10px 5px;
   }
 }

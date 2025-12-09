@@ -278,7 +278,7 @@ input[type="date"].form-input::-webkit-datetime-edit-year-field:focus {
 
 .form-input::placeholder,
 .form-textarea::placeholder {
-  color: #999;
+  color: #fff;
 }
 
 .form-textarea {

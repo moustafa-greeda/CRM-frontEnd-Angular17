@@ -6,17 +6,7 @@
   background-size: cover;
   background-image: none;
   background-repeat: no-repeat;
-  /* background-color: #11181f !important;*/
 }
-/* .dashboard-info::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 100%;
-  filter: blur(250px);
-} */
 
 ::ng-deep .stat-card:nth-child(3) p,
 ::ng-deep .stat-card:nth-child(4) p {
@@ -211,10 +201,83 @@
 }
 
 /* Responsive Design */
+@media (max-width: 1024px) {
+  .top-salespeople-section {
+    padding: 15px;
+  }
+
+  .section-title {
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+
+  .salesperson-content {
+    gap: 15px;
+  }
+
+  .profile-section {
+    gap: 15px;
+  }
+
+  .profile-image-wrapper {
+    width: 70px;
+    height: 70px;
+  }
+
+  .profile-image {
+    width: 70px;
+    height: 70px;
+  }
+
+  .salesperson-name {
+    font-size: 18px;
+  }
+
+  .stat-item {
+    padding: 8px 15px;
+  }
+
+  .stat-label {
+    font-size: 16px;
+  }
+
+  .stat-value {
+    font-size: 14px;
+  }
+}
+
 @media (max-width: 768px) {
+  .top-salespeople-section {
+    padding: 15px 10px;
+    margin-top: 20px;
+  }
+
+  .section-title {
+    font-size: 20px;
+    margin-bottom: 15px;
+    text-align: center;
+  }
+
+  .salespeople-list {
+    gap: 12px;
+  }
+
+  .salesperson-card {
+    padding: 10px;
+  }
+
   .salesperson-content {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    gap: 15px;
+    text-align: center;
+  }
+
+  .profile-section {
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
   }
 
   .sales-stats {
@@ -222,13 +285,90 @@
     max-width: 100%;
   }
 
+  .profile-image-wrapper {
+    width: 60px;
+    height: 60px;
+  }
+
+  .profile-image {
+    width: 60px;
+    height: 60px;
+  }
+
+  .salesperson-name {
+    font-size: 16px;
+    text-align: center;
+  }
+
   .stat-item {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     gap: 5px;
+    width: 100%;
+    padding: 10px;
+  }
+
+  .stat-label {
+    font-size: 16px;
   }
 
   .stat-value {
-    text-align: right;
+    text-align: center;
+    font-size: 14px;
+  }
+
+  .medal-badge {
+    width: 30px;
+    height: 30px;
+  }
+
+  .medal-number {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 480px) {
+  .top-salespeople-section {
+    padding: 10px 5px;
+  }
+
+  .section-title {
+    font-size: 18px;
+    margin-bottom: 12px;
+  }
+
+  .salesperson-card {
+    padding: 8px;
+  }
+
+  .profile-image-wrapper {
+    width: 50px;
+    height: 50px;
+  }
+
+  .profile-image {
+    width: 50px;
+    height: 50px;
+  }
+
+  .salesperson-name {
+    font-size: 14px;
+  }
+
+  .stat-label {
+    font-size: 14px;
+  }
+
+  .stat-value {
+    font-size: 12px;
+  }
+
+  .medal-badge {
+    width: 25px;
+    height: 25px;
+  }
+
+  .medal-number {
+    font-size: 8px;
   }
 }

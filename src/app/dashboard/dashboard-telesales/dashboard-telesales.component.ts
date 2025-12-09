@@ -1300,18 +1300,18 @@ export class DashboardTelesalesComponent implements OnInit {
     }
 
     // Get assignLeadId from lead data or use current user's ID as fallback
-    const assignLeadId =
-      lead.assignedLeadId ||
-      lead.assignedToId ||
-      lead.employeeId ||
-      lead.assignedEmployeeId ||
-      this._authService.getEmployeeId() ||
-      1; // Final fallback
+    // const assignLeadId =
+    //   lead.assignedLeadId ||
+    //   lead.assignedToId ||
+    //   lead.employeeId ||
+    //   lead.assignedEmployeeId ||
+    //   this._authService.getEmployeeId(); // Final fallback
 
     // Build payload with required fields
     const payload: any = {
       leadId: leadId,
-      assignLeadId: assignLeadId,
+      // assignLeadId: assignLeadId,
+      assignLeadId: leadId,
       leadStatus: newStatus,
     };
 
@@ -1322,7 +1322,8 @@ export class DashboardTelesalesComponent implements OnInit {
         // Check if response indicates success
         if (response && response.succeeded === true) {
           lead.leadStatus = newStatus; // Update optimistically
-          lead.assignLeadId = assignLeadId; // Update assignLeadId
+          // lead.assignLeadId = assignLeadId;
+          lead.assignLeadId = leadId;
           this.editingLeadId = null;
           this.selectedLeadForEdit = null;
           delete lead._draftLeadStatus;

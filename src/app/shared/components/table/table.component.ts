@@ -53,6 +53,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
   @Input() showMeeting: boolean = false;
   @Input() showFollowUp: boolean = false;
   @Input() addButton: boolean = false;
+  @Input() showAssignToAccountant: boolean = false;
   // Actions display mode: 'inline' buttons or single dropdown menu
   @Input() actionDisplayMode: 'inline' | 'dropdown' = 'inline';
   // Custom action labels for dropdown menu
@@ -149,6 +150,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
     packet: TablePacketOption | null;
   }>();
   @Output() addButtonClick = new EventEmitter<any>();
+  @Output() assignToAccountant = new EventEmitter<any>();
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   // Dropdown state for per-row action menu
@@ -360,6 +362,13 @@ export class TableComponent implements AfterViewInit, OnDestroy {
       event.stopPropagation();
     }
     this.followUp.emit(row);
+  }
+
+  onAssignToAccountant(row: any, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.assignToAccountant.emit(row);
   }
 
   dropdownPosition: { top: number; left: number } = { top: 0, left: 0 };

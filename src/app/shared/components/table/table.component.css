@@ -819,6 +819,24 @@
   border: none !important;
 }
 
+.assign-accountant-btn {
+  border-radius: 6px;
+  color: #10b981;
+  border: 1.5px solid #10b981;
+  background: rgba(16, 185, 129, 0.1);
+}
+
+.assign-accountant-btn:hover {
+  color: var(--white-color);
+  background: #10b981;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+}
+
+.dropdown-menu .assign-accountant-btn:hover {
+  border: none !important;
+}
+
 .follow-up-btn {
   color: var(--secondary-color);
   border-radius: 6px;
@@ -1006,9 +1024,12 @@
 /* ========================== No Data Styling ====================== */
 .runner {
   position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   width: 200px;
   height: auto;
-  animation: randomMove 6s ease-in-out infinite;
+  animation: randomMove 10s ease-in-out infinite;
   object-fit: contain;
   z-index: 1;
   pointer-events: none;
@@ -1018,40 +1039,40 @@
 @keyframes randomMove {
   0% {
     right: 0%;
-    transform: scale(1.5) scaleX(1) translateY(0px);
+    transform: scaleX(1) translateY(0px);
   }
   12.5% {
     right: 12.5%;
-    transform: scale(1.5) scaleX(1) translateY(-3px);
+    transform: scaleX(1) translateY(-3px);
   }
   25% {
     right: 25%;
-    transform: scale(1.5) scaleX(1) translateY(0px);
+    transform: scaleX(1) translateY(0px);
   }
   37.5% {
     right: 37.5%;
-    transform: scale(1.5) scaleX(1) translateY(-3px);
+    transform: scaleX(1) translateY(-3px);
   }
   50% {
     right: 50%;
-    transform: scale(1.5) scaleX(1) translateY(0px);
+    transform: translateX(0px);
   }
-  62.5% {
+  /* 62.5% {
     right: 62.5%;
-    transform: scale(1.5) scaleX(1) translateY(-3px);
+    transform: scaleX(1) translateX(-3px);
   }
   75% {
     right: 75%;
-    transform: scale(1.5) scaleX(1) translateY(0px);
-  }
-  87.5% {
+    transform: scaleX(1) translateY(0px);
+  } */
+  /* 87.5% {
     right: 87.5%;
     transform: scale(1.5) scaleX(1) translateY(-3px);
-  }
+  } 
   100% {
     right: 100%;
     transform: scale(1.5) scaleX(1) translateY(0px);
-  }
+  } */
 }
 
 /*  */

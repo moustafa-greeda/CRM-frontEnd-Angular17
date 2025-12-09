@@ -295,6 +295,19 @@
                             <i class="bi bi-camera-video"></i>
                           </button>
                           <button
+                            class="action-btn assign-accountant-btn"
+                            *ngIf="showAssignToAccountant"
+                            (click)="
+                              onAssignToAccountant(row, $event);
+                              openDropdownRowIndex = null
+                            "
+                            title="تعيين للمحاسب"
+                            [attr.aria-label]="'تعيين للمحاسب'"
+                            style="margin: 4px 2px"
+                          >
+                            <i class="bi bi-person-check"></i>
+                          </button>
+                          <button
                             class="action-btn view-btn"
                             *ngIf="showFollowUp"
                             (click)="
@@ -426,6 +439,17 @@
                               >
                                 <i class="bi bi-camera-video"></i>
                                 <span>{{ getActionLabel("meeting") }}</span>
+                              </button>
+                              <button
+                                *ngIf="showAssignToAccountant"
+                                class="action-btn assign-accountant-btn"
+                                (click)="
+                                  onAssignToAccountant(row);
+                                  openDropdownRowIndex = null
+                                "
+                              >
+                                <i class="bi bi-person-check"></i>
+                                <span>تعيين للمحاسب</span>
                               </button>
                             </div>
                           </div>

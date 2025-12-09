@@ -16,9 +16,7 @@
   padding: 20px 24px;
   border-bottom: 1px solid var(--border-color);
   border-top: 1px solid var(--border-color);
-  /* position: sticky; */
   top: 0;
-  /* background: var(--bg-dark); */
   z-index: 10;
 }
 
@@ -179,7 +177,7 @@ select.form-input:focus {
 
 .form-input.error,
 select.form-input.error {
-  border-color: #ef4444;
+  border-color: var(--bg-error);
 }
 
 .form-textarea {
@@ -191,7 +189,7 @@ select.form-input.error {
 .hint {
   display: block !important;
   font-size: 12px;
-  color: #ef4444 !important;
+  color: var(--bg-error) !important;
   margin-top: 4px;
   font-weight: 400;
   visibility: visible !important;
@@ -200,19 +198,19 @@ select.form-input.error {
 
 /* Dropdown Error Styling */
 .dropdown-error ::ng-deep .custom-dropdown .dropdown-trigger {
-  border-color: #ef4444 !important;
+  border-color: var(--bg-error) !important;
   border-width: 1px !important;
 }
 
 .dropdown-error ::ng-deep .custom-dropdown .dropdown-trigger:focus,
 .dropdown-error ::ng-deep .custom-dropdown .dropdown-trigger:hover {
-  border-color: #ef4444 !important;
+  border-color: var(--bg-error) !important;
   box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.2) !important;
 }
 
 /* Global style for dropdown error (if ng-deep doesn't work) */
 :host ::ng-deep .dropdown-error .custom-dropdown .dropdown-trigger {
-  border-color: #ef4444 !important;
+  border-color: var(--bg-error) !important;
 }
 
 /* Services Table */
@@ -246,11 +244,7 @@ select.form-input.error {
   text-align: center;
   font-size: 17px;
   color: rgba(255, 255, 255, 0.9);
-  border-bottom: 1px solid var(--border-color, #2a3441);
-}
-
-.services-table tbody tr:last-child td {
-  border-bottom: none;
+  /* border-bottom: 1px solid var(--border-color, #2a3441); */
 }
 
 .services-table tbody tr:hover {
@@ -269,8 +263,22 @@ select.form-input.error {
 
 .table-input:focus {
   outline: none;
-  border-color: #0ea5e9;
+  border-color: var(--bg-input-focus);
   background: rgba(255, 255, 255, 0.08);
+}
+
+.table-input.error {
+  border-color: #ef4444 !important;
+  background: rgba(239, 68, 68, 0.1) !important;
+}
+
+.service-error-hint {
+  display: block;
+  font-size: 11px;
+  color: #ef4444;
+  margin-top: 2px;
+  font-weight: 400;
+  text-align: right;
 }
 
 .actions-cell {

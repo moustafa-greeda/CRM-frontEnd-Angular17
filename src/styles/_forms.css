@@ -69,7 +69,38 @@ select {
 input:invalid,
 textarea:invalid,
 select:invalid {
-  border-color: var(--input-error);
+  border-color: var(--bg-error, #ff4444);
+}
+
+/* ========== Error Class ========== */
+input.error,
+textarea.error,
+select.error,
+input.form-input.error,
+textarea.form-textarea.error,
+select.form-select.error,
+.form-input.error,
+.form-textarea.error,
+.form-select.error {
+  border-color: var(--bg-error, #ff4444) !important;
+  border-width: 2px !important;
+  box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.1) !important;
+}
+
+/* More specific selectors for form inputs with error class */
+input[type="text"].error,
+input[type="email"].error,
+input[type="password"].error,
+input[type="number"].error,
+input[type="tel"].error,
+input[type="url"].error,
+input[type="date"].error,
+input[type="text"].form-input.error,
+input[type="number"].form-input.error,
+input[type="date"].form-input.error {
+  border-color: var(--bg-error, #ff4444) !important;
+  border-width: 2px !important;
+  box-shadow: 0 0 0 2px rgba(255, 68, 68, 0.1) !important;
 }
 
 input:disabled,

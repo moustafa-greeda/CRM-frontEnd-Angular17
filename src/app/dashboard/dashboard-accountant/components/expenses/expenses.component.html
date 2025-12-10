@@ -22,9 +22,20 @@
             formControlName="expenseName"
             placeholder="ادخل وصف المصروف"
             class="form-input"
-            [class.error]=""
+            [class.error]="
+              expensesForm.get('expenseName')?.invalid &&
+              expensesForm.get('expenseName')?.touched
+            "
           />
-          <small class="error-message" *ngIf=""> وصف المصروف مطلوب </small>
+          <small
+            class="error-message"
+            *ngIf="
+              expensesForm.get('expenseName')?.invalid &&
+              expensesForm.get('expenseName')?.touched
+            "
+          >
+            وصف المصروف مطلوب
+          </small>
         </div>
         <!-- amount -->
         <div class="form-field">
@@ -34,9 +45,20 @@
             formControlName="amount"
             placeholder="ادخل المبلغ المصروف"
             class="form-input"
-            [class.error]=""
+            [class.error]="
+              expensesForm.get('amount')?.invalid &&
+              expensesForm.get('amount')?.touched
+            "
           />
-          <small class="error-message" *ngIf=""> المبلغ المصروف مطلوب </small>
+          <small
+            class="error-message"
+            *ngIf="
+              expensesForm.get('amount')?.invalid &&
+              expensesForm.get('amount')?.touched
+            "
+          >
+            المبلغ المصروف مطلوب
+          </small>
         </div>
         <!-- date -->
         <div class="form-field">
@@ -46,8 +68,20 @@
             formControlName="expenseDate"
             placeholder="ادخل تاريخ الصرف"
             class="form-input"
+            [class.error]="
+              expensesForm.get('expenseDate')?.invalid &&
+              expensesForm.get('expenseDate')?.touched
+            "
           />
-          <small class="error-message" *ngIf=""> تاريخ الصرف مطلوب </small>
+          <small
+            class="error-message"
+            *ngIf="
+              expensesForm.get('expenseDate')?.invalid &&
+              expensesForm.get('expenseDate')?.touched
+            "
+          >
+            تاريخ الصرف مطلوب
+          </small>
         </div>
       </div>
       <!-- button submit -->
@@ -124,6 +158,22 @@
       [currentPage]="currentPage"
       [totalCount]="totalCount"
     ></app-table>
+
+    <!-- Total Amount Footer -->
+    <div class="table-footer" *ngIf="expensesData.length > 0">
+      <table class="footer-table">
+        <tbody>
+          <tr class="total-row">
+            <td></td>
+            <td class="total-label">المبلغ الإجمالي:</td>
+            <td class="total-value">
+              {{ getTotalAmount() | number : "1.2-2" }}
+            </td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
 

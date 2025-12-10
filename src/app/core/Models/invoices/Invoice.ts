@@ -107,3 +107,23 @@ export interface IGetAllExpenses {
   amount: string;
   totalAmount: string;
 }
+
+// ------------------------ Interface for GetAllExpensesData-------------------------------------
+export interface IGetAllExpensesData {
+  totalCount: number;
+  items: IGetAllExpenses[];
+}
+// ----------------------------------- interface for search expenses -------------------------------------
+export interface ExpensesQueryParams {
+  expenseName?: string;
+  fromDate?: string;
+  toDate?: string;
+  pageIndex?: number;
+  pageSize?: number;
+}
+// ------------------------ Interface for Add Expenses ------------------------------
+export interface IAddExpenses {
+  expenseName: string;
+  expenseDate: string;
+  amount: number;
+}

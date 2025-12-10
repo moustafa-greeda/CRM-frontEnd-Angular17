@@ -1,14 +1,19 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { ExpensesService } from './expenses.service';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { IGetAllExpenses } from './../../../../core/Models/invoices/Invoice';
+import {
+  ExpensesQueryParams,
+  IAddExpenses,
+  IGetAllExpenses,
+} from './../../../../core/Models/invoices/Invoice';
+import { NotifyDialogService } from '../../../../shared/components/notify-dialog-host/notify-dialog.service';
 
 @Component({
   selector: 'app-expenses',
   templateUrl: './expenses.component.html',
   styleUrl: './expenses.component.css',
 })
-export class ExpensesComponent {
+export class ExpensesComponent implements OnInit {
   pageTitle = 'المصروفات';
   breadcrumb = [
     {
@@ -51,7 +56,8 @@ export class ExpensesComponent {
 
   constructor(
     private _expenseService: ExpensesService,
-    private _fb: FormBuilder
+    private _fb: FormBuilder,
+    private _notify: NotifyDialogService
   ) {}
   ngOnInit(): void {
     // call initialize form
@@ -60,8 +66,8 @@ export class ExpensesComponent {
     this.getAllExpenses();
   }
   // ================================== get all expenses ======================================
-  getAllExpenses(): void {
-    this._expenseService.getExpenses().subscribe({
+  getAllExpenses(queryParams?: ExpensesQueryParams): void {
+    this._expenseService.getExpenses(queryParams).subscribe({
       next: (res) => {
         if (res.succeeded && res.data) {
           this.expensesData = res.data.items;
@@ -78,33 +84,103 @@ export class ExpensesComponent {
       },
     });
   }
-  //===================================== form builder ======================================
+  //===================================== form add expenses builder ======================================
   private initializeForm(): void {
     this.expensesForm = this._fb.group({
       expenseName: ['', [Validators.required]],
       amount: ['', [Validators.required]],
       expenseDate: ['', [Validators.required]],
     });
-
+    // ----------------------------------- search form builder -------------------------------------
     this.searchForm = this._fb.group({
+      expenseName: [''],
       datefrom: [''],
       dateTo: [''],
     });
   }
   // ================================== submit form ======================================
   onExpensesSubmit(): void {
+    // Mark all fields as touched to show validation errors
+    if (this.expensesForm.invalid) {
+      Object.keys(this.expensesForm.controls).forEach((key) => {
+        this.expensesForm.get(key)?.markAsTouched();
+      });
+      return;
+    }
+
     if (this.expensesForm.valid) {
-      console.log(this.expensesForm.value);
+      const formValue = this.expensesForm.value;
+      const data: IAddExpenses = {
+        expenseName: formValue.expenseName,
+        amount: Number(formValue.amount),
+        expenseDate: formValue.expenseDate,
+      };
+
+      this._expenseService.addExpenses(data).subscribe({
+        next: (res) => {
+          if (res.succeeded) {
+            this._notify.success({
+              title: 'تم الحفظ',
+              description: 'تم إضافة المصروف بنجاح',
+            });
+            // Reset form after successful submission
+            this.expensesForm.reset();
+            // Reload expenses list
+            this.getAllExpenses();
+          } else {
+            this._notify.error({
+              title: 'خطأ',
+              description: res.message || 'حدث خطأ أثناء إضافة المصروف',
+            });
+          }
+        },
+        error: (err) => {
+          console.error('Error adding expenses:', err);
+          this._notify.error({
+            title: 'خطأ',
+            description: err.error?.message || 'حدث خطأ أثناء إضافة المصروف',
+          });
+        },
+      });
     }
   }
   // ================================== search form ======================================
   onSearch(event: any): void {
-    console.log(event);
+    event.preventDefault();
+    this.onSearchSubmit();
   }
   // ================================== submit search form ======================================
   onSearchSubmit(): void {
-    if (this.searchForm.valid) {
-      console.log(this.searchForm.value);
+    const formValue = this.searchForm.value;
+    const queryParams: ExpensesQueryParams = {
+      pageIndex: 1,
+      pageSize: this.pageSize,
+    };
+
+    // Add search parameters if they have values
+    if (formValue.expenseName && formValue.expenseName.trim()) {
+      queryParams.expenseName = formValue.expenseName.trim();
     }
+
+    if (formValue.datefrom) {
+      queryParams.fromDate = formValue.datefrom;
+    }
+
+    if (formValue.dateTo) {
+      queryParams.toDate = formValue.dateTo;
+    }
+
+    this.currentPage = 1;
+    this.getAllExpenses(queryParams);
+  }
+
+  // ================================== calculate total amount ======================================
+  getTotalAmount(): number {
+    return this.expensesData.reduce((total, expense) => {
+      const amount = parseFloat(
+        expense.amount?.toString().replace(/,/g, '') || '0'
+      );
+      return total + (isNaN(amount) ? 0 : amount);
+    }, 0);
   }
 }

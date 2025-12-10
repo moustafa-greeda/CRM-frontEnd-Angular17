@@ -2,7 +2,7 @@
 .table-container {
   position: relative;
   margin: 0px auto;
-  padding: 50px 35px;
+  padding: 30px 18px;
   width: 100%;
   min-width: 800px;
   min-height: 50vh;
@@ -10,9 +10,6 @@
   display: flex;
   flex-direction: column;
   overflow-x: auto;
-  /* overflow-y: visible; */
-  border-radius: 20px;
-  /* border: 1px solid var(--border-color); */
   -webkit-overflow-scrolling: touch;
   animation: tableFadeIn 1.5s ease-out forwards;
 }
@@ -29,7 +26,7 @@
   height: 100%;
   z-index: 0;
   pointer-events: none;
-  animation: tableFadeIn 1.5s ease-out forwards;
+  animation: tableFadeInFrame 1.5s ease-out forwards;
 }
 
 .table-frame-left {
@@ -49,7 +46,6 @@
   width: 100%;
   min-width: 800px; /* Minimum width for the table */
   border-collapse: collapse;
-  border-radius: 12px;
   table-layout: fixed;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
   transition: all 0.5s ease;
@@ -60,11 +56,8 @@
 .table-scroll-wrapper {
   flex: 1;
   overflow-y: auto;
-  overflow-x: auto; /* Show horizontal scrollbar when table is wider than container */
+  overflow-x: auto;
   max-height: calc(80vh - 60px);
-  border-radius: 45px;
-  /* border-top-left-radius: 45px;
-  border-top-right-radius: 45px; */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3) !important;
   background: var(--bg-light);
   position: relative;
@@ -73,6 +66,25 @@
   -webkit-overflow-scrolling: touch;
   display: flex;
   flex-direction: column;
+  border-radius: 45px;
+}
+.table-scroll-wrapper::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  padding: 2px;
+  background: linear-gradient(
+    90deg,
+    var(--border-color) 0%,
+    var(--secondary-color) 40%,
+    #002b33 70%,
+    #008299 100%
+  );
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask-composite: exclude;
+  pointer-events: none;
 }
 
 /* When table has no data, make it take full height */

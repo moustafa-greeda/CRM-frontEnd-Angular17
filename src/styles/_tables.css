@@ -19,7 +19,7 @@
 }
 
 .enhanced-table th {
-  padding: 5px;
+  padding: 20px 5px;
   color: var(--white-color);
   font-size: 12x;
   font-weight: bold;

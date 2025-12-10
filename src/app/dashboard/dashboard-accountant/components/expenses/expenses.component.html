@@ -1,0 +1,132 @@
+<div class="parent-container">
+  <!---------------------- page header ---------------------------------->
+  <app-page-header
+    [title]="pageTitle"
+    [breadcrumb]="breadcrumb"
+  ></app-page-header>
+
+  <!--------------------- form add expenses ------------------------------>
+  <div class="add-expenses-container border-gradient">
+    <h3>اضافة مصروف جديد</h3>
+    <form
+      [formGroup]="expensesForm"
+      (ngSubmit)="onExpensesSubmit()"
+      class="form-container"
+    >
+      <div class="form-grid">
+        <!-- expense name -->
+        <div class="form-field">
+          <label>وصف المصروفات</label>
+          <input
+            type="text"
+            formControlName="expenseName"
+            placeholder="ادخل وصف المصروف"
+            class="form-input"
+            [class.error]=""
+          />
+          <small class="error-message" *ngIf=""> وصف المصروف مطلوب </small>
+        </div>
+        <!-- amount -->
+        <div class="form-field">
+          <label>المبلغ</label>
+          <input
+            type="number"
+            formControlName="amount"
+            placeholder="ادخل المبلغ المصروف"
+            class="form-input"
+            [class.error]=""
+          />
+          <small class="error-message" *ngIf=""> المبلغ المصروف مطلوب </small>
+        </div>
+        <!-- date -->
+        <div class="form-field">
+          <label>التاريخ</label>
+          <input
+            type="date"
+            formControlName="expenseDate"
+            placeholder="ادخل تاريخ الصرف"
+            class="form-input"
+          />
+          <small class="error-message" *ngIf=""> تاريخ الصرف مطلوب </small>
+        </div>
+      </div>
+      <!-- button submit -->
+      <div class="parent-button">
+        <button type="submit" class="btn btn-primary">حفظ المصروف</button>
+      </div>
+    </form>
+  </div>
+  <!---------------------------- search container ---------------------------------->
+  <div class="add-expenses-container border-gradient mt-md">
+    <h3>بحث</h3>
+    <form
+      [formGroup]="searchForm"
+      (ngSubmit)="onSearchSubmit()"
+      class="form-container"
+    >
+      <div class="form-grid-search">
+        <div class="form-field">
+          <label>ابحث عن المصروفات</label>
+          <input
+            type="text"
+            class="search-input"
+            formControlName="expenseName"
+            placeholder="ابحث عن المصروفات"
+          />
+        </div>
+        <div class="form-field">
+          <label>من</label>
+          <input
+            type="date"
+            formControlName="datefrom"
+            placeholder="اختر تاريخ البداية"
+            class="form-input"
+          />
+        </div>
+        <div class="form-field">
+          <label>الي</label>
+          <input
+            type="date"
+            formControlName="dateTo"
+            placeholder="اختر تاريخ النهاية"
+            class="form-input"
+          />
+        </div>
+        <div class="parent-button">
+          <!-- button search -->
+          <button
+            class="btn btn-primary search-button"
+            (click)="onSearch($event)"
+          >
+            <i class="bi bi-search"></i>
+            بحث
+          </button>
+        </div>
+      </div>
+    </form>
+  </div>
+  <!---------------------------- table ---------------------------------->
+  <div class="table-container mt-md">
+    <app-table
+      [data]="expensesData"
+      [columns]="expensesColumns"
+      [showDataTable]="true"
+      [hasNoData]="expensesData.length === 0"
+      [pageSize]="pageSize"
+      [showIndex]="true"
+      [showAdd]="false"
+      [showEdit]="false"
+      [actionTitles]="{
+        view: 'عرض تفاصيل المصروفات',
+        add: 'إضافة مصروفات جديدة',
+        edit: 'تعديل بيانات المصروفات',
+      }"
+      [currentPage]="currentPage"
+      [totalCount]="totalCount"
+    ></app-table>
+  </div>
+</div>
+
+<!-- (addButtonClick)="onAddClick($event)"
+      (edit)="onEditExpenses($event)"
+      (view)="onViewExpenses($event)" -->

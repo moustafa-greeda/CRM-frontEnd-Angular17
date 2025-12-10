@@ -63,8 +63,6 @@ select {
 [dir="rtl"] select {
   background-position: left var(--spacing-sm) center;
   text-align: center;
-  /* padding-right: var(--spacing-md); */
-  /* padding-left: calc(var(--spacing-md) + 20px); */
 }
 
 /* ========== Input States ========== */

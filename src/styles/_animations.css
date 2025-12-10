@@ -117,3 +117,14 @@
     transform: perspective(600px) translateX(0);
   }
 }
+
+@keyframes tableFadeInFrame {
+  0% {
+    opacity: 0;
+    transform: perspective(600px) translateY(515px);
+  }
+  100% {
+    opacity: 1;
+    transform: perspective(600px) translateX(0);
+  }
+}

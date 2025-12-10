@@ -229,7 +229,8 @@
 }
 
 .btn-primary {
-  background: var(--button-color);
+  /* background: var(--button-color) !important; */
+  background: linear-gradient(90deg, #2a8899 0%, #5db386 100%) !important;
   color: #11181f;
 }
 

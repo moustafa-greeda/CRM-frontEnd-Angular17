@@ -19,6 +19,7 @@ import { InvoiceWorkOrdersDialogComponent } from './components/invoice-work-orde
 import { InvoicesComponent } from './components/invoices/invoices.component';
 import { PaymentDialogComponent } from './components/invoices/payment-dialog/payment-dialog.component';
 import { PaymentsComponent } from './components/payments/payments.component';
+import { ExpensesComponent } from './components/expenses/expenses.component';
 
 @NgModule({
   declarations: [
@@ -28,6 +29,7 @@ import { PaymentsComponent } from './components/payments/payments.component';
     InvoicesComponent,
     PaymentDialogComponent,
     PaymentsComponent,
+    ExpensesComponent,
   ],
   imports: [
     CommonModule,

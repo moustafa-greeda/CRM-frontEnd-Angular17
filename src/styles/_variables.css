@@ -36,7 +36,7 @@
   --bg-overlay: rgba(0, 0, 0, 0.35);
 
   /* button */
-  --button-color: #2A8899;
+  --button-color: linear-gradient(90deg, #2A8899 0%, #5DB386 100%);;
   /* --white-color: #fff; */
   --white-color: #f2f2f2;
   --link-color: #fff;

@@ -4,6 +4,7 @@ import { DashboardAccountantComponent } from './dashboard-accountant.component';
 import { InvoiceWorkOrdersComponent } from './components/invoice-work-orders/InvoiceWorkOrders.component';
 import { InvoicesComponent } from './components/invoices/invoices.component';
 import { PaymentsComponent } from './components/payments/payments.component';
+import { ExpensesComponent } from './components/expenses/expenses.component';
 
 const routes: Routes = [
   {
@@ -21,6 +22,10 @@ const routes: Routes = [
   {
     path: 'payments',
     component: PaymentsComponent,
+  },
+  {
+    path: 'expenses',
+    component: ExpensesComponent,
   },
 ];
 

@@ -16,4 +16,9 @@ export const AccountantMenu: SidebarItem[] = [
   //   icon: 'bi bi-cash-coin',
   //   route: '/dashboard/accountant/payments',
   // },
+  {
+    title: 'المصروفات',
+    icon: 'bi bi-credit-card',
+    route: '/dashboard/accountant/expenses',
+  },
 ];

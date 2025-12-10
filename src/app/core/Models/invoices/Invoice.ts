@@ -98,3 +98,12 @@ export interface IPayment {
   // General
   totalAmount: number;
 }
+
+// ------------------------ Interface for Get All Expenses Response ------------------------------
+export interface IGetAllExpenses {
+  id?: string | number;
+  expenseName: string;
+  expenseDate: number;
+  amount: string;
+  totalAmount: string;
+}

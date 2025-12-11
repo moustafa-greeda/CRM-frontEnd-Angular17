@@ -721,6 +721,13 @@
   font-size: 14px;
 }
 
+.action-btn:disabled,
+.action-btn.disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
 .view-btn {
   border-radius: 6px;
   border: 1.5px solid var(--accent-color);

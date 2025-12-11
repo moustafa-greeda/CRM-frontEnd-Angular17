@@ -213,6 +213,10 @@
                             "
                             [title]="getActionTitle('add')"
                             [attr.aria-label]="getActionTitle('add')"
+                            [disabled]="isAddDisabled && isAddDisabled(row)"
+                            [class.disabled]="
+                              isAddDisabled && isAddDisabled(row)
+                            "
                             style="margin: 4px 2px"
                           >
                             <i class="bi bi-plus"></i>
@@ -223,6 +227,10 @@
                             (click)="onEdit(row); openDropdownRowIndex = null"
                             [title]="getActionTitle('edit')"
                             [attr.aria-label]="getActionTitle('edit')"
+                            [disabled]="isEditDisabled && isEditDisabled(row)"
+                            [class.disabled]="
+                              isEditDisabled && isEditDisabled(row)
+                            "
                             style="margin: 4px 2px"
                           >
                             <i class="bi bi-pencil"></i>
@@ -346,6 +354,10 @@
                                 (click)="
                                   onAddButton(row); openDropdownRowIndex = null
                                 "
+                                [disabled]="isAddDisabled && isAddDisabled(row)"
+                                [class.disabled]="
+                                  isAddDisabled && isAddDisabled(row)
+                                "
                               >
                                 <i class="bi bi-plus"></i>
                                 <span>{{ getActionLabel("add") }}</span>
@@ -375,6 +387,12 @@
                                 class="action-btn edit-btn"
                                 (click)="
                                   onEdit(row); openDropdownRowIndex = null
+                                "
+                                [disabled]="
+                                  isEditDisabled && isEditDisabled(row)
+                                "
+                                [class.disabled]="
+                                  isEditDisabled && isEditDisabled(row)
                                 "
                               >
                                 <i class="bi bi-pencil"></i>

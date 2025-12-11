@@ -6,10 +6,44 @@
   ></app-page-header>
   <!-- search and dropdown -->
   <div class="search-container border-gradient">
-    <app-search-input
-      [placeholder]="searchPlaceholder"
-      (search)="onSearch($event)"
-    ></app-search-input>
+    <form [formGroup]="filterForm" (ngSubmit)="onFilterSubmit()">
+      <div class="form-grid-search">
+        <div class="form-field">
+          <app-dropdown
+            [options]="paymentMethods"
+            [selectedOption]="paymentMethod"
+            [label]="'اختر طريقة الدفع'"
+            (optionSelected)="onPaymentMethodChange($event)"
+          ></app-dropdown>
+        </div>
+        <div class="form-field">
+          <label>من</label>
+          <input
+            type="date"
+            formControlName="fromDate"
+            class="form-input"
+            placeholder="ابحث عن تاريخ بدأ الفاتورة"
+            (change)="onDateFilterChange()"
+          />
+        </div>
+
+        <div class="form-field">
+          <label>الي</label>
+          <input
+            type="date"
+            formControlName="toDate"
+            class="form-input"
+            placeholder="ابحث عن تاريخ نهاية الفاتورة"
+            (change)="onDateFilterChange()"
+          />
+        </div>
+
+        <app-search-input
+          [placeholder]="searchPlaceholder"
+          (search)="onSearch($event)"
+        ></app-search-input>
+      </div>
+    </form>
   </div>
   <!-- content -->
   <div class="content mt-md">
@@ -65,8 +99,12 @@
         [pageSize]="pageSize"
         [currentPage]="currentPage"
         [totalCount]="totalCount"
+        [isAddDisabled]="isPaymentFullyPaid"
+        [isEditDisabled]="isPaymentFullyPaid"
         (view)="onShowTablePayments($event)"
         (edit)="onEditDeal($event)"
+        (pageChange)="onPageChange($event)"
+        (pageSizeChange)="onPageSizeChange($event)"
         [noDataMessage]="noDataMessage"
       ></app-table>
     </div>

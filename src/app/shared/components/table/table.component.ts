@@ -96,6 +96,9 @@ export class TableComponent implements AfterViewInit, OnDestroy {
   // Optional packet selection dropdown
   @Input() packetOptions: TablePacketOption[] = [];
   @Input() defaultPacket: TablePacketOption | null = null;
+  // Optional disabled function for buttons
+  @Input() isAddDisabled?: (row: any) => boolean;
+  @Input() isEditDisabled?: (row: any) => boolean;
 
   // Track last emitted event to prevent duplicates
   private lastEmittedPageIndex: number = -1;

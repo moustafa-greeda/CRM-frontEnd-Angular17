@@ -59,6 +59,7 @@ export interface IGetAllInvoiceDataItem {
   paidAmount: number;
   remaining: number;
   paymentStatus: string;
+  createdAt: string;
 }
 
 // ------------------------ Interface for Add Invoice Response ------------------------------
@@ -118,6 +119,10 @@ export interface ExpensesQueryParams {
   expenseName?: string;
   fromDate?: string;
   toDate?: string;
+  amount?: string | number;
+  dayFilter?: string;
+  weekFilter?: string;
+  monthFilter?: string;
   pageIndex?: number;
   pageSize?: number;
 }

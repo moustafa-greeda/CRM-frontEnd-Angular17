@@ -12,6 +12,8 @@ import {
   PaymentDialogData,
 } from './payment-dialog/payment-dialog.component';
 import { PaymentService } from './payment-dialog/payment.service';
+import { PageEvent } from '@angular/material/paginator';
+import { FormBuilder, FormGroup } from '@angular/forms';
 
 @Component({
   selector: 'app-invoices',
@@ -27,6 +29,13 @@ export class InvoicesComponent {
   searchPlaceholder = 'ابحث عن فاتورة';
   searchValue = '';
   statusValue = '';
+  paymentMethod = '';
+  paymentMethods: string[] = [
+    'جميع الطرق',
+    'نقدي',
+    'تحويل بنكي',
+    'بطاقة ائتمان',
+  ];
 
   invoices: IGetAllInvoiceDataItem[] = [];
   filteredInvoices: IGetAllInvoiceDataItem[] = [];
@@ -45,21 +54,34 @@ export class InvoicesComponent {
   paymentsVisaColumns: any[] = [];
 
   currentInvoiceIdForPayments: number | null = null;
+  filterForm!: FormGroup;
+
   constructor(
     private _invoicesService: InvoicesService,
     private dialog: MatDialog,
-    private _paymentService: PaymentService
+    private _paymentService: PaymentService,
+    private _fb: FormBuilder
   ) {}
   ngOnInit(): void {
     this.initializeTableColumns();
+    this.initializeFilterForm();
     // subscribe to invoices
     this.loadInvoices();
+  }
+
+  // ==================================== Initialize Filter Form ====================================
+  private initializeFilterForm(): void {
+    this.filterForm = this._fb.group({
+      fromDate: [''],
+      toDate: [''],
+    });
   }
   // ============================ Load Invoices ======================
   loadInvoices(
     overrides: Partial<InvoiceQueryParams> = {},
     updateFiltered: boolean = false
   ): void {
+    const formValue = this.filterForm?.value || {};
     const query: InvoiceQueryParams = {
       clientName: this.searchValue || undefined,
       pageIndex: overrides.pageIndex ?? this.currentPage,
@@ -67,17 +89,33 @@ export class InvoicesComponent {
       ...overrides,
     };
 
+    // Add date filters if they have values
+    if (formValue.fromDate || overrides.fromDate) {
+      query.fromDate = formValue.fromDate || overrides.fromDate;
+    }
+    if (formValue.toDate || overrides.toDate) {
+      query.toDate = formValue.toDate || overrides.toDate;
+    }
+
     this._invoicesService.getAllInvoices(query).subscribe((res) => {
       const payload = res?.data as IGetAllInvoiceData | undefined;
       this.invoices = payload?.items ?? [];
 
       if (updateFiltered) {
+        // Update filteredInvoices when filter is active or when explicitly requested
         this.filteredInvoices = [...this.invoices];
         this.totalCount = payload?.totalCount ?? this.filteredInvoices.length;
         this.hasActiveFilter = true;
       } else if (!this.hasActiveFilter) {
+        // When no active filter, show invoices in summary table only
+        // Keep filteredInvoices empty for main table
         this.filteredInvoices = [];
-        this.totalCount = 0;
+        this.totalCount = payload?.totalCount ?? 0;
+      } else {
+        // Update filteredInvoices and totalCount when hasActiveFilter is true
+        // This ensures data is updated when pagination changes
+        this.filteredInvoices = [...this.invoices];
+        this.totalCount = payload?.totalCount ?? this.filteredInvoices.length;
       }
     });
   }
@@ -93,22 +131,23 @@ export class InvoicesComponent {
       { key: 'clientEmail', header: 'البريد الإلكتروني' },
       { key: 'clientPhone', header: 'رقم الهاتف' },
       { key: 'totalprices', header: 'المبلغ الكلي' },
-      { key: 'paymentMethod', header: 'طريقة الدفع' },
+      { key: 'paymentMethodName', header: 'طريقة الدفع' },
       { key: 'paidAmount', header: 'المبلغ المدفوع' },
       { key: 'remaining', header: 'المبلغ المتبقي' },
       { key: 'paymentStatus', header: 'حالة الدفع' },
+      { key: 'createdAt', header: 'تاريخ الإصدار', formatter: 'datetime' },
       { key: 'actions', header: 'الإجراءات' },
     ];
 
     this.paymentsCashColumns = [
-      { key: 'id', header: 'رقم الفاتورة' },
+      { key: 'invoiceId', header: 'رقم الفاتورة' },
       { key: 'amountPaid', header: 'المبلغ المدفوع' },
       { key: 'cashReceiptNumber', header: 'رقم الإيصال' },
       { key: 'cashReceivedBy', header: 'المستلم بواسطة' },
       { key: 'paymentDate', header: 'تاريخ الدفع', formatter: 'datetime' },
     ];
     this.paymentsBankTransferColumns = [
-      { key: 'id', header: 'رقم الفاتورة' },
+      { key: 'invoiceId', header: 'رقم الفاتورة' },
       { key: 'amountPaid', header: 'المبلغ المدفوع' },
       { key: 'accountName', header: 'اسم الحساب' },
       { key: 'accountNumber', header: 'رقم الحساب' },
@@ -117,7 +156,7 @@ export class InvoicesComponent {
       { key: 'paymentDate', header: 'تاريخ الدفع', formatter: 'datetime' },
     ];
     this.paymentsVisaColumns = [
-      { key: 'id', header: 'رقم الفاتورة' },
+      { key: 'invoiceId', header: 'رقم الفاتورة' },
       { key: 'amountPaid', header: 'المبلغ المدفوع' },
       { key: 'visaCardNumber', header: 'رقم البطاقة' },
       { key: 'visaOwnerName', header: 'اسم صاحب البطاقة' },
@@ -165,18 +204,62 @@ export class InvoicesComponent {
 
   clearSummaryFilter(): void {
     this.filteredInvoices = [...this.invoices];
-    this.totalCount = 0;
+    this.totalCount = this.invoices.length;
     this.currentPage = 1;
+    this.hasActiveFilter = false;
+  }
+
+  // ==================================== Page Change Handler ====================================
+  onPageChange(event: PageEvent): void {
+    this.currentPage = event.pageIndex + 1; // MatPaginator is 0-based, we use 1-based
+    this.pageSize = event.pageSize;
+
+    // Reload invoices with new page
+    this.loadInvoices(
+      {
+        pageIndex: this.currentPage,
+        pageSize: this.pageSize,
+      },
+      this.hasActiveFilter
+    );
+  }
+
+  // ==================================== Page Size Change Handler ====================================
+  onPageSizeChange(pageSize: number): void {
+    this.pageSize = pageSize;
+    this.currentPage = 1; // Reset to first page when page size changes
+
+    // Reload invoices with new page size
+    this.loadInvoices(
+      {
+        pageIndex: 1,
+        pageSize: this.pageSize,
+      },
+      this.hasActiveFilter || this.filteredInvoices.length > 0
+    );
   }
 
   // ==================================== Table Action Handlers ====================================
+  // Check if payment is fully paid
+  isPaymentFullyPaid(row: IGetAllInvoiceDataItem): boolean {
+    return row.paymentStatus === 'مدفوعة بالكامل';
+  }
+
   onEditDeal(row: IGetAllInvoiceDataItem): void {
+    // Check if payment is fully paid
+    if (this.isPaymentFullyPaid(row)) {
+      return; // Don't open dialog if fully paid
+    }
     // Use payment dialog for editing invoices
     this.onPayment(row);
   }
 
   // ==================================== Payment Handler ====================================
   onPayment(row: IGetAllInvoiceDataItem): void {
+    // Check if payment is fully paid
+    if (this.isPaymentFullyPaid(row)) {
+      return; // Don't open dialog if fully paid
+    }
     const dialogRef = this.dialog.open(PaymentDialogComponent, {
       width: '90vw',
       maxWidth: '900px',
@@ -247,7 +330,14 @@ export class InvoicesComponent {
   getPaymentByInvoiceId(invoiceId: number): void {
     this._paymentService.getPaymentByInvoiceId(invoiceId).subscribe({
       next: (response) => {
-        this.payments = response?.data ?? [];
+        // Map payments and ensure invoiceId is set
+        this.payments = (response?.data ?? []).map((payment) => {
+          const mappedPayment = {
+            ...payment,
+            invoiceId: payment.invoiceId || invoiceId,
+          };
+          return mappedPayment;
+        });
       },
       error: (error) => {
         console.error('Error loading payments:', error);
@@ -274,22 +364,40 @@ export class InvoicesComponent {
   }
 
   get cashPayments(): IPayment[] {
-    return this.payments.filter(
-      (payment) => this.getPaymentMethodValue(payment) === PaymentMethod.Cash
-    );
+    return this.payments
+      .filter(
+        (payment) => this.getPaymentMethodValue(payment) === PaymentMethod.Cash
+      )
+      .map((payment) => ({
+        ...payment,
+        invoiceId:
+          payment.invoiceId || this.currentInvoiceIdForPayments || undefined,
+      }));
   }
 
   get bankTransferPayments(): IPayment[] {
-    return this.payments.filter(
-      (payment) =>
-        this.getPaymentMethodValue(payment) === PaymentMethod.BankTransfer
-    );
+    return this.payments
+      .filter(
+        (payment) =>
+          this.getPaymentMethodValue(payment) === PaymentMethod.BankTransfer
+      )
+      .map((payment) => ({
+        ...payment,
+        invoiceId:
+          payment.invoiceId || this.currentInvoiceIdForPayments || undefined,
+      }));
   }
 
   get visaPayments(): IPayment[] {
-    return this.payments.filter(
-      (payment) => this.getPaymentMethodValue(payment) === PaymentMethod.Visa
-    );
+    return this.payments
+      .filter(
+        (payment) => this.getPaymentMethodValue(payment) === PaymentMethod.Visa
+      )
+      .map((payment) => ({
+        ...payment,
+        invoiceId:
+          payment.invoiceId || this.currentInvoiceIdForPayments || undefined,
+      }));
   }
 
   hasCashPayments(): boolean {
@@ -306,5 +414,44 @@ export class InvoicesComponent {
 
   getPaymentMethodsString(): string {
     return this.payments.map((p) => String(p.paymentMethod)).join(', ');
+  }
+
+  // ==================================== Payment Method Change Handler ====================================
+  onPaymentMethodChange(value: string): void {
+    this.paymentMethod = value;
+    this.currentPage = 1;
+
+    // Map Arabic labels to PaymentMethod enum values
+    let paymentMethodValue: number | undefined;
+    if (value === 'نقدي') {
+      paymentMethodValue = PaymentMethod.Cash;
+    } else if (value === 'تحويل بنكي') {
+      paymentMethodValue = PaymentMethod.BankTransfer;
+    } else if (value === 'بطاقة ائتمان') {
+      paymentMethodValue = PaymentMethod.Visa;
+    } else {
+      paymentMethodValue = undefined; // 'جميع الطرق'
+    }
+
+    // Reload invoices with payment method filter
+    this.loadInvoices(
+      {
+        pageIndex: 1,
+        paymentMethod: paymentMethodValue,
+      },
+      true
+    );
+  }
+
+  // ==================================== Date Filter Change Handler ====================================
+  onDateFilterChange(): void {
+    this.currentPage = 1;
+    this.loadInvoices({ pageIndex: 1 }, true);
+  }
+
+  // ==================================== Filter Submit Handler ====================================
+  onFilterSubmit(): void {
+    this.currentPage = 1;
+    this.loadInvoices({ pageIndex: 1 }, true);
   }
 }

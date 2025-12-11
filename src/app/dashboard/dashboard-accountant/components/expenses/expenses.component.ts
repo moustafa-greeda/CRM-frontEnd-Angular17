@@ -29,6 +29,7 @@ export class ExpensesComponent implements OnInit {
   searchPlaceholder = 'ابحث عن مصروفات';
   searchForm!: FormGroup;
   expensesData: IGetAllExpenses[] = [];
+  amountSearch = '';
   expensesColumns: {
     key: string;
     header: string;
@@ -53,6 +54,20 @@ export class ExpensesComponent implements OnInit {
   currentPage = 1;
   totalCount = 0;
   selectedRows = [];
+  filterValue = '';
+  filterOptions: string[] = [
+    'اختر المده',
+    'اليوم',
+    'الأسبوع الحالي',
+    'الشهر الحالي',
+  ];
+
+  // Mapping between display labels and API values
+  private filterValueMap: Record<string, string> = {
+    اليوم: 'today',
+    'الأسبوع الحالي': 'thisWeek',
+    'الشهر الحالي': 'thisMonth',
+  };
 
   constructor(
     private _expenseService: ExpensesService,
@@ -94,6 +109,7 @@ export class ExpensesComponent implements OnInit {
     // ----------------------------------- search form builder -------------------------------------
     this.searchForm = this._fb.group({
       expenseName: [''],
+      amount: [''],
       datefrom: [''],
       dateTo: [''],
     });
@@ -165,6 +181,9 @@ export class ExpensesComponent implements OnInit {
     if (formValue.datefrom) {
       queryParams.fromDate = formValue.datefrom;
     }
+    if (formValue.amount && formValue.amount.trim()) {
+      queryParams.amount = formValue.amount.trim();
+    }
 
     if (formValue.dateTo) {
       queryParams.toDate = formValue.dateTo;
@@ -182,5 +201,36 @@ export class ExpensesComponent implements OnInit {
       );
       return total + (isNaN(amount) ? 0 : amount);
     }, 0);
+  }
+
+  // ================================== Filter Change Handler ======================================
+  onFilterChange(value: string): void {
+    this.filterValue = value;
+    const apiValue = this.filterValueMap[value] || '';
+
+    // Reset all date filters
+    const queryParams: ExpensesQueryParams = {
+      pageIndex: 1,
+      pageSize: this.pageSize,
+    };
+
+    // Apply the appropriate filter based on selected value
+    if (apiValue === 'today') {
+      queryParams.dayFilter = 'today';
+    } else if (apiValue === 'thisWeek') {
+      queryParams.weekFilter = 'thisWeek';
+    } else if (apiValue === 'thisMonth') {
+      queryParams.monthFilter = 'thisMonth';
+    }
+
+    // If no filter selected, clear all filters
+    if (!apiValue) {
+      // Just reload without filters
+      this.getAllExpenses({ pageIndex: 1, pageSize: this.pageSize });
+      return;
+    }
+
+    this.currentPage = 1;
+    this.getAllExpenses(queryParams);
   }
 }

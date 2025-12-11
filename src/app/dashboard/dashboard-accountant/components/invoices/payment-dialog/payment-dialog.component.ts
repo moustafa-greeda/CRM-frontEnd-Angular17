@@ -29,7 +29,8 @@ export class PaymentDialogComponent implements OnInit {
     const total = this.paymentForm?.get('totalAmount')?.value || 0;
     const paid = this.paymentForm?.get('paidAmount')?.value || '';
     const paidValue = paid === '' || paid === null ? 0 : Number(paid);
-    return Math.max(0, total - paidValue);
+    const remaining = Math.max(0, total - paidValue);
+    return Math.round(remaining * 100) / 100; // Round to 2 decimal places
   }
 
   constructor(
@@ -45,12 +46,36 @@ export class PaymentDialogComponent implements OnInit {
 
   ngOnInit(): void {
     if (this.data?.invoice) {
+      // Round totalAmount to 2 decimal places
+      const totalAmount = this.data.invoice.totalprices || 0;
+      const roundedTotal = Math.round(totalAmount * 100) / 100;
+      
       this.paymentForm.patchValue({
         invoiceNumber: this.data.invoice.id || '',
         paidAmount: this.data.invoice.paidAmount || '',
-        totalAmount: this.data.invoice.totalprices || 0,
+        totalAmount: roundedTotal,
         paymentMethod: this.data.invoice.paymentMethod || 'تحويل بنكي',
       });
+      
+      // Round values when they change
+      this.paymentForm.get('totalAmount')?.valueChanges.subscribe((value) => {
+        if (value !== null && value !== undefined) {
+          const rounded = Math.round(Number(value) * 100) / 100;
+          if (rounded !== value) {
+            this.paymentForm.get('totalAmount')?.setValue(rounded, { emitEvent: false });
+          }
+        }
+      });
+      
+      this.paymentForm.get('paidAmount')?.valueChanges.subscribe((value) => {
+        if (value !== null && value !== undefined && value !== '') {
+          const rounded = Math.round(Number(value) * 100) / 100;
+          if (rounded !== value) {
+            this.paymentForm.get('paidAmount')?.setValue(rounded, { emitEvent: false });
+          }
+        }
+      });
+      
       this.selectedPaymentMethod =
         this.data.invoice.paymentMethod || 'تحويل بنكي';
       this.showCreditCard = this.selectedPaymentMethod === 'بطاقة ائتمان';
@@ -244,10 +269,14 @@ export class PaymentDialogComponent implements OnInit {
         paymentMethodEnum === PaymentMethod.Cash
           ? formValue.totalAmount
           : formValue.paidAmount;
+      
+      // Round amounts to 2 decimal places
+      const roundedAmountPaid = Math.round(Number(amountPaid) * 100) / 100;
+      const roundedTotalAmount = Math.round(Number(formValue.totalAmount) * 100) / 100;
 
       const paymentData: IPayment = {
         invoiceId: invoiceId ? Number(invoiceId) : undefined,
-        amountPaid: amountPaid,
+        amountPaid: roundedAmountPaid,
         cashReceivedBy: this._authService.getUsername() || undefined,
 
         bankName: formValue.bankName,
@@ -257,7 +286,7 @@ export class PaymentDialogComponent implements OnInit {
         authorizationCode: formValue.authorizationCode,
         visaOwnerName: formValue.visaOwnerName,
         customerName: this.data.invoice.clientName,
-        totalAmount: formValue.totalAmount,
+        totalAmount: roundedTotalAmount,
         paymentMethod: paymentMethodEnum,
         isPaid: true,
       };

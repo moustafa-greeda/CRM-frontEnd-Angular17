@@ -109,6 +109,25 @@
           />
         </div>
         <div class="form-field">
+          <label>ابحث عن المبلغ</label>
+          <input
+            type="text"
+            class="search-input"
+            formControlName="amount"
+            placeholder="ابحث عن المبلغ"
+          />
+        </div>
+        <div class="form-feild">
+          <label>ابحث عن المدة</label>
+          <app-dropdown
+            id="filter-dropdown"
+            [options]="filterOptions"
+            [selectedOption]="filterValue"
+            [label]="'اختر المده'"
+            (optionSelected)="onFilterChange($event)"
+          ></app-dropdown>
+        </div>
+        <div class="form-field">
           <label>من</label>
           <input
             type="date"
@@ -126,6 +145,7 @@
             class="form-input"
           />
         </div>
+
         <div class="parent-button">
           <!-- button search -->
           <button

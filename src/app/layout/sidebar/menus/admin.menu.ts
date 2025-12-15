@@ -41,11 +41,11 @@ export const AdminMenu: SidebarItem[] = [
     icon: 'bi bi-diagram-3',
     route: '/dashboard/admin/distribution',
   },
-  {
-    title: 'ادارة الاتفاقيات',
-    icon: 'bi bi-globe',
-    route: '/dashboard/admin/showdeals',
-  },
+  // {
+  //   title: 'ادارة الاتفاقيات',
+  //   icon: 'bi bi-globe',
+  //   route: '/dashboard/admin/showdeals',
+  // },
   {
     title: 'البيانات المصدرة',
     icon: 'bi bi-file-earmark-excel',

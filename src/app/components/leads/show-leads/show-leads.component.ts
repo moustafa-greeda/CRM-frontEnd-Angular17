@@ -1,4 +1,10 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  HostListener,
+  ChangeDetectionStrategy,
+  ChangeDetectorRef,
+} from '@angular/core';
 import {
   ILeads,
   ILeadsResponse,
@@ -19,6 +25,7 @@ import { ActionButton } from '../../../shared/interfaces/action-button.interface
   selector: 'app-show-leads',
   templateUrl: './show-leads.component.html',
   styleUrl: './show-leads.component.css',
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ShowLeadsComponent implements OnInit {
   // Search and filter properties
@@ -69,10 +76,11 @@ export class ShowLeadsComponent implements OnInit {
     private leadsService: LeadsService,
     private router: Router,
     private notify: NotifyDialogService,
-    private leadStatusService: LeadStatusService
+    private leadStatusService: LeadStatusService,
+    private cdr: ChangeDetectorRef
   ) {}
   // ====================== page header ======================
-  pageTitle = 'إدارة الموظفين';
+  pageTitle = 'إدارة العملاء';
   breadcrumb: BreadcrumbItem[] = [
     { label: 'الرئيسية' },
     { label: 'بيانات العملاء', active: true },
@@ -84,25 +92,22 @@ export class ShowLeadsComponent implements OnInit {
       iconClass: 'bi bi-plus',
       click: () => this.onAddClient(),
     },
-    {
-      iconClass: 'bi bi-box-arrow-in-up',
-      click: () => this.notifyUnavailableFeature('رفع ملف'),
-      tooltip: 'Upload',
-    },
-    {
-      iconClass: 'bi bi-box-arrow-right',
-      click: () => this.notifyUnavailableFeature('تنزيل ملف'),
-      tooltip: 'Download',
-    },
   ];
   // =============================================================
 
   filteredClients: ILeads[] = [];
 
   ngOnInit(): void {
-    this.loadLeads();
-    this.loadLeadStatusOptions();
+    // Setup search debouncing first (synchronous)
     this.setupSearchDebouncing();
+
+    // Load leads first (critical data)
+    this.loadLeads();
+
+    // Load lead status options after a short delay (non-critical, can load in background)
+    setTimeout(() => {
+      this.loadLeadStatusOptions();
+    }, 100);
   }
 
   private setupSearchDebouncing(): void {
@@ -129,6 +134,7 @@ export class ShowLeadsComponent implements OnInit {
 
   loadLeadStatusOptions(): void {
     this.isLoadingLeadStatus = true;
+    this.cdr.markForCheck();
     this.leadStatusService.getAllLeadStatus().subscribe({
       next: (response) => {
         if (response.succeeded && response.data) {
@@ -136,12 +142,14 @@ export class ShowLeadsComponent implements OnInit {
           this.leadStatusOptions = response.data.map((status) => status.name);
         }
         this.isLoadingLeadStatus = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.isLoadingLeadStatus = false;
         // Fallback to default options
         this.leadStatusOptions = ['تم التحويل', 'لم يتم التحويل'];
         this.leadStatusLookupId = 'تم التحويل';
+        this.cdr.markForCheck();
       },
     });
   }
@@ -216,6 +224,7 @@ export class ShowLeadsComponent implements OnInit {
           this.totalPages = 0;
         }
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
       error: () => {
         this.error = 'فشل في تحميل بيانات العملاء';
@@ -223,6 +232,7 @@ export class ShowLeadsComponent implements OnInit {
         this.filteredClients = [];
         this.totalPages = 0;
         this.isLoading = false;
+        this.cdr.markForCheck();
       },
     });
   }
@@ -230,6 +240,7 @@ export class ShowLeadsComponent implements OnInit {
   onSearchChange(): void {
     this.isSearchPending = true;
     this.currentPage = 1;
+    this.cdr.markForCheck();
     this.searchSubject.next(this.searchTerm || '');
   }
 
@@ -237,6 +248,7 @@ export class ShowLeadsComponent implements OnInit {
     this.searchTerm = searchTerm || '';
     this.currentPage = 1;
     this.isSearchPending = false;
+    this.cdr.markForCheck();
     // Search immediately without debounce
     this.searchLeads();
   }

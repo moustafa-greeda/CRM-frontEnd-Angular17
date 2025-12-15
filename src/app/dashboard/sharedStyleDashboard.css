@@ -35,6 +35,25 @@
   font-size: 22px;
   color: var(--primary-color);
 }
+
+/* ================================ Search & Filters ================================ */
+.search-container {
+  padding: 12px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.search-container app-search-input {
+  flex: 1 1 260px;
+  min-width: 260px;
+}
+
+.search-container .dropdown-container app-dropdown {
+  flex: 0 0 200px;
+  min-width: 200px;
+}
 /* Mobile devices */
 @media (max-width: 480px) {
   .welcome-section {
@@ -76,7 +95,17 @@
   min-height: 200px;
 }
 
-/* ================================ MEDIA QUERIES ================================ */
+/* ================================ responsive ================================ */
+@media (max-width: 1800px) {
+  .search-container {
+    padding: 10px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+}
 
 /* Large tablets and below */
 @media (max-width: 1024px) {

@@ -93,6 +93,22 @@ export class DashboardTelesalesComponent implements OnInit {
     return this.actionDateFilterOptions.map((opt) => opt.label);
   }
 
+  onResetFilters(): void {
+    // Reset all filters
+    this.searchTerm = '';
+    this.selectedCountry = '';
+    this.selectedCity = '';
+    this.selectedActionDateFilter = null;
+    this.selectedLeadStatusName = '';
+    this.currentPage = 1;
+
+    // Clear city list when country is reset
+    this.cityList = [];
+
+    // Reload data with reset filters
+    const username = this._authService.getUsername() || '';
+    this.loadLeadsData(username);
+  }
   pageSize = 10;
   currentPage = 1; // Start from 1-based
   totalCount = 0;

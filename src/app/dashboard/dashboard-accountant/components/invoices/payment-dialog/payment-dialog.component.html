@@ -72,7 +72,7 @@
         >
           <div class="amount-required">
             <span class="amount-label">المبلغ المطلوب سداده</span>
-            <span class="amount-value">{{ remainingAmount | number : '1.2-2' }}</span>
+            <span class="amount-value">{{ remainingAmount }}</span>
           </div>
           <!-- <div class="form-grid">
             <div class="form-field">
@@ -124,7 +124,7 @@
         >
           <div class="amount-required">
             <span class="amount-label">المبلغ المطلوب سداده</span>
-            <span class="amount-value">{{ remainingAmount | number : '1.2-2' }} ريال</span>
+            <span class="amount-value">{{ remainingAmount }} ريال</span>
           </div>
           <div class="form-grid">
             <div class="form-field">
@@ -154,11 +154,10 @@
               <label>المبلغ المتبقي</label>
               <input
                 type="number"
-                value="{{ remainingAmount | number : '1.2-2' }}"
+                value="{{ remainingAmount }}"
                 placeholder="المبلغ المتبقي"
                 class="form-input"
                 readonly
-                step="0.01"
               />
             </div>
             <div class="form-field">

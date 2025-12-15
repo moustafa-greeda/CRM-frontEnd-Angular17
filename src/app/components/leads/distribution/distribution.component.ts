@@ -63,23 +63,23 @@ export class DistributionComponent implements OnInit {
     { label: 'الاتفاقيات', active: true },
   ];
 
-  actionButtons: ActionButton[] = [
-    {
-      label: 'انشاء عميل',
-      iconClass: 'bi bi-plus',
-      click: () => this.onAddAgreement(),
-    },
-    {
-      iconClass: 'bi bi-box-arrow-in-up',
-      click: () => this.onUpload(),
-      tooltip: 'Upload',
-    },
-    {
-      iconClass: 'bi bi-box-arrow-right',
-      click: () => this.onDownload(),
-      tooltip: 'Download',
-    },
-  ];
+  // actionButtons: ActionButton[] = [
+  //   {
+  //     label: 'انشاء عميل',
+  //     iconClass: 'bi bi-plus',
+  //     click: () => this.onAddAgreement(),
+  //   },
+  //   {
+  //     iconClass: 'bi bi-box-arrow-in-up',
+  //     click: () => this.onUpload(),
+  //     tooltip: 'Upload',
+  //   },
+  //   {
+  //     iconClass: 'bi bi-box-arrow-right',
+  //     click: () => this.onDownload(),
+  //     tooltip: 'Download',
+  //   },
+  // ];
 
   companyColumns = [
     { key: 'dragHandle', header: '', width: '50px' },
@@ -91,7 +91,7 @@ export class DistributionComponent implements OnInit {
     { key: 'leadSourceName', header: 'مصدر العميل' },
     { key: 'assignedTo', header: 'مخصص ل' },
     { key: 'createdAt', header: 'تاريخ الإنشاء' },
-    { key: 'actions', header: 'الإجراءات' },
+    // { key: 'actions', header: 'الإجراءات' },
   ];
 
   filterDropdowns: Array<{
@@ -108,48 +108,48 @@ export class DistributionComponent implements OnInit {
       selected: 'جميع العملاء',
       open: false,
     },
-    {
-      key: 'group',
-      label: 'اختر المجموعة',
-      options: ['المجموعة 1', 'المجموعة 2', 'المجموعة 3'],
-      selected: null,
-      open: false,
-    },
-    {
-      key: 'role',
-      label: 'اختر المنصب',
-      options: ['مطور', 'مصمم', 'مدير'],
-      selected: null,
-      open: false,
-    },
-    {
-      key: 'status',
-      label: 'اختر الحالة',
-      options: ['نشط', 'معلق', 'مغلق'],
-      selected: null,
-      open: false,
-    },
-    {
-      key: 'type',
-      label: 'اختر النوع',
-      options: ['مؤسسة', 'شركة', 'فرد'],
-      selected: null,
-      open: false,
-    },
-    {
-      key: 'region',
-      label: 'اختر المنطقة',
-      options: ['الرياض', 'جدة', 'الشرقية'],
-      selected: null,
-      open: false,
-    },
-    {
-      key: 'owner',
-      label: 'اختر المالك',
-      options: ['أحمد', 'محمد', 'خالد'],
-      selected: null,
-      open: false,
-    },
+    // {
+    //   key: 'group',
+    //   label: 'اختر المجموعة',
+    //   options: ['المجموعة 1', 'المجموعة 2', 'المجموعة 3'],
+    //   selected: null,
+    //   open: false,
+    // },
+    // {
+    //   key: 'role',
+    //   label: 'اختر المنصب',
+    //   options: ['مطور', 'مصمم', 'مدير'],
+    //   selected: null,
+    //   open: false,
+    // },
+    // {
+    //   key: 'status',
+    //   label: 'اختر الحالة',
+    //   options: ['نشط', 'معلق', 'مغلق'],
+    //   selected: null,
+    //   open: false,
+    // },
+    // {
+    //   key: 'type',
+    //   label: 'اختر النوع',
+    //   options: ['مؤسسة', 'شركة', 'فرد'],
+    //   selected: null,
+    //   open: false,
+    // },
+    // {
+    //   key: 'region',
+    //   label: 'اختر المنطقة',
+    //   options: ['الرياض', 'جدة', 'الشرقية'],
+    //   selected: null,
+    //   open: false,
+    // },
+    // {
+    //   key: 'owner',
+    //   label: 'اختر المالك',
+    //   options: ['أحمد', 'محمد', 'خالد'],
+    //   selected: null,
+    //   open: false,
+    // },
   ];
 
   /*---------------------------- Event Handlers --------------*/

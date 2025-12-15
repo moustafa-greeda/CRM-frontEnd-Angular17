@@ -5,6 +5,7 @@ import {
   ITransferredLead,
   ITransferredLeadsData,
 } from '../../core/Models/teleSalse/itransferred-leads-to-sales';
+import { ITop3TeleSales } from '../../core/Models/teleSalse/ITop3TeleSales';
 
 interface TopSalesperson {
   id: number;
@@ -37,6 +38,7 @@ export class TeleSalesComponent {
   AverageCallDuration: number = 0;
   transferredLeadsData: ITransferredLeadsData | null = null;
   transferredLeads: ITransferredLead[] = [];
+  TopTeleSales: ITop3TeleSales[] = [];
   transferredLeadsColumns: {
     key: string;
     header: string;
@@ -109,6 +111,8 @@ export class TeleSalesComponent {
 
     // ==================================== GetTransferredLeadsToSales ============================
     this.GetTransferredLeadsToSales();
+    // ==================================== GetTop3TeleSales ==============================
+    this.GetTop3TeleSales();
   }
   // ==================================== GetTransferredLeadsToSales ============================
   GetTransferredLeadsToSales(): void {
@@ -119,33 +123,14 @@ export class TeleSalesComponent {
     });
   }
 
-  topSalespeople: TopSalesperson[] = [
-    {
-      id: 1,
-      name: 'مريم محمد',
-      profileImage: './assets/img/avatar-male.svg',
-      totalSales: 225000,
-      totalDeals: 45,
-      rank: 1,
-    },
-    {
-      id: 2,
-      name: 'سارة حسن',
-      profileImage: './assets/img/avatar-male.svg',
-      totalSales: 190000,
-      totalDeals: 38,
-      rank: 2,
-    },
-    {
-      id: 3,
-      name: 'محمود حسن',
-      profileImage: './assets/img/avatar-male.svg',
-      totalSales: 175000,
-      totalDeals: 35,
-      rank: 3,
-    },
-  ];
-
+  // ==================================== GetTop3TeleSales ==============================
+  GetTop3TeleSales(): void {
+    this._teleSalesService.GetTop3TeleSales().subscribe({
+      next: (res) => {
+        this.TopTeleSales = res.data || [];
+      },
+    });
+  }
   getMedalIcon(rank: number): string {
     switch (rank) {
       case 1:

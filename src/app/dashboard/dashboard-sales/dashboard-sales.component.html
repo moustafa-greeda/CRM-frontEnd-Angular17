@@ -27,6 +27,10 @@
         [options]="cityNames"
         (optionSelected)="onCitySelected($event)"
       ></app-dropdown>
+      <app-button
+        [buttonText]="'اعادة تعيين الفلاتر'"
+        (buttonClick)="onResetFilters()"
+      ></app-button>
     </div>
   </div>
   <!-- table -->

@@ -315,9 +315,8 @@ export class ChartsTeleSalesComponent implements OnInit {
         tickThickness: 0,
         minimum: 1, // الحد الأدنى لليوم
         maximum: 31, // الحد الأقصى لليوم
-        interval: 1, // عرض كل يوم
+        interval: 2,
         labelFormatter: (e: any) => {
-          // التأكد من أن المحور X يعرض اليوم فقط كرقم (بدون AM/PM أو أي إضافات أخرى)
           return `${e.value}`;
         },
       },
@@ -333,7 +332,7 @@ export class ChartsTeleSalesComponent implements OnInit {
         tickThickness: 0,
         minimum: 0,
         maximum: 24,
-        interval: 1,
+        interval: 2,
         labelFormatter: (e: any) => this.formatHourLabel(e.value),
       },
       toolTip: {

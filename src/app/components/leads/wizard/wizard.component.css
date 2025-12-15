@@ -27,6 +27,15 @@
   direction: rtl;
 }
 
+/* Preserve form data when switching steps */
+.wizard-form {
+  position: relative;
+}
+
+.wizard-form[hidden] {
+  display: none !important;
+}
+
 [dir="rtl"] .form-row {
   direction: rtl;
 }

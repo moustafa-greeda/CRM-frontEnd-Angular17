@@ -50,7 +50,7 @@ export class Step3Component extends BaseStepComponent implements OnInit {
       // Individual social media platform fields
       instgram: [''],
       snapchat: [''],
-      facebook: [''],
+      facebook: ['', Validators.required],
       linkedin: [''],
       youtube: [''],
       tiktok: [''],

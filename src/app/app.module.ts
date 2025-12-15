@@ -65,6 +65,7 @@ import { PdfPreviewDialogModule } from './shared/components/pdf-preview-dialog/p
 import { SpinnerInterceptor } from './core/loader/spinner.interceptor';
 import { AuthTokenInterceptor } from './core/auth-token.interceptor';
 import { AuthErrorInterceptor } from './core/guards/auth-error.interceptor';
+import { DashboardLegalComponent } from './dashboard/dashboard-legal/dashboard-legal.component';
 
 const MATERIAL_MODULES = [
   MatTableModule,
@@ -120,6 +121,7 @@ const SHARED_PRESENTATIONAL_COMPONENTS = [
     ...DASHBOARD_COMPONENTS,
     ...FEATURE_COMPONENTS,
     ...SHARED_PRESENTATIONAL_COMPONENTS,
+    DashboardLegalComponent,
   ],
   imports: [
     BrowserModule,

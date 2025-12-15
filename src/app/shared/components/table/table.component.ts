@@ -52,8 +52,11 @@ export class TableComponent implements AfterViewInit, OnDestroy {
   @Input() showCall: boolean = false;
   @Input() showMeeting: boolean = false;
   @Input() showFollowUp: boolean = false;
-  @Input() addButton: boolean = false;
   @Input() showAssignToAccountant: boolean = false;
+  @Input() addButton: boolean = false;
+  // Optional predicates to disable add/edit actions per-row
+  @Input() disableAddPredicate?: (row: any) => boolean;
+  @Input() disableEditPredicate?: (row: any) => boolean;
   // Actions display mode: 'inline' buttons or single dropdown menu
   @Input() actionDisplayMode: 'inline' | 'dropdown' = 'inline';
   // Custom action labels for dropdown menu
@@ -96,9 +99,6 @@ export class TableComponent implements AfterViewInit, OnDestroy {
   // Optional packet selection dropdown
   @Input() packetOptions: TablePacketOption[] = [];
   @Input() defaultPacket: TablePacketOption | null = null;
-  // Optional disabled function for buttons
-  @Input() isAddDisabled?: (row: any) => boolean;
-  @Input() isEditDisabled?: (row: any) => boolean;
 
   // Track last emitted event to prevent duplicates
   private lastEmittedPageIndex: number = -1;
@@ -321,8 +321,22 @@ export class TableComponent implements AfterViewInit, OnDestroy {
     this.addButtonClick.emit(row);
   }
 
+  // Determine if add action should be disabled for a specific row
+  isAddDisabled(row: any): boolean {
+    return typeof this.disableAddPredicate === 'function'
+      ? !!this.disableAddPredicate(row)
+      : false;
+  }
+
   onEdit(row: any) {
     this.edit.emit(row);
+  }
+
+  // Determine if edit action should be disabled for a specific row
+  isEditDisabled(row: any): boolean {
+    return typeof this.disableEditPredicate === 'function'
+      ? !!this.disableEditPredicate(row)
+      : false;
   }
 
   onDelete(row: any) {
@@ -332,6 +346,14 @@ export class TableComponent implements AfterViewInit, OnDestroy {
   onView(row: any) {
     this.view.emit(row);
   }
+
+  onAssignToAccountant(row: any, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.assignToAccountant.emit(row);
+  }
+
   onChat(row: any) {
     this.chat.emit(row);
   }
@@ -365,13 +387,6 @@ export class TableComponent implements AfterViewInit, OnDestroy {
       event.stopPropagation();
     }
     this.followUp.emit(row);
-  }
-
-  onAssignToAccountant(row: any, event?: Event) {
-    if (event) {
-      event.stopPropagation();
-    }
-    this.assignToAccountant.emit(row);
   }
 
   dropdownPosition: { top: number; left: number } = { top: 0, left: 0 };

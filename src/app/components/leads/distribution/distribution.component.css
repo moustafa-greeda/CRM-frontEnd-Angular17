@@ -201,14 +201,14 @@
   gap: 12px;
   padding: 10px 15px;
   border-radius: 10px;
-  border: 1px solid #46e3ff;
-  background: rgba(17, 24, 31, 0.8);
+  border: 1px solid var(--primary-color);
+  background: rgba(17, 24, 31, 0.9);
   flex-wrap: wrap;
 }
 
 .filter-dropdown-item {
   width: 13%;
-  min-width: 150px;
+  min-width: 200px;
   flex-shrink: 0;
 }
 
@@ -542,7 +542,68 @@
 .confirm:hover {
   filter: brightness(1.05);
 }
+
+/* ----------------------------- table container ----------------------------- */
+.table-container {
+  overflow-x: auto;
+  min-height: 200px;
+}
 /* ----------------------------- media queries ----------------------------- */
+@media (max-width: 1600px) {
+  .distribution-layout {
+    flex-wrap: wrap; /* stack children */
+  }
+  /* .filter {
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+  } */
+  /* .parent-search {
+    width: 100%;
+  }
+  .parent-search .search-input {
+    width: 100%;
+  }
+
+  .parent-import-export {
+    width: 100%;
+    flex-wrap: wrap;
+    display: flex;
+    justify-content: space-between !important;
+    align-items: center;
+    gap: 10px;
+  }
+  .parent-import {
+    width: 100%;
+    display: flex;
+    justify-content: space-between !important;
+    align-items: center;
+    gap: 10px;
+  } */
+  .distribution-layout aside.sidebar {
+    flex: 1 1 100%;
+    max-width: 100%;
+    order: 2; /* sidebar below table */
+  }
+  .distribution-layout aside.sidebar.collapsed {
+    flex: 1 1 100%;
+    max-width: 100%;
+    min-width: 100%;
+  }
+  .distribution-layout > app-table {
+    flex: 1 1 100%;
+    max-width: 100%;
+    order: 1;
+  }
+  .sidebar-toggle {
+    position: static;
+    margin-bottom: 10px;
+    align-self: flex-end;
+  }
+  .sidebar-toggle.collapsed {
+    right: auto;
+  }
+}
 @media (max-width: 1200px) {
   .distribution-layout {
     flex-wrap: wrap; /* stack children */

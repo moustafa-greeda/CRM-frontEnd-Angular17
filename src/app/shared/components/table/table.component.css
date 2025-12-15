@@ -68,7 +68,7 @@
   flex-direction: column;
   border-radius: 45px;
 }
-.table-scroll-wrapper::before {
+/* .table-scroll-wrapper::before {
   content: "";
   position: absolute;
   inset: 0;
@@ -85,7 +85,7 @@
   -webkit-mask-composite: xor;
   mask-composite: exclude;
   pointer-events: none;
-}
+} */
 
 /* When table has no data, make it take full height */
 .table-scroll-wrapper:has(.no-data-row) {
@@ -719,13 +719,6 @@
   justify-content: center;
   transition: all 0.3s ease;
   font-size: 14px;
-}
-
-.action-btn:disabled,
-.action-btn.disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
-  pointer-events: none;
 }
 
 .view-btn {

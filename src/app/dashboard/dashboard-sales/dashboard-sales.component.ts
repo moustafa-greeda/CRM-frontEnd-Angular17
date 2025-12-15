@@ -1,5 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { forkJoin, of } from 'rxjs';
+import { take } from 'rxjs/operators';
 import { catchError } from 'rxjs/operators';
 import {
   ITeleSalseActionResponse,
@@ -67,6 +68,13 @@ export class DashboardSalesComponent implements OnInit {
   selectedActionDateFilter: string = '--';
   actionDisplayMode: 'inline' | 'dropdown' = 'dropdown';
 
+  onResetFilters(): void {
+    this.selectedCountry = '';
+    this.selectedCity = '';
+    this.selectedActionDateFilter = '';
+    this.currentPage = 1;
+    this.loadLeadsData(this._authService.getUsername() || '');
+  }
   // Derived option lists for dropdowns (template-safe)
   get countryNames(): string[] {
     return (this.countryList || []).map((c: any) => c?.name).filter(Boolean);
@@ -320,8 +328,6 @@ export class DashboardSalesComponent implements OnInit {
       // call get list lead status
       this.getListLeadStatus();
     });
-    // call get list lead status
-    this.getListLeadStatus();
 
     // Load tele sales actions
     this.loadSalesActions();
@@ -346,7 +352,7 @@ export class DashboardSalesComponent implements OnInit {
   //========================================= load all packets ===========================================
   loadAllPackets(): void {
     // Subscribe to the packets observable
-    this._pakegsService.packets$.subscribe((packets) => {
+    this._pakegsService.packets$.pipe(take(1)).subscribe((packets) => {
       this.allPackets = packets;
       this.refreshPacketAssignments();
     });

@@ -240,26 +240,13 @@ export class InvoicesComponent {
   }
 
   // ==================================== Table Action Handlers ====================================
-  // Check if payment is fully paid
-  isPaymentFullyPaid(row: IGetAllInvoiceDataItem): boolean {
-    return row.paymentStatus === 'مدفوعة بالكامل';
-  }
-
   onEditDeal(row: IGetAllInvoiceDataItem): void {
-    // Check if payment is fully paid
-    if (this.isPaymentFullyPaid(row)) {
-      return; // Don't open dialog if fully paid
-    }
     // Use payment dialog for editing invoices
     this.onPayment(row);
   }
 
   // ==================================== Payment Handler ====================================
   onPayment(row: IGetAllInvoiceDataItem): void {
-    // Check if payment is fully paid
-    if (this.isPaymentFullyPaid(row)) {
-      return; // Don't open dialog if fully paid
-    }
     const dialogRef = this.dialog.open(PaymentDialogComponent, {
       width: '90vw',
       maxWidth: '900px',

@@ -3,7 +3,6 @@
   <app-page-header
     [title]="pageTitle"
     [breadcrumb]="breadcrumb"
-    [actionButtons]="actionButtons"
   ></app-page-header>
 
   <!-- ---------------------------- Filter Dropdown -------------- -->
@@ -52,7 +51,7 @@
     <div class="parent-import-export">
       <div class="parent-import">
         <!-- delet lead -->
-        <i class="bi bi-trash3"></i>
+        <!-- <i class="bi bi-trash3"></i> -->
 
         <!-- select all -->
         <div class="select-all">
@@ -168,30 +167,32 @@
           ({{ selectedRows.length }} محدد)
         </span>
       </div>
-      <app-table
-        [data]="leadsList"
-        [columns]="companyColumns"
-        [selectedRows]="selectedRows"
-        [showDataTable]="true"
-        [hasNoData]="leadsList.length === 0"
-        [pageSize]="pageSize"
-        [currentPage]="currentPage"
-        [totalCount]="totalCount"
-        [tableClass]="'erb-data-table'"
-        [containerClass]="'erb-table-container'"
-        [showCheckbox]="true"
-        [showView]="true"
-        [showEdit]="true"
-        [showDelete]="true"
-        [showIndex]="true"
-        (rowSelectionChange)="onRowSelectionChange($event)"
-        (selectAllChange)="onSelectAllChange($event)"
-        (pageChange)="onPageChange($event)"
-        (pageSizeChange)="onPageSizeChange($event)"
-        (edit)="onEditDeal($event)"
-        (delete)="onDeleteDeal($event)"
-        (view)="onViewDeal($event)"
-      ></app-table>
+      <div class="table-container">
+        <app-table
+          [data]="leadsList"
+          [columns]="companyColumns"
+          [selectedRows]="selectedRows"
+          [showDataTable]="true"
+          [hasNoData]="leadsList.length === 0"
+          [pageSize]="pageSize"
+          [currentPage]="currentPage"
+          [totalCount]="totalCount"
+          [tableClass]="'erb-data-table'"
+          [containerClass]="'erb-table-container'"
+          [showCheckbox]="true"
+          [showView]="false"
+          [showEdit]="false"
+          [showDelete]="false"
+          [showIndex]="true"
+          (rowSelectionChange)="onRowSelectionChange($event)"
+          (selectAllChange)="onSelectAllChange($event)"
+          (pageChange)="onPageChange($event)"
+          (pageSizeChange)="onPageSizeChange($event)"
+          (edit)="onEditDeal($event)"
+          (delete)="onDeleteDeal($event)"
+          (view)="onViewDeal($event)"
+        ></app-table>
+      </div>
     </div>
   </div>
 </div>

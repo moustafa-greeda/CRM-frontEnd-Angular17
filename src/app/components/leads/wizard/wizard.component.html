@@ -49,24 +49,19 @@
       <!-- Form Container -->
       <div class="form-container">
         <!-- Step 0: البيانات الشخصية (includes Address) -->
-        <div class="wizard-form" *ngIf="currentStep === 0">
+        <div class="wizard-form" [hidden]="currentStep !== 0" [@slideAnimation]>
           <app-step1
             [wizardComponent]="this"
             [jobLevels]="jobLevels"
             [countries]="countries"
             [cities]="cities"
-            [@slideAnimation]
             #step1Ref
           ></app-step1>
         </div>
 
         <!-- Step 1: وسائل التواصل الاجتماعي -->
-        <div class="wizard-form" *ngIf="currentStep === 1">
-          <app-step3
-            [wizardComponent]="this"
-            [@slideAnimation]
-            #step3Ref
-          ></app-step3>
+        <div class="wizard-form" [hidden]="currentStep !== 1" [@slideAnimation]>
+          <app-step3 [wizardComponent]="this" #step3Ref></app-step3>
         </div>
 
         <!-- Navigation Buttons -->

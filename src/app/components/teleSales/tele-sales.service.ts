@@ -4,6 +4,7 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../core/Models/api-response.model';
 import { ITransferredLeadsData } from '../../core/Models/teleSalse/itransferred-leads-to-sales';
+import { ITop3TeleSales } from '../../core/Models/teleSalse/ITop3TeleSales';
 
 @Injectable({
   providedIn: 'root',
@@ -63,6 +64,12 @@ export class TeleSalesService {
   GetTransferredLeadsToSales(): Observable<ApiResponse<ITransferredLeadsData>> {
     return this.http.get<ApiResponse<ITransferredLeadsData>>(
       `${this.Base_Url}/AdminTeleSalesDashboard/chart/GetTransferredLeadsToSales`
+    );
+  }
+  // ==================================== GetTop3TeleSales ==============================
+  GetTop3TeleSales(): Observable<ApiResponse<ITop3TeleSales[]>> {
+    return this.http.get<ApiResponse<ITop3TeleSales[]>>(
+      `${this.Base_Url}/AdminTeleSalesDashboard/chart/GetTop3TeleSales`
     );
   }
 }

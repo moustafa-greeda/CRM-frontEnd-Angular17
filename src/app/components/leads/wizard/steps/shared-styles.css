@@ -215,8 +215,8 @@
 }
 
 /* Button Styles */
-.btn {
-  padding: 12px 24px;
+/* .btn {
+  padding: 15px 24px !important;
   border: none;
   border-radius: 8px;
   font-size: 1rem;
@@ -229,7 +229,6 @@
 }
 
 .btn-primary {
-  /* background: var(--button-color) !important; */
   background: linear-gradient(90deg, #2a8899 0%, #5db386 100%) !important;
   color: #11181f;
 }
@@ -237,18 +236,7 @@
 .btn-primary:hover {
   background: #2f7f8f;
   transform: translateY(-2px);
-}
-
-.btn-secondary {
-  background: transparent;
-  color: #e6edf3;
-  border: 2px solid var(--button-color);
-}
-
-.btn-secondary:hover {
-  background: var(--bg-input-focus);
-  color: #11181f;
-}
+} */
 
 /* Loading States */
 .loading {

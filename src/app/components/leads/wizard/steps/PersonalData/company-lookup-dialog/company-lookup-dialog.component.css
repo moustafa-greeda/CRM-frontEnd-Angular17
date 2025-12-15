@@ -22,6 +22,7 @@
   color: var(--company-dialog-text);
   background: var(--company-dialog-bg);
   box-shadow: var(--company-dialog-shadow);
+  transition: all 0.3s ease;
 }
 
 .dialog-header {

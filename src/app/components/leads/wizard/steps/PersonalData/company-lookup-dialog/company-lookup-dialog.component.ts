@@ -189,6 +189,8 @@ export class CompanyLookupDialogComponent
   selectCompany(company: ICompanies): void {
     this.selectedCompanyId = company.id || null;
     this.selectedCompany = company;
+    // Automatically confirm selection when clicking on company name
+    this.confirmSelection();
   }
 
   confirmSelection(): void {

@@ -37,6 +37,14 @@
         (optionSelected)="onActionDateFilterSelected($event)"
       ></app-dropdown>
       <app-button
+        *ngIf="
+          searchTerm ||
+          selectedCountry ||
+          selectedCity ||
+          selectedActionDateFilter ||
+          selectedLeadStatusName
+        "
+        [buttonClass]="'btn btn-danger'"
         [buttonText]="'اعادة تعيين الفلاتر'"
         (buttonClick)="onResetFilters()"
       ></app-button>

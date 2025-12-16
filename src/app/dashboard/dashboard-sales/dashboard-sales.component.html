@@ -15,20 +15,28 @@
       <app-dropdown
         label="اختر الحالة"
         [options]="listLeadStatus"
+        [selectedOption]="selectedLeadStatusName"
         (optionSelected)="onOptionSelected($event)"
       ></app-dropdown>
       <app-dropdown
         label="اختر الدولة"
         [options]="countryNames"
+        [selectedOption]="selectedCountry"
         (optionSelected)="onCountrySelected($event)"
       ></app-dropdown>
       <app-dropdown
-        label="اختر المدينة"
+        [label]="cityDropdownLabel"
         [options]="cityNames"
+        [selectedOption]="selectedCity"
+        [disabled]="!selectedCountry"
         (optionSelected)="onCitySelected($event)"
       ></app-dropdown>
       <app-button
-        [buttonText]="'اعادة تعيين الفلاتر'"
+        *ngIf="
+          searchTerm || selectedLeadStatusId || selectedCountry || selectedCity
+        "
+        [buttonClass]="'btn btn-danger'"
+        [buttonText]="' مسح الفلاتر'"
         (buttonClick)="onResetFilters()"
       ></app-button>
     </div>

@@ -44,16 +44,6 @@ export class EmployeeComponent implements OnInit {
       iconClass: 'bi bi-plus',
       click: () => this.onAddEmployee(),
     },
-    {
-      iconClass: 'bi bi-box-arrow-in-up',
-      click: () => console.log('Upload'),
-      tooltip: 'Upload',
-    },
-    {
-      iconClass: 'bi bi-box-arrow-right',
-      click: () => console.log('Download'),
-      tooltip: 'Download',
-    },
   ];
   // Reactive source for list
   employeesList$ = new BehaviorSubject<IEmployee[]>([]);

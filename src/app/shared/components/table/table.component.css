@@ -62,6 +62,7 @@
   background: var(--bg-light);
   position: relative;
   min-width: 800px;
+  /* min-width: 1000px; */
   scroll-behavior: smooth;
   -webkit-overflow-scrolling: touch;
   display: flex;
@@ -869,15 +870,17 @@
 
 /************************* Responsive action buttons *************************/
 @media (max-width: 1024px) {
-  /* Table Container - Responsive with scroll */
   .table-container {
-    padding: 24px 16px;
-    min-width: 0; /* Allow container to shrink */
-    overflow-x: auto; /* Show horizontal scrollbar when needed */
+    padding: 0px;
+  }
+
+  .table-frame-left,
+  .table-frame-right {
+    display: none;
   }
 
   .table-scroll-wrapper {
-    min-width: 0; /* Override 800px min-width */
+    /* min-width: 0; Override 800px min-width */
     overflow-x: auto; /* Enable horizontal scroll */
   }
 

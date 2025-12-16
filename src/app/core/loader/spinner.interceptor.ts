@@ -23,7 +23,12 @@ export class SpinnerInterceptor implements HttpInterceptor {
     next: HttpHandler
   ): Observable<HttpEvent<any>> {
     //Skip spinner for specific URLs (assets, auth, etc.)
-    const excludedUrls = ['/assets', '/logout', '/Auth/Login'];
+    const excludedUrls = [
+      '/assets',
+      '/logout',
+      '/Auth/Login',
+      '/Client/GetCitiesByCountryId', // لا تُظهر اللودر عند تحميل مدن الدولة
+    ];
     // Check if the request method is GET
     const isGet = req.method.toUpperCase() === 'GET';
     // Skip spinner for POST requests

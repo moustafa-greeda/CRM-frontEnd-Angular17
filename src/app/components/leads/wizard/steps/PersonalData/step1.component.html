@@ -29,15 +29,24 @@
       <!-- phone number -->
       <div class="form-group">
         <label for="phone"> رقم الهاتف </label>
-        <input
-          type="text"
-          id="phone"
-          formControlName="phone"
-          placeholder="أدخل رقم التليفون  "
-          class="form-input"
-          (blur)="onFieldBlur('phone')"
-          (input)="onFieldChange('phone')"
-        />
+        <div class="phone-input-wrapper">
+          <input
+            type="text"
+            id="phone"
+            formControlName="phone"
+            placeholder="أدخل رقم الهاتف"
+            class="form-input"
+            (blur)="onFieldBlur('phone')"
+            (input)="onFieldChange('phone')"
+          />
+          <input
+            type="text"
+            class="phone-prefix-input"
+            [value]="currentCountryPhonePrefix || ''"
+            disabled
+            readonly
+          />
+        </div>
         <div class="error-message" *ngIf="getErrorMessage('phone')">
           {{ getErrorMessage("phone") }}
         </div>

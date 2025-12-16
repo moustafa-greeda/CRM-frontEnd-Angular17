@@ -22,6 +22,13 @@ import {
   CompanyLookupRecord,
 } from './company-lookup-dialog/company-lookup-dialog.component';
 import { CountryCityService } from '../../../../../core/services/common/country-city.service';
+// ----------------- liberary for phone number validation -----------------
+import {
+  parsePhoneNumberFromString,
+  isValidPhoneNumber,
+  CountryCode,
+} from 'libphonenumber-js';
+import { AbstractControl, ValidationErrors, ValidatorFn } from '@angular/forms';
 
 @Component({
   selector: 'app-step1',
@@ -44,6 +51,14 @@ export class Step1Component
   selectedCompanyName: string = '';
   countryList: any[] = [];
   cityList: any[] = [];
+  currentCountryIsoCode?: string;
+  currentCountryPhonePrefix?: string;
+  // خريطة أطوال أرقام الهاتف المتوقعة لكل دولة (أكملها حسب احتياجك)
+  private readonly countryPhoneLengthMap: Record<string, number> = {
+    SA: 9, // السعودية: 9 أرقام بعد كود الدولة
+    EG: 10, // مصر (مثال)
+    AE: 9,
+  };
 
   private genderSubscription?: Subscription;
 
@@ -134,6 +149,27 @@ export class Step1Component
     });
   }
 
+  //======================= Method to validate phone number =======================
+  // دالة التحقق من رقم الهاتف بناءً على `isoCode`
+  phoneNumberValidator(countryCode: string): ValidatorFn {
+    return (control: AbstractControl): ValidationErrors | null => {
+      if (!control.value) {
+        return null; // لا تحقق إذا كانت القيمة فارغة
+      }
+
+      const cc = this.toCountryCode(countryCode);
+      if (!cc) {
+        return { invalidPhoneNumber: true };
+      }
+
+      const phoneNumber = parsePhoneNumberFromString(control.value, cc);
+      if (phoneNumber && isValidPhoneNumber(control.value, cc)) {
+        return null; // رقم الهاتف صالح
+      }
+
+      return { invalidPhoneNumber: true }; // رقم الهاتف غير صالح
+    };
+  }
   // ============================= Get Industry List =============================
   getIndustryList() {
     this.industryService.getAllIndustries().subscribe((res) => {
@@ -157,7 +193,22 @@ export class Step1Component
 
   // Method to get form data
   getFormData() {
-    return this.form.value;
+    const data = { ...this.form.value };
+
+    // دمج كود الدولة مع رقم الهاتف قبل الإرسال
+    const rawPhone = (data.phone || '').toString().trim();
+    const prefix = this.currentCountryPhonePrefix || '';
+
+    if (rawPhone && prefix) {
+      const normalizedPrefix = prefix.startsWith('+') ? prefix : `+${prefix}`;
+
+      // لو المستخدم كتب الكود بنفسه ما نكررش
+      if (!rawPhone.startsWith(normalizedPrefix)) {
+        data.phone = `${normalizedPrefix}${rawPhone}`;
+      }
+    }
+
+    return data;
   }
 
   // Method to check if form is valid
@@ -170,6 +221,33 @@ export class Step1Component
     Object.keys(this.form.controls).forEach((key) => {
       this.form.get(key)?.markAsTouched();
     });
+  }
+
+  override getErrorMessage(fieldName: string): string {
+    const baseMessage = super.getErrorMessage(fieldName) || '';
+
+    if (fieldName !== 'phone') {
+      return baseMessage;
+    }
+
+    const control = this.form.get('phone');
+    if (!control || !control.touched || !control.errors) {
+      return baseMessage;
+    }
+
+    if (control.hasError('required')) {
+      return 'رقم الهاتف مطلوب';
+    }
+
+    if (control.hasError('pattern')) {
+      return 'صيغة رقم الهاتف غير صحيحة';
+    }
+
+    if (control.hasError('invalidPhoneNumber')) {
+      return 'رقم الهاتف غير صالح بالنسبة للدولة المختارة';
+    }
+
+    return baseMessage;
   }
 
   // Method to reset form
@@ -254,21 +332,72 @@ export class Step1Component
   }
 
   // Step2 methods (Address)
+  // onCountryChange(event: any): void {
+  //   const countryId = event.target.value;
+  //   if (countryId) {
+  //     // Use wizard's city loading method
+  //     if (this.wizardComponent) {
+  //       this.wizardComponent.loadCitiesByCountryId(Number(countryId));
+  //     }
+  //     // Clear city selection when country changes
+  //     this.form.get('city')?.setValue('');
+  //   } else {
+  //     // Clear city list when no country is selected
+  //     this.cityList = [];
+  //     this.form.get('city')?.setValue('');
+  //   }
+  //   // Call the base class method for form handling
+  //   this.onFieldChange('country');
+  // }
+
   onCountryChange(event: any): void {
     const countryId = event.target.value;
+
+    // استخرج الدولة المختارة
+    let isoCode: string | undefined;
+    let phonePrefix: string | undefined;
+    const selectedCountry = this.countryList.find(
+      (c: any) => String(c.id) === String(countryId)
+    );
+    if (selectedCountry) {
+      isoCode =
+        selectedCountry.iso_2 ||
+        selectedCountry.iso_3 ||
+        selectedCountry.isoCode ||
+        undefined;
+      phonePrefix =
+        selectedCountry.keyCode || selectedCountry.iso_numeric || undefined;
+    }
+    this.currentCountryIsoCode = isoCode;
+    this.currentCountryPhonePrefix = phonePrefix;
+
+    // تحديث التحقق من رقم الهاتف بناءً على كود الدولة (بدون حقن البادئة في قيمة الحقل)
+    const phoneControl = this.form.get('phone');
+    if (phoneControl) {
+      const validators = [
+        Validators.required,
+        Validators.pattern(/^[0-9+\-\s()]+$/),
+      ] as ValidatorFn[];
+
+      if (isoCode) {
+        validators.push(this.phoneNumberValidator(isoCode));
+      }
+
+      phoneControl.setValidators(validators);
+      phoneControl.updateValueAndValidity();
+    }
+
+    // تابع باقي المنطق لتحديث المدن والحقول الأخرى
     if (countryId) {
-      // Use wizard's city loading method
       if (this.wizardComponent) {
         this.wizardComponent.loadCitiesByCountryId(Number(countryId));
       }
-      // Clear city selection when country changes
       this.form.get('city')?.setValue('');
     } else {
-      // Clear city list when no country is selected
       this.cityList = [];
       this.form.get('city')?.setValue('');
     }
-    // Call the base class method for form handling
+
     this.onFieldChange('country');
   }
 
@@ -281,5 +410,35 @@ export class Step1Component
   updateCountries(countries: any[]): void {
     this.countryList = countries;
     this.countries = countries; // Also update the input property
+  }
+
+  private toCountryCode(code: string): CountryCode | undefined {
+    const normalized = (code || '').trim().toUpperCase();
+    // libphonenumber-js CountryCode is ISO-2 (مثل SA, EG, AE)
+    if (/^[A-Z]{2}$/.test(normalized)) {
+      return normalized as CountryCode;
+    }
+    return undefined;
+  }
+
+  // Return numeric length of the current country's phone prefix (e.g. +966 -> 3)
+  getCurrentCountryPhoneLength(): number | null {
+    if (!this.currentCountryPhonePrefix) {
+      return null;
+    }
+    const digitsOnly = String(this.currentCountryPhonePrefix).replace(
+      /\D/g,
+      ''
+    );
+    return digitsOnly.length || null;
+  }
+
+  // Return required national number length for current country (بدون كود الدولة)
+  getRequiredNationalPhoneLength(): number | null {
+    if (!this.currentCountryIsoCode) {
+      return null;
+    }
+    const iso = this.currentCountryIsoCode.toUpperCase();
+    return this.countryPhoneLengthMap[iso] ?? null;
   }
 }

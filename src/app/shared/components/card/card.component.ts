@@ -79,7 +79,8 @@ export interface CardField {
       </div>
 
       <!-- Social & Rating -->
-      <div class="client-actions">
+      @if(showFooter) {
+      <div class="client-actions ">
         <div class="icon-star">
           <span>0.5</span>
           <i class="bi bi-star-fill"></i>
@@ -114,6 +115,7 @@ export interface CardField {
           <i class="bi bi-telephone-fill"></i>
         </div>
       </div>
+      }
     </div>
   `,
   styles: [
@@ -430,6 +432,7 @@ export class CardComponent {
   @Input() selectable: boolean = false;
   @Input() isSelected: boolean = false;
   @Input() index: number = 0; // For stagger animation
+  @Input() showFooter: boolean = false;
 
   @Output() selectionChange = new EventEmitter<boolean>();
 

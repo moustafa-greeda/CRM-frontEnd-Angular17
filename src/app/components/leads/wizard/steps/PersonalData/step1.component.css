@@ -39,6 +39,27 @@
   font-size: 16px;
 }
 
+.phone-input-wrapper {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.phone-prefix-input {
+  width: 80px;
+  min-width: 70px;
+  padding: 10px 8px;
+  border-radius: 10px;
+  border: 1px solid var(--border-color);
+  background: rgba(17, 24, 31, 0.6);
+  color: #aaa;
+  text-align: center;
+}
+
+.phone-prefix-input:disabled {
+  opacity: 1;
+}
+
 .company-select-button {
   width: 100%;
   min-height: 50px;

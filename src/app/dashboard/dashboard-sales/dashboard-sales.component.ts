@@ -1,7 +1,6 @@
 import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { forkJoin, of } from 'rxjs';
-import { take } from 'rxjs/operators';
-import { catchError } from 'rxjs/operators';
+import { catchError, take } from 'rxjs/operators';
 import {
   ITeleSalseActionResponse,
   ITeleSalseActionRequest,
@@ -71,7 +70,10 @@ export class DashboardSalesComponent implements OnInit {
   onResetFilters(): void {
     this.selectedCountry = '';
     this.selectedCity = '';
-    this.selectedActionDateFilter = '';
+    this.selectedActionDateFilter = '--';
+    this.selectedLeadStatusId = 0;
+    this.selectedLeadStatusName = '';
+    this.searchTerm = '';
     this.currentPage = 1;
     this.loadLeadsData(this._authService.getUsername() || '');
   }
@@ -82,6 +84,10 @@ export class DashboardSalesComponent implements OnInit {
 
   get cityNames(): string[] {
     return (this.cityList || []).map((c: any) => c?.name).filter(Boolean);
+  }
+
+  get cityDropdownLabel(): string {
+    return this.selectedCountry ? 'اختر المدينة' : 'يجب اختيار الدولة أولاً';
   }
 
   get packetDropdownOptions(): PacketOption[] {
@@ -123,6 +129,7 @@ export class DashboardSalesComponent implements OnInit {
   // Search and filter properties
   searchTerm: string = '';
   selectedLeadStatusId: number = 0;
+  selectedLeadStatusName: string = '';
   isSearching: boolean = false;
   selectedCountry: string = '';
   selectedCity: string = '';
@@ -614,6 +621,7 @@ export class DashboardSalesComponent implements OnInit {
     // Handle option selection
     // Get the ID from the map
     this.selectedLeadStatusId = this.leadStatusMap.get(option) || 0;
+    this.selectedLeadStatusName = option || '';
     this.currentPage = 1; // Reset to first page on filter change
 
     // Use client-side filter

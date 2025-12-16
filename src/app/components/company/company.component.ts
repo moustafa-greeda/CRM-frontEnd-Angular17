@@ -159,16 +159,16 @@ export class CompanyComponent {
       iconClass: 'bi bi-plus',
       click: () => this.onAddCompany(),
     },
-    {
-      iconClass: 'bi bi-box-arrow-in-up',
-      click: () => console.log('Upload'),
-      tooltip: 'Upload',
-    },
-    {
-      iconClass: 'bi bi-box-arrow-right',
-      click: () => console.log('Download'),
-      tooltip: 'Download',
-    },
+    // {
+    //   iconClass: 'bi bi-box-arrow-in-up',
+    //   click: () => console.log('Upload'),
+    //   tooltip: 'Upload',
+    // },
+    // {
+    //   iconClass: 'bi bi-box-arrow-right',
+    //   click: () => console.log('Download'),
+    //   tooltip: 'Download',
+    // },
   ];
 
   // =============================== form company ===================

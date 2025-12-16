@@ -118,13 +118,7 @@ export class LeadsService {
   }
 
   // ================================= convert contact to client  ===========================
-  ConvertContactToClient(payload: IcovertcontactToLead): Observable<any> {
-    return this.http.post<any>(`${this.BASE_API_URL}/Client/CreateLead`, {
-      payload,
-    });
-  }
 
-  // ================================= CreateLead ===========================
   CreateLead(
     contactId: number,
     leadStatusLookupId: number = 1

@@ -5,15 +5,16 @@ import {
   HostListener,
   ElementRef,
 } from '@angular/core';
-import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { FormGroup } from '@angular/forms';
 import { trigger, transition, style, animate } from '@angular/animations';
 import { ErrorHandlerService } from '../../../core/services/error-handler.service';
-import { WizardLeadService, IContact } from './wizard-lead.service';
+import { WizardLeadService } from './wizard-lead.service';
 import { CountryCityService } from '../../../core/services/common/country-city.service';
 import { JobLevelService } from '../../../core/services/common/job-level.service';
 import { NotifyDialogService } from '../../../shared/components/notify-dialog-host/notify-dialog.service';
 import { Location } from '@angular/common';
 import { Router } from '@angular/router';
+import { IContact } from '../../../core/Models/leads/IContact';
 
 @Component({
   selector: 'app-wizard',
@@ -36,7 +37,8 @@ export class WizardComponent implements OnInit, AfterViewInit {
   totalSteps = 2;
   private isWizardReady = false;
   private isChangingStep = false;
-  private outsideCloseEnabled = true;
+  private isSubmitting = false;
+  private outsideCloseEnabled = false;
 
   // References to step components
   step1Component?: any;
@@ -56,15 +58,13 @@ export class WizardComponent implements OnInit, AfterViewInit {
   cities: any[] = [];
 
   constructor(
-    private fb: FormBuilder,
     private errorHandler: ErrorHandlerService,
     private wizardLeadService: WizardLeadService,
     private countryCityService: CountryCityService,
     private jobLevelService: JobLevelService,
     private notify: NotifyDialogService,
     private elementRef: ElementRef,
-    private location: Location,
-    private router: Router
+    private location: Location
   ) {}
 
   ngOnInit(): void {
@@ -137,18 +137,23 @@ export class WizardComponent implements OnInit, AfterViewInit {
     if (this.areAllFormsValid()) {
       const employeeData = this.collectAllData();
 
-      this.wizardLeadService.createEmployee(employeeData).subscribe({
+      this.isSubmitting = true;
+      this.setOutsideCloseEnabled(false);
+
+      this.wizardLeadService.createContact(employeeData).subscribe({
         next: (response) => {
+          this.isSubmitting = false;
           this.notify.success({
             title: 'تم الحفظ',
             description: 'تم إرسال البيانات بنجاح!',
           });
           // Reset forms before navigation
           this.resetAllForms();
-          // Navigate to show-leads page after successful submission
-          this.router.navigate(['dashboard/admin/showLeads']);
+          // this.router.navigate(['dashboard/admin/showLeads']);
         },
         error: (error) => {
+          this.isSubmitting = false;
+          // this.setOutsideCloseEnabled(true);
           // Show more detailed error message
           let errorMessage =
             'حدث خطأ أثناء إرسال البيانات. يرجى المحاولة مرة أخرى.';
@@ -203,7 +208,7 @@ export class WizardComponent implements OnInit, AfterViewInit {
     const addressLineValue =
       step1Data?.addressLine || step2Data?.addressLine
         ? String(step1Data.addressLine || step2Data.addressLine).trim()
-      : '';
+        : '';
 
     const payload: any = {
       name: String(step1Data.firstName || ''),
@@ -459,7 +464,8 @@ export class WizardComponent implements OnInit, AfterViewInit {
     if (
       !this.isWizardReady ||
       this.isChangingStep ||
-      !this.outsideCloseEnabled
+      !this.outsideCloseEnabled ||
+      this.isSubmitting
     ) {
       return;
     }

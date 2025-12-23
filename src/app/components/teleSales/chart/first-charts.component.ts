@@ -70,6 +70,7 @@ export class ChartsTeleSalesComponent implements OnInit {
 
   //         return {
   //           label,
+  //           hour: item.hour,
   //           day: this.parseDayValue(item.day),
   //           totalCalls: item.totalCalls ?? 0,
   //           successCalls: item.success ?? 0,
@@ -223,13 +224,7 @@ export class ChartsTeleSalesComponent implements OnInit {
   //       minimum: 0,
   //       interval,
   //     },
-  //     toolTip: {
-  //       shared: true,
-  //       backgroundColor: '#031120',
-  //       borderColor: '#00E0FF',
-  //       fontColor: '#e2f4ff',
-  //       contentFormatter: (e: any) => this.buildAreaTooltip(e.entries),
-  //     },
+
   //     legend: {
   //       cursor: 'pointer',
   //       fontColor: '#FFFFFF',
@@ -335,6 +330,13 @@ export class ChartsTeleSalesComponent implements OnInit {
         interval: 2,
         labelFormatter: (e: any) => this.formatHourLabel(e.value),
       },
+      // toolTip: {
+      //   shared: true,
+      //   backgroundColor: '#031120',
+      //   borderColor: '#00E0FF',
+      //   fontColor: '#e2f4ff',
+      //   contentFormatter: (e: any) => this.buildAreaTooltip(e.entries),
+      // },
       toolTip: {
         shared: true,
         backgroundColor: '#031120',
@@ -362,6 +364,7 @@ export class ChartsTeleSalesComponent implements OnInit {
           x: item.day ?? 0,
           y: item.hour ?? 0,
           label: item.label,
+          callCount: config.getValue(item), // Store call count for tooltip
         })),
       })),
     };
@@ -698,20 +701,34 @@ export class ChartsTeleSalesComponent implements OnInit {
     if (!entries || !entries.length) {
       return '';
     }
-    const hourValue = entries[0].dataPoint?.x ?? 0;
-    const formattedHour = this.formatHourLabel(hourValue);
-    const dayValue = this.callResultsData.find(
-      (item) => item.hour === hourValue
-    )?.day;
+    const dayValue = entries[0].dataPoint?.x ?? 0;
+    const hourValue = entries[0].dataPoint?.y ?? 0;
+    const dataItem = this.callResultsData.find(
+      (item) => item.day === dayValue && item.hour === hourValue
+    );
+
+    if (!dataItem) {
+      return '';
+    }
+
+    const formattedHour = this.formatHourLabel(dataItem.hour);
     const header = `<span style="color:#00E0FF;font-weight:bold">${formattedHour}</span>`;
     const dayLine = dayValue
       ? `<br/><span style="color:#8fb7ff">اليوم ${dayValue}</span>`
       : '';
     const lines = entries
-      .map(
-        (entry: any) =>
-          `<br/><span style="color:${entry.dataSeries.lineColor}">${entry.dataSeries.name}: ${entry.dataPoint.y}</span>`
-      )
+      .map((entry: any) => {
+        // Get the actual call count from dataItem based on the series name
+        let callCount = 0;
+        if (entry.dataSeries.name === 'إجمالي المكالمات') {
+          callCount = dataItem.totalCalls;
+        } else if (entry.dataSeries.name === 'مكالمات ناجحة') {
+          callCount = dataItem.successCalls;
+        } else if (entry.dataSeries.name === 'مكالمات فاشلة') {
+          callCount = dataItem.failedCalls;
+        }
+        return `<br/><span style="color:${entry.dataSeries.lineColor}">${entry.dataSeries.name}: ${callCount}</span>`;
+      })
       .join('');
     return `${header}${dayLine}${lines}`;
   }

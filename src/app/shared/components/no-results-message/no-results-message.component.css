@@ -1,0 +1,44 @@
+/* No results message styles */
+.no-results-message {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  padding: 40px 20px;
+  margin-top: 20px;
+  border: 1px solid var(--bg-error);
+  border-radius: 10px;
+  background: var(--bg-light);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.no-results-content {
+  text-align: center;
+  color: var(--white-color);
+  max-width: 500px;
+}
+
+.no-results-content i {
+  font-size: 64px;
+  color: var(--primary-color);
+  margin-bottom: 20px;
+  opacity: 0.7;
+}
+
+.no-results-content h3 {
+  font-size: 24px;
+  font-weight: 700;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+  text-shadow: 0 0 10px var(--primary-color-dark);
+}
+
+.no-results-content p {
+  font-size: 16px;
+  color: var(--white-color);
+  opacity: 0.8;
+  margin-bottom: 30px;
+}
+.no-results-content button {
+  display: inline-block;
+}

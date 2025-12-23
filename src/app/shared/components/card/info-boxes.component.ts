@@ -2,7 +2,9 @@ import { Component, Input } from '@angular/core';
 
 export interface InfoBox {
   label: string;
-  value: string | null | undefined;
+  value?: string | null | undefined;
+  key?: string; // Optional key to get value from data object
+  icon?: string; // Optional icon (for future use)
 }
 
 @Component({
@@ -22,6 +24,7 @@ export interface InfoBox {
   .info-boxes {
     display: flex;
     justify-content: space-between;
+    flex-wrap: wrap;
     align-items: center;
     margin-top: 8px;
     font-size: 12px;

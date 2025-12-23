@@ -10,7 +10,7 @@ import {
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
-import { GetAllCompaniseService } from '../../../../../../core/services/common/get-all-companise.service';
+import { GetAllCompaniseService } from '../../../../../../core/services/common/companise.service';
 import { ICompanies } from '../../../../../../core/Models/common/icompanies';
 
 export interface CompanyLookupDialogData {

@@ -13,7 +13,7 @@
   </button>
 
   <div class="logo" *ngIf="!isCollapsed">
-    <img src="./assets/logo.svg" alt="logo_elbatt" loading="lazy" />
+    <img src="./assets/logo.svg" alt="logo_Zawolf" loading="lazy" />
   </div>
 
   <div class="menu">
@@ -22,7 +22,7 @@
         <a
           [routerLink]="item.route"
           routerLinkActive="active"
-          [routerLinkActiveOptions]="{ exact: false }"
+          [routerLinkActiveOptions]="{ exact: true }"
         >
           <span>{{ item.title }}</span>
           <i [class]="item.icon"></i>

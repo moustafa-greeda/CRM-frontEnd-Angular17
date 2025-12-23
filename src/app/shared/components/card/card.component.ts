@@ -1,5 +1,5 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { InfoBox } from '../../ui/info-boxes/info-boxes.component';
+import { InfoBox } from './info-boxes.component';
 
 export interface CardField {
   label: string;
@@ -11,7 +11,7 @@ export interface CardField {
   selector: 'app-card',
   template: `
     <!-- <div class="client-card border-gradient diagonal medium rounded-lg"> -->
-    <div class="client-card" [style.animation-delay]="index * 0.3 + 's'">
+    <div class="client-card" [style.animation-delay]="index * 0.2 + 's'">
       <!-- border -->
       <span class="corner tl"></span>
       <span class="corner tr"></span>
@@ -19,21 +19,37 @@ export interface CardField {
       <span class="corner br"></span>
       <!-- Avatar -->
       <div class="client-avatar">
-        <div class="icon">
-          <i class="bi bi-three-dots-vertical"></i>
+        <div class="icon" *ngIf="showEditIcon" (click)="onEditClick($event)">
+          <i class="bi bi-pencil-square edit"></i>
+          <!-- <i class="bi bi-three-dots-vertical"></i> -->
         </div>
         <div class="avatar-placeholder">
           <!-- {{ (data[titleKey]?.charAt(0) || '?').toUpperCase() }} -->
-          <img [src]="getAvatarImage()" [alt]="data[titleKey] || 'avatar'" />
+          <img
+            *ngIf="showAvatar"
+            [src]="getAvatarImage()"
+            [alt]="data[titleKey] || 'avatar'"
+          />
         </div>
 
-        <div *ngIf="selectable" class="checkbox-wrapper">
+        <div *ngIf="selectable && showSelectBox" class="checkbox-wrapper">
           <input
             type="checkbox"
             class="custom-checkbox"
             [checked]="isSelected"
             (change)="onSelectionChange($event)"
           />
+        </div>
+        <!-- Status indicator: uses data['status'] to respect index signature typing -->
+        <div class="status" *ngIf="data?.['isActive'] !== undefined">
+          <span
+            [ngClass]="{
+              'status-active': data['isActive'] === true,
+              'status-inactive': data['isActive'] === false
+            }"
+          >
+            {{ data['isActive'] ? 'نشط' : 'غير نشط' }}
+          </span>
         </div>
       </div>
 
@@ -64,18 +80,8 @@ export interface CardField {
           </div>
         </div>
 
-        <!-- Email -->
-        <!-- <div class="email-container" *ngIf="data?.['email']">
-          <div
-            class="icon-wrapper border-gradient horizontal thin rounded-full"
-          >
-            <i class="bi bi-envelope"></i>
-          </div>
-          <p class="client-email">{{ data['email'] }}</p>
-        </div> -->
-
         <!-- Info Boxes -->
-        <app-info-boxes [boxes]="infoBoxes"></app-info-boxes>
+        <app-info-boxes [boxes]="getProcessedInfoBoxes()"></app-info-boxes>
       </div>
 
       <!-- Social & Rating -->
@@ -120,43 +126,91 @@ export interface CardField {
   `,
   styles: [
     `
+      .status {
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        font-size: 11px;
+      }
+
+      .status span {
+        padding: 5px 10px;
+        border-radius: 999px;
+        font-weight: 700;
+        text-transform: uppercase;
+        font-size: 12px;
+        color: var(--white-color);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        transition: all 0.3s ease;
+        cursor: pointer;
+        transform: scale(1.2);
+      }
+
+      .status-active {
+        background: rgba(0, 128, 0, 0.2);
+        color: #00ff7f;
+        border: 1px solid #00ff7f;
+      }
+
+      .status-inactive {
+        background: rgba(255, 0, 0, 0.15);
+        color: #ff6b6b;
+        border: 1px solid #ff6b6b;
+      }
+
+      .status-pending {
+        background: rgba(255, 215, 0, 0.15);
+        color: #ffd700;
+        border: 1px solid #ffd700;
+      }
+
       .client-card {
         position: relative;
         color: var(--white-color);
         padding: 20px;
         backdrop-filter: blur(2px);
         border-radius: 20px;
-        box-shadow: inset 2px 2px 10px rgba(255, 255, 255, 0.1),
           inset -2px -2px 10px rgba(0, 0, 0, 0.6),
           0 10px 25px rgba(70, 227, 255, 0.2);
         background: var(--bg-light);
-        transform: perspective(600px) rotateX(5deg) rotateY(-5deg);
-        transition: transform 0.4s ease, box-shadow 0.4s ease, opacity 0.4s ease;
-        opacity: 0;
-        animation: cardFadeIn 0.6s ease-out forwards;
+
+        // transform: perspective(600px) rotateX(5deg) rotateY(-5deg);
+        transition: transform 0.4s ease, box-shadow 0.4s ease,
+          opacity 0.4s ease background 0.4s ease;
+        // border: 1px solid var(--border-color);
+
+        // opacity: 0;
+        // animation: cardFadeIn 0.6s ease-out forwards;
       }
 
-      @keyframes cardFadeIn {
-        0% {
-          opacity: 0;
-          transform: perspective(600px) rotateX(5deg) rotateY(-5deg)
-            translateX(-300px);
-        }
-        100% {
-          opacity: 1;
-          transform: perspective(600px) rotateX(5deg) rotateY(-5deg)
-            translateX(0);
-        }
-      }
+      // @keyframes cardFadeIn {
+      //   0% {
+      //     opacity: 0;
+      //     transform: perspective(600px) rotateX(5deg) rotateY(-5deg)
+      //       translateX(-300px);
+      //   }
+      //   100% {
+      //     opacity: 1;
+      //     transform: perspective(600px) rotateX(5deg) rotateY(-5deg)
+      //       translateX(0);
+      //   }
+      // }
 
       /* 
         Here's a fix using :host for hover effect:
       */
       :host(:hover) .client-card {
         transform: perspective(600px) rotateX(0) rotateY(0) scale(1.05) !important;
-        box-shadow: inset 2px 2px 10px rgba(255, 255, 255, 0.1),
-          inset -2px -2px 4px rgba(0, 0, 0, 0.6),
-          0 4px 4px rgba(0, 234, 255, 0.4) !important;
+        box-shadow:  0px 0px 12px var(--secondary-color) !important;
+        // background: linear-gradient(
+        //   120deg,
+        //   #000204 0%,
+        //   #000204 40%,
+        //   #008299 50%,
+        //   #000204 60%,
+        //   #000204 100%
+        // );
+        background: rgba(17, 24, 31);
       }
 
       /* ✨ الزوايا الأربعة */
@@ -248,9 +302,19 @@ export interface CardField {
         margin-bottom: 16px;
         display: flex;
         align-items: center;
-        justify-content: space-between;
+        justify-content: center;
+        position: relative;
       }
-
+      .client-card .client-avatar .icon {
+        position: absolute;
+        top: 0px;
+        right: 0px;
+        font-size: 20px;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        color: var(--primary-color);
+      }
       .avatar-placeholder {
         width: 48px;
         height: 48px;
@@ -271,10 +335,16 @@ export interface CardField {
       }
 
       .checkbox-wrapper {
-        display: inline-block;
+        position: absolute;
+        top: 0;
+        left: 0;
+        font-weight: 700;
+        cursor: pointer;
+        transition: all 0.3s ease;
       }
 
       .client-name-container {
+      text-align: center;
         display: flex;
         gap: 4px;
         flex-direction: column;
@@ -423,6 +493,7 @@ export interface CardField {
 })
 export class CardComponent {
   @Input() data!: Record<string, any>;
+  @Input() showSelectBox: boolean = false;
   @Input() titleKey: string = 'name';
   @Input() subTitleKey?: string;
   @Input() fields: CardField[] = [];
@@ -433,13 +504,22 @@ export class CardComponent {
   @Input() isSelected: boolean = false;
   @Input() index: number = 0; // For stagger animation
   @Input() showFooter: boolean = false;
-
+  @Input() showEditIcon: boolean = false;
+  @Input() showAvatar: boolean = true;
   @Output() selectionChange = new EventEmitter<boolean>();
+  @Output() editClick = new EventEmitter<void>();
 
   onSelectionChange(event: Event): void {
     const isChecked = (event.target as HTMLInputElement).checked;
     this.isSelected = isChecked;
     this.selectionChange.emit(isChecked);
+  }
+
+  onEditClick(event?: Event): void {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.editClick.emit();
   }
 
   getAvatarImage(): string {
@@ -471,5 +551,22 @@ export class CardComponent {
 
     // Default fallback
     return 'assets/logo.svg';
+  }
+
+  getProcessedInfoBoxes(): InfoBox[] {
+    if (!this.infoBoxes || !this.data) {
+      return [];
+    }
+    return this.infoBoxes.map((box) => {
+      // If key is provided, get value from data object
+      if (box.key) {
+        return {
+          label: box.label,
+          value: this.data[box.key] || null,
+        };
+      }
+      // Otherwise, use the value directly
+      return box;
+    });
   }
 }

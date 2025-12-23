@@ -121,21 +121,6 @@
   justify-content: center;
 }
 
-/* ======================= Empty State ==================== */
-.empty-state {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
-.empty-state-content {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-}
-
 /* ============================= Pagination ============================= */
 /* Pagination Container */
 .pagination-controls {

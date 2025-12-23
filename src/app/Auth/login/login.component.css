@@ -1,9 +1,10 @@
 .parent {
   width: 100%;
-  height: 100vh;
+  min-height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 20px;
   background-image: url("/assets/bg-login.svg");
   background-repeat: no-repeat;
   background-size: cover;
@@ -11,8 +12,9 @@
 }
 
 .section {
-  width: 550px;
-  height: 600px;
+  width: 100%;
+  max-width: 550px;
+  min-height: 600px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -23,6 +25,7 @@
   border: 2px solid var(--primary-color);
   box-shadow: 0 4px 30.8px 0 var(--primary-color);
   background-color: rgb(17, 24, 31, 60%);
+  padding: 30px 20px;
 }
 
 .logo {
@@ -33,72 +36,88 @@
 .logo img {
   background-size: cover;
 }
+
 h1 {
   color: var(--white-color);
   text-shadow: 0 2px 5px var(--primary-color);
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  margin: 15px 0;
+  text-align: center;
 }
+
 .form-login {
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  width: 100%;
+  max-width: 450px;
 }
 
 .form-login label {
-  width: 450px;
-  font-size: 15px;
+  width: 100%;
+  font-size: clamp(14px, 2vw, 15px);
   display: block;
   color: var(--white-color);
+  margin-bottom: 5px;
+  text-align: right;
 }
+
 .form-login input {
-  width: 450px;
+  width: 100%;
   height: 55px;
   padding: 12px 15px;
-  margin: 20px 0px;
+  margin: 10px 0px;
   border: 2px solid var(--primary-color);
   border-radius: 8px;
-  font-size: 14px;
+  font-size: clamp(14px, 2vw, 16px);
   transition: 0.3s ease;
-  color: #ffffff;
   color: var(--primary-color);
   background-color: rgba(255, 255, 255, 0.1) !important;
 }
 
 .form-login input:focus {
   border: 2px solid var(--secondary-color);
+  outline: none;
 }
 
 .form-login input::placeholder,
 .password-wrapper input::placeholder {
   color: #fff;
   opacity: 1;
+  font-size: clamp(13px, 2vw, 14px);
 }
+
 .password-wrapper {
   position: relative;
-  width: 450px;
+  width: 100%;
+  max-width: 450px;
 }
 
 .password-wrapper input {
   width: 100%;
   height: 55px;
-  padding-left: 20px;
+  padding-left: 50px;
+  padding-right: 15px;
   border: 2px solid var(--primary-color);
   border-radius: 8px;
   background-color: rgba(255, 255, 255, 0.1);
   color: #fff;
   caret-color: var(--primary-color);
+  font-size: clamp(14px, 2vw, 16px);
 }
 
 .password-wrapper .toggle-password {
   position: absolute;
   top: 50%;
-  left: 15px; /* stick to the right inside the input */
+  left: 15px;
   transform: translateY(-50%);
-  font-size: 20px;
+  font-size: clamp(18px, 3vw, 20px);
   cursor: pointer;
-  color: var(--primary-color); /* adjust to be visible on dark background */
+  color: var(--primary-color);
   opacity: 0.8;
   transition: opacity 0.2s ease;
+  z-index: 1;
 }
 
 .password-wrapper .toggle-password:hover {
@@ -111,16 +130,31 @@ input[type="password"]::-ms-reveal {
 }
 
 /* forget password */
-
 .check-group {
-  width: 450px;
+  width: 100%;
+  max-width: 450px;
   display: flex;
   justify-content: space-between;
-  align-items: center !important;
+  align-items: center;
   color: var(--white-color);
+  margin: 15px 0;
+  /* flex-wrap: wrap; */
+  gap: 10px;
 }
+
 .check-group p {
   color: var(--white-color);
+}
+
+.check-group a {
+  color: var(--white-color);
+  text-decoration: none;
+  font-size: clamp(13px, 2vw, 14px);
+  transition: color 0.2s ease;
+}
+
+.check-group a:hover {
+  color: var(--primary-color);
 }
 
 .check-group input[type="checkbox"] {
@@ -131,16 +165,22 @@ input[type="password"]::-ms-reveal {
   border-radius: 4px;
   accent-color: #fff;
   background-color: #fff;
+  cursor: pointer;
 }
 
 button {
-  width: 450px;
+  width: 100%;
+  max-width: 450px;
   height: 50px;
-  font-size: 18px;
+  font-size: clamp(16px, 2.5vw, 18px);
   color: var(--white-color);
   background-color: var(--button-color);
   box-shadow: 10px 10px 5px #000;
   transition: box-shadow 0.3s ease, transform 0.3s ease;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 10px;
 }
 
 button:hover {
@@ -148,20 +188,203 @@ button:hover {
   box-shadow: var(--button-hover-shadow);
 }
 
-.error {
-  font-size: 15px;
-  margin-top: 20px;
-  margin-bottom: 10px;
-  padding: 10px 100px;
-  text-align: right;
-  color: var(--bg-error);
+button:active {
+  transform: translateY(0);
 }
 
+.error {
+  font-size: clamp(13px, 2vw, 15px);
+  margin-top: 15px;
+  margin-bottom: 10px;
+  padding: 10px 15px;
+  text-align: center;
+  color: var(--bg-error);
+  width: 100%;
+  max-width: 450px;
+  word-wrap: break-word;
+}
+
+/* ============================= Responsive Design ============================= */
+
+/* Large Tablets and Small Desktops */
+@media (max-width: 1024px) {
+  .section {
+    max-width: 500px;
+    padding: 25px 20px;
+  }
+}
+
+/* Tablets */
 @media (max-width: 768px) {
   .parent {
-    background-repeat: no-repeat;
-    background-size: cover;
+    padding: 15px;
     background-position: center;
+  }
+
+  .section {
+    max-width: 100%;
+    min-height: auto;
+    padding: 25px 20px;
+    border-radius: 20px;
+  }
+
+  .logo {
+    max-width: 250px;
+  }
+
+  h1 {
+    font-size: 1.75rem;
+  }
+}
+
+/* Large Mobile Devices */
+@media (max-width: 480px) {
+  .parent {
+    padding: 10px;
+  }
+
+  .section {
+    padding: 20px 15px;
+    border-radius: 15px;
+    min-height: auto;
+  }
+
+  .logo {
+    max-width: 200px;
+    margin: 0 auto 10px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin: 10px 0;
+  }
+
+  .form-login input,
+  .password-wrapper input {
+    height: 50px;
+    padding: 10px 12px;
+    font-size: 14px;
+  }
+
+  .password-wrapper input {
+    padding-left: 45px;
+    padding-right: 12px;
+  }
+
+  .password-wrapper .toggle-password {
+    left: 12px;
+    font-size: 18px;
+  }
+
+  button {
+    height: 48px;
+    font-size: 16px;
+  }
+
+  /* .check-group {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  } */
+
+  .error {
+    padding: 8px 10px;
+    font-size: 13px;
+  }
+}
+
+/* Small Mobile Devices */
+@media (max-width: 360px) {
+  .parent {
+    padding: 8px;
+  }
+
+  .section {
+    padding: 15px 12px;
+    border-radius: 12px;
+  }
+
+  .logo {
+    max-width: 180px;
+  }
+
+  h1 {
+    font-size: 1.25rem;
+    margin: 8px 0;
+  }
+
+  .form-login input,
+  .password-wrapper input {
+    height: 45px;
+    padding: 8px 10px;
+    font-size: 13px;
+    margin: 8px 0;
+  }
+
+  .password-wrapper input {
+    padding-left: 40px;
+    padding-right: 10px;
+  }
+
+  .password-wrapper .toggle-password {
+    right: 10px;
+    font-size: 16px;
+  }
+
+  button {
+    height: 45px;
+    font-size: 15px;
+  }
+
+  .check-group {
+    font-size: 12px;
+  }
+
+  .check-group input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+  }
+}
+
+/* Landscape Orientation for Mobile */
+@media (max-width: 768px) and (orientation: landscape) {
+  .parent {
+    padding: 10px;
+    min-height: auto;
+    height: auto;
+  }
+
+  .section {
+    min-height: auto;
+    padding: 20px 15px;
+  }
+
+  .logo {
+    max-width: 180px;
+    margin: 0 auto 5px;
+  }
+
+  h1 {
+    font-size: 1.5rem;
+    margin: 5px 0;
+  }
+
+  .form-login input,
+  .password-wrapper input {
+    height: 45px;
+    margin: 8px 0;
+  }
+}
+
+/* Very Large Screens */
+@media (min-width: 1400px) {
+  .section {
+    max-width: 600px;
+    padding: 40px 30px;
+  }
+
+  .logo {
+    max-width: 320px;
   }
 }
 @keyframes fadeIn {

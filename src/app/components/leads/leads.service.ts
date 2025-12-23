@@ -7,6 +7,7 @@ import {
   ILeadsResponse,
   ILeadsSearchParams,
 } from '../../core/Models/leads/ileads';
+import { ApiResponse } from './distribution/distribution.service';
 
 @Injectable({
   providedIn: 'root',
@@ -130,6 +131,54 @@ export class LeadsService {
     return this.http.post<any>(
       `${this.BASE_API_URL}/Client/CreateLead`,
       payload
+    );
+  }
+
+  // =============================== import from excel ===================
+  importFromExcel(
+    file: File
+  ): Observable<ApiResponse<any> & { statusCode?: number }> {
+    const formData = new FormData();
+    formData.append('file', file, file.name);
+    return this.postFormDataForImport(
+      `${this.BASE_API_URL}/Client/import-contacts`,
+      formData
+    );
+  }
+
+  private postFormDataForImport(
+    url: string,
+    formData: FormData
+  ): Observable<ApiResponse<any> & { statusCode?: number }> {
+    const token =
+      localStorage.getItem('token') || sessionStorage.getItem('token');
+    return new Observable<ApiResponse<any> & { statusCode?: number }>(
+      (observer) => {
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', url);
+        if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+        xhr.setRequestHeader('Accept', '*/*');
+        xhr.onload = () => {
+          try {
+            const parsed = JSON.parse(xhr.responseText);
+            // Add status code to response
+            const responseWithStatus = {
+              ...parsed,
+              statusCode: xhr.status,
+            };
+            if (xhr.status >= 200 && xhr.status < 300) {
+              observer.next(responseWithStatus);
+              observer.complete();
+            } else {
+              observer.error(responseWithStatus);
+            }
+          } catch (e) {
+            observer.error(e);
+          }
+        };
+        xhr.onerror = () => observer.error(new Error('Network error'));
+        xhr.send(formData);
+      }
     );
   }
 }

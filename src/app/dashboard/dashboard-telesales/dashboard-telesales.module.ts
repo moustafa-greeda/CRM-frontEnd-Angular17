@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { DashboardTelesalesComponent } from './dashboard-telesales.component';
-import { CallsComponent } from './calls/calls.component';
 import { DashboardTelesalesRoutingModule } from './dashboard-telesales-routing.module';
 import { SharedComponentsModule } from '../../shared/components/shared-components.module';
 import { MatTableModule } from '@angular/material/table';
@@ -15,9 +14,15 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { CallsComponent } from './components/calls/calls.component';
+import { FollowUpTeleSalesComponent } from './components/follow-up-tele-sales/follow-up-tele-sales.component';
 
 @NgModule({
-  declarations: [DashboardTelesalesComponent, CallsComponent],
+  declarations: [
+    DashboardTelesalesComponent,
+    CallsComponent,
+    FollowUpTeleSalesComponent,
+  ],
   imports: [
     CommonModule,
     FormsModule,

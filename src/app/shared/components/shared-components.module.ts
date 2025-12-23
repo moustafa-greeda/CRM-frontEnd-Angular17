@@ -17,6 +17,7 @@ import { ViewToggleComponent } from '../ui/view-toggle/view-toggle.component';
 import { SearchInputComponent } from '../ui/search-input/search-input.component';
 import { ButtonComponent } from '../ui/button/button.component';
 import { CountLeadComponent } from './count-lead/count-lead.component';
+import { NoResultsMessageComponent } from './no-results-message/no-results-message.component';
 // import {ContractEditorComponent} from './contract-editor/contract-editor.component'
 
 @NgModule({
@@ -34,6 +35,7 @@ import { CountLeadComponent } from './count-lead/count-lead.component';
     ButtonComponent,
     CountLeadComponent,
     DropdownComponent,
+    NoResultsMessageComponent,
     // ContractEditorComponent
   ],
   imports: [
@@ -58,6 +60,7 @@ import { CountLeadComponent } from './count-lead/count-lead.component';
     SearchInputComponent,
     ButtonComponent,
     CountLeadComponent,
+    NoResultsMessageComponent,
   ],
 })
 export class SharedComponentsModule {}

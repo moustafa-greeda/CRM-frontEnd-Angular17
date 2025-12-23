@@ -6,7 +6,7 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 12px 15px;
+  /* padding: 12px 15px; */
   border: none;
   border-radius: 8px;
   font-size: 14px;
@@ -23,6 +23,7 @@
   justify-content: center;
   border-radius: 12px;
   border: 1px solid var(--color-primary);
+  color: #fff;
   background: linear-gradient(90deg, #008299 0%, #002b33 100%);
 }
 

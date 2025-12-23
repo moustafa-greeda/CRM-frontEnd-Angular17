@@ -1,12 +1,17 @@
 import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DashboardTelesalesComponent } from './dashboard-telesales.component';
-import { CallsComponent } from './calls/calls.component';
+import { CallsComponent } from './components/calls/calls.component';
+import { FollowUpTeleSalesComponent } from './components/follow-up-tele-sales/follow-up-tele-sales.component';
 
 const routes: Routes = [
   {
     path: '',
     component: DashboardTelesalesComponent,
+  },
+  {
+    path: 'follow-up-tele',
+    component: FollowUpTeleSalesComponent,
   },
   {
     path: 'calls',

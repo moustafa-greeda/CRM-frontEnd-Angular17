@@ -45,7 +45,7 @@ import { ConfirmDeleteComponent } from './shared/components/confirm-delete/confi
 import { NotifyDialogHostComponent } from './shared/components/notify-dialog-host/notify-dialog-host.component';
 import { GridCardsComponent } from './shared/ui/grid-cards/grid-cards.component';
 import { CardComponent } from './shared/components/card/card.component';
-import { InfoBoxesComponent } from './shared/ui/info-boxes/info-boxes.component';
+import { InfoBoxesComponent } from './shared/components/card/info-boxes.component';
 
 import { HomeAdminComponent } from './components/home-admin/home-admin.component';
 import { CitiesComponent } from './components/cities/cities.component';

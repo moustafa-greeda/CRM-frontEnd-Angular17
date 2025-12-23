@@ -3,12 +3,12 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, PageEvent } from '@angular/material/paginator';
 import { Subscription } from 'rxjs';
-import { ICall } from '../../../core/Models/teleSalse/ICall';
+import { ICall } from '../../../../core/Models/teleSalse/ICall';
 import { CallsService } from './calls.service';
-import { NotifyDialogService } from '../../../shared/components/notify-dialog-host/notify-dialog.service';
-import { FormUiComponent } from '../../../shared/components/form-ui/form-ui.component';
-import { DateUtilsService } from '../../../core/services/common/date-utils.service';
-import { AuthService } from '../../../Auth/auth.service';
+import { NotifyDialogService } from '../../../../shared/components/notify-dialog-host/notify-dialog.service';
+import { FormUiComponent } from '../../../../shared/components/form-ui/form-ui.component';
+import { DateUtilsService } from '../../../../core/services/common/date-utils.service';
+import { AuthService } from '../../../../Auth/auth.service';
 
 @Component({
   selector: 'app-calls',

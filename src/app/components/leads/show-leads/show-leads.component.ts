@@ -18,6 +18,7 @@ import { LeadStatusService } from '../../../core/services/common/lead-status.ser
 import { ILeadStatus } from '../../../core/Models/common/ilead-status';
 import { BreadcrumbItem } from '../../../shared/interfaces/breadcrumb-item.interface';
 import { ActionButton } from '../../../shared/interfaces/action-button.interface';
+import { NgxSpinnerService } from 'ngx-spinner';
 
 // Using ILeads interface from the API instead of local Client interface
 
@@ -77,7 +78,9 @@ export class ShowLeadsComponent implements OnInit {
     private router: Router,
     private notify: NotifyDialogService,
     private leadStatusService: LeadStatusService,
-    private cdr: ChangeDetectorRef
+    private cdr: ChangeDetectorRef,
+    private _leadsService: LeadsService,
+    private spinner: NgxSpinnerService
   ) {}
   // ====================== page header ======================
   pageTitle = 'إدارة العملاء';
@@ -92,9 +95,12 @@ export class ShowLeadsComponent implements OnInit {
       iconClass: 'bi bi-plus',
       click: () => this.onAddClient(),
     },
+    {
+      label: 'استيراد من ال EXcel',
+      iconClass: 'bi bi-file-earmark-excel',
+      click: () => this.onImportFromExcel(),
+    },
   ];
-  // =============================================================
-
   filteredClients: ILeads[] = [];
 
   ngOnInit(): void {
@@ -110,6 +116,94 @@ export class ShowLeadsComponent implements OnInit {
     }, 100);
   }
 
+  // =============================== import from excel ===================  // ========================================= import from excel ====================
+
+  // =============================== import from excel ===================
+  onImportFromExcel(): void {
+    // Create file input element
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.xlsx,.xls';
+    input.style.display = 'none';
+
+    // Handle file selection
+    input.onchange = (event: any) => {
+      const file: File = event.target.files[0];
+      if (!file) {
+        return;
+      }
+
+      // Validate file type
+      const validExtensions = ['.xlsx', '.xls'];
+      const fileExtension = file.name
+        .substring(file.name.lastIndexOf('.'))
+        .toLowerCase();
+      if (!validExtensions.includes(fileExtension)) {
+        this.notify.error({
+          title: 'خطأ في نوع الملف',
+          description: 'يرجى اختيار ملف Excel بصيغة .xlsx أو .xls',
+        });
+        return;
+      }
+
+      // Show loader
+      this.spinner.show();
+
+      // Call API
+      this._leadsService.importFromExcel(file).subscribe({
+        next: (response) => {
+          this.spinner.hide();
+          console.log('Import response:', response);
+
+          // Check if response has succeeded property
+          // Even with status 200, API may return succeeded: false
+          if (response && response.statusCode === 200) {
+            this.notify.success({
+              title: 'نجاح',
+              description: response.message || 'تم استيراد البيانات بنجاح',
+            });
+            // Refresh employees list
+            this.loadLeads();
+          } else {
+            // Even with status 200, if succeeded is false, show error
+            // API returns status 200 but with succeeded: false when there's a business logic error
+            this.notify.error({
+              title: 'فشل الاستيراد',
+              description:
+                response?.message || 'حدث خطأ أثناء استيراد البيانات',
+            });
+          }
+        },
+        error: (error) => {
+          this.spinner.hide();
+          console.error('Error importing from Excel:', error);
+
+          // Handle different error formats
+          let errorMessage = 'حدث خطأ أثناء استيراد البيانات من ملف Excel';
+
+          if (error?.error?.message) {
+            errorMessage = error.error.message;
+          } else if (error?.error?.errors) {
+            errorMessage = Array.isArray(error.error.errors)
+              ? error.error.errors.join(', ')
+              : String(error.error.errors);
+          } else if (error?.message) {
+            errorMessage = error.message;
+          }
+
+          this.notify.error({
+            title: 'فشل الاستيراد',
+            description: errorMessage,
+          });
+        },
+      });
+    };
+
+    // Trigger file selection dialog
+    document.body.appendChild(input);
+    input.click();
+    document.body.removeChild(input);
+  }
   private setupSearchDebouncing(): void {
     this.searchSubject
       .pipe(
@@ -558,18 +652,22 @@ export class ShowLeadsComponent implements OnInit {
    */
   createLeadForClient(client: ILeads): void {
     // Find the selected lead status ID from the API data
-    const selectedStatus = this.leadStatusList.find(
-      (status) => status.name === this.leadStatusLookupId
-    );
-    const leadStatusId = selectedStatus?.id || 1; // Default to 1 if not found
+    // const selectedStatus = this.leadStatusList.find(
+    //   (status) => status.name === this.leadStatusLookupId
+    // );
+    // const leadStatusId = selectedStatus?.id || 1; // Default to 1 if not found
 
-    this.leadsService.CreateLead(client.id, leadStatusId).subscribe({
-      next: () => {},
-      error: () => {
-        this.notify.open({
-          type: 'error',
+    this.leadsService.CreateLead(client.id).subscribe({
+      next: (response: any) => {},
+      error: (error: any) => {
+        // Extract error message from validationErrors or fallback to message
+        const errorMessage =
+          error?.error?.validationErrors?.[0]?.errorMessage ||
+          'هذا العميل موجود بالفعل';
+
+        this.notify.error({
           title: 'خطأ',
-          description: `تعذر إنشاء عميل محتمل لـ ${client.name}`,
+          description: errorMessage,
         });
       },
     });
@@ -654,7 +752,7 @@ export class ShowLeadsComponent implements OnInit {
       { key: 'phone', header: 'رقم الهاتف' },
       { key: 'companyName', header: 'اسم الشركة' },
       { key: 'industeryName', header: 'الصناعة' },
-
+      { key: 'contactSource', header: 'مصدر العميل' },
       {
         key: 'isHaveSoialMedia',
         header: 'لديه وسائل تواصل اجتماعي',

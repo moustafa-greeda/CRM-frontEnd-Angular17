@@ -1,0 +1,15 @@
+<div class="no-results-message">
+  <div class="no-results-content">
+    <i [class]="icon"></i>
+    <h3>{{ title }}</h3>
+    <p>{{ description }}</p>
+    <button
+      *ngIf="showResetButton"
+      [class]="resetButtonClass"
+      (click)="onResetClick()"
+    >
+      {{ resetButtonText }}
+    </button>
+  </div>
+</div>
+

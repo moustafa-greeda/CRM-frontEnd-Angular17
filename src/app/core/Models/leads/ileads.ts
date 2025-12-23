@@ -7,6 +7,7 @@ export interface ILeads {
   companyName: string | null;
   industeryName: string; // Note: API uses 'industeryName' not 'industryName'
   locationName: string;
+  contactSource: string;
   webSiteUrl: string; // Note: API uses 'webSiteUrl' not 'websiteUrl'
   isHaveSoialMedia: boolean; // Note: API uses 'isHaveSoialMedia' not 'isHaveSocialMedia'
   socialMediaLink: string;

@@ -33,7 +33,7 @@ select {
 
 input[type="date"].form-input::-webkit-calendar-picker-indicator {
   /* padding-left: 50px; */
-  margin-left: 50%;
+  /* margin-left: 50%; */
   filter: invert(1);
   cursor: pointer;
   opacity: 0.8;

@@ -2,14 +2,14 @@ import { Injectable } from '@angular/core';
 import { MatDialog, MatDialogRef } from '@angular/material/dialog';
 import { Observable, of } from 'rxjs';
 import { switchMap } from 'rxjs/operators';
-import { FormUiComponent } from '../../../shared/components/form-ui/form-ui.component';
-import { NotifyDialogService } from '../../../shared/components/notify-dialog-host/notify-dialog.service';
+import { FormUiComponent } from '../../../../shared/components/form-ui/form-ui.component';
+import { NotifyDialogService } from '../../../../shared/components/notify-dialog-host/notify-dialog.service';
 import { CallsService } from './calls.service';
-import { CallStatusService } from '../../../core/services/common/call-status.service';
-import { AuthService } from '../../../Auth/auth.service';
-import { ICall } from '../../../core/Models/teleSalse/ICall';
-import { ICallStatus } from '../../../core/Models/common/call-status';
-import { formUiConfig } from '../../../shared/interfaces/formUi.interface';
+import { CallStatusService } from '../../../../core/services/common/call-status.service';
+import { AuthService } from '../../../../Auth/auth.service';
+import { ICall } from '../../../../core/Models/teleSalse/ICall';
+import { ICallStatus } from '../../../../core/Models/common/call-status';
+import { formUiConfig } from '../../../../shared/interfaces/formUi.interface';
 
 export interface CallDialogOptions {
   call?: ICall;

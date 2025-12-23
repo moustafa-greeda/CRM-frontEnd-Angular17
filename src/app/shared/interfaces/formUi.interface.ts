@@ -8,6 +8,7 @@ export interface FormField {
     | 'textarea'
     | 'select'
     | 'date'
+    | 'datetime-local'
     | 'radio'
     | 'checkbox'
     | 'file'
@@ -17,12 +18,15 @@ export interface FormField {
   options?: { value: any; label: string }[];
   colSpan?: number; // For grid layout (1-3)
   accept?: string; // For file input (e.g., 'image/*', '.pdf')
+  hidden?: boolean; // Hide field from form
+  disabled?: boolean; // Disable field
   input1?: {
     name: string;
     label: string;
     type: string;
     placeholder?: string;
     required?: boolean;
+    disabled?: boolean;
     options?: { value: any; label: string }[];
   };
   input2?: {
@@ -31,6 +35,7 @@ export interface FormField {
     type: string;
     placeholder?: string;
     required?: boolean;
+    disabled?: boolean;
     options?: { value: any; label: string }[];
   };
 }

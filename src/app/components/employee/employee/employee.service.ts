@@ -14,13 +14,45 @@ export class EmployeeService {
   constructor(private http: HttpClient) {}
 
   // =============================== get employees ===================
-  getAllEmployees(): Observable<ApiResponse<IEmployee[]>> {
-    // const headers = this.getAuthHeaders();
-    return this.http.get<ApiResponse<IEmployee[]>>(
-      `${this.BASE_API_URL}/Employee/GetAllEmployee`
-    );
+  getAllEmployees(filters?: {
+    isActive?: boolean;
+    departmentId?: number;
+    empCode?: string;
+    empName?: string;
+  }): Observable<ApiResponse<IEmployee[]>> {
+    let url = `${this.BASE_API_URL}/Employee/GetAllEmployee`;
+    const params: string[] = [];
+
+    if (filters) {
+      if (filters.isActive !== undefined && filters.isActive !== null) {
+        params.push(`isActive=${filters.isActive}`);
+      }
+      if (filters.departmentId !== undefined && filters.departmentId !== null) {
+        params.push(`departmentId=${filters.departmentId}`);
+      }
+      if (filters.empCode) {
+        params.push(`empCode=${encodeURIComponent(filters.empCode)}`);
+      }
+      if (filters.empName) {
+        params.push(`empName=${encodeURIComponent(filters.empName)}`);
+      }
+    }
+
+    if (params.length > 0) {
+      url += '?' + params.join('&');
+    }
+
+    return this.http.get<ApiResponse<IEmployee[]>>(url);
   }
 
+  // =============================== create employee code  ===================
+  createEmployeeCode(
+    departmentId: number
+  ): Observable<ApiResponse<{ empCode: string }>> {
+    return this.http.get<ApiResponse<{ empCode: string }>>(
+      `${this.BASE_API_URL}/Employee/CreateEmpCode?departmentId=${departmentId}`
+    );
+  }
   // =============================== add employee ===================
   addEmployee(employee: IEmployee): Observable<ApiResponse<IEmployee>> {
     return this.addEmployeeWithFormData(employee);
@@ -32,6 +64,26 @@ export class EmployeeService {
   ): Observable<ApiResponse<IEmployee>> {
     const formData = this.createFormData(employee);
     return this.postFormData(`${this.BASE_API_URL}/Employee/create`, formData);
+  }
+
+  // =============================== update employee ===================
+  updateEmployee(
+    id: number,
+    employee: IEmployee
+  ): Observable<ApiResponse<IEmployee>> {
+    return this.updateEmployeeWithFormData(id, employee);
+  }
+
+  // =============================== update employee with FormData ===================
+  updateEmployeeWithFormData(
+    id: number,
+    employee: IEmployee
+  ): Observable<ApiResponse<IEmployee>> {
+    const formData = this.createFormData(employee);
+    return this.putFormData(
+      `${this.BASE_API_URL}/Employee/update/${id}`,
+      formData
+    );
   }
 
   // =============================== create FormData ===================
@@ -76,6 +128,35 @@ export class EmployeeService {
     return new Observable<ApiResponse<IEmployee>>((observer) => {
       const xhr = new XMLHttpRequest();
       xhr.open('POST', url);
+      if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+      xhr.setRequestHeader('Accept', '*/*');
+      xhr.onload = () => {
+        try {
+          const parsed = JSON.parse(xhr.responseText);
+          if (xhr.status >= 200 && xhr.status < 300) {
+            observer.next(parsed);
+            observer.complete();
+          } else {
+            observer.error(parsed);
+          }
+        } catch (e) {
+          observer.error(e);
+        }
+      };
+      xhr.onerror = () => observer.error(new Error('Network error'));
+      xhr.send(formData);
+    });
+  }
+
+  private putFormData(
+    url: string,
+    formData: FormData
+  ): Observable<ApiResponse<IEmployee>> {
+    const token =
+      localStorage.getItem('token') || sessionStorage.getItem('token');
+    return new Observable<ApiResponse<IEmployee>>((observer) => {
+      const xhr = new XMLHttpRequest();
+      xhr.open('PUT', url);
       if (token) xhr.setRequestHeader('Authorization', `Bearer ${token}`);
       xhr.setRequestHeader('Accept', '*/*');
       xhr.onload = () => {

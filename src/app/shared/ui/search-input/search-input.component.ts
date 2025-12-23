@@ -40,7 +40,7 @@ import { Component, EventEmitter, Output, Input } from '@angular/core';
       color: #ffffff;
       border: 1px solid #2D8091;
       border-radius: 8px;
-      padding: 12px 16px 12px 50px;
+      padding: 12px 16px 12px;
       font-size: 14px;
     }
 

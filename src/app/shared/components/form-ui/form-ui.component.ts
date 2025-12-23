@@ -27,6 +27,7 @@ import { formUiConfig, FormField } from '../../interfaces/formUi.interface';
 export class FormUiComponent implements OnInit, AfterViewInit {
   @Input() config?: formUiConfig;
   @Input() initialData?: Record<string, any>;
+  @Input() isLoading: boolean = false;
   @Output() formSubmit = new EventEmitter<any>();
   @Output() formCancel = new EventEmitter<void>();
 
@@ -71,7 +72,18 @@ export class FormUiComponent implements OnInit, AfterViewInit {
     const controls: Record<string, any> = {};
 
     for (const field of this.config.fields) {
-      const validators = field.required ? [Validators.required] : [];
+      const validators: any[] = [];
+
+      // Add required validator if field is required
+      if (field.required) {
+        validators.push(Validators.required);
+      }
+
+      // Add email validator if field type is email
+      if (field.type === 'email') {
+        validators.push(Validators.email);
+      }
+
       const initialValue = this.initialData?.[field.name] ?? '';
 
       if (field.type === 'checkbox') {
@@ -96,14 +108,24 @@ export class FormUiComponent implements OnInit, AfterViewInit {
             ? [Validators.required]
             : [];
           const input1Value = this.initialData?.[field.input1.name] ?? '';
-          controls[field.input1.name] = [input1Value, input1Validators];
+          const input1Control = new FormControl(input1Value, input1Validators);
+          // Disable if specified in config
+          if (field.input1.disabled) {
+            input1Control.disable();
+          }
+          controls[field.input1.name] = input1Control;
         }
         if (field.input2) {
           const input2Validators = field.input2.required
             ? [Validators.required]
             : [];
           const input2Value = this.initialData?.[field.input2.name] ?? '';
-          controls[field.input2.name] = [input2Value, input2Validators];
+          const input2Control = new FormControl(input2Value, input2Validators);
+          // Disable if specified in config
+          if (field.input2.disabled) {
+            input2Control.disable();
+          }
+          controls[field.input2.name] = input2Control;
         }
       } else {
         controls[field.name] = [initialValue, validators];
@@ -151,6 +173,9 @@ export class FormUiComponent implements OnInit, AfterViewInit {
     if (control?.errors && control.touched) {
       if (control.errors['required']) {
         return `${this.getFieldLabel(fieldName)} مطلوب`;
+      }
+      if (control.errors['email']) {
+        return 'البريد الإلكتروني غير صحيح';
       }
     }
     return '';

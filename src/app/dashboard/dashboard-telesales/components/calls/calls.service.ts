@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
-import { environment } from '../../../../environments/environment';
+import { environment } from '../../../../../environments/environment';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
-import { ApiResponse } from '../../../core/Models/api-response.model';
-import { ICall } from '../../../core/Models/teleSalse/ICall';
+import { ApiResponse } from '../../../../core/Models/api-response.model';
+import { ICall } from '../../../../core/Models/teleSalse/ICall';
 
 // Interface for GetAllCallForTeleSales API response
 export interface ICallStatusResponse {

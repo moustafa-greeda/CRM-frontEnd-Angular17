@@ -60,7 +60,7 @@ export class DistributionComponent implements OnInit {
   /*---------------------------- UI Data Configuration --------------*/
   breadcrumb: BreadcrumbItem[] = [
     { label: 'الرئيسية' },
-    { label: 'الاتفاقيات', active: true },
+    { label: 'التوزيع', active: true },
   ];
 
   companyColumns = [
@@ -182,7 +182,6 @@ export class DistributionComponent implements OnInit {
         type: 'error',
         title: 'تحذير',
         description: 'يرجى اختيار موظف أولاً قبل تأكيد التخصيص',
-        autoCloseMs: 3000,
       });
       return;
     }
@@ -192,7 +191,6 @@ export class DistributionComponent implements OnInit {
         type: 'error',
         title: 'تحذير',
         description: 'لا توجد عناصر مخصصة للتأكيد',
-        autoCloseMs: 3000,
       });
       return;
     }
@@ -205,7 +203,6 @@ export class DistributionComponent implements OnInit {
         type: 'error',
         title: 'خطأ في البيانات',
         description: 'بعض العناصر المخصصة تحتوي على معرفات غير صحيحة',
-        autoCloseMs: 3000,
       });
       return;
     }
@@ -215,7 +212,6 @@ export class DistributionComponent implements OnInit {
         type: 'error',
         title: 'خطأ في البيانات',
         description: 'معرف الموظف غير صحيح',
-        autoCloseMs: 3000,
       });
       return;
     }
@@ -228,7 +224,11 @@ export class DistributionComponent implements OnInit {
     const payload = this.assignedCustomers.map((c) => ({
       leadId: parseInt(c.id),
       teleSalesId: selectedEmployee.id!,
-      assignedBy: 'string',
+      // assignedBy: 'string',
+      // assignedBy: this.selectedEmployee?.name || '',
+      statusName:
+        this.leadsList.find((r) => r.id.toString() === c.id)?.leadStatusName ||
+        '',
       assignedAt: new Date().toISOString(),
       notes: 'string',
     }));
@@ -254,10 +254,7 @@ export class DistributionComponent implements OnInit {
         this.notify.open({
           type: 'error',
           title: 'فشل التخصيص',
-          description:
-            err?.error?.message ||
-            err?.message ||
-            'حدث خطأ أثناء تنفيذ عملية التخصيص',
+          description: 'تم التخصيص من قبل بالفعل',
         });
       },
     });

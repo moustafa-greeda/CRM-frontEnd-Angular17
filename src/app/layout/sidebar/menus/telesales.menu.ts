@@ -6,6 +6,11 @@ export const TelesalesMenu: SidebarItem[] = [
     icon: 'bi bi-house-door',
     route: '/dashboard/telesales',
   },
+  // {
+  //   title: 'المتابعة',
+  //   icon: 'bi bi-calendar',
+  //   route: '/dashboard/telesales/follow-up-tele',
+  // },
   {
     title: 'المكالمات',
     icon: 'bi bi-telephone',

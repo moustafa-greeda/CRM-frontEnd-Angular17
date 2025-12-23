@@ -14,6 +14,7 @@ export interface ITeleSalseActionRequest {
   leadId: number;
   actionTypeId: number;
   actionNotes: string;
+  actionDate?: string;
 }
 
 export interface ITeleSalseActionGroup {

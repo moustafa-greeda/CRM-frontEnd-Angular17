@@ -1,0 +1,179 @@
+.search-parent {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 15px;
+  border-radius: 10px;
+  background: var(--bg-light);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+/* ========== Search Form Grid ========== */
+.form-grid-search {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg, 16px);
+  align-items: end;
+  width: 100%;
+}
+
+/* Default styling for form fields */
+.form-grid-search .form-field {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  min-width: 0;
+}
+
+/* Label styling */
+.form-grid-search .form-field label {
+  color: var(--secondary-color);
+  font-size: 14px;
+  margin-bottom: var(--spacing-xs, 8px);
+}
+
+/* Styling for search field - make it responsive */
+.search-field {
+  grid-column: span 1;
+  width: 100%;
+}
+
+/* Force search input component to be responsive */
+.search-field ::ng-deep app-search-input,
+.search-field ::ng-deep .search-input-container {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.search-field ::ng-deep .search-input-container {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ========== Responsive Design ========== */
+
+/* Large Desktops (1200px and above) - Keep 3 columns */
+@media (min-width: 1200px) {
+  .form-grid-search {
+    grid-template-columns: 25% 25% 40%;
+    justify-content: space-between;
+    gap: var(--spacing-lg, 16px);
+  }
+}
+
+/* Medium Desktops and Large Tablets (992px to 1199px) */
+@media (max-width: 1199px) and (min-width: 993px) {
+  .form-grid-search {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md, 14px);
+  }
+}
+
+/* Tablets (768px to 992px) */
+@media (max-width: 992px) and (min-width: 769px) {
+  .search-parent {
+    padding: 16px;
+  }
+
+  .form-grid-search {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md, 14px);
+  }
+
+  .search-field {
+    grid-column: 1 / -1; /* Full width for search field */
+  }
+}
+
+/* Small Tablets (768px and below) */
+@media (max-width: 768px) {
+  .search-parent {
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+
+  .form-grid-search {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm, 12px);
+  }
+  .search-field {
+    grid-column: 1 / -1;
+  }
+
+  .form-grid-search .form-field label {
+    font-size: 13px;
+  }
+
+  /* Ensure search input is full width on mobile */
+  .search-field ::ng-deep app-search-input,
+  .search-field ::ng-deep .search-input-container {
+    width: 100% !important;
+  }
+}
+
+/* Mobile (480px and below) */
+@media (max-width: 480px) {
+  .search-parent {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .form-grid-search {
+    gap: var(--spacing-xs, 10px);
+  }
+
+  .form-grid-search .form-field label {
+    font-size: 12px;
+  }
+
+  .search-field {
+    grid-column: span 1;
+  }
+}
+
+/* Add border color when card is inactive */
+:host
+  ::ng-deep
+  app-card.inactive
+  .client-card
+  .client-name-container
+  .client-name {
+  /* border: 1px solid var(--bg-error) !important; */
+  color: var(--bg-error) !important;
+}
+
+/* Change color for corners when inactive */
+/* Top-left corner */
+:host ::ng-deep app-card.inactive .client-card .corner.tl {
+  background: linear-gradient(to right, var(--bg-error) 4px, transparent 100%)
+      top left no-repeat,
+    linear-gradient(to bottom, var(--bg-error) 4px, transparent 100%) top left
+      no-repeat !important;
+  background-size: 100% 6px, 6px 100% !important;
+}
+
+/* Top-right corner */
+:host ::ng-deep app-card.inactive .client-card .corner.tr {
+  background: linear-gradient(to left, var(--bg-error) 4px, transparent 100%)
+      top right no-repeat,
+    linear-gradient(to bottom, var(--bg-error) 4px, transparent 100%) top right
+      no-repeat !important;
+  background-size: 100% 6px, 6px 100% !important;
+}
+
+/* Bottom-left corner */
+:host ::ng-deep app-card.inactive .client-card .corner.bl {
+  background: linear-gradient(to right, var(--bg-error) 4px, transparent 100%)
+      bottom left no-repeat,
+    linear-gradient(to top, var(--bg-error) 4px, transparent 100%) bottom left
+      no-repeat !important;
+  background-size: 100% 6px, 6px 100% !important;
+}
+
+/* Bottom-right corner */
+:host ::ng-deep app-card.inactive .client-card .corner.br {
+  background: linear-gradient(to left, var(--bg-error) 4px, transparent 100%)
+      bottom right no-repeat,
+    linear-gradient(to top, var(--bg-error) 4px, transparent 100%) bottom right
+      no-repeat !important;
+  background-size: 100% 6px, 6px 100% !important;
+}

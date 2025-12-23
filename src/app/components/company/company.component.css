@@ -1,116 +1,135 @@
 .parent-container {
   padding: 15px;
 }
-/* ------------------------------------------------------------------- filter dropdown ----------------------------------> */
-.filter-dropdown {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 15px;
+/* -------------------------------------------------------------------search and  filter dropdown ----------------------------------> */
+.search-parent {
+  width: 100%;
+  margin-bottom: 20px;
+  padding: 15px;
   border-radius: 10px;
-  border: 1px solid var(--bg-border-input);
-  background: rgba(17, 24, 31, 0.8);
-  flex-wrap: wrap;
+  background: var(--bg-light);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
 
-.filter-dropdown-item {
-  width: 160px;
-  flex-shrink: 0;
-}
-
-.filter-dropdown-item .custom-dropdown {
+/* ========== Search Form Grid ========== */
+.form-grid-search {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--spacing-lg, 16px);
+  align-items: end;
   width: 100%;
 }
 
-.filter-dropdown-item .dropdown-trigger {
+/* Default styling for form fields */
+.form-grid-search .form-field {
+  display: flex;
+  flex-direction: column;
   width: 100%;
-  min-height: 50px;
+  min-width: 0;
 }
 
-.filter-dropdown-item .dropdown-menu {
-  width: 100%;
-  max-height: 300px;
-  overflow-y: auto;
-}
-
-/* -------------------------------------------- import and export ------------> */
-.filter {
-  margin-top: 20px;
-  padding: 10px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 50px;
-  gap: 24px;
-  border-radius: 12px;
-  background: rgba(17, 24, 31, 0.8);
-}
-.parent-import-export {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.parent-import,
-.parent-search {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-}
-
-.parent-import .import-export {
-  display: flex;
-  align-items: center;
-  gap: 30px;
-  padding: 10px;
-  justify-content: space-between;
-  border-radius: 12px;
-  border: 1px solid var(--primary-color);
-  background: rgba(17, 24, 31, 0.8);
-}
-.parent-import .import-export svg:hover {
-  color: #fff;
-  font-size: 18px;
-  transform: translateY(-2px);
-}
-
-.select-all {
-  padding: 15px 10px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 10px;
-  border-radius: 12px;
-  border: 1px solid var(--primary-color);
-  background: rgba(17, 24, 31, 0.8);
-}
-
-.select-all .select-all-text {
-  padding: 0px !important;
-  margin: 0px !important;
+/* Label styling */
+.form-grid-search .form-field label {
+  color: var(--secondary-color);
   font-size: 14px;
-  font-weight: 600;
-  cursor: pointer;
-  color: #fff;
+  margin-bottom: var(--spacing-xs, 8px);
 }
 
-.parent-import > i {
-  padding: 5px 10px;
-  border-radius: 12px;
-  font-size: 25px;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  color: var(--bg-error);
-  border: 1px solid var(--bg-error);
-  background: rgba(17, 24, 31, 0.8);
+/* Styling for search field - make it responsive */
+.search-field {
+  grid-column: span 1;
+  width: 100%;
 }
 
-.parent-import > i:hover {
-  color: #fff;
-  background-color: var(--bg-error);
-  transform: translateY(-2px);
-  box-shadow: 0px 5px 2px #9e2c2c;
+/* Force search input component to be responsive */
+.search-field ::ng-deep app-search-input,
+.search-field ::ng-deep .search-input-container {
+  width: 100% !important;
+  max-width: 100% !important;
+}
+
+.search-field ::ng-deep .search-input-container {
+  flex: 1;
+  min-width: 0;
+}
+
+/* ========== Responsive Design ========== */
+
+/* Large Desktops (1200px and above) - Keep 3 columns */
+@media (min-width: 1200px) {
+  .form-grid-search {
+    grid-template-columns: 25% 25% 40%;
+    justify-content: space-between;
+    gap: var(--spacing-lg, 16px);
+  }
+}
+
+/* Medium Desktops and Large Tablets (992px to 1199px) */
+@media (max-width: 1199px) and (min-width: 993px) {
+  .form-grid-search {
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--spacing-md, 14px);
+  }
+}
+
+/* Tablets (768px to 992px) */
+@media (max-width: 992px) and (min-width: 769px) {
+  .search-parent {
+    padding: 16px;
+  }
+
+  .form-grid-search {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-md, 14px);
+  }
+
+  .search-field {
+    grid-column: 1 / -1; /* Full width for search field */
+  }
+}
+
+/* Small Tablets (768px and below) */
+@media (max-width: 768px) {
+  .search-parent {
+    padding: 14px;
+    margin-bottom: 16px;
+  }
+
+  .form-grid-search {
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--spacing-sm, 12px);
+  }
+  .search-field {
+    grid-column: 1 / -1;
+  }
+
+  .form-grid-search .form-field label {
+    font-size: 13px;
+  }
+
+  /* Ensure search input is full width on mobile */
+  .search-field ::ng-deep app-search-input,
+  .search-field ::ng-deep .search-input-container {
+    width: 100% !important;
+  }
+}
+
+/* Mobile (480px and below) */
+@media (max-width: 480px) {
+  .search-parent {
+    padding: 12px;
+    margin-bottom: 12px;
+  }
+
+  .form-grid-search {
+    gap: var(--spacing-xs, 10px);
+  }
+
+  .form-grid-search .form-field label {
+    font-size: 12px;
+  }
+
+  .search-field {
+    grid-column: span 1;
+  }
 }

@@ -7,13 +7,13 @@
   <app-count-card [stats]="stats"></app-count-card>
   <app-sales-charts></app-sales-charts>
 
-  <!-- أفضل 3 مندوبين -->
+  <!-- أفضل 3 Sales -->
   <div class="top-salespeople-section border-card">
     <span class="corner tl"></span>
     <span class="corner tr"></span>
     <span class="corner bl"></span>
     <span class="corner br"></span>
-    <h2 class="section-title">أفضل 3 مندوبين</h2>
+    <h2 class="section-title">Best 3 Sales</h2>
     <div class="salespeople-list">
       <div
         *ngFor="let person of topSalespeople; index as index"
@@ -60,6 +60,13 @@
           </div>
         </div>
       </div>
+      <app-no-results-message
+        *ngIf="topSalespeople.length === 0"
+        title="لا يوجد بيانات متاحة"
+        description="لا يوجد مندوبين حاليا"
+        icon="bi bi-person-fill-x"
+        [showResetButton]="false"
+      ></app-no-results-message>
     </div>
   </div>
 </section>

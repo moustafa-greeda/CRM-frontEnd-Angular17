@@ -24,11 +24,10 @@ import { DateUtilsService } from '../../core/services/common/date-utils.service'
 import { AssignLeadsToSalesRequest } from '../../core/Models/teleSalse/tele-sales-dashboard.types';
 import { GetAllSalesService } from '../../core/services/common/get-all-sales.service';
 import { CurruncyService } from '../../core/services/common/curruncy.service';
-import { CallsService } from './calls/calls.service';
 import { ICall } from '../../core/Models/teleSalse/ICall';
 import { ICallStatus } from '../../core/Models/common/call-status';
 import { CallStatusService } from '../../core/services/common/call-status.service';
-import { CallDialogService } from './calls/call-dialog.service';
+import { CallDialogService } from './components/calls/call-dialog.service';
 
 @Component({
   selector: 'app-dashboard-telesales',
@@ -957,30 +956,59 @@ export class DashboardTelesalesComponent implements OnInit {
       return;
     }
 
+    // Build fields array - add actionDate if type is 'meeting'
+    const fields: any[] = [
+      {
+        name: 'actionNotes',
+        label: actionConfig.label,
+        type: 'textarea',
+        placeholder: actionConfig.placeholder,
+        required: true,
+        colSpan: 3,
+      },
+    ];
+
+    // Add actionDate field for meeting type
+    if (actionConfig.type === 'meeting') {
+      fields.push({
+        name: 'actionDate',
+        label: 'تاريخ الاجتماع',
+        type: 'datetime-local',
+        placeholder: 'اختر تاريخ ووقت الاجتماع',
+        required: true,
+        colSpan: 3,
+      });
+    }
+
     const actionDialogConfig = {
       title: `إضافة ${actionConfig.name}`,
       submitText: 'حفظ',
       cancelText: 'إلغاء',
-      fields: [
-        {
-          name: 'actionNotes',
-          label: actionConfig.label,
-          type: 'textarea',
-          placeholder: actionConfig.placeholder,
-          required: true,
-          colSpan: 3,
-        },
-      ],
+      fields: fields,
     };
+
+    const initialData: any = {
+      actionNotes: '',
+    };
+
+    // Add actionDate to initialData if meeting type
+    if (actionConfig.type === 'meeting') {
+      // Set default to current date/time
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      initialData.actionDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
 
     const dialogRef = this.dialog.open(FormUiComponent, {
       width: '700px',
       panelClass: 'agreement-dialog',
       data: {
         config: actionDialogConfig,
-        initialData: {
-          actionNotes: '',
-        },
+        initialData: initialData,
       },
       hasBackdrop: true,
       backdropClass: 'agreement-dialog-backdrop',
@@ -994,6 +1022,14 @@ export class DashboardTelesalesComponent implements OnInit {
           actionTypeId: actionTypeId,
           actionNotes: formData.actionNotes,
         };
+
+        // Add actionDate if it's a meeting type and provided
+        if (actionConfig.type === 'meeting' && formData.actionDate) {
+          // Convert datetime-local to ISO string
+          const date = new Date(formData.actionDate);
+          requestData.actionDate = date.toISOString();
+        }
+
         this.createTeleSalesAction(requestData);
 
         // Close the dialog after successful submission
@@ -1215,26 +1251,21 @@ export class DashboardTelesalesComponent implements OnInit {
           next: (response) => {
             console.log('AssignLeadsToSales Response:', response);
 
-            // Check if response is successful (multiple ways API might indicate success)
-            const isSuccess =
-              response &&
-              (response.succeeded === true ||
-                (response as any).success === true ||
-                (!response.succeeded &&
-                  !(response as any).errors &&
-                  !(response as any).error));
+            // Check if response is successful
+            // Handle nested message structure: response.message.succeeded
+            const responseData = (response as any)?.message || response;
+            const isSuccess = responseData?.succeeded === true;
 
             if (isSuccess) {
               // Close the dialog first
               dialogRef.close();
 
               // Show success notification after dialog closes
-
               this.notify.open({
                 type: 'success',
                 title: 'نجح',
                 description:
-                  response?.message ||
+                  responseData?.message ||
                   (response as any)?.data?.message ||
                   'تم تعيين العميل للمبيعات بنجاح',
               });
@@ -1246,8 +1277,10 @@ export class DashboardTelesalesComponent implements OnInit {
               }
             } else {
               // Show error but don't close dialog so user can fix and retry
+              // Extract error message from nested structure
               const errorMsg =
-                response?.message ||
+                responseData?.validationErrors?.[0]?.errorMessage ||
+                responseData?.message ||
                 (response as any)?.errors?.join?.(' ') ||
                 (response as any)?.error ||
                 'حدث خطأ أثناء تعيين العميل';
@@ -1260,12 +1293,15 @@ export class DashboardTelesalesComponent implements OnInit {
             }
           },
           error: (error) => {
-            console.error('AssignLeadsToSales Error:', error);
+            // Extract error message from error response
+            const errorResponse = error?.error || error;
+            const errorData = errorResponse?.message;
 
             const errorMsg =
-              error?.error?.message ||
-              error?.error?.validationErrors?.[0]?.errorMessage ||
-              error?.error?.data ||
+              errorData?.validationErrors?.[0]?.errorMessage ||
+              errorData?.message ||
+              errorResponse?.validationErrors?.[0]?.errorMessage ||
+              errorResponse?.message ||
               error?.message ||
               'فشل تعيين العميل للمبيعات';
 

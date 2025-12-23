@@ -13,7 +13,6 @@ import {
 } from '../../dashboard/dashboard-accountant/components/invoices/invoices.service';
 import { PaymentService } from '../../dashboard/dashboard-accountant/components/invoices/payment-dialog/payment.service';
 import { forkJoin } from 'rxjs';
-import { icon } from 'leaflet';
 import { InvoicesAdminService } from './invoices-admin.service';
 
 @Component({
@@ -273,67 +272,6 @@ export class InvoicesComponent {
     );
   }
 
-  // ==================================== Table Action Handlers ====================================
-  // onEditDeal(row: IGetAllInvoiceDataItem): void {
-  //   // Use payment dialog for editing invoices
-  //   this.onPayment(row);
-  // }
-
-  // ==================================== Payment Handler ====================================
-  // onPayment(row: IGetAllInvoiceDataItem): void {
-  //   const dialogRef = this.dialog.open(PaymentDialogComponent, {
-  //     width: '90vw',
-  //     maxWidth: '900px',
-  //     height: 'auto',
-  //     maxHeight: '95vh',
-
-  //     data: {
-  //       invoice: row,
-  //     } as PaymentDialogData,
-  //     disableClose: true,
-  //     panelClass: 'agreement-dialog',
-  //     backdropClass: 'agreement-dialog-backdrop',
-  //     hasBackdrop: true,
-  //   });
-
-  //   dialogRef.afterClosed().subscribe((result) => {
-  //     if (result) {
-  //       // Update invoice with payment information
-  //       const updatedInvoice: IGetAllInvoiceDataItem = {
-  //         ...row,
-  //         paidAmount: result.paidAmount || row.paidAmount,
-  //         remaining: result.remaining || row.remaining,
-  //         paymentMethod: result.paymentMethod || row.paymentMethod,
-  //         paymentStatus:
-  //           result.paidAmount >= row.totalprices ? 'مدفوعة' : 'قيد المراجعة',
-  //       };
-  //       // Update the invoice in the list
-  //       const index = this.invoices.findIndex((inv) => inv.id === row.id);
-  //       if (index !== -1) {
-  //         this.invoices[index] = updatedInvoice;
-  //       }
-  //       // Update filtered invoices if it exists there
-  //       const filteredIndex = this.filteredInvoices.findIndex(
-  //         (inv) => inv.id === row.id
-  //       );
-  //       if (filteredIndex !== -1) {
-  //         this.filteredInvoices[filteredIndex] = updatedInvoice;
-  //       }
-
-  //       // Reload payments table if it's currently open for this invoice
-  //       if (
-  //         this.showTablePayments &&
-  //         this.currentInvoiceIdForPayments === row.id
-  //       ) {
-  //         const invoiceId =
-  //           typeof row.id === 'string' ? Number(row.id) : row.id;
-  //         if (invoiceId) {
-  //           this.getPaymentByInvoiceId(invoiceId);
-  //         }
-  //       }
-  //     }
-  //   });
-  // }
   // ==================================== Payment Handler ====================================
   onShowTablePayments(row: any): void {
     this.showTablePayments = true;

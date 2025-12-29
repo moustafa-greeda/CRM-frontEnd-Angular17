@@ -561,7 +561,7 @@ export class CardComponent {
       // If key is provided, get value from data object
       if (box.key) {
         return {
-          label: box.label,
+          ...box,
           value: this.data[box.key] || null,
         };
       }

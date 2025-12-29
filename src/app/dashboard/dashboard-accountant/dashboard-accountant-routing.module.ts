@@ -10,22 +10,27 @@ const routes: Routes = [
   {
     path: '',
     component: DashboardAccountantComponent,
+    data: { roles: ['Accountant'] },
   },
   {
     path: 'invoicesWorkOrders',
     component: InvoiceWorkOrdersComponent,
+    data: { roles: ['Accountant'] },
   },
   {
     path: 'invoices',
     component: InvoicesComponent,
+    data: { roles: ['Accountant'] },
   },
   {
     path: 'payments',
     component: PaymentsComponent,
+    data: { roles: ['Accountant'] },
   },
   {
     path: 'expenses',
     component: ExpensesComponent,
+    data: { roles: ['Accountant'] },
   },
 ];
 

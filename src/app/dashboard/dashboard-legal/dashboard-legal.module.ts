@@ -14,9 +14,10 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { DashboardLegalComponent } from './dashboard-legal.component';
+import { ContractComponent } from './components/contract/contract.component';
 
 @NgModule({
-  declarations: [DashboardLegalComponent],
+  declarations: [DashboardLegalComponent, ContractComponent],
   imports: [
     CommonModule,
     FormsModule,

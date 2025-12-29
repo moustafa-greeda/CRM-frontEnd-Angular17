@@ -16,4 +16,5 @@ export enum UserRole {
   Accountant = 'Accountant',
   Tech = 'Tech',
   Customer = 'Customer',
+  Legal = 'Legal Affairs',
 }

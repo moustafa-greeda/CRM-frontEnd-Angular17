@@ -33,11 +33,10 @@ export class PaginationComponent {
 
   // Check if pagination should be shown
   get shouldShow(): boolean {
-    return (
-      !this.isLoading &&
-      this.totalPages > 1 &&
-      (this.showWhenLoading || !this.isLoading)
-    );
+    // Show pagination if there are pages and not loading (or showWhenLoading is true)
+    const hasPages = this.totalPages > 0;
+    const notLoading = !this.isLoading || this.showWhenLoading;
+    return hasPages && notLoading;
   }
 
   onPageChange(page: number): void {

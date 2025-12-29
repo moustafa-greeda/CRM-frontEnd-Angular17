@@ -141,4 +141,12 @@ export class DashboardSalseService {
       data
     );
   }
+  // ==================================== assign lead to contract =====================================
+
+  assignLeadToContract(data: any): Observable<any> {
+    return this.http.post(
+      `${this.BASE_API_URL}/SalesDashbored/AssignContractToLeaglAffir`,
+      data
+    );
+  }
 }

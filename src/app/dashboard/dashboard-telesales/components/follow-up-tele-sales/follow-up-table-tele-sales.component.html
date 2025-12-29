@@ -1,0 +1,58 @@
+<div class="parent-container">
+  <!-- page header -->
+  <app-page-header
+    [title]="pageTitle"
+    [breadcrumb]="breadcrumb"
+  ></app-page-header>
+  <!------------- search and dropdown ---------------->
+  <div class="search-container border-gradient">
+    <app-dropdown
+      [options]="['Today', 'ThisWeek', 'ThisMonth']"
+      [icon]="'bi bi-calendar'"
+      [selectedOption]="dateFilter"
+      [label]="'اختر التاريخ'"
+      (change)="onDropdownChange($event)"
+    ></app-dropdown>
+
+    <app-search-input
+      [placeholder]="'ابحث عن العملاء'"
+      (search)="onSearch($event)"
+    ></app-search-input>
+    <!-- reset filters button -->
+    @if(dateFilter || searchTerm){
+    <app-button
+      [buttonClass]="'btn btn-danger'"
+      [buttonText]="'مسح الفلتر'"
+      [icon]="'bi bi-trash'"
+      (click)="resetFilters()"
+    ></app-button>
+    }
+  </div>
+  <!-------------------- table --------------------->
+  <!-- <div class="table-container"> -->
+  <div class="table-responsive mt-md">
+    <app-table
+      [data]="leadsList"
+      [columns]="columns"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      [totalCount]="totalCount"
+      [showIndex]="true"
+      (pageChange)="onPageChange($event)"
+      (pageSizeChange)="onPageSizeChange($event)"
+      (view)="onView($event)"
+    ></app-table>
+  </div>
+
+  <!-- No results message - only show when there's an active text search -->
+  <app-no-results-message
+    *ngIf="hasActiveSearchTerm && hasNoLeads"
+    title="لا يوجد نتائج للبحث"
+    description="لم يتم العثور على عملاء مطابقين لمعايير البحث"
+    icon="bi bi-search"
+    [showResetButton]="true"
+    resetButtonText="إعادة تعيين الفلاتر"
+    resetButtonClass="btn btn-danger"
+    (resetClick)="resetFilters()"
+  ></app-no-results-message>
+</div>

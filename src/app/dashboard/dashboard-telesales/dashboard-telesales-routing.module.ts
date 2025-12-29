@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 import { DashboardTelesalesComponent } from './dashboard-telesales.component';
 import { CallsComponent } from './components/calls/calls.component';
-import { FollowUpTeleSalesComponent } from './components/follow-up-tele-sales/follow-up-tele-sales.component';
+import { FollowUpTeleSalesComponent } from './components/follow-up-tele-sales/follow-up-table-tele-sales.component';
 
 const routes: Routes = [
   {
@@ -11,6 +11,10 @@ const routes: Routes = [
   },
   {
     path: 'follow-up-tele',
+    component: FollowUpTeleSalesComponent,
+  },
+  {
+    path: 'follow-up-tele/view/:id',
     component: FollowUpTeleSalesComponent,
   },
   {

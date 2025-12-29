@@ -68,14 +68,6 @@
       (editClick)="onEditEmployee(employee)"
     ></app-card>
   </app-grid-cards>
-  <!-- no employees message -->
-  <app-no-results-message
-    *ngIf="hasNoEmployees && !isLoading"
-    title="لا يوجد نتائج للبحث"
-    description="لا يوجد موظفين حاليا"
-    icon="bi bi-person-fill-x"
-    [showResetButton]="false"
-  ></app-no-results-message>
 
   <!-- No results message - only show when there's an active text search -->
   <app-no-results-message

@@ -18,6 +18,8 @@ import { SearchInputComponent } from '../ui/search-input/search-input.component'
 import { ButtonComponent } from '../ui/button/button.component';
 import { CountLeadComponent } from './count-lead/count-lead.component';
 import { NoResultsMessageComponent } from './no-results-message/no-results-message.component';
+import { PaginationComponent } from './pagination-card/pagination.component';
+import { PaginationControlsComponent } from './pagination-card/pagination-card-controls.component';
 // import {ContractEditorComponent} from './contract-editor/contract-editor.component'
 
 @NgModule({
@@ -36,6 +38,8 @@ import { NoResultsMessageComponent } from './no-results-message/no-results-messa
     CountLeadComponent,
     DropdownComponent,
     NoResultsMessageComponent,
+    PaginationComponent,
+    PaginationControlsComponent,
     // ContractEditorComponent
   ],
   imports: [
@@ -61,6 +65,8 @@ import { NoResultsMessageComponent } from './no-results-message/no-results-messa
     ButtonComponent,
     CountLeadComponent,
     NoResultsMessageComponent,
+    PaginationComponent,
+    PaginationControlsComponent,
   ],
 })
 export class SharedComponentsModule {}

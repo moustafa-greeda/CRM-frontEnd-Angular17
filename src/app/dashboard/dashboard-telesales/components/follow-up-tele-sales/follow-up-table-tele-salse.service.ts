@@ -5,7 +5,7 @@ import { HttpClient } from '@angular/common/http';
 @Injectable({
   providedIn: 'root',
 })
-export class FollowUpTeleSalseService {
+export class FollowUpTableTeleSalseService {
   private BASE_API_URL = environment.apiUrl;
   constructor(private _http: HttpClient) {}
   // ==================================== get all follow up ===========================================

@@ -15,7 +15,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CallsComponent } from './components/calls/calls.component';
-import { FollowUpTeleSalesComponent } from './components/follow-up-tele-sales/follow-up-tele-sales.component';
+import { FollowUpTeleSalesComponent } from './components/follow-up-tele-sales/follow-up-table-tele-sales.component';
 
 @NgModule({
   declarations: [

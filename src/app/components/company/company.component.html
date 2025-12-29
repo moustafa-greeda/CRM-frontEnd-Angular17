@@ -35,11 +35,44 @@
           (search)="onSearch($event)"
         ></app-search-input>
       </div>
+      @if(selectedCountry || selectedCity || lastSearchTerm){
+      <app-button
+        [buttonClass]="'btn btn-danger'"
+        [buttonText]="'مسح الفلتر'"
+        [icon]="'bi bi-trash'"
+        (click)="resetFilters()"
+      ></app-button>
+      }
     </div>
   </div>
 
+  <div class="filter">
+    <div class="parent-import">
+      <!----------------------- View Toggle Button ----------->
+      <div class="view-toggle-container">
+        <app-view-toggle
+          [viewMode]="viewMode"
+          (viewModeChange)="viewMode = $event"
+        ></app-view-toggle>
+      </div>
+    </div>
+    <!-- Custom Pagination Controls (cards only) -->
+    <app-pagination-card-controls
+      *ngIf="viewMode === 'card'"
+      [currentPage]="currentPage"
+      [totalPages]="totalPages"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[10, 50, 100, 500]"
+      (pageSizeChange)="onPageSizeChange($event)"
+    ></app-pagination-card-controls>
+  </div>
+
   <!-- grid cards -->
-  <app-grid-cards [isLoading]="false" [error]="false">
+  <app-grid-cards
+    [isLoading]="false"
+    [error]="false"
+    *ngIf="viewMode === 'card'"
+  >
     <app-card
       *ngFor="
         let company of companyList$();
@@ -49,7 +82,9 @@
       [data]="company"
       [index]="i"
       [selectable]="true"
+      [showEditIcon]="true"
       [isSelected]="isCompanySelected(company)"
+      (editClick)="onEditCompany(company)"
       (selectionChange)="onCardSelectionChange(company, $event)"
       [titleKey]="'name'"
       [subTitleKey]="'industeryName'"
@@ -58,12 +93,50 @@
         { label: 'الهاتف', key: 'phoneNumber', icon: 'bi bi-telephone-fill' }
       ]"
       [infoBoxes]="[
+        {
+          label: 'الدولة',
+          key: 'countryName',
+          icon: 'bi bi-geo-alt',
+          colspan: 2
+        },
         { label: 'المدينة', key: 'cityName', icon: 'bi bi-geo-alt' },
-        { label: 'الدولة', key: 'countryName', icon: 'bi bi-geo-alt' }
+        { label: 'الملكيه', key: 'ownershipId', icon: 'bi bi-building' },
+        { label: 'حجم الشركة', key: 'companySizeId', icon: 'bi bi-people' },
+        { label: 'المرحلة', key: 'comapanyStageId', icon: 'bi bi-briefcase' }
       ]"
-      [rating]="2"
     ></app-card>
   </app-grid-cards>
+
+  <!-- Pagination for cards -->
+  <app-pagination-card
+    *ngIf="viewMode === 'card'"
+    [currentPage]="currentPage"
+    [totalPages]="totalPages"
+    [isLoading]="isLoadingCompanies"
+    (pageChange)="handlePageChange($event)"
+  ></app-pagination-card>
+
+  <!------------------------- Table View (Reusable) ---------------------->
+  <div
+    class="table-view-container"
+    *ngIf="
+      !isLoadingCompanies && companyList$().length > 0 && viewMode === 'table'
+    "
+  >
+    <app-table
+      [data]="companyList$()"
+      [columns]="tableColumns"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      [totalCount]="totalCount"
+      [showIndex]="true"
+      (pageChange)="onTablePage($any($event))"
+      (pageSizeChange)="onTablePageSize($any($event))"
+      (view)="onViewClient($any($event))"
+      (edit)="onEditClient($any($event))"
+      (delete)="onDeleteClient($any($event))"
+    ></app-table>
+  </div>
   <!-- No results message - only show when there's an active text search -->
   <app-no-results-message
     *ngIf="hasActiveSearchTerm && hasNoCompanies"

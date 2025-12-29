@@ -1,0 +1,68 @@
+<!-- <section class="dashboard-info">
+  <h1 class="welcome-section">
+    مرحباً بك <span>{{ userInfo.name || "المستخدم" }}</span> في لوحة تحكم -
+    الشؤون القانونية
+  </h1>
+</section> -->
+
+<div class="parent-container">
+  <!-- page header -->
+  <app-page-header
+    [title]="pageTitle"
+    [breadcrumb]="breadcrumb"
+  ></app-page-header>
+  <!-- search and dropdown -->
+  <div class="search-container border-gradient">
+    <form [formGroup]="filterForm" (ngSubmit)="onFilterSubmit()">
+      <div class="form-grid-search">
+        <!-- <div class="form-field">
+          <app-dropdown
+            [options]="contractStatusList"
+            [selectedOption]="selectedContractStatus || ''"
+            [label]="'اختر حالة العقد '"
+            (optionSelected)="onContractStatusChange($event)"
+          ></app-dropdown>
+        </div> -->
+        <app-search-input
+          [placeholder]="'ابحث عن العقود'"
+          (search)="onSearch($event)"
+        ></app-search-input>
+      </div>
+    </form>
+  </div>
+  <!-- content -->
+  <div class="content mt-md">
+    <div class="table-container">
+      <app-table
+        [data]="listContracts"
+        [columns]="columns"
+        [showIndex]="true"
+        [showAdd]="true"
+        [selectedRows]="selectedRows"
+        [showDataTable]="true"
+        [actionTitles]="actionTitles"
+        [hasNoData]="listContracts.length === 0"
+        [pageSize]="pageSize"
+        [currentPage]="currentPage"
+        [totalCount]="totalCount"
+        (pageChange)="onPageChange($event)"
+        (addButtonClick)="onAddContract($event)"
+        (pageSizeChange)="onPageSizeChange($event)"
+        [noDataMessage]="'لا يوجد عقود لعرضها'"
+      ></app-table>
+    </div>
+  </div>
+
+  <!-- <ng-container *ngIf="listContracts.length === 0">
+    <app-table
+      [data]="[]"
+      [columns]="[]"
+      [showDataTable]="true"
+      [hasNoData]="true"
+      [noDataMessage]="'لا توجد بيانات عقود لعرضها'"
+    ></app-table>
+  </ng-container> -->
+</div>
+
+<!-- (view)="onShowTablePayments($event)"
+        (edit)="onEditDeal($event)" -->

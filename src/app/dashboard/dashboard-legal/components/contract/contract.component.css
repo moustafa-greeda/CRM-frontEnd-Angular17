@@ -1,0 +1,8 @@
+/* جعل الفورم يعرض عمودين فقط */
+::ng-deep .agreement-dialog .form-grid {
+  grid-template-columns: repeat(2, 1fr) !important;
+}
+
+::ng-deep .agreement-dialog .col-span-3 {
+  grid-column: span 2 !important;
+}

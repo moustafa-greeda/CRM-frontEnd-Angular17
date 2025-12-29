@@ -1249,25 +1249,33 @@ export class DashboardTelesalesComponent implements OnInit {
 
         this._dashboardService.AssignLeadsToSales(payload).subscribe({
           next: (response) => {
-            console.log('AssignLeadsToSales Response:', response);
-
             // Check if response is successful
-            // Handle nested message structure: response.message.succeeded
-            const responseData = (response as any)?.message || response;
-            const isSuccess = responseData?.succeeded === true;
+            // API returns: { message: "تم تعيين العملاء بنجاح", assignments: [...] }
+            // or: { succeeded: true, message: "...", data: {...} }
+            const responseData = response as any;
+
+            // Check multiple success indicators
+            const isSuccess =
+              responseData?.succeeded === true ||
+              (responseData?.message && responseData?.assignments) ||
+              (responseData?.message &&
+                typeof responseData.message === 'string' &&
+                responseData.message.includes('نجاح'));
 
             if (isSuccess) {
               // Close the dialog first
               dialogRef.close();
 
-              // Show success notification after dialog closes
+              // Show success notification with API message or default
+              const successMessage =
+                (typeof responseData?.message === 'string'
+                  ? responseData.message
+                  : null) || 'تم تعيين العميل للمبيعات بنجاح';
+
               this.notify.open({
                 type: 'success',
                 title: 'نجح',
-                description:
-                  responseData?.message ||
-                  (response as any)?.data?.message ||
-                  'تم تعيين العميل للمبيعات بنجاح',
+                description: 'تم تعيين العميل للمبيعات بنجاح',
               });
 
               // Refresh leads data
@@ -1281,8 +1289,6 @@ export class DashboardTelesalesComponent implements OnInit {
               const errorMsg =
                 responseData?.validationErrors?.[0]?.errorMessage ||
                 responseData?.message ||
-                (response as any)?.errors?.join?.(' ') ||
-                (response as any)?.error ||
                 'حدث خطأ أثناء تعيين العميل';
 
               this.notify.open({
@@ -1350,14 +1356,6 @@ export class DashboardTelesalesComponent implements OnInit {
       this.cancelLeadStatus(lead);
       return;
     }
-
-    // Get assignLeadId from lead data or use current user's ID as fallback
-    // const assignLeadId =
-    //   lead.assignedLeadId ||
-    //   lead.assignedToId ||
-    //   lead.employeeId ||
-    //   lead.assignedEmployeeId ||
-    //   this._authService.getEmployeeId(); // Final fallback
 
     // Build payload with required fields
     const payload: any = {

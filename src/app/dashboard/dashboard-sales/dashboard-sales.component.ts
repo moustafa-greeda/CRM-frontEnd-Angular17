@@ -22,6 +22,7 @@ import { StatusColorService } from '../../core/services/common/status-color.serv
 import { DateUtilsService } from '../../core/services/common/date-utils.service';
 import { DashboardSalseService } from './dashboard-salse.service';
 import { PakegsService } from '../../core/services/common/pakegs.service';
+import { TransferredLeadsToLegal } from '../../core/Models/teleSalse/transferred-leads-to-legal';
 
 type PacketOption = {
   id: number | null;
@@ -1767,5 +1768,29 @@ export class DashboardSalesComponent implements OnInit {
         }
       },
     });
+  }
+
+  // ============================ assign lead to contract =====================================
+  private assignLeadToContract(lead: any): void {
+    const payload: TransferredLeadsToLegal = {
+      contactId: lead.contactId,
+      contactName: lead.contactName,
+      contactPhone: lead.contactPhone,
+      assignedBy: lead.assignedBy,
+      contractAmount: lead.contractAmount,
+    };
+  }
+
+  private sendAssignLeadToContractRequest(
+    lead: any,
+    assignedByEmp: number
+  ): void {
+    const payload: TransferredLeadsToLegal = {
+      contactId: lead.contactId,
+      contactName: lead.contactName,
+      contactPhone: lead.contactPhone,
+      assignedBy: assignedByEmp,
+      contractAmount: lead.contractAmount,
+    };
   }
 }

@@ -105,13 +105,6 @@ function normalizeEmpUserId(
     return String(foundUser.id);
   }
 
-  // If value doesn't match any user, return empty
-  console.warn(
-    'empUserId not found in usersList:',
-    empUserId,
-    'Available users:',
-    usersList.map((u) => ({ id: u.id, userName: u.userName }))
-  );
   return '';
 }
 
@@ -166,9 +159,7 @@ function mapEmployeeToFormData(
   };
 }
 
-/**
- * Maps form data to employee data structure
- */
+/* Maps form data to employee data structure*/
 function mapFormDataToEmployee(
   formData: EmployeeFormData,
   employeeId?: number
@@ -193,6 +184,8 @@ function mapFormDataToEmployee(
     file: formData.file,
     address: formData.address || '',
     empUserId: formData.empUserId || '',
+    emprengcyPhone: formData.emprengcyPhone || '',
+    emprengcyPhoneContactName: formData.emprengcyPhoneContactName || '',
   };
 }
 
@@ -250,6 +243,8 @@ function enrichEmployeeWithDepartment(
     imagePath: (employee as any).imagePath || null,
     departmentName: department?.name || employee.departmentName || 'غير محدد',
     address: employee.address || '',
+    emprengcyPhone: employee.emprengcyPhone || '',
+    emprengcyPhoneContactName: employee.emprengcyPhoneContactName || '',
   } as IGetAllEmployee;
 }
 
@@ -529,7 +524,15 @@ export class EmployeeComponent implements OnInit {
     this.updateDepartmentOptions();
     // this.updateUserOptions();
 
-    const dialogRef = this.openEmployeeDialog(this.employeeFormConfig);
+    // Set default value for isActive = true when creating
+    const initialData: EmployeeFormInitialData = {
+      isActive: true,
+    } as EmployeeFormInitialData;
+
+    const dialogRef = this.openEmployeeDialog(
+      this.employeeFormConfig,
+      initialData
+    );
 
     // Listen to submit event from FormUiComponent and only close on success
     const componentInstance = dialogRef.componentInstance;
@@ -586,6 +589,12 @@ export class EmployeeComponent implements OnInit {
           ...field,
           options: field.options ? [...field.options] : undefined,
         };
+
+        // Show isActive field in edit mode (hidden in create mode)
+        if (field.name === 'isActive') {
+          fieldCopy.hidden = false;
+        }
+
         // Ensure empUserId field has the updated options
         if (field.name === 'empUserId' && this.usersList.length > 0) {
           fieldCopy.options = this.usersList.map((user) => ({

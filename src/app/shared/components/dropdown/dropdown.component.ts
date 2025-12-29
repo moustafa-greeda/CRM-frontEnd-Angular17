@@ -17,7 +17,10 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
         [class.disabled]="disabled"
         (click)="toggleDropdown()"
       >
-        <span class="selected-option">{{ selectedOption || label }}</span>
+        <span class="selected-option">
+          {{ selectedOption || label }}
+          <i *ngIf="icon" [class]="icon"></i>
+        </span>
         <i class="bi bi-chevron-down dropdown-arrow"></i>
       </button>
 
@@ -38,6 +41,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   position: relative;
   width: 100%;
   min-width: 180px;
+  z-index: 1000;
 }
 
 .dropdown-trigger {
@@ -63,7 +67,11 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   display: inline-block;
   max-width: calc(100% - 24px);
 }
-
+.selected-option i{
+  margin-right: 10px !important;
+  font-size: 16px;
+  color: #fff;
+}
 .dropdown-menu {
   position: absolute;
   top: 100%;
@@ -73,7 +81,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   max-height: 300px;
   overflow-y: auto;
   border-radius: 8px;
-  z-index: 100000000000;
+  z-index: 9999;
   display: none;
   backdrop-filter: blur(10px);
   border: 1px solid var(--primary-color);
@@ -110,6 +118,7 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
 export class DropdownComponent {
   // Inputs for dropdown label, options, and selected option
   @Input() label: string = '';
+  @Input() icon: string = '';
   @Input() options: string[] = [];
   @Input() selectedOption: string = '';
   @Input() disabled: boolean = false;

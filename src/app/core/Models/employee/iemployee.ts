@@ -15,6 +15,8 @@ export interface IEmployee {
   empUserId: string;
   file?: File;
   departmentName?: string;
+  emprengcyPhone?: string;
+  emprengcyPhoneContactName: string;
 }
 
 export interface EmployeeFilters {
@@ -42,6 +44,8 @@ export interface EmployeeFormData {
   address?: string;
   empUserId?: string;
   file?: File;
+  emprengcyPhone?: string;
+  emprengcyPhoneContactName?: string;
 }
 
 /**

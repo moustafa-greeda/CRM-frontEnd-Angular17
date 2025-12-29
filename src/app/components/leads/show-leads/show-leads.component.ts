@@ -11,7 +11,14 @@ import {
   ILeadsSearchParams,
 } from '../../../core/Models/leads/ileads';
 import { LeadsService } from '../leads.service';
-import { Subject, debounceTime, distinctUntilChanged } from 'rxjs';
+import {
+  Subject,
+  debounceTime,
+  distinctUntilChanged,
+  forkJoin,
+  of,
+} from 'rxjs';
+import { catchError, map } from 'rxjs/operators';
 import { Router } from '@angular/router';
 import { NotifyDialogService } from '../../../shared/components/notify-dialog-host/notify-dialog.service';
 import { LeadStatusService } from '../../../core/services/common/lead-status.service';
@@ -533,12 +540,20 @@ export class ShowLeadsComponent implements OnInit {
     this.onSelectAllChange(fakeEvent);
   }
 
-  onPageSizeChange(event: Event): void {
-    const target = event.target as HTMLSelectElement;
-    const newPageSize = +target.value;
-    this.pageSize = newPageSize;
+  onPageSizeChange(newPageSize: number | Event): void {
+    // Handle both Event (from direct select) and number (from component)
+    const pageSize =
+      typeof newPageSize === 'number'
+        ? newPageSize
+        : +((newPageSize as Event).target as HTMLSelectElement).value;
+
+    this.pageSize = pageSize;
     this.currentPage = 1; // Reset to first page when changing page size
     this.searchLeads();
+  }
+
+  handlePageChange(event: any): void {
+    this.onPageChange(event as number);
   }
 
   getPageNumbers(): number[] {
@@ -643,54 +658,78 @@ export class ShowLeadsComponent implements OnInit {
       this.selectedCards.length === this.filteredClients.length;
   }
 
-  // Export methods
   // ================================= CreateLead Methods ===========================
-
-  /**
-   * Create a lead for a single client
-   * @param client - The client to create a lead for
-   */
-  createLeadForClient(client: ILeads): void {
-    // Find the selected lead status ID from the API data
-    // const selectedStatus = this.leadStatusList.find(
-    //   (status) => status.name === this.leadStatusLookupId
-    // );
-    // const leadStatusId = selectedStatus?.id || 1; // Default to 1 if not found
-
-    this.leadsService.CreateLead(client.id).subscribe({
-      next: (response: any) => {},
-      error: (error: any) => {
+  createLeadForClient(client: ILeads) {
+    return this.leadsService.CreateLead(client.id).pipe(
+      map((response: any) => ({ success: true, client, response })),
+      catchError((error: any) => {
         // Extract error message from validationErrors or fallback to message
         const errorMessage =
           error?.error?.validationErrors?.[0]?.errorMessage ||
           'هذا العميل موجود بالفعل';
 
+        // Show error notification for individual client
         this.notify.error({
           title: 'خطأ',
-          description: errorMessage,
+          description: `${client.name || 'العميل'}: ${errorMessage}`,
         });
-      },
-    });
+
+        // Return error result instead of throwing
+        return of({ success: false, client, error: errorMessage });
+      })
+    );
   }
 
   /**
    * Create leads for multiple clients
-   * @param clients - Array of clients to create leads for
    */
   createLeadForMultipleClients(clients: ILeads[]): void {
-    clients.forEach((client) => {
-      this.createLeadForClient(client);
-    });
+    if (clients.length === 0) {
+      return;
+    }
 
-    // Show success notification using NotifyDialogService
-    this.notify.success({
-      title: 'تم بنجاح!',
-      description: `تم تعديل ${clients.length} عميل محتمل بنجاح!`,
-      autoCloseMs: 3000,
-    });
+    // Show loading spinner
+    this.spinner.show();
 
-    // Reset form after successful submission
-    this.resetFormAfterSubmit();
+    // Create array of observables for all clients
+    const createLeadObservables = clients.map((client) =>
+      this.createLeadForClient(client)
+    );
+
+    // Wait for all requests to complete
+    forkJoin(createLeadObservables).subscribe({
+      next: (results) => {
+        this.spinner.hide();
+
+        // Count successful and failed operations
+        const successful = results.filter((r) => r.success).length;
+        const failed = results.filter((r) => !r.success).length;
+
+        if (successful > 0) {
+          // Show success notification only if at least one succeeded
+          this.notify.success({
+            title: 'تم بنجاح!',
+            description: `تم إنشاء ${successful} عميل محتمل بنجاح${
+              failed > 0 ? ` (فشل ${failed} عميل)` : ''
+            }!`,
+          });
+
+          // Refresh the leads list
+          this.loadLeads();
+        }
+
+        // Reset form after submission
+        this.resetFormAfterSubmit();
+      },
+      error: (error) => {
+        this.spinner.hide();
+        console.error('Error creating leads:', error);
+        this.notify.error({
+          title: 'خطأ',
+          description: 'حدث خطأ أثناء إنشاء العملاء المحتملين',
+        });
+      },
+    });
   }
 
   /**
@@ -734,6 +773,13 @@ export class ShowLeadsComponent implements OnInit {
    */
   toggleViewMode(): void {
     this.viewMode = this.viewMode === 'card' ? 'table' : 'card';
+  }
+
+  /**
+   * Handle view mode change from view-toggle component
+   */
+  onViewModeChange(mode: 'card' | 'table'): void {
+    this.viewMode = mode;
   }
 
   /**

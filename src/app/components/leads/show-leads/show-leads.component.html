@@ -13,49 +13,18 @@
       <div class="search-section">
         <app-search-input
           [placeholder]="getSearchPlaceholder()"
-          (search)="onSearch($event)"
+          (search)="onSearch($any($event))"
         ></app-search-input>
       </div>
     </div>
     <!-- left section -->
     <div class="parent-left">
-      <!-- <app-dropdown
-        [label]="
-          isLoadingLeadStatus
-            ? 'جاري التحميل...'
-            : isLeadStatusSelected
-            ? 'حالة العميل المحتمل'
-            : 'تعديل حالة العميل'
-        "
-        [options]="leadStatusOptions"
-        [selectedOption]="leadStatusLookupId"
-        (optionSelected)="onLeadStatusChange($event)"
-      ></app-dropdown> -->
-
-      <!-- Create Lead Button -->
-      <!-- <button
-        class="btn button-color"
-        (click)="createLeadForSelectedClients()"
-        [disabled]="selectedCards.length === 0 || !isLeadStatusSelected"
-        title="إنشاء عميل محتمل للعملاء المحددين"
-      >
-        <i class="bi bi-plus-circle"></i>
-        إنشاء عميل محتمل ({{ selectedCards.length }})
-      </button> -->
-      <button
-        class="btn button-color"
-        (click)="createLeadForSelectedClients()"
-        title="إنشاء عميل محتمل للعملاء المحددين"
-      >
-        <i class="bi bi-plus-circle"></i>
-        إنشاء عميل محتمل ({{ selectedCards.length }})
-      </button>
-      <!-- <app-button
-        [label]="'إنشاء عميل محتمل'"
+      <app-button
+        [buttonText]="'إنشاء عميل محتمل'"
         [icon]="'bi bi-plus-circle'"
-        [disabled]="selectedCards.length === 0 || !isLeadStatusSelected"
         (click)="createLeadForSelectedClients()"
-      ></app-button> -->
+        [disabled]="selectedCards.length === 0"
+      ></app-button>
 
       <!-- count lead -->
       <div class="countLead">
@@ -80,7 +49,7 @@
       <div class="view-toggle-container">
         <app-view-toggle
           [viewMode]="viewMode"
-          (viewModeChange)="viewMode = $event"
+          (viewModeChange)="onViewModeChange($any($event))"
         ></app-view-toggle>
       </div>
       <!-- select all -->
@@ -100,21 +69,14 @@
       <!-- <i class="bi bi-trash3"></i> -->
     </div>
     <!-- Custom Pagination Controls (cards only) -->
-    <div class="pagination-controls" *ngIf="viewMode === 'card'">
-      <div class="page-size-selector">
-        <label>عدد العناصر:</label>
-        <select (change)="onPageSizeChange($event)" [value]="pageSize">
-          <option value="10">10</option>
-          <option value="50">50</option>
-          <option value="100">100</option>
-          <option value="500">500</option>
-        </select>
-      </div>
-
-      <div class="pagination-info">
-        <span>صفحة {{ currentPage }} من {{ totalPages }}</span>
-      </div>
-    </div>
+    <app-pagination-card-controls
+      *ngIf="viewMode === 'card'"
+      [currentPage]="currentPage"
+      [totalPages]="totalPages"
+      [pageSize]="pageSize"
+      [pageSizeOptions]="[10, 50, 100, 500]"
+      (pageSizeChange)="onPageSizeChange($event)"
+    ></app-pagination-card-controls>
   </div>
 
   <!------------------------- Client Cards Grid ---------------------->
@@ -173,60 +135,13 @@
   </div>
 
   <!-- Custom Pagination Navigation (cards only) -->
-  <div
-    class="pagination-navigation"
-    *ngIf="!isLoading && totalPages > 1 && viewMode === 'card'"
-  >
-    <div class="pagination-buttons">
-      <button
-        class="btn btn-outline-primary"
-        (click)="onPageChange(1)"
-        [disabled]="currentPage === 1"
-        title="الصفحة الأولى"
-      >
-        <i class="bi bi-chevron-double-left"></i>
-      </button>
 
-      <button
-        class="btn btn-outline-primary"
-        (click)="onPageChange(currentPage - 1)"
-        [disabled]="currentPage === 1"
-        title="الصفحة السابقة"
-      >
-        <i class="bi bi-chevron-left"></i>
-      </button>
-
-      <div class="page-numbers">
-        <button
-          *ngFor="let page of getPageNumbers()"
-          class="btn"
-          [class.btn-primary]="page === currentPage"
-          [class.btn-outline-primary]="page !== currentPage"
-          (click)="onPageChange(page)"
-        >
-          {{ page }}
-        </button>
-      </div>
-
-      <button
-        class="btn btn-outline-primary"
-        (click)="onPageChange(currentPage + 1)"
-        [disabled]="currentPage === totalPages"
-        title="الصفحة التالية"
-      >
-        <i class="bi bi-chevron-right"></i>
-      </button>
-
-      <button
-        class="btn btn-outline-primary"
-        (click)="onPageChange(totalPages)"
-        [disabled]="currentPage === totalPages"
-        title="الصفحة الأخيرة"
-      >
-        <i class="bi bi-chevron-double-right"></i>
-      </button>
-    </div>
-  </div>
+  <app-pagination-card
+    [currentPage]="currentPage"
+    [totalPages]="totalPages"
+    [isLoading]="isLoading"
+    (pageChange)="handlePageChange($event)"
+  ></app-pagination-card>
 
   <!-- no employees message -->
   <app-no-results-message

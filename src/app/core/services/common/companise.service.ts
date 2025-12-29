@@ -66,4 +66,9 @@ export class GetAllCompaniseService {
     const url = `${this.BASE_API_URL}/Company/CreateCompany`;
     return this.http.post<ApiResponse<ICompanies>>(url, company);
   }
+  // ================================= update company =================================
+  updateCompany(company: ICreateCompany): Observable<ApiResponse<ICompanies>> {
+    const url = `${this.BASE_API_URL}/Company/EditComapny`;
+    return this.http.put<ApiResponse<ICompanies>>(url, company);
+  }
 }

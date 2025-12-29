@@ -69,24 +69,6 @@
   flex-direction: column;
   border-radius: 45px;
 }
-/* .table-scroll-wrapper::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  border-radius: inherit;
-  padding: 2px;
-  background: linear-gradient(
-    90deg,
-    var(--border-color) 0%,
-    var(--secondary-color) 40%,
-    #002b33 70%,
-    #008299 100%
-  );
-  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
-  -webkit-mask-composite: xor;
-  mask-composite: exclude;
-  pointer-events: none;
-} */
 
 /* When table has no data, make it take full height */
 .table-scroll-wrapper:has(.no-data-row) {
@@ -835,19 +817,35 @@
 .assign-accountant-btn {
   border-radius: 6px;
   color: #10b981;
-  border: 1.5px solid #10b981;
-  background: rgba(16, 185, 129, 0.1);
+  /* border: 1.5px solid #10b981; */
+  /* background: rgba(16, 185, 129, 0.1); */
+  background: rgba(69, 72, 72, 0.38);
 }
 
 .assign-accountant-btn:hover {
   color: var(--white-color);
   background: #10b981;
   transform: translateY(-1px);
-  box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3);
+  /* box-shadow: 0 4px 8px rgba(16, 185, 129, 0.3); */
 }
 
 .dropdown-menu .assign-accountant-btn:hover {
   border: none !important;
+}
+
+.assign-legal-btn {
+  border-radius: 6px;
+  color: var(--primary-color);
+  background: rgba(69, 72, 72, 0.38);
+}
+.assign-legal-btn i {
+  color: var(--primary-color);
+}
+.assign-legal-btn:hover {
+  color: var(--white-color);
+  background: var(--primary-color);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 8px rgba(69, 72, 72, 0.38);
 }
 
 .follow-up-btn {

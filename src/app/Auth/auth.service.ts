@@ -228,7 +228,10 @@ export class AuthService {
         return '/dashboard/accountant/invoicesWorkOrders';
       case 'Tech':
         return '/dashboard/tech';
+      case 'Legal Affairs':
+        return '/dashboard/legal';
       case 'Admin':
+        return '/dashboard/admin';
       default:
         return '/dashboard/admin';
     }

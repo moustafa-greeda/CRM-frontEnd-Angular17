@@ -1,6 +1,7 @@
 import { Component, Input } from '@angular/core';
 
 export interface InfoBox {
+  colspan?: number;
   label: string;
   value?: string | null | undefined;
   key?: string; // Optional key to get value from data object
@@ -13,6 +14,7 @@ export interface InfoBox {
     <div class="info-boxes">
       <div
         class="client-source border-gradient horizontal thin"
+        [class.full-width]="box.colspan === 2"
         *ngFor="let box of boxes"
       >
         <span class="label">{{ box.label }} :</span>
@@ -39,6 +41,10 @@ export interface InfoBox {
     background: transparent;
     display: flex;
     align-items: center;
+  }
+
+  .client-source.full-width {
+    width: 100%;
   }
 
 

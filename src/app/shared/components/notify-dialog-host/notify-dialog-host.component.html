@@ -26,8 +26,6 @@
 
     <p class="nd-desc" *ngIf="d.description">{{ d.description }}</p>
 
-    <audio *ngIf="d.soundUrl" [src]="d.soundUrl" autoplay></audio>
-
     <div class="nd-progress" *ngIf="d.autoCloseMs">
       <div class="nd-progress-bar"></div>
     </div>

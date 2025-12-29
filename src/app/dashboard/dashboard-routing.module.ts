@@ -16,7 +16,7 @@ const routes: Routes = [
         (m) => m.DashboardAdminModule
       ),
     canActivate: [AuthGuard, RoleGuard],
-    data: { roles: ['Admin', 'Customer'] },
+    data: { roles: ['Admin'] },
   },
   {
     path: 'telesales',
@@ -71,6 +71,15 @@ const routes: Routes = [
       ),
     canActivate: [AuthGuard, RoleGuard],
     data: { roles: ['Employee'] },
+  },
+  {
+    path: 'legal',
+    loadChildren: () =>
+      import('./dashboard-legal/dashboard-legal.module').then(
+        (m) => m.DashboardLegalModule
+      ),
+    canActivate: [AuthGuard, RoleGuard],
+    data: { roles: ['Legal Affairs'] },
   },
 ];
 

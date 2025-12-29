@@ -102,6 +102,12 @@ export class EmployeeService {
     this.append(fd, 'gender', employee.gender);
     this.append(fd, 'isActive', String(employee.isActive));
     this.append(fd, 'empUserId', employee.empUserId);
+    this.append(fd, 'emprengcyPhone', employee.emprengcyPhone);
+    this.append(
+      fd,
+      'emprengcyPhoneContactName',
+      employee.emprengcyPhoneContactName
+    );
     if (employee.file instanceof File) {
       fd.append('file', employee.file, employee.file.name);
     }
@@ -111,8 +117,7 @@ export class EmployeeService {
   // =============================== helpers ===================
   private formatDate(value?: string): string {
     if (!value) return '';
-    // return new Date(value).toISOString().split('T')[0];
-    return value.split('T')[0]; // أسلم وأفضل
+    return value.split('T')[0];
   }
 
   private append(fd: FormData, key: string, value?: string): void {

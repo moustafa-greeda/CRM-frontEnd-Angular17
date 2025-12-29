@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { DropdownContainerComponent } from './dropdown-container/dropdown-container.component';
-import { DropdownOptionComponent } from './dropdown-option/dropdown-option.component';
+import { DropdownOptionComponent } from '../ui/table-dropdown/dropdown-option.component';
 import { TableDropdownComponent } from '../ui/table-dropdown/table-dropdown.component';
 
 @NgModule({

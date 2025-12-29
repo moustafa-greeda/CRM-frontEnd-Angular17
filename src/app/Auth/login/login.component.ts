@@ -22,7 +22,6 @@ export class LoginComponent {
 
   constructor(
     private service: AuthService,
-    private router: Router,
     private spinner: NgxSpinnerService,
     @Inject(PLATFORM_ID) private readonly platformId: Object,
     private notify: NotifyDialogService
@@ -44,6 +43,7 @@ export class LoginComponent {
         this.notify.success({
           title: 'تم تسجيل الدخول',
           description: 'أهلاً بك!',
+          autoCloseMs: 7000,
         });
 
         if (isPlatformBrowser(this.platformId)) {

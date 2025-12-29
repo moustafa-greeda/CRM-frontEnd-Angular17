@@ -105,6 +105,22 @@ export const EMPLOYEE_FORM_CONFIG: formUiConfig = {
       colSpan: 1,
     },
     {
+      name: 'emprengcyPhone',
+      label: 'رقم هاتف الطوائ',
+      type: 'text',
+      placeholder: 'ادخل رقم هاتف الطوارئ',
+      required: false,
+      colSpan: 1,
+    },
+    {
+      name: 'emprengcyPhoneContactName',
+      label: 'اسم الطوارئ',
+      type: 'text',
+      placeholder: 'ادخل اسم صاحب هاتف الطوارئ',
+      required: false,
+      colSpan: 1,
+    },
+    {
       name: 'gender',
       label: 'الجنس',
       type: 'radio',
@@ -119,6 +135,7 @@ export const EMPLOYEE_FORM_CONFIG: formUiConfig = {
       label: 'الحالة',
       type: 'radio',
       required: true,
+      hidden: true, // Hidden in create mode, will be shown in update mode
       colSpan: 1,
       options: [
         { value: true, label: 'نشط' },

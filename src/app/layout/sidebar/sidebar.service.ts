@@ -5,6 +5,7 @@ import { SalesMenu } from './menus/sales.menu';
 import { AccountantMenu } from './menus/accountant.menu';
 import { TechMenu } from './menus/tech.menu';
 import { CustomerMenu } from './menus/customer.menu';
+import { LegalMenu } from './menus/legal.menu';
 import { UserRole } from '../../core/Models/user/user.model';
 
 @Injectable({
@@ -25,6 +26,8 @@ export class SidebarService {
         return TechMenu;
       case UserRole.Customer:
         return CustomerMenu;
+      case UserRole.Legal:
+        return LegalMenu;
       default:
         return [];
     }

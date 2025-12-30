@@ -7,11 +7,10 @@
   <!------------- search and dropdown ---------------->
   <div class="search-container border-gradient">
     <app-dropdown
-      [options]="['Today', 'ThisWeek', 'ThisMonth']"
+      [options]="dateFilterLabels"
       [icon]="'bi bi-calendar'"
-      [selectedOption]="dateFilter"
       [label]="'اختر التاريخ'"
-      (change)="onDropdownChange($event)"
+      (optionSelected)="onDropdownChange($event)"
     ></app-dropdown>
 
     <app-search-input
@@ -19,7 +18,7 @@
       (search)="onSearch($event)"
     ></app-search-input>
     <!-- reset filters button -->
-    @if(dateFilter || searchTerm){
+    @if(dateFilter() || searchTerm()){
     <app-button
       [buttonClass]="'btn btn-danger'"
       [buttonText]="'مسح الفلتر'"
@@ -29,15 +28,15 @@
     }
   </div>
   <!-------------------- table --------------------->
-  <!-- <div class="table-container"> -->
   <div class="table-responsive mt-md">
     <app-table
-      [data]="leadsList"
+      [data]="leadsList()"
       [columns]="columns"
-      [pageSize]="pageSize"
-      [currentPage]="currentPage"
-      [totalCount]="totalCount"
+      [pageSize]="pageSize()"
+      [currentPage]="pageIndex()"
+      [totalCount]="totalCount()"
       [showIndex]="true"
+      [showView]="true"
       (pageChange)="onPageChange($event)"
       (pageSizeChange)="onPageSizeChange($event)"
       (view)="onView($event)"

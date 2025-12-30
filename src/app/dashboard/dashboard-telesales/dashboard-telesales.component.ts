@@ -527,6 +527,7 @@ export class DashboardTelesalesComponent implements OnInit {
       .subscribe({
         next: (response) => {
           this.teleSalesActions = response;
+          console.log(this.teleSalesActions);
           this.loadingActions = false;
         },
         error: () => {
@@ -750,6 +751,9 @@ export class DashboardTelesalesComponent implements OnInit {
       const actionNumber = index + 1;
       const actionTypeName = this.getActionTypeNameById(action);
       const actionDate = this.formatActionDate(action.actionDate);
+      const actionDateFormatted = action.actionDate
+        ? this.formatCreatedDate(action.actionDate)
+        : 'غير محدد';
 
       // Create a formatted action string with each field on a separate line
       const actionKey = `action_${actionNumber}`;
@@ -767,6 +771,18 @@ export class DashboardTelesalesComponent implements OnInit {
         label: actionLabel,
         type: 'text' as const,
       });
+
+      // Add actionDate as a separate field with proper date/time formatting
+      if (action.actionDate) {
+        const actionDateKey = `actionDate_${actionNumber}`;
+        const actionDateLabel = `تاريخ ووقت الإجراء ${actionNumber}`;
+        actionsData[actionDateKey] = action.actionDate;
+        fields.push({
+          key: actionDateKey,
+          label: actionDateLabel,
+          type: 'date' as const,
+        });
+      }
     });
 
     // Add lead information
@@ -980,6 +996,17 @@ export class DashboardTelesalesComponent implements OnInit {
       });
     }
 
+    if (actionConfig.type === 'followup') {
+      fields.push({
+        name: 'actionDate',
+        label: 'تاريخ المتابعة',
+        type: 'datetime-local',
+        placeholder: 'اختر تاريخ ووقت المتابعة',
+        required: false,
+        colSpan: 3,
+      });
+    }
+
     const actionDialogConfig = {
       title: `إضافة ${actionConfig.name}`,
       submitText: 'حفظ',
@@ -992,7 +1019,7 @@ export class DashboardTelesalesComponent implements OnInit {
     };
 
     // Add actionDate to initialData if meeting type
-    if (actionConfig.type === 'meeting') {
+    if (actionConfig.type === 'meeting' || actionConfig.type === 'followup') {
       // Set default to current date/time
       const now = new Date();
       const year = now.getFullYear();
@@ -1023,8 +1050,12 @@ export class DashboardTelesalesComponent implements OnInit {
           actionNotes: formData.actionNotes,
         };
 
-        // Add actionDate if it's a meeting type and provided
-        if (actionConfig.type === 'meeting' && formData.actionDate) {
+        // Add actionDate if it's a meeting or followup type and provided
+        if (
+          (actionConfig.type === 'meeting' ||
+            actionConfig.type === 'followup') &&
+          formData.actionDate
+        ) {
           // Convert datetime-local to ISO string
           const date = new Date(formData.actionDate);
           requestData.actionDate = date.toISOString();

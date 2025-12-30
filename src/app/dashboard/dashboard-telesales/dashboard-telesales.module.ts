@@ -16,12 +16,14 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { CallsComponent } from './components/calls/calls.component';
 import { FollowUpTeleSalesComponent } from './components/follow-up-tele-sales/follow-up-table-tele-sales.component';
+import { DetailsFollowUpTeleComponent } from './components/follow-up-tele-sales/details-follow-up-tele/details-follow-up-tele.component';
 
 @NgModule({
   declarations: [
     DashboardTelesalesComponent,
     CallsComponent,
     FollowUpTeleSalesComponent,
+    DetailsFollowUpTeleComponent,
   ],
   imports: [
     CommonModule,

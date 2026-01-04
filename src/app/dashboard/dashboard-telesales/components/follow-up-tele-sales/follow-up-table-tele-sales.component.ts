@@ -1,7 +1,7 @@
 import { Component, effect, OnInit, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { FollowUpTableTeleSalseService } from './follow-up-table-tele-salse.service';
-import { IFollowUp } from '../../interfaces/IFollowUp';
+import { IFollowUp } from './interfaces/IFollowUp';
 
 @Component({
   selector: 'app-follow-up-table-tele-sales',

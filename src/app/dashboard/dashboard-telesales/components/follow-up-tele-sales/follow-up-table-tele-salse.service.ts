@@ -3,7 +3,7 @@ import { environment } from '../../../../../environments/environment';
 import { HttpClient, HttpParams, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { ApiResponse } from '../../../../core/Models/api-response.model';
-import { IFollowUp, IFollowUpPersonal } from '../../interfaces/IFollowUp';
+import { IFollowUp } from './interfaces/IFollowUp';
 
 @Injectable({
   providedIn: 'root',

@@ -517,7 +517,7 @@ export class DashboardTelesalesComponent implements OnInit {
   }
 
   loadTeleSalesActions(
-    employeeId: number = 11,
+    employeeId: number = this._authService.getEmployeeId() || 0,
     startDate?: string,
     endDate?: string
   ): void {

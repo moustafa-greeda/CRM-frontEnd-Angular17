@@ -9,6 +9,7 @@ import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
 export class RecentInteractionsComponent implements OnInit {
   @Input() recentInteractions: any[] = [];
   @Input() loadingRecentInteractions: boolean = false;
+  @Input() showName: boolean = true;
 
   constructor() {}
 

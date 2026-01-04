@@ -1,6 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CountCardComponent } from './count-card/count-card.component';
@@ -45,6 +46,7 @@ import { PaginationControlsComponent } from './pagination-card/pagination-card-c
   imports: [
     CommonModule,
     FormsModule,
+    RouterModule,
     MatPaginatorModule,
     ReactiveFormsModule,
     MatDialogModule,

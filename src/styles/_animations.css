@@ -128,3 +128,14 @@
     transform: perspective(600px) translateX(0);
   }
 }
+/* ============================== Fade In Card last interactions ================================================ */
+@keyframes fadeInCard {
+  from {
+    opacity: 0.5;
+    transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

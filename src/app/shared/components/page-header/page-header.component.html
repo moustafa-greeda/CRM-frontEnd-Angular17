@@ -8,7 +8,18 @@
     <!-- Breadcrumb -->
     <div class="breadcrumb" *ngIf="breadcrumb?.length">
       <ng-container *ngFor="let item of breadcrumb; let last = last">
-        <span class="breadcrumb-item" [class.active]="last">
+        <a
+          *ngIf="item.link && !last"
+          [routerLink]="item.link"
+          class="breadcrumb-item"
+        >
+          {{ item.label }}
+        </a>
+        <span
+          *ngIf="!item.link || last"
+          class="breadcrumb-item"
+          [class.active]="last"
+        >
           {{ item.label }}
         </span>
         <span class="breadcrumb-separator" *ngIf="!last">></span>

@@ -79,15 +79,6 @@ export const EMPLOYEE_FORM_CONFIG: formUiConfig = {
       options: [],
     },
 
-    // {
-    //   name: 'empUserId',
-    //   label: 'المستخدم',
-    //   type: 'select',
-    //   placeholder: 'اختر المستخدم',
-    //   required: false,
-    //   colSpan: 1,
-    //   options: [],
-    // },
     {
       name: 'salary',
       label: 'المرتب',

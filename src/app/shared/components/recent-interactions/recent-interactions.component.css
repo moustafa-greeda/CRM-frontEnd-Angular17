@@ -6,31 +6,13 @@
   height: 100%;
 }
 .interactions-panel {
-  background: rgba(17, 24, 31, 0.8);
+  /* background: rgba(17, 24, 31, 0.8); */
   border: 1px solid rgba(70, 227, 255, 0.2);
   border-radius: 15px;
   padding: 20px;
-  backdrop-filter: blur(10px);
+  /* backdrop-filter: blur(10px); */
   animation: fadeInCard 0.8s ease-out both;
   transition: all 0.3s ease;
-}
-
-@keyframes fadeInCard {
-  from {
-    opacity: 0;
-    transform: translateY(30px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-.interactions-panel:hover {
-  border-color: rgba(70, 227, 255, 0.4);
-  background: rgba(17, 24, 31, 0.95);
-  transform: translateY(-2px);
-  box-shadow: 0 10px 25px rgba(70, 227, 255, 0.15);
 }
 
 .panel-header {
@@ -61,9 +43,9 @@
 }
 
 .interaction-card:hover {
-  border-color: #46e3ff;
-  background: rgba(70, 227, 255, 0.05);
-  transform: translateX(5px);
+  border-color: #46e3ff !important;
+  background: rgba(70, 227, 255, 0.05) !important;
+  transform: translateY(5px) !important;
 }
 
 .interaction-content {
@@ -78,7 +60,7 @@
 }
 
 .interaction-type-name {
-  color: #46e3ff;
+  color: var(--secondary-color);
   font-size: 16px;
   font-weight: 600;
   margin: 0;

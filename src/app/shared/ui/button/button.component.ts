@@ -6,11 +6,12 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
     <button
       class="btn"
       [ngClass]="buttonClass"
+      [type]="type"
       (click)="onClick()"
       [disabled]="disabled"
     >
+      <i *ngIf="icon" [class]="icon"></i>
       {{ buttonText }}
-      <i [class]="icon"></i>
     </button>
   `,
   styles: `
@@ -26,6 +27,7 @@ export class ButtonComponent {
   @Input() icon: string = ''; // Default button icon
   @Input() buttonClass: string = 'btn btn-primary'; // Default button class for styling
   @Input() disabled: boolean = false; // Default button disabled
+  @Input() type: string = 'button'; // Default button type
 
   // Output event when the button is clicked
   @Output() buttonClick = new EventEmitter<void>();

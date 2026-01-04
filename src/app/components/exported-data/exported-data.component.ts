@@ -11,12 +11,7 @@ import {
   DetailViewDialogComponent,
   DetailViewDialogData,
 } from '../../shared/components/detail-view-dialog/detail-view-dialog.component';
-
-/*---------------------------- Interfaces --------------*/
-interface BreadcrumbItem {
-  label: string;
-  link: string | null;
-}
+import { BreadcrumbItem } from '../../shared/interfaces/breadcrumb-item.interface';
 
 @Component({
   selector: 'app-exported-data',
@@ -27,7 +22,7 @@ export class ExportedDataComponent implements OnInit {
   /*---------------------------- Properties --------------*/
   breadcrumb: BreadcrumbItem[] = [
     { label: 'الرئيسية', link: '/dashboard/sales' },
-    { label: ' استقبال البيانات المصدرة', link: null },
+    { label: ' استقبال البيانات المصدرة' },
   ];
 
   dropdownOptions: string[] = [];

@@ -39,7 +39,7 @@ export interface ITeleSalseActionResponse {
 }
 
 export interface IRecentInteraction {
-  contactName: string;
+  contactName?: string;
   actionId: number;
   actionTime: string;
   actionType: string;

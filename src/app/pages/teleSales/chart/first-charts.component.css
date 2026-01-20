@@ -1,0 +1,291 @@
+/* Charts Container */
+.charts-container {
+  display: grid;
+  gap: 30px;
+}
+
+.charts-loading {
+  display: grid;
+  gap: 20px;
+}
+
+.skeleton {
+  position: relative;
+  overflow: hidden;
+}
+
+.skeleton::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    90deg,
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.08) 50%,
+    rgba(255, 255, 255, 0) 100%
+  );
+  animation: shimmer 1.4s infinite;
+}
+
+.skeleton-block {
+  width: 100%;
+  height: 300px;
+  border-radius: 12px;
+  background: rgba(17, 24, 31, 0.6);
+}
+
+@keyframes shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+/* ******************************* Chart Card ****************************/
+.chart-card {
+  background: #11181f !important;
+  border: 1px solid rgba(79, 209, 199, 0.2) !important;
+  padding: 3px;
+  min-height: 400px;
+  border-radius: 12px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: hidden;
+  position: relative;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  animation: fadeInUp 0.6s ease-out;
+}
+
+.chart-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.4);
+  border-color: rgba(70, 227, 255, 0.6);
+}
+
+.chart-card:nth-child(2) {
+  animation-delay: 0.1s;
+}
+
+.chart-card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+/* CanvasJS Chart Styling */
+canvasjs-chart {
+  -webkit-font-smoothing: antialiased !important;
+  -moz-osx-font-smoothing: grayscale !important;
+  text-rendering: optimizeLegibility !important;
+  color-scheme: normal !important;
+  color-adjust: exact !important;
+}
+
+canvasjs-chart .canvasjs-chart-title {
+  font-family: "Arial", sans-serif !important;
+  font-size: 18px !important;
+  font-weight: bold !important;
+  fill: #ffffff !important;
+  color: #ffffff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+}
+
+/* Fix color rendering for Chrome */
+canvasjs-chart svg {
+  color-rendering: optimizeSpeed !important;
+  shape-rendering: geometricPrecision !important;
+  text-rendering: optimizeLegibility !important;
+}
+
+canvasjs-chart .canvasjs-chart-canvas {
+  image-rendering: -webkit-optimize-contrast !important;
+  image-rendering: crisp-edges !important;
+}
+
+canvasjs-chart .canvasjs-axis-label,
+canvasjs-chart .canvasjs-chart-label {
+  font-family: "Arial", sans-serif !important;
+  fill: #ffffff !important;
+  color: #ffffff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+  font-weight: 500 !important;
+}
+
+canvasjs-chart .canvasjs-axis-title {
+  font-family: "Arial", sans-serif !important;
+  fill: #ffffff !important;
+  color: #ffffff !important;
+  text-shadow: none !important;
+  opacity: 1 !important;
+  filter: none !important;
+  font-weight: bold !important;
+}
+
+/* Chrome-specific fixes for color rendering */
+@supports (-webkit-appearance: none) {
+  canvasjs-chart {
+    -webkit-transform: translateZ(0) !important;
+    transform: translateZ(0) !important;
+    will-change: auto !important;
+    -webkit-font-smoothing: subpixel-antialiased !important;
+    -moz-osx-font-smoothing: auto !important;
+  }
+
+  canvasjs-chart svg {
+    -webkit-backface-visibility: hidden !important;
+    backface-visibility: hidden !important;
+    -webkit-transform: translateZ(0) !important;
+    transform: translateZ(0) !important;
+  }
+
+  canvasjs-chart .canvasjs-chart-title,
+  canvasjs-chart .canvasjs-axis-label,
+  canvasjs-chart .canvasjs-chart-label,
+  canvasjs-chart .canvasjs-axis-title {
+    fill: #ffffff !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    -webkit-font-smoothing: antialiased !important;
+    -moz-osx-font-smoothing: grayscale !important;
+    text-rendering: optimizeLegibility !important;
+  }
+}
+
+/* Force hardware acceleration for better color rendering */
+canvasjs-chart {
+  transform: translateZ(0) !important;
+  -webkit-transform: translateZ(0) !important;
+}
+
+/* Additional Chrome fixes for text clarity */
+@media screen and (-webkit-min-device-pixel-ratio: 0) {
+  canvasjs-chart {
+    -webkit-text-stroke: 0.01em transparent !important;
+    text-stroke: 0.01em transparent !important;
+  }
+
+  canvasjs-chart .canvasjs-chart-title,
+  canvasjs-chart .canvasjs-axis-label,
+  canvasjs-chart .canvasjs-chart-label,
+  canvasjs-chart .canvasjs-axis-title,
+  canvasjs-chart .canvasjs-legend-text {
+    fill: #ffffff !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    -webkit-text-stroke: 0.01em transparent !important;
+    text-stroke: 0.01em transparent !important;
+    font-weight: 600 !important;
+  }
+}
+
+/* Legend text clarity */
+canvasjs-chart .canvasjs-legend-text {
+  fill: #ffffff !important;
+  color: #ffffff !important;
+  opacity: 1 !important;
+  font-family: "Arial", sans-serif !important;
+  font-weight: 500 !important;
+}
+
+/* Tooltip text clarity */
+canvasjs-chart .canvasjs-chart-tooltip {
+  opacity: 1 !important;
+}
+
+canvasjs-chart .canvasjs-chart-tooltip text {
+  fill: #ffffff !important;
+  opacity: 1 !important;
+  font-weight: 500 !important;
+}
+
+/* Chrome color space fixes */
+canvasjs-chart svg {
+  color-interpolation: sRGB !important;
+  color-interpolation-filters: sRGB !important;
+}
+
+/* Top Charts Grid */
+.charts-grid-2 {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(400px, 1fr));
+  gap: 20px;
+}
+
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .charts-grid-2 {
+    grid-template-columns: 1fr;
+    gap: 15px;
+  }
+
+  .chart-card {
+    min-height: 250px;
+    padding: 15px;
+  }
+}
+
+@media (min-width: 769px) and (max-width: 1024px) {
+  .charts-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1025px) {
+  .charts-grid-2 {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* Animation for loading */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Fade in from left animation */
+@keyframes fadeInFromLeft {
+  from {
+    opacity: 0;
+    transform: translateX(300px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Fade in from right animation */
+@keyframes fadeInFromRight {
+  from {
+    opacity: 0;
+    transform: translateX(-300px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+/* Fade in from left - overrides default animation */
+.fade-in-left {
+  animation: fadeInFromLeft .8s ease-out !important;
+}
+
+/* Fade in from right - overrides default animation */
+.fade-in-right {
+  animation: fadeInFromRight .8s ease-out !important;
+}
+

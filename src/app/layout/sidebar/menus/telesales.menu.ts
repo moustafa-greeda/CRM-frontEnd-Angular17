@@ -16,4 +16,9 @@ export const TelesalesMenu: SidebarItem[] = [
     icon: 'bi bi-telephone',
     route: '/dashboard/telesales/calls',
   },
+  {
+    title: 'التعيين الي sales',
+    icon: 'bi bi-person-plus',
+    route: '/dashboard/telesales/assignToSales',
+  },
 ];

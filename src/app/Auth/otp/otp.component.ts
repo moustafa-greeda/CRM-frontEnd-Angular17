@@ -1,7 +1,12 @@
 import { Component, QueryList, ViewChildren, ElementRef } from '@angular/core';
-import { Router } from '@angular/router';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { Router, RouterModule } from '@angular/router';
+
 @Component({
   selector: 'app-otp',
+  standalone: true,
+  imports: [CommonModule, FormsModule, RouterModule],
   templateUrl: './otp.component.html',
   styleUrl: './otp.component.css',
 })

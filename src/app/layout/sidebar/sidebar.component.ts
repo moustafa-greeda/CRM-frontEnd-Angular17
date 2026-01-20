@@ -7,7 +7,8 @@ import {
   Output,
   EventEmitter,
 } from '@angular/core';
-import { isPlatformBrowser } from '@angular/common';
+import { CommonModule, isPlatformBrowser } from '@angular/common';
+import { RouterModule } from '@angular/router';
 import { AuthService } from '../../Auth/auth.service';
 import { SidebarService } from './sidebar.service';
 import { UserRole } from '../../core/Models/user/user.model';
@@ -15,6 +16,8 @@ import { SidebarItem } from '../../core/Models/sidbar/menu-item.model';
 
 @Component({
   selector: 'app-sidebar',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './sidebar.component.html',
   styleUrls: ['./sidebar.component.css'],
 })

@@ -1,5 +1,6 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { InfoBox } from './info-boxes.component';
+import { CommonModule } from '@angular/common';
+import { InfoBox, InfoBoxesComponent } from './info-boxes.component';
 
 export interface CardField {
   label: string;
@@ -9,6 +10,8 @@ export interface CardField {
 
 @Component({
   selector: 'app-card',
+  standalone: true,
+  imports: [CommonModule, InfoBoxesComponent],
   template: `
     <!-- <div class="client-card border-gradient diagonal medium rounded-lg"> -->
     <div class="client-card" [style.animation-delay]="index * 0.2 + 's'">
@@ -29,6 +32,13 @@ export interface CardField {
             *ngIf="showAvatar"
             [src]="getAvatarImage()"
             [alt]="data[titleKey] || 'avatar'"
+            [loading]="index === 0 ? 'eager' : 'lazy'"
+            [attr.fetchpriority]="index === 0 ? 'high' : 'auto'"
+            [decoding]="'async'"
+            (error)="onImageError($event)"
+            [style.background-color]="'var(--bg-light)'"
+            width="48"
+            height="48"
           />
         </div>
 
@@ -173,43 +183,34 @@ export interface CardField {
           inset -2px -2px 10px rgba(0, 0, 0, 0.6),
           0 10px 25px rgba(70, 227, 255, 0.2);
         background: var(--bg-light);
+        opacity: 0;
+        transform: translateY(20px);
+        animation: fadeInUp 0.4s ease-out forwards;
 
         // transform: perspective(600px) rotateX(5deg) rotateY(-5deg);
         transition: transform 0.4s ease, box-shadow 0.4s ease,
           opacity 0.4s ease background 0.4s ease;
-        // border: 1px solid var(--border-color);
-
-        // opacity: 0;
-        // animation: cardFadeIn 0.6s ease-out forwards;
       }
 
-      // @keyframes cardFadeIn {
-      //   0% {
-      //     opacity: 0;
-      //     transform: perspective(600px) rotateX(5deg) rotateY(-5deg)
-      //       translateX(-300px);
-      //   }
-      //   100% {
-      //     opacity: 1;
-      //     transform: perspective(600px) rotateX(5deg) rotateY(-5deg)
-      //       translateX(0);
-      //   }
-      // }
+      @keyframes fadeInUp {
+        0% {
+          opacity: 0;
+          transform: translateY(40px);
+        },
+        50%{
+          opacity: 0.5;
+          transform: translateY(20px);
+        }
 
-      /* 
-        Here's a fix using :host for hover effect:
-      */
+        100% {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
       :host(:hover) .client-card {
         transform: perspective(600px) rotateX(0) rotateY(0) scale(1.05) !important;
         box-shadow:  0px 0px 12px var(--secondary-color) !important;
-        // background: linear-gradient(
-        //   120deg,
-        //   #000204 0%,
-        //   #000204 40%,
-        //   #008299 50%,
-        //   #000204 60%,
-        //   #000204 100%
-        // );
         background: rgba(17, 24, 31);
       }
 
@@ -510,16 +511,22 @@ export class CardComponent {
   @Output() editClick = new EventEmitter<void>();
 
   onSelectionChange(event: Event): void {
-    const isChecked = (event.target as HTMLInputElement).checked;
-    this.isSelected = isChecked;
-    this.selectionChange.emit(isChecked);
+    // Use requestAnimationFrame to improve INP
+    requestAnimationFrame(() => {
+      const isChecked = (event.target as HTMLInputElement).checked;
+      this.isSelected = isChecked;
+      this.selectionChange.emit(isChecked);
+    });
   }
 
   onEditClick(event?: Event): void {
     if (event) {
       event.stopPropagation();
     }
-    this.editClick.emit();
+    // Use requestAnimationFrame to improve INP
+    requestAnimationFrame(() => {
+      this.editClick.emit();
+    });
   }
 
   getAvatarImage(): string {
@@ -551,6 +558,14 @@ export class CardComponent {
 
     // Default fallback
     return 'assets/logo.svg';
+  }
+
+  onImageError(event: Event): void {
+    const img = event.target as HTMLImageElement;
+    // Fallback to default avatar if image fails to load
+    if (img.src && !img.src.includes('avatar-male.svg') && !img.src.includes('avatar-female.svg')) {
+      img.src = 'assets/img/avatar-male.svg';
+    }
   }
 
   getProcessedInfoBoxes(): InfoBox[] {

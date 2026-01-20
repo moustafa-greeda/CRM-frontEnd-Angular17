@@ -1,7 +1,10 @@
 import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-count-lead',
+  standalone: true,
+  imports: [CommonModule],
   template: `
     <div class="countLead">
       <p class="countLead-text">{{ count || 0 }} {{ label || 'عميل' }}</p>

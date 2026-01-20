@@ -1,7 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ClickOutsideDirective } from '../../directives/click-outside.directive';
 
 @Component({
   selector: 'app-dropdown',
+  standalone: true,
+  imports: [CommonModule, ClickOutsideDirective],
   template: `
     <div
       class="custom-dropdown"
@@ -41,7 +45,13 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   position: relative;
   width: 100%;
   min-width: 180px;
-  z-index: 1000;
+  z-index: 10;
+}
+
+/* ✅ When dropdown is open, increase z-index to appear above other dropdowns */
+.custom-dropdown.open {
+  z-index: 999990 !important;
+  position: relative;
 }
 
 .dropdown-trigger {
@@ -57,6 +67,8 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   border-radius: 10px;
   border: 1px solid var(--input-border);
   background: rgba(17, 24, 31, 0.8);
+  position: relative;
+  z-index: 1;
 }
 
 .selected-option {
@@ -81,11 +93,12 @@ import { Component, Input, Output, EventEmitter } from '@angular/core';
   max-height: 300px;
   overflow-y: auto;
   border-radius: 8px;
-  z-index: 9999;
+  z-index: 999999 !important;
   display: none;
   backdrop-filter: blur(10px);
   border: 1px solid var(--primary-color);
-  background: rgba(17, 24, 31);
+  background: rgba(17, 24, 31, 0.98);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
 }
 
 .custom-dropdown.open .dropdown-menu {

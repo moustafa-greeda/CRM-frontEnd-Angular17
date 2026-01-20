@@ -1,23 +1,11 @@
-/* ============================================================================
-   BASE STYLES
-   ============================================================================
-   Base typography, body styles, and fundamental element styling.
-   ============================================================================ */
-
 body {
-  /* font-family: "Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto",
-    "Oxygen", "Ubuntu", "Cantarell", sans-serif; */
-  /* font-family: "Amiri", serif, "sans-serif"; */
   font-family: "Alexandria", sans-serif;
 
-  background: linear-gradient(
-      rgba(0, 0, 0, var(--bg-dim)),
-      rgba(0, 0, 0, var(--bg-dim))
-    ),
-    var(--bg-image) center / cover no-repeat fixed, var(--bg-color);
+  background: var(--bg-image) center / cover no-repeat fixed, var(--bg-color);
   color: var(--text-color);
   min-height: 100vh;
   display: flex;
+  position: relative;
   flex-direction: column;
   line-height: 1.6;
   font-size: 16px;
@@ -25,7 +13,16 @@ body {
   font-style: normal;
   overflow-x: hidden;
 }
-
+body::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(17, 24, 31, 0.8);
+  z-index: -10;
+}
 /* ========== Typography ========== */
 h1,
 h2,
@@ -39,51 +36,6 @@ h6 {
   color: var(--text-color);
 }
 
-h1 {
-  font-size: 2.25rem;
-}
-h2 {
-  font-size: 1.875rem;
-}
-h3 {
-  font-size: 1.5rem;
-}
-h4 {
-  font-size: 1.25rem;
-}
-h5 {
-  font-size: 1.125rem;
-}
-h6 {
-  font-size: 1rem;
-}
-
-/* ========== Links ========== */
-a {
-  color: var(--link-color);
-  text-decoration: none;
-  transition: color var(--transition-fast);
-}
-
-a:hover {
-  color: var(--link-hover);
-}
-
-/* ========== Buttons ========== */
-button {
-  font-family: inherit;
-  cursor: pointer;
-  border: none;
-  border-radius: var(--radius-md);
-  transition: all var(--transition-fast);
-  font-weight: 500;
-  outline: none;
-}
-
-button:focus {
-  outline: 2px solid var(--link-color);
-  outline-offset: 2px;
-}
 
 /* ========== Scrollbar ========== */
 ::-webkit-scrollbar {
@@ -105,7 +57,7 @@ button:focus {
 
 /* ========== Focus & Selection ========== */
 *:focus-visible {
-  outline: 2px solid var(--link-color);
+  outline: 1px solid var(--link-color);
   outline-offset: 2px;
 }
 
@@ -127,13 +79,6 @@ button:focus {
   color: #000; /* اختياري */
 }
 
-/* ========== Container ========== */
-.container {
-  width: 100%;
-  max-width: 1400px;
-  margin: 0 auto;
-  padding: 0 var(--spacing-md);
-}
 
 /* ========== Responsive Typography ========== */
 @media (max-width: 768px) {

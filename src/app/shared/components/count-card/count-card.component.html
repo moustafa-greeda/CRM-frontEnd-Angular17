@@ -3,7 +3,7 @@
 </div>
 
 <div class="stats-grid">
-  <div class="stat-card" *ngFor="let stat of stats">
+  <div class="stat-card" *ngFor="let stat of stats; let i = index">
     <div class="stat-card-content">
       <h3>{{ stat.title }}</h3>
       @if (stat.subtitle) {
@@ -22,7 +22,17 @@
       }
     </div>
     @if (stat.imageSrc) {
-    <img [src]="stat.imageSrc" [alt]="stat.title" class="stat-card-image" />
+    <img 
+      [src]="stat.imageSrc" 
+      [alt]="stat.title" 
+      class="stat-card-image"
+      [loading]="i === 0 ? 'eager' : 'lazy'"
+      [attr.fetchpriority]="i === 0 ? 'high' : 'auto'"
+      [decoding]="'async'"
+      width="80"
+      height="80"
+      (error)="onImageError($event, stat.imageSrc)"
+    />
     } @else {
     <i class="bi {{ stat.icon }}"></i>
     }

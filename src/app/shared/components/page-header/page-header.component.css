@@ -1,5 +1,5 @@
 .header-section {
-  padding-top: 10px;
+  padding-top: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -32,11 +32,11 @@
 }
 
 .breadcrumb-item:hover {
-  color: var(--primary-color, #46e3ff);
+  color: var(--white-color, #fff);
 }
 
 .breadcrumb-item.active {
-  color: var(--primary-color) !important;
+  color: var(--white-color) !important;
   font-size: 20px;
   font-weight: 700;
   cursor: default;
@@ -50,4 +50,36 @@
   display: flex;
   gap: 20px;
   align-items: center;
+}
+
+.btn {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: none;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  text-decoration: none;
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 12px;
+  border: 1px solid var(--color-primary);
+  color: #fff;
+  background: linear-gradient(90deg, #008299 0%, #002b33 100%);
+}
+
+.btn-primary i {
+  font-size: 25px;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(90deg, #002b33 0%, #008299 100%);
+  transform: translateY(-2px);
 }

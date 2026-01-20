@@ -1,8 +1,11 @@
 import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { StatusColorService } from '../../../core/services/common/status-color.service';
 
 @Component({
   selector: 'app-dropdown-option',
+  standalone: true,
+  imports: [CommonModule],
   template: `
     <option [value]="value" [selected]="isSelected" [style]="getOptionStyle()">
       {{ displayText }}

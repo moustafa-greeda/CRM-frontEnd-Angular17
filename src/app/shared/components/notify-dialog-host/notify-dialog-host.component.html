@@ -1,7 +1,7 @@
 <div *ngIf="data as d" class="nd-overlay" (click)="backdropClick()">
   <div
     class="nd-modal"
-    [class.nd-success]="d.type === 'success'"
+    [class.nd-success]="d.type === 'success' "
     [class.nd-error]="d.type === 'error'"
     [ngStyle]="autoVars"
     role="dialog"
@@ -10,7 +10,7 @@
   >
     <div class="nd-header">
       <div class="nd-accent">
-        <iconify-icon [icon]="iconName" width="26" height="26"></iconify-icon>
+        <i [class]="iconName"></i>
       </div>
       <h2 class="nd-title">{{ displayTitle }}</h2>
     </div>

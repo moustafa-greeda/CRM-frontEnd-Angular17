@@ -5,10 +5,15 @@ import {
   EventEmitter,
   ViewEncapsulation,
 } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { DropdownContainerComponent } from '../../components/dropdown-container/dropdown-container.component';
+import { DropdownOptionComponent } from './dropdown-option.component';
 import { StatusColorService } from '../../../core/services/common/status-color.service';
 
 @Component({
   selector: 'app-table-dropdown',
+  standalone: true,
+  imports: [CommonModule, DropdownContainerComponent, DropdownOptionComponent],
   template: `
     <app-dropdown-container
       [selectedValue]="selectedValue"

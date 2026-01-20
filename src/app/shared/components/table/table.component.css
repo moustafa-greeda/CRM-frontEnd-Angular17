@@ -11,7 +11,7 @@
   flex-direction: column;
   overflow-x: auto;
   -webkit-overflow-scrolling: touch;
-  animation: tableFadeIn 1.5s ease-out forwards;
+  animation: tableFadeIn .9s ease-out forwards;
 }
 .table-bg-frame {
   position: relative;
@@ -26,7 +26,7 @@
   height: 100%;
   z-index: 0;
   pointer-events: none;
-  animation: tableFadeInFrame 1.5s ease-out forwards;
+  animation: tableFadeInFrame .9s ease-out forwards;
 }
 
 .table-frame-left {
@@ -39,6 +39,41 @@
 /* Ensure dropdown menus are not clipped by table container */
 .table-container .dropdown-menu {
   position: absolute !important;
+}
+
+/* Employee sales select - arrow centered */
+.employee-sales-select {
+  width: 100%;
+  padding: 10px;
+  font-size: 13px;
+  border-radius: 8px;
+  border: 1px solid var(--input-border);
+  background-color: rgba(17, 24, 31, 0.8);
+  color: #fff;
+  cursor: pointer;
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: center right 10px;
+  background-size: 16px;
+}
+
+.employee-sales-select:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.employee-sales-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+}
+
+.employee-sales-select option {
+  background-color: rgba(17, 24, 31, 0.95);
+  color: #fff;
+  padding: 10px;
 }
 
 /* Data Table */
@@ -314,7 +349,7 @@
   border: none;
 }
 .assign-badge.unassigned {
-  color: var(--text-muted);
+  color: var(--text-muted , #fff);
   border: none;
 }
 
@@ -322,9 +357,9 @@
 .data-table thead {
   position: sticky;
   top: 0;
-  z-index: 100;
-  /* background: var(--bg-dark); */
+  z-index: 10;
   background: rgba(0, 255, 255, 0.1);
+  pointer-events: auto;
 }
 
 /* Ensure table rows don't overlap dropdown */
@@ -349,9 +384,12 @@
   padding: 20px 0px !important;
   font-size: 14px;
   font-weight: 600;
-  backdrop-filter: blur(10px) !important;
+  /* backdrop-filter: blur(10px) !important; */
   background: var(--bg-table-header) !important;
   color: var(--white-color);
+  z-index: 20;
+  position: relative;
+  pointer-events: auto;
 }
 
 /* Row Styling */
@@ -367,7 +405,25 @@
   z-index: 1;
 }
 
-.data-table tr:hover {
+/* ✅ Prevent hover on rows that are behind thead */
+.data-table tbody tr {
+  position: relative;
+}
+
+/* ✅ Create an overlay on thead to block pointer events on rows behind it */
+.data-table thead::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: -2px;
+  z-index: 15;
+  pointer-events: auto;
+  background: transparent;
+}
+
+.data-table tbody tr:hover {
   background-color: rgba(17, 24, 31, 0.5);
   outline: 1px solid var(--primary-color);
   transform: translateY(-1px);
@@ -375,8 +431,14 @@
   z-index: 2;
 }
 
-.data-table tr:hover:not(.has-open-dropdown) {
+/* ✅ Only apply hover if row is not behind thead */
+.data-table tbody tr:hover:not(.has-open-dropdown) {
   z-index: 2 !important;
+}
+
+/* ✅ Table scroll wrapper */
+.table-scroll-wrapper {
+  position: relative;
 }
 
 /* Row with open dropdown should be above others */
@@ -950,7 +1012,6 @@
 }
 
 /* ========================== Custom Scrollbar Styling ====================== */
-/* Webkit browsers (Chrome, Safari, Edge) - Vertical Scrollbar */
 .table-scroll-wrapper::-webkit-scrollbar {
   width: 10px;
   height: 10px;
@@ -1070,22 +1131,6 @@
     right: 50%;
     transform: translateX(0px);
   }
-  /* 62.5% {
-    right: 62.5%;
-    transform: scaleX(1) translateX(-3px);
-  }
-  75% {
-    right: 75%;
-    transform: scaleX(1) translateY(0px);
-  } */
-  /* 87.5% {
-    right: 87.5%;
-    transform: scale(1.5) scaleX(1) translateY(-3px);
-  } 
-  100% {
-    right: 100%;
-    transform: scale(1.5) scaleX(1) translateY(0px);
-  } */
 }
 
 /*  */

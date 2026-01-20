@@ -20,6 +20,10 @@ export interface FormField {
   accept?: string; // For file input (e.g., 'image/*', '.pdf')
   hidden?: boolean; // Hide field from form
   disabled?: boolean; // Disable field
+  pattern?: string | RegExp;
+  minLength?: number;
+  maxLength?: number;
+  patternErrorMessage?: string;
   input1?: {
     name: string;
     label: string;
@@ -28,6 +32,10 @@ export interface FormField {
     required?: boolean;
     disabled?: boolean;
     options?: { value: any; label: string }[];
+    pattern?: string | RegExp;
+    minLength?: number;
+    maxLength?: number;
+    patternErrorMessage?: string;
   };
   input2?: {
     name: string;
@@ -37,6 +45,10 @@ export interface FormField {
     required?: boolean;
     disabled?: boolean;
     options?: { value: any; label: string }[];
+    pattern?: string | RegExp;
+    minLength?: number;
+    maxLength?: number;
+    patternErrorMessage?: string;
   };
 }
 

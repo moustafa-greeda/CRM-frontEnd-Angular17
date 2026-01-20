@@ -1,9 +1,3 @@
-/* ============================================================================
-   ANIMATIONS & KEYFRAMES
-   ============================================================================
-   Reusable animations and keyframe definitions.
-   ============================================================================ */
-
 /* ========== Fade In Scale (Notify Dialog) ========== */
 @keyframes fade-in-scale {
   from {
@@ -65,7 +59,7 @@
 
 /* ========== Animation Utilities ========== */
 .animate-fade-in {
-  animation: fade-in-scale var(--transition-normal) ease-out;
+  animation: fade-in-scale .6s ease-out;
 }
 
 .animate-fade-up {
@@ -77,12 +71,17 @@
 }
 
 .animation-fade-left {
-  animation: fade-left 1.5s ease-out;
+  animation: fade-left .8s ease-out;
 }
 
 .animation-fade-right {
-  animation: fade-right 1.5s ease-out;
+  animation: fade-right .8s ease-out;
 }
+
+.animate-fadeUpSearchContainer {
+  animation: fadeUpSearchContainer .6s ease-out;
+}
+
 /* ============================================================ Fade In Left & Right ============================================================ */
 
 @keyframes fade-left {
@@ -121,7 +120,11 @@
 @keyframes tableFadeInFrame {
   0% {
     opacity: 0;
-    transform: perspective(600px) translateY(515px);
+    transform: perspective(600px) translateY(200px);
+  }
+  50% {
+    opacity: 0.5;
+    transform: perspective(600px) translateY(300px);
   }
   100% {
     opacity: 1;
@@ -133,6 +136,18 @@
   from {
     opacity: 0.5;
     transform: translateX(100px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ================================================ fade up search container ====================================== */
+@keyframes fadeUpSearchContainer {
+  from {
+    opacity: 0;
+    transform: translateY(-150px);
   }
   to {
     opacity: 1;

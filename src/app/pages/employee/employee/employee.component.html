@@ -1,0 +1,84 @@
+@if(!isLoadingEmployees()){
+  <div class="parent-container">
+  <!-- page header -->
+  <app-page-header
+    [title]="pageTitle"
+    [breadcrumb]="breadcrumb"
+    [actionButtons]="actionButtons"
+  ></app-page-header>
+
+  <!-- search and dropdown -->
+  <div class="search-parent border-gradient mb-4">
+    <div class="form-grid-search">
+      <div class="form-field">
+        <app-dropdown
+          [options]="statusOptions"
+          [selectedOption]="selectedStatus()"
+          [label]="'اختر حالة الموظف'"
+          (optionSelected)="onStatusMethodChange($event)"
+        ></app-dropdown>
+      </div>
+
+      <div class="form-field">
+        <app-dropdown
+          [options]="departmentOptions()"
+          [selectedOption]="selectedDepartment()"
+          [label]="'اختر القسم'"
+          (optionSelected)="onDepartmentChange($event)"
+        ></app-dropdown>
+      </div>
+
+      <div class="form-field search-field">
+        <app-search-input
+          [placeholder]="searchPlaceholder"
+          (search)="onSearch($event)"
+        ></app-search-input>
+      </div>
+    </div>
+  </div>
+
+  <!-- grid cards -->
+  <app-grid-cards [error]="false">
+    <app-card
+      *ngFor="
+        let employee of employeeList();
+        trackBy: trackByClientId;
+        index as i
+      "
+      [ngClass]="employee.isActive ? 'active' : 'inactive'"
+      [data]="getEmployeeCardData(employee)"
+      [index]="i"
+      [selectable]="true"
+      [titleKey]="'name'"
+      [showEditIcon]="true"
+      [subTitleKey]="'departmentName'"
+      [rating]="2"
+      [fields]="[
+        { label: 'البريد الإلكتروني', key: 'email', icon: 'bi bi-envelope' },
+        { label: 'الهاتف', key: 'phoneNumber', icon: 'bi bi-telephone-fill' }
+      ]"
+      [infoBoxes]="[
+        { label: 'كود الموظف', value: employee.empCode },
+        { label: 'الرتبة', value: employee.position },
+
+        { label: 'تاريخ الإنضمام', value: formatDate(employee.hireDate) },
+        { label: 'العنوان', value: employee.address }
+      ]"
+      (editClick)="onEditEmployee(employee)"
+    ></app-card>
+  </app-grid-cards>
+
+  <!-- No results message - only show when there's an active text search -->
+  <app-no-results-message
+    *ngIf="hasActiveSearchTerm() && hasNoEmployees()"
+    title="لا يوجد نتائج للبحث"
+    description="لم يتم العثور على موظفين مطابقين لمعايير البحث"
+    icon="bi bi-search"
+    [showResetButton]="true"
+    resetButtonText="إعادة تعيين الفلاتر"
+    resetButtonClass="btn-danger"
+    (resetClick)="resetFilters()"
+  ></app-no-results-message>
+</div>
+
+}

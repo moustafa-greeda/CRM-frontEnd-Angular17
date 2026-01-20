@@ -9,18 +9,30 @@ import {
   HostListener,
   ElementRef,
 } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import {
   FormBuilder,
   FormGroup,
   Validators,
   FormArray,
   FormControl,
+  ReactiveFormsModule,
 } from '@angular/forms';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { formUiConfig, FormField } from '../../interfaces/formUi.interface';
+import { ButtonComponent } from '../../ui/button/button.component';
+import { DropdownComponent } from '../dropdown/dropdown.component';
 
 @Component({
   selector: 'app-form-ui',
+  standalone: true,
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    ButtonComponent,
+    DropdownComponent,
+  ],
   templateUrl: './form-ui.component.html',
   styleUrls: ['./form-ui.component.css'],
 })
@@ -84,6 +96,25 @@ export class FormUiComponent implements OnInit, AfterViewInit {
         validators.push(Validators.email);
       }
 
+      // Add pattern validator if pattern is specified
+      if (field.pattern) {
+        const pattern =
+          typeof field.pattern === 'string'
+            ? new RegExp(field.pattern)
+            : field.pattern;
+        validators.push(Validators.pattern(pattern));
+      }
+
+      // Add minLength validator if specified
+      if (field.minLength !== undefined) {
+        validators.push(Validators.minLength(field.minLength));
+      }
+
+      // Add maxLength validator if specified
+      if (field.maxLength !== undefined) {
+        validators.push(Validators.maxLength(field.maxLength));
+      }
+
       const initialValue = this.initialData?.[field.name] ?? '';
 
       if (field.type === 'checkbox') {
@@ -104,9 +135,23 @@ export class FormUiComponent implements OnInit, AfterViewInit {
       } else if (field.type === 'two-inputs') {
         // For two-inputs, create controls for both inputs
         if (field.input1) {
-          const input1Validators = field.input1.required
-            ? [Validators.required]
-            : [];
+          const input1Validators: any[] = [];
+          if (field.input1.required) {
+            input1Validators.push(Validators.required);
+          }
+          if (field.input1.pattern) {
+            const pattern =
+              typeof field.input1.pattern === 'string'
+                ? new RegExp(field.input1.pattern)
+                : field.input1.pattern;
+            input1Validators.push(Validators.pattern(pattern));
+          }
+          if (field.input1.minLength !== undefined) {
+            input1Validators.push(Validators.minLength(field.input1.minLength));
+          }
+          if (field.input1.maxLength !== undefined) {
+            input1Validators.push(Validators.maxLength(field.input1.maxLength));
+          }
           const input1Value = this.initialData?.[field.input1.name] ?? '';
           const input1Control = new FormControl(input1Value, input1Validators);
           // Disable if specified in config
@@ -116,9 +161,23 @@ export class FormUiComponent implements OnInit, AfterViewInit {
           controls[field.input1.name] = input1Control;
         }
         if (field.input2) {
-          const input2Validators = field.input2.required
-            ? [Validators.required]
-            : [];
+          const input2Validators: any[] = [];
+          if (field.input2.required) {
+            input2Validators.push(Validators.required);
+          }
+          if (field.input2.pattern) {
+            const pattern =
+              typeof field.input2.pattern === 'string'
+                ? new RegExp(field.input2.pattern)
+                : field.input2.pattern;
+            input2Validators.push(Validators.pattern(pattern));
+          }
+          if (field.input2.minLength !== undefined) {
+            input2Validators.push(Validators.minLength(field.input2.minLength));
+          }
+          if (field.input2.maxLength !== undefined) {
+            input2Validators.push(Validators.maxLength(field.input2.maxLength));
+          }
           const input2Value = this.initialData?.[field.input2.name] ?? '';
           const input2Control = new FormControl(input2Value, input2Validators);
           // Disable if specified in config
@@ -177,8 +236,48 @@ export class FormUiComponent implements OnInit, AfterViewInit {
       if (control.errors['email']) {
         return 'البريد الإلكتروني غير صحيح';
       }
+      if (control.errors['pattern']) {
+        const errorMessage = this.getPatternErrorMessage(fieldName);
+        return errorMessage || 'القيمة المدخلة غير صحيحة';
+      }
+      if (control.errors['minlength']) {
+        const minLength = control.errors['minlength'].requiredLength;
+        return `يجب أن يكون ${this.getFieldLabel(
+          fieldName
+        )} على الأقل ${minLength} أحرف`;
+      }
+      if (control.errors['maxlength']) {
+        const maxLength = control.errors['maxlength'].requiredLength;
+        return `يجب أن يكون ${this.getFieldLabel(
+          fieldName
+        )} على الأكثر ${maxLength} أحرف`;
+      }
     }
     return '';
+  }
+
+  private getPatternErrorMessage(fieldName: string): string | null {
+    if (!this.config) return null;
+
+    // Check in regular fields
+    const field = this.config.fields.find((f) => f.name === fieldName);
+    if (field?.patternErrorMessage) {
+      return field.patternErrorMessage;
+    }
+
+    // Check in two-inputs fields (input1 and input2)
+    for (const f of this.config.fields) {
+      if (f.type === 'two-inputs') {
+        if (f.input1?.name === fieldName && f.input1.patternErrorMessage) {
+          return f.input1.patternErrorMessage;
+        }
+        if (f.input2?.name === fieldName && f.input2.patternErrorMessage) {
+          return f.input2.patternErrorMessage;
+        }
+      }
+    }
+
+    return null;
   }
 
   private getFieldLabel(fieldName: string): string {

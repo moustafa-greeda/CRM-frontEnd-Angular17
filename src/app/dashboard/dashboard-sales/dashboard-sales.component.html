@@ -1,39 +1,40 @@
+@if(!isloading()){
 <section class="dashboard-info">
   <h1 class="welcome-section">
-    مرحباً بك <span>{{ userInfo.name || "المستخدم" }}</span> في لوحة تحكم -
+    مرحباً بك <span>{{ userInfo().name || "المستخدم" }}</span> في لوحة تحكم -
     Salse
   </h1>
   <!-- count card -->
-  <app-count-card [stats]="stats"></app-count-card>
+  <app-count-card [stats]="stats()"></app-count-card>
   <!-- search and dropdown -->
   <div class="search-container border-gradient">
     <app-search-input
-      [placeholder]="searchPlaceholder"
+      [placeholder]="searchPlaceholder()"
       (search)="onSearch($event)"
     ></app-search-input>
     <div class="dropdown-container">
       <app-dropdown
         label="اختر الحالة"
-        [options]="listLeadStatus"
-        [selectedOption]="selectedLeadStatusName"
+        [options]="listLeadStatus()"
+        [selectedOption]="selectedLeadStatusName()"
         (optionSelected)="onOptionSelected($event)"
       ></app-dropdown>
       <app-dropdown
         label="اختر الدولة"
-        [options]="countryNames"
-        [selectedOption]="selectedCountry"
+        [options]="countryNames()"
+        [selectedOption]="selectedCountry()"
         (optionSelected)="onCountrySelected($event)"
       ></app-dropdown>
       <app-dropdown
-        [label]="cityDropdownLabel"
-        [options]="cityNames"
-        [selectedOption]="selectedCity"
-        [disabled]="!selectedCountry"
+        [label]="cityDropdownLabel()"
+        [options]="cityNames()"
+        [selectedOption]="selectedCity()"
+        [disabled]="!selectedCountry()"
         (optionSelected)="onCitySelected($event)"
       ></app-dropdown>
       <app-button
         *ngIf="
-          searchTerm || selectedLeadStatusId || selectedCountry || selectedCity
+          searchTerm() || selectedLeadStatusId() || selectedCountry() || selectedCity()
         "
         [buttonClass]="'btn btn-danger'"
         [buttonText]="' مسح الفلاتر'"
@@ -44,14 +45,14 @@
   <!-- table -->
   <div class="table-container">
     <app-table
-      *ngIf="!loadingLeads && !isSearching"
-      [data]="leadsList"
-      [columns]="columns"
-      [pageSize]="pageSize"
-      [currentPage]="currentPage"
-      [totalCount]="totalCount"
+      *ngIf="!loadingLeads() && !isSearching()"
+      [data]="leadsList()"
+      [columns]="columns()"
+      [pageSize]="pageSize()"
+      [currentPage]="currentPage()"
+      [totalCount]="totalCount()"
       [showDataTable]="true"
-      [hasNoData]="leadsList.length === 0"
+      [hasNoData]="leadsList().length === 0"
       [showIndex]="true"
       [showView]="true"
       [addButton]="true"
@@ -64,13 +65,13 @@
       [showMeeting]="true"
       [showFollowUp]="true"
       [showAssignToAccountant]="true"
-      [actionLabels]="actionLabels"
-      [actionDisplayMode]="actionDisplayMode"
-      [leadStatusOptions]="leadStatusOptions"
-      [leadStatusColorMap]="leadStatusColorMap"
+      [actionLabels]="actionLabels()"
+      [actionDisplayMode]="actionDisplayMode()"
+      [leadStatusOptions]="leadStatusOptions()"
+      [leadStatusColorMap]="leadStatusColorMap()"
       [alwaysEditLeadStatus]="true"
-      [packetOptions]="packetDropdownOptions"
-      [defaultPacket]="defaultPacketOption"
+      [packetOptions]="packetDropdownOptions()"
+      [defaultPacket]="defaultPacketOption()"
       (packetSelected)="
         onPacketSelected($event.row, normalizePacketOption($event.packet))
       "
@@ -96,15 +97,15 @@
   <div class="notifications-interactions-container">
     <!-- Recent Interactions Panel -->
     <app-recent-interactions
-      [recentInteractions]="recentInteractions"
-      [loadingRecentInteractions]="loadingRecentInteractions"
+      [recentInteractions]="recentInteractions()"
+      [loadingRecentInteractions]="loadingRecentInteractions()"
     >
     </app-recent-interactions>
 
     <!-- notifications panel -->
     <app-notification-card
-      [notifications]="notifications"
-      [loadingNotifications]="loadingNotifications"
+      [notifications]="notifications()"
+      [loadingNotifications]="loadingNotifications()"
     >
     </app-notification-card>
   </div>
@@ -113,12 +114,12 @@
 <!------------------------ Lead Actions Dialog --------------------->
 <div
   class="lead-actions-dialog"
-  *ngIf="showLeadActionsDialog"
+  *ngIf="showLeadActionsDialog()"
   (click)="closeLeadActionsDialog()"
 >
   <div class="dialog-content" (click)="$event.stopPropagation()">
     <div class="dialog-header">
-      <h3>إجراءات {{ selectedLead?.name }}</h3>
+      <h3>إجراءات {{ selectedLead()?.name }}</h3>
       <button class="close-btn" (click)="closeLeadActionsDialog()">
         <i class="bi bi-x"></i>
       </button>
@@ -126,14 +127,13 @@
 
     <div class="dialog-body">
       <div
-        *ngFor="let action of selectedLeadActions; trackBy: trackByAction"
+        *ngFor="let action of selectedLeadActions(); trackBy: trackByAction"
         class="action-item"
       >
         <div class="action-header">
           <div class="action-type">
             <i
-              class="bi"
-              [ngClass]="getActionTypeIconById(action.actionTypeId)"
+              [class]="'bi ' + getActionTypeIconById(action.actionTypeId)"
             ></i>
             <span>{{ getActionTypeNameById(action) }}</span>
           </div>
@@ -148,3 +148,5 @@
     </div>
   </div>
 </div>
+
+}

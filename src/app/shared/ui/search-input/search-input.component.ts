@@ -1,7 +1,11 @@
 import { Component, EventEmitter, Output, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-search-input',
+  standalone: true,
+  imports: [CommonModule, FormsModule],
   template: `
     <div class="search-input-container">
       <input
@@ -11,7 +15,11 @@ import { Component, EventEmitter, Output, Input } from '@angular/core';
         [(ngModel)]="searchTerm"
         (keyup.enter)="onSearch()"
       />
-      <button class="search-button" (click)="onSearch()">
+      <button
+        class="search-button"
+        [disabled]="isButtonDisabled"
+        (click)="onSearch()"
+      >
         <i class="bi bi-search"></i>
         بحث
       </button>
@@ -78,6 +86,18 @@ import { Component, EventEmitter, Output, Input } from '@angular/core';
       transform: translateY(0);
     }
 
+    .search-button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
+      box-shadow: none;
+    }
+
+    .search-button:disabled:hover {
+      transform: none;
+      box-shadow: none;
+    }
+
     .search-button i {
       font-size: 16px;
     }
@@ -89,13 +109,25 @@ import { Component, EventEmitter, Output, Input } from '@angular/core';
   `,
 })
 export class SearchInputComponent {
-  @Input() placeholder: string = ' ..... ابحث عن العملاء';
+  @Input() placeholder: string = ' ..... البحث  ';
+  @Input() hasData: boolean = true; // Enable search by default, disable if no data in API
+  @Input() disabled: boolean = false; // Additional disabled state
 
   searchTerm: string = '';
 
   @Output() search = new EventEmitter<string>();
 
+  // Computed property to check if button should be disabled
+  get isButtonDisabled(): boolean {
+    const isEmpty = !this.searchTerm || this.searchTerm.trim().length === 0;
+    return isEmpty || !this.hasData || this.disabled;
+  }
+
   onSearch() {
+    // Prevent search if input is empty or no data available
+    if (this.isButtonDisabled) {
+      return;
+    }
     this.search.emit(this.searchTerm);
   }
 }

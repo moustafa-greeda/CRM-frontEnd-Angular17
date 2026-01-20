@@ -1,14 +1,20 @@
 import {
   Component,
-  Input,
-  Output,
-  EventEmitter,
+  input,
+  output,
   ViewChild,
   AfterViewInit,
   OnDestroy,
   Renderer2,
+  signal,
+  computed,
+  ChangeDetectionStrategy,
+  inject,
 } from '@angular/core';
-import { MatPaginator, PageEvent } from '@angular/material/paginator';
+import { CommonModule } from '@angular/common';
+import { RouterModule } from '@angular/router';
+import { MatPaginator, PageEvent, MatPaginatorModule } from '@angular/material/paginator';
+import { TableDropdownComponent } from '../../ui/table-dropdown/table-dropdown.component';
 
 interface TablePacketOption {
   id: number | string | null;
@@ -18,49 +24,53 @@ interface TablePacketOption {
 
 @Component({
   selector: 'app-table',
+  standalone: true,
+  imports: [CommonModule, RouterModule, MatPaginatorModule, TableDropdownComponent],
   templateUrl: './table.component.html',
   styleUrls: ['./table.component.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TableComponent implements AfterViewInit, OnDestroy {
-  @Input() data: any[] = [];
-  @Input() columns: {
+  private readonly renderer = inject(Renderer2);
+  // ========================================
+  // 📥 Input Signals - Data
+  // ========================================
+  readonly data = input<any[]>([]);
+  readonly columns = input<{
     key: string;
     header: string;
     width?: string;
     formatter?: 'date' | 'datetime' | 'booleanYesNo';
-  }[] = [];
-  @Input() selectedRows: any[] = [];
-  @Input() pageSize = 10;
-  @Input() currentPage = 1;
-  @Input() showDataTable = true;
-  @Input() hasNoData = false;
-  @Input() totalCount: number = 0;
-  @Input() noDataMessage: string = '';
-  // Public class names for styling from parent components
-  @Input() tableClass: string = '';
-  @Input() containerClass: string = '';
-  // Action visibility
-  @Input() showCheckbox: boolean = false;
-  @Input() showView: boolean = false;
-  @Input() showEdit: boolean = false;
-  @Input() showDelete: boolean = false;
-  @Input() showIndex: boolean = false;
-  @Input() showChat: boolean = false;
-  @Input() showEmail: boolean = false;
-  @Input() showNote: boolean = false;
-  @Input() showAdd: boolean = false;
-  @Input() showCall: boolean = false;
-  @Input() showMeeting: boolean = false;
-  @Input() showFollowUp: boolean = false;
-  @Input() showAssignToAccountant: boolean = false;
-  @Input() addButton: boolean = false;
-  // Optional predicates to disable add/edit actions per-row
-  @Input() disableAddPredicate?: (row: any) => boolean;
-  @Input() disableEditPredicate?: (row: any) => boolean;
-  // Actions display mode: 'inline' buttons or single dropdown menu
-  @Input() actionDisplayMode: 'inline' | 'dropdown' = 'inline';
-  // Custom action labels for dropdown menu
-  @Input() actionLabels: {
+  }[]>([]);
+  readonly selectedRows = input<any[]>([]);
+  readonly pageSize = input<number>(10);
+  readonly currentPage = input<number>(1);
+  readonly showDataTable = input<boolean>(true);
+  readonly hasNoData = input<boolean>(false);
+  readonly totalCount = input<number>(0);
+  readonly noDataMessage = input<string>('');
+  readonly tableClass = input<string>('');
+  readonly containerClass = input<string>('');
+
+  // ========================================
+  // 📥 Input Signals - Action Visibility
+  // ========================================
+  readonly showCheckbox = input<boolean>(false);
+  readonly showView = input<boolean>(false);
+  readonly showEdit = input<boolean>(false);
+  readonly showDelete = input<boolean>(false);
+  readonly showIndex = input<boolean>(false);
+  readonly showChat = input<boolean>(false);
+  readonly showEmail = input<boolean>(false);
+  readonly showNote = input<boolean>(false);
+  readonly showAdd = input<boolean>(false);
+  readonly showCall = input<boolean>(false);
+  readonly showMeeting = input<boolean>(false);
+  readonly showFollowUp = input<boolean>(false);
+  readonly showAssignToAccountant = input<boolean>(false);
+  readonly addButton = input<boolean>(false);
+  readonly actionDisplayMode = input<'inline' | 'dropdown'>('inline');
+  readonly actionLabels = input<{
     view?: string;
     edit?: string;
     delete?: string;
@@ -71,10 +81,9 @@ export class TableComponent implements AfterViewInit, OnDestroy {
     call?: string;
     meeting?: string;
     followUp?: string;
-  } = {};
-
-  // Custom action titles (tooltips) for inline icons
-  @Input() actionTitles: {
+    assignToAccountant?: string;
+  }>({});
+  readonly actionTitles = input<{
     view?: string;
     edit?: string;
     delete?: string;
@@ -85,87 +94,105 @@ export class TableComponent implements AfterViewInit, OnDestroy {
     call?: string;
     meeting?: string;
     followUp?: string;
-  } = {};
+    assignToAccountant?: string;
+  }>({});
+  readonly leadStatusOptions = input<string[]>([]);
+  readonly editingLeadId = input<number | null>(null);
+  readonly alwaysEditLeadStatus = input<boolean>(false);
+  readonly leadStatusColorMap = input<Record<string, string>>({});
+  readonly rowIdentityKey = input<string>('id');
+  readonly packetOptions = input<TablePacketOption[]>([]);
+  readonly defaultPacket = input<TablePacketOption | null>(null);
+  readonly employeeSalesOptions = input<string[]>([]);
 
-  // Lead status editing properties
-  @Input() leadStatusOptions: string[] = [];
-  @Input() editingLeadId: number | null = null;
-  // Force leadStatus column to render as dropdown by default
-  @Input() alwaysEditLeadStatus: boolean = false;
-  // Optional color map for status options
-  @Input() leadStatusColorMap: Record<string, string> = {};
-  // Key used to uniquely identify rows when tracking selection
-  @Input() rowIdentityKey: string = 'id';
-  // Optional packet selection dropdown
-  @Input() packetOptions: TablePacketOption[] = [];
-  @Input() defaultPacket: TablePacketOption | null = null;
-
-  // Track last emitted event to prevent duplicates
-  private lastEmittedPageIndex: number = -1;
-  private lastEmittedPageSize: number = -1;
-  private documentClickUnlisten?: () => void;
-
-  // Getter for pageIndex (MatPaginator is 0-based); currentPage is 1-based
-  get pageIndex(): number {
-    const totalPages = Math.max(1, Math.ceil(this.totalCount / this.pageSize));
-    const zeroBased = this.currentPage - 1;
-    return Math.max(0, Math.min(zeroBased, totalPages - 1));
-  }
-
-  // Get total number of pages
-  get totalPages(): number {
-    return Math.ceil(this.totalCount / this.pageSize);
-  }
-
-  // Check if on first page
-  get isFirstPage(): boolean {
-    return this.currentPage === 1;
-  }
-
-  // Check if on last page
-  get isLastPage(): boolean {
-    return this.currentPage >= this.totalPages || this.totalPages === 0;
-  }
-
-  @Output() rowSelectionChange = new EventEmitter<{
-    row: any;
-    selected: boolean;
-  }>();
-  @Output() selectAllChange = new EventEmitter<boolean>();
-  @Output() pageChange = new EventEmitter<PageEvent>();
-  @Output() pageSizeChange = new EventEmitter<number>();
-  @Output() edit = new EventEmitter<any>();
-  @Output() delete = new EventEmitter<any>();
-  @Output() view = new EventEmitter<any>();
-  @Output() rowDragStart = new EventEmitter<any>();
-  @Output() chat = new EventEmitter<any>();
-  @Output() email = new EventEmitter<any>();
-  @Output() note = new EventEmitter<any>();
-  @Output() call = new EventEmitter<any>();
-  @Output() meeting = new EventEmitter<any>();
-  @Output() followUp = new EventEmitter<any>();
-  @Output() leadStatusClick = new EventEmitter<any>();
-  @Output() statusChange = new EventEmitter<{ row: any; status: string }>();
-  @Output() saveLeadStatus = new EventEmitter<any>();
-  @Output() cancelLeadStatus = new EventEmitter<any>();
-  @Output() packetSelected = new EventEmitter<{
+  // ========================================
+  // 📤 Output Signals
+  // ========================================
+  readonly rowSelectionChange = output<{ row: any; selected: boolean }>();
+  readonly selectAllChange = output<boolean>();
+  readonly pageChange = output<PageEvent>();
+  readonly pageSizeChange = output<number>();
+  readonly edit = output<any>();
+  readonly delete = output<any>();
+  readonly view = output<any>();
+  readonly rowDragStart = output<any>();
+  readonly chat = output<any>();
+  readonly email = output<any>();
+  readonly note = output<any>();
+  readonly call = output<any>();
+  readonly meeting = output<any>();
+  readonly followUp = output<any>();
+  readonly leadStatusClick = output<any>();
+  readonly statusChange = output<{ row: any; status: string }>();
+  readonly saveLeadStatus = output<any>();
+  readonly cancelLeadStatus = output<any>();
+  readonly packetSelected = output<{
     row: any;
     packet: TablePacketOption | null;
   }>();
-  @Output() addButtonClick = new EventEmitter<any>();
-  @Output() assignToAccountant = new EventEmitter<any>();
+  readonly addButtonClick = output<any>();
+  readonly assignToAccountant = output<any>();
+  readonly employeeSalesChange = output<{
+    row: any;
+    employeeSales: string;
+  }>();
+
+  // ========================================
+  // 🔄 Internal State Signals
+  // ========================================
+  private readonly lastEmittedPageIndex = signal<number>(-1);
+  private readonly lastEmittedPageSize = signal<number>(-1);
+  readonly openDropdownRowIndex = signal<number | null>(null);
+  readonly dropdownPosition = signal<{ top: number; left: number }>({ top: 0, left: 0 });
+
+  // ========================================
+  // 💡 Computed Signals
+  // ========================================
+  readonly pageIndex = computed(() => {
+    const totalCount = this.totalCount();
+    const pageSize = this.pageSize();
+    const currentPage = this.currentPage();
+    const totalPages = Math.max(1, Math.ceil(totalCount / pageSize));
+    const zeroBased = currentPage - 1;
+    return Math.max(0, Math.min(zeroBased, totalPages - 1));
+  });
+
+  readonly totalPages = computed(() =>
+    Math.ceil(this.totalCount() / this.pageSize())
+  );
+
+  readonly isFirstPage = computed(() => this.currentPage() === 1);
+
+  readonly isLastPage = computed(() => {
+    const currentPage = this.currentPage();
+    const totalPages = this.totalPages();
+    return currentPage >= totalPages || totalPages === 0;
+  });
+
+  readonly packetOptionsWithFallback = computed(() => {
+    const options = [...(this.packetOptions() || [])];
+    const defaultPacket = this.defaultPacket();
+
+    if (defaultPacket && !options.some(opt =>
+      this.serializePacketId(opt.id) === this.serializePacketId(defaultPacket.id)
+    )) {
+      return [defaultPacket, ...options];
+    }
+
+    return options;
+  });
+
+  // ========================================
+  // 🔗 ViewChild & Cleanup
+  // ========================================
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-
-  // Dropdown state for per-row action menu
-  openDropdownRowIndex: number | null = null;
-
-  constructor(private renderer: Renderer2) {}
+  private documentClickUnlisten?: () => void;
 
   ngAfterViewInit() {
     // Listen for page changes (includes page size changes)
     if (this.paginator) {
       this.paginator.page.subscribe((event: PageEvent) => {
-        if (event.pageSize && event.pageSize !== this.pageSize) {
+        if (event.pageSize && event.pageSize !== this.pageSize()) {
           this.pageSizeChange.emit(event.pageSize);
         }
         this.pageChange.emit(event);
@@ -182,7 +209,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
           !target.closest('.action-buttons') &&
           !target.closest('.dropdown-menu')
         ) {
-          this.openDropdownRowIndex = null;
+          this.openDropdownRowIndex.set(null);
         }
       }
     );
@@ -195,31 +222,30 @@ export class TableComponent implements AfterViewInit, OnDestroy {
     }
   }
 
-  isRowSelected(row: any) {
+  isRowSelected(row: any): boolean {
     const rowId = this.getRowIdentity(row);
-    return this.selectedRows.some(
+    return this.selectedRows().some(
       (selectedRow) => this.getRowIdentity(selectedRow) === rowId
     );
   }
 
-  isAllSelected() {
-    return (
-      this.data.length > 0 && this.data.every((row) => this.isRowSelected(row))
-    );
+  isAllSelected(): boolean {
+    const data = this.data();
+    return data.length > 0 && data.every((row) => this.isRowSelected(row));
   }
 
   getRowIndex(index: number): number {
     // Calculate the actual row number in the dataset
     // currentPage is 1-based, so we need to subtract 1 to get 0-based page index
-    return (this.currentPage - 1) * this.pageSize + index + 1;
+    return (this.currentPage() - 1) * this.pageSize() + index + 1;
   }
 
-  onRowSelectionChange(row: any, event: Event) {
+  onRowSelectionChange(row: any, event: Event): void {
     const target = event.target as HTMLInputElement;
     this.rowSelectionChange.emit({ row, selected: target?.checked || false });
   }
 
-  onRowClick(row: any, event: Event) {
+  onRowClick(row: any, event: Event): void {
     // Prevent selection when clicking on checkboxes or action buttons
     const target = event.target as HTMLElement;
     if (
@@ -234,7 +260,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
     this.rowSelectionChange.emit({ row, selected: !isSelected });
   }
 
-  onSelectAllChange(event: Event) {
+  onSelectAllChange(event: Event): void {
     const target = event.target as HTMLInputElement;
     this.selectAllChange.emit(target?.checked || false);
   }
@@ -244,7 +270,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
       return row;
     }
 
-    const key = this.rowIdentityKey;
+    const key = this.rowIdentityKey();
     if (key && row.hasOwnProperty(key)) {
       return row[key];
     }
@@ -259,50 +285,50 @@ export class TableComponent implements AfterViewInit, OnDestroy {
     return JSON.stringify(row);
   }
 
-  onPageChange(event: any) {
+  onPageChange(event: any): void {
     // Prevent pagination if no data
-    if (this.totalCount === 0) {
+    if (this.totalCount() === 0) {
       return;
     }
 
     // Prevent duplicate events
     if (
-      this.lastEmittedPageIndex === event.pageIndex &&
-      this.lastEmittedPageSize === (event.pageSize || this.pageSize)
+      this.lastEmittedPageIndex() === event.pageIndex &&
+      this.lastEmittedPageSize() === (event.pageSize || this.pageSize())
     ) {
       return;
     }
 
     // Check if page size changed and emit pageSizeChange event
-    if (event.pageSize && event.pageSize !== this.pageSize) {
-      this.pageSize = event.pageSize;
+    if (event.pageSize && event.pageSize !== this.pageSize()) {
       this.pageSizeChange.emit(event.pageSize);
-      this.lastEmittedPageIndex = event.pageIndex;
-      this.lastEmittedPageSize = event.pageSize;
+      this.lastEmittedPageIndex.set(event.pageIndex);
+      this.lastEmittedPageSize.set(event.pageSize);
       // Don't emit pageChange if only pageSize changed
       return;
     }
 
     // Update tracking
-    this.lastEmittedPageIndex = event.pageIndex;
-    this.lastEmittedPageSize = this.pageSize;
+    this.lastEmittedPageIndex.set(event.pageIndex);
+    this.lastEmittedPageSize.set(this.pageSize());
 
     // Emit the page change event to parent component
     // The parent will handle updating currentPage
     this.pageChange.emit(event);
   }
 
-  onPageSizeChange(event: any) {
+  onPageSizeChange(event: any): void {
     // Handle page size change
     const newPageSize = event.pageSize || event;
     this.pageSizeChange.emit(newPageSize);
   }
 
-  onDragStartRow(row: any, event: DragEvent) {
+  onDragStartRow(row: any, event: DragEvent): void {
     // Allow dragging any row
+    const selectedRows = this.selectedRows();
     const ids: string[] =
-      Array.isArray(this.selectedRows) && this.selectedRows.length > 0
-        ? this.selectedRows.map((r) => r?.id).filter(Boolean)
+      Array.isArray(selectedRows) && selectedRows.length > 0
+        ? selectedRows.map((r) => r?.id).filter(Boolean)
         : [row?.id];
     try {
       event.dataTransfer?.setData('application/json', JSON.stringify(ids));
@@ -321,22 +347,8 @@ export class TableComponent implements AfterViewInit, OnDestroy {
     this.addButtonClick.emit(row);
   }
 
-  // Determine if add action should be disabled for a specific row
-  isAddDisabled(row: any): boolean {
-    return typeof this.disableAddPredicate === 'function'
-      ? !!this.disableAddPredicate(row)
-      : false;
-  }
-
   onEdit(row: any) {
     this.edit.emit(row);
-  }
-
-  // Determine if edit action should be disabled for a specific row
-  isEditDisabled(row: any): boolean {
-    return typeof this.disableEditPredicate === 'function'
-      ? !!this.disableEditPredicate(row)
-      : false;
   }
 
   onDelete(row: any) {
@@ -346,14 +358,6 @@ export class TableComponent implements AfterViewInit, OnDestroy {
   onView(row: any) {
     this.view.emit(row);
   }
-
-  onAssignToAccountant(row: any, event?: Event) {
-    if (event) {
-      event.stopPropagation();
-    }
-    this.assignToAccountant.emit(row);
-  }
-
   onChat(row: any) {
     this.chat.emit(row);
   }
@@ -389,14 +393,19 @@ export class TableComponent implements AfterViewInit, OnDestroy {
     this.followUp.emit(row);
   }
 
-  dropdownPosition: { top: number; left: number } = { top: 0, left: 0 };
+  onAssignToAccountant(row: any, event?: Event) {
+    if (event) {
+      event.stopPropagation();
+    }
+    this.assignToAccountant.emit(row);
+  }
 
-  toggleDropdown(rowIndex: number, event: MouseEvent) {
+  toggleDropdown(rowIndex: number, event: MouseEvent): void {
     event.stopPropagation();
     event.preventDefault();
 
-    const wasOpen = this.openDropdownRowIndex === rowIndex;
-    this.openDropdownRowIndex = wasOpen ? null : rowIndex;
+    const wasOpen = this.openDropdownRowIndex() === rowIndex;
+    this.openDropdownRowIndex.set(wasOpen ? null : rowIndex);
 
     // Position the dropdown with fixed coordinates to avoid overflow clipping
     if (!wasOpen) {
@@ -404,9 +413,10 @@ export class TableComponent implements AfterViewInit, OnDestroy {
       if (target) {
         const rect = target.getBoundingClientRect();
         // Place menu below the button - use getBoundingClientRect which gives viewport coordinates
-        this.dropdownPosition.top = rect.bottom + 4;
-        // Align right edge of menu with right edge of button
-        this.dropdownPosition.left = rect.right - 160; // 160px ~ menu width
+        this.dropdownPosition.set({
+          top: rect.bottom + 4,
+          left: rect.right - 160, // 160px ~ menu width
+        });
       }
     }
   }
@@ -469,8 +479,9 @@ export class TableComponent implements AfterViewInit, OnDestroy {
       meeting: 'اجتماع',
       followUp: 'متابعة',
     };
+    const actionLabels = this.actionLabels();
     return (
-      this.actionLabels[action as keyof typeof this.actionLabels] ||
+      actionLabels[action as keyof typeof actionLabels] ||
       defaultLabels[action] ||
       ''
     );
@@ -490,8 +501,9 @@ export class TableComponent implements AfterViewInit, OnDestroy {
       meeting: 'اجتماع',
       followUp: 'متابعة',
     };
+    const actionTitles = this.actionTitles();
     return (
-      this.actionTitles[action as keyof typeof this.actionTitles] ||
+      actionTitles[action as keyof typeof actionTitles] ||
       defaultTitles[action] ||
       ''
     );
@@ -500,19 +512,20 @@ export class TableComponent implements AfterViewInit, OnDestroy {
   // Get lead status options with current value included
   getLeadStatusOptionsWithCurrent(row: any): string[] {
     const currentStatus = row._draftLeadStatus || row.leadStatus;
-    if (!currentStatus) return this.leadStatusOptions;
+    const leadStatusOptions = this.leadStatusOptions();
+    if (!currentStatus) return leadStatusOptions;
 
     // Check if current status is already in options
-    const isInOptions = this.leadStatusOptions.some(
+    const isInOptions = leadStatusOptions.some(
       (opt) => opt.toLowerCase() === currentStatus.toLowerCase()
     );
 
     // If not in options, add it to the beginning
     if (!isInOptions) {
-      return [currentStatus, ...this.leadStatusOptions];
+      return [currentStatus, ...leadStatusOptions];
     }
 
-    return this.leadStatusOptions;
+    return leadStatusOptions;
   }
 
   // Format cell value based on formatter type
@@ -538,22 +551,12 @@ export class TableComponent implements AfterViewInit, OnDestroy {
     return value;
   }
 
-  formatBooleanYesNo(value: any): string {
-    if (value === true) {
-      return 'نعم';
-    }
-    if (value === false) {
-      return 'لا';
-    }
-    return '-';
-  }
-
   // Lead status editing methods
   isEditingLeadStatus(row: any): boolean {
-    if (this.alwaysEditLeadStatus) {
+    if (this.alwaysEditLeadStatus()) {
       return true;
     }
-    return this.editingLeadId === row.id;
+    return this.editingLeadId() === row.id;
   }
 
   onLeadStatusClick(row: any): void {
@@ -567,30 +570,10 @@ export class TableComponent implements AfterViewInit, OnDestroy {
   onSaveLeadStatus(row: any): void {
     // Update the draft status and emit save event
     this.saveLeadStatus.emit(row);
-
-    // Close editing mode after save
-    this.editingLeadId = null;
   }
 
   onCancelLeadStatus(row: any): void {
     this.cancelLeadStatus.emit(row);
-  }
-
-  get packetOptionsWithFallback(): TablePacketOption[] {
-    const options = Array.isArray(this.packetOptions)
-      ? [...this.packetOptions]
-      : [];
-    if (
-      this.defaultPacket &&
-      !options.some(
-        (opt) =>
-          this.serializePacketId(opt.id) ===
-          this.serializePacketId(this.defaultPacket?.id)
-      )
-    ) {
-      return [this.defaultPacket, ...options];
-    }
-    return options;
   }
 
   getInvoiceStatusClass(status: string | null | undefined): string {
@@ -617,7 +600,7 @@ export class TableComponent implements AfterViewInit, OnDestroy {
   }
 
   getPacketOptionsForRow(row: any): TablePacketOption[] {
-    const options = this.packetOptionsWithFallback.slice();
+    const options = this.packetOptionsWithFallback().slice();
     const rowPacket = row?.packet;
     const rowPacketId = this.serializePacketId(
       rowPacket?.id ?? row?.packetId ?? null
@@ -657,11 +640,13 @@ export class TableComponent implements AfterViewInit, OnDestroy {
   onPacketChange(row: any, event: Event): void {
     const select = event.target as HTMLSelectElement;
     const selectedValue = select.value;
+    const packetOptions = this.packetOptions();
+    const defaultPacket = this.defaultPacket();
     const packet =
-      this.packetOptions.find(
+      packetOptions.find(
         (opt) => this.serializePacketId(opt.id) === selectedValue
       ) ||
-      this.defaultPacket ||
+      defaultPacket ||
       null;
     this.packetSelected.emit({ row, packet });
   }
@@ -694,5 +679,14 @@ export class TableComponent implements AfterViewInit, OnDestroy {
       row.currencyCode ||
       '';
     return currency ? `${priceText} ${currency}` : priceText;
+  }
+
+  onEmployeeSalesChange(row: any, event: Event): void {
+    const select = event.target as HTMLSelectElement;
+    const selectedValue = select.value;
+    this.employeeSalesChange.emit({
+      row,
+      employeeSales: selectedValue,
+    });
   }
 }

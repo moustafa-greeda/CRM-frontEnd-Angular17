@@ -16,7 +16,10 @@
     --nd-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
   }
 }
-
+.nd-modal{
+  padding: 20px !important;
+  border-radius: 12px !important; 
+}
 .nd-modal::before {
   content: "";
   position: absolute;
@@ -38,27 +41,6 @@
   --nd-accent: var(--nd-error);
 }
 
-/* close button */
-.nd-close {
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  width: 32px;
-  height: 32px;
-  border-radius: 8px;
-  border: 0;
-  background: transparent;
-  color: var(--nd-muted);
-  font-size: 22px;
-  line-height: 1;
-  cursor: pointer;
-  transition: transform 0.12s ease, background 0.12s ease, color 0.12s ease;
-}
-.nd-close:hover {
-  background: rgba(0, 0, 0, 0.06);
-  transform: scale(1.05);
-  color: var(--nd-fg);
-}
 
 /* header */
 .nd-header {
@@ -96,7 +78,7 @@
 }
 .nd-media img {
   max-width: 100% !important;
-  max-height: 200px !important;
+  max-height: 150px !important;
   min-height: 80px !important;
   width: auto !important;
   height: auto !important;
@@ -132,24 +114,6 @@
   transform: translateY(0);
 }
 
-/* auto-close progress */
-.nd-progress {
-  height: 4px;
-  background: rgba(0, 0, 0, 0.08);
-  border-radius: 999px;
-  overflow: hidden;
-  margin-top: 12px;
-}
-.nd-progress-bar {
-  height: 100%;
-  background: var(--nd-accent);
-  width: 100%;
-  transform-origin: left;
-  animation: nd-deplete var(--nd-auto-duration, 3000ms) linear forwards;
-  filter: drop-shadow(
-    0 0 6px color-mix(in oklab, var(--nd-accent) 55%, transparent)
-  );
-}
 
 /* motion */
 @keyframes nd-pop {
@@ -174,10 +138,12 @@
 /* يحدد اللون حسب النوع */
 .nd-modal.nd-success {
   --nd-accent: #22c55e;
-} /* أخضر */
+  border: 1px solid var(--nd-success);
+} 
 .nd-modal.nd-error {
   --nd-accent: #ef4444;
-} /* أحمر */
+    border: 1px solid var(--nd-error);
+} 
 
 /* حاوية الأيقونة: دائرة بخلفية صلبة من --nd-accent */
 .nd-accent {
@@ -191,8 +157,7 @@
   box-shadow: 0 0 18px color-mix(in oklab, var(--nd-accent) 60%, transparent);
 }
 
-.nd-accent iconify-icon {
-  width: 26px;
-  height: 26px;
+.nd-accent i {
+  font-size: 26px;
   color: #fff;
 }

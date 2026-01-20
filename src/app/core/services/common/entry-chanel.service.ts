@@ -1,7 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { environment } from '../../../../environments/environment';
-import { ApiResponse } from '../../../components/leads/distribution/distribution.service';
 import { IEntryChanel } from '../../Models/common/entry-chanel';
 import { Observable } from 'rxjs';
 

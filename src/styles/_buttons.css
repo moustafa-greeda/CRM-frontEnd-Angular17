@@ -2,11 +2,10 @@
    BUTTONS
    ============================================================================
 /*************************************************** btn primary ******************************/
-.btn {
+/* .btn {
   display: flex;
   align-items: center;
   gap: 8px;
-  /* padding: 12px 15px; */
   border: none;
   border-radius: 8px;
   font-size: 14px;
@@ -37,34 +36,19 @@
   transform: translateY(-2px);
 }
 
-.btn-secondary {
-  background: transparent;
-  color: #e6edf3;
-  border: 2px solid var(--button-color);
+.btn-danger {
+  padding: 10px 15px;
+  border: 1px solid var(--bg-error);
+  border-radius: 8px;
+  background: linear-gradient(90deg, #ff4444 0%, #8c1717 100%);
+  color: #fff;
 }
-
-.btn-secondary:hover {
-  background: var(--bg-input-focus);
-  color: #11181f;
+.btn-danger:hover {
+  transform: translateY(-2px) scale(1.05);
+  background-color: #ff4444;
+  box-shadow: 0 0 8px rgba(220, 53, 69, 0.3);
 }
-/* ========== Button Sizes ========== */
-.btn-sm {
-  padding: 4px 8px;
-  font-size: 12px;
-}
-
-.btn-lg {
-  padding: 10px 20px;
-  font-size: 16px;
-}
-
-/* ========== Button States ========== */
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-.btn:focus {
-  outline: 2px solid var(--link-color);
-  outline-offset: 2px;
-}
+} */

@@ -216,7 +216,8 @@ import {
   ChangeDetectionStrategy,
   ChangeDetectorRef,
 } from '@angular/core';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { CommonModule } from '@angular/common';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
 import { NotifyDialogService } from '../notify-dialog-host/notify-dialog.service';
 
 /*---------------------------- Interfaces --------------*/
@@ -232,6 +233,8 @@ export interface DetailViewDialogData {
 
 @Component({
   selector: 'app-detail-view-dialog',
+  standalone: true,
+  imports: [CommonModule, MatDialogModule],
   templateUrl: './detail-view-dialog.component.html',
   styleUrls: ['./detail-view-dialog.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,

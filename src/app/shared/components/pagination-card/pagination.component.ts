@@ -5,9 +5,12 @@ import {
   EventEmitter,
   computed,
 } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-pagination-card',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './pagination.component.html',
   styleUrl: './pagination.component.css',
 })

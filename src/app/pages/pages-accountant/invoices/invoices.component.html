@@ -1,0 +1,162 @@
+<div class="parent-container">
+  <!-- page header -->
+  <app-page-header
+    [title]="pageTitle"
+    [breadcrumb]="breadcrumb"
+  ></app-page-header>
+  <!-- search and dropdown -->
+  <div class="search-container border-gradient">
+    <form [formGroup]="filterForm" (ngSubmit)="onFilterSubmit()">
+      <div class="form-grid-search">
+        <div class="form-field">
+          <app-dropdown
+            [options]="paymentMethods"
+            [selectedOption]="paymentMethod()"
+            [label]="'اختر طريقة الدفع'"
+            (optionSelected)="onPaymentMethodChange($event)"
+          ></app-dropdown>
+        </div>
+        <div class="form-field">
+          <label>من</label>
+          <input
+            type="date"
+            formControlName="fromDate"
+            class="form-input"
+            placeholder="ابحث عن تاريخ بدأ الفاتورة"
+            (change)="onDateFilterChange()"
+          />
+        </div>
+
+        <div class="form-field">
+          <label>الي</label>
+          <input
+            type="date"
+            formControlName="toDate"
+            class="form-input"
+            placeholder="ابحث عن تاريخ نهاية الفاتورة"
+            (change)="onDateFilterChange()"
+          />
+        </div>
+
+        <app-search-input
+          [placeholder]="searchPlaceholder"
+          (search)="onSearch($event)"
+        ></app-search-input>
+      </div>
+    </form>
+  </div>
+  <!-- content -->
+  <div class="content mt-md">
+    <div class="right-section">
+      <table class="app-table enhanced-table">
+        <thead>
+          <tr>
+            <th>رقم الفاتورة</th>
+            <th>اسم العميل</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr
+            *ngFor="let invoice of invoices(); let i = index"
+            (click)="onSummaryRowClick(invoice)"
+            [class.active]="
+              filteredInvoices().length === 1 &&
+              filteredInvoices()[0]?.id === invoice.id
+            "
+          >
+            <td>{{ invoice.id }}</td>
+            <td>{{ invoice.clientName }}</td>
+          </tr>
+          <tr *ngIf="invoices().length === 0">
+            <td colspan="2" class="no-summary-data">
+              لا توجد فواتير متاحة حالياً
+            </td>
+          </tr>
+        </tbody>
+      </table>
+      <button
+        class="btn btn-primary btn-lg"
+        *ngIf="invoices().length > 0"
+        (click)="clearSummaryFilter()"
+      >
+        عرض كل الفواتير
+      </button>
+    </div>
+    <div class="table-container left-section">
+      <app-table
+        [data]="filteredInvoices()"
+        [columns]="columns"
+        [showIndex]="true"
+        [showEdit]="true"
+        [showView]="true"
+        [selectedRows]="selectedRows()"
+        [showDataTable]="true"
+        [actionTitles]="{
+        add: 'إضافة دفعة جديدة',
+        edit: 'تعديل بيانات الدفعة',
+      }"
+        [hasNoData]="filteredInvoices().length === 0"
+        [pageSize]="pageSize()"
+        [currentPage]="currentPage()"
+        [totalCount]="totalCount()"
+        (view)="onShowTablePayments($event)"
+        (edit)="onEditDeal($event)"
+        (pageChange)="onPageChange($event)"
+        (pageSizeChange)="onPageSizeChange($event)"
+        [noDataMessage]="noDataMessage"
+      ></app-table>
+    </div>
+  </div>
+  <!-- payment table -->
+  <ng-container *ngIf="showTablePayments()">
+    <!-- cash payments -->
+    <ng-container *ngIf="hasCashPayments()">
+      <h2 class="title-payments">الدفعات النقدية</h2>
+      <app-table
+        [data]="cashPayments()"
+        [columns]="paymentsCashColumns"
+        [showDataTable]="true"
+        [showIndex]="true"
+        [hasNoData]="cashPayments().length === 0"
+      ></app-table>
+    </ng-container>
+    <!-- bank transfer payments -->
+    <ng-container *ngIf="hasBankTransferPayments()">
+      <h2 class="title-payments">الدفعات البنكية</h2>
+      <app-table
+        [data]="bankTransferPayments()"
+        [columns]="paymentsBankTransferColumns"
+        [showDataTable]="true"
+        [showIndex]="true"
+        [hasNoData]="bankTransferPayments().length === 0"
+      ></app-table>
+    </ng-container>
+    <!-- visa payments -->
+    <ng-container *ngIf="hasVisaPayments()">
+      <h2 class="title-payments">دفعات البطاقة الائتمانية</h2>
+      <app-table
+        [data]="visaPayments()"
+        [columns]="paymentsVisaColumns"
+        [showDataTable]="true"
+        [showIndex]="true"
+        [hasNoData]="visaPayments().length === 0"
+      ></app-table>
+    </ng-container>
+  </ng-container>
+  <ng-container *ngIf="showTablePayments()">
+    <!-- if no payments show empty table -->
+    <ng-container
+      *ngIf="
+        !hasCashPayments() && !hasBankTransferPayments() && !hasVisaPayments()
+      "
+    >
+      <app-table
+        [data]="[]"
+        [columns]="[]"
+        [showDataTable]="true"
+        [hasNoData]="true"
+        [noDataMessage]="'لا توجد بيانات دفعات لعرضها'"
+      ></app-table>
+    </ng-container>
+  </ng-container>
+</div>

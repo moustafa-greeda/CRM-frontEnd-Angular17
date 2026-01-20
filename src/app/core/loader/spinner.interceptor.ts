@@ -28,6 +28,8 @@ export class SpinnerInterceptor implements HttpInterceptor {
       '/logout',
       '/Auth/Login',
       '/Client/GetCitiesByCountryId', // لا تُظهر اللودر عند تحميل مدن الدولة
+      '/AdminSalesDashboard', // Dashboard components manage their own loading state
+      '/AdminTeleSalesDashboard', // Dashboard components manage their own loading state
     ];
     // Check if the request method is GET
     const isGet = req.method.toUpperCase() === 'GET';

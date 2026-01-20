@@ -1,20 +1,18 @@
-import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, ChangeDetectionStrategy, signal, computed, inject } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { take } from 'rxjs/operators';
 import { forkJoin, of } from 'rxjs';
-import { catchError, take } from 'rxjs/operators';
-import {
-  ITeleSalseActionResponse,
-  ITeleSalseActionRequest,
-} from '../../core/Models/teleSalse/itele-salse-action';
+import { ITeleSalseActionResponse } from '../../core/Models/teleSalse/itele-salse-action';
 import { AuthService } from '../../Auth/auth.service';
 import { LeadStatusService } from '../../core/services/common/lead-status.service';
-import { FormUiComponent } from '../../shared/components/form-ui/form-ui.component';
-import { MatDialog } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { NotifyDialogService } from '../../shared/components/notify-dialog-host/notify-dialog.service';
 import {
   DetailViewDialogComponent,
   DetailViewDialogData,
 } from '../../shared/components/detail-view-dialog/detail-view-dialog.component';
-import { GetTeleSalesTableDataRequest } from '../../core/Models/teleSalse/get-tele-sales-table-data-request';
 import { ICountry } from '../../core/Models/common/icountry';
 import { ICity } from '../../core/Models/common/country-city.models';
 import { CountryCityService } from '../../core/services/common/country-city.service';
@@ -22,33 +20,62 @@ import { StatusColorService } from '../../core/services/common/status-color.serv
 import { DateUtilsService } from '../../core/services/common/date-utils.service';
 import { DashboardSalseService } from './dashboard-salse.service';
 import { PakegsService } from '../../core/services/common/pakegs.service';
-import { TransferredLeadsToLegal } from '../../core/Models/teleSalse/transferred-leads-to-legal';
+import { CountCardComponent } from '../../shared/components/count-card/count-card.component';
+import { SearchInputComponent } from '../../shared/ui/search-input/search-input.component';
+import { DropdownComponent } from '../../shared/components/dropdown/dropdown.component';
+import { ButtonComponent } from '../../shared/ui/button/button.component';
+import { TableComponent } from '../../shared/components/table/table.component';
+import { RecentInteractionsComponent } from '../../shared/components/recent-interactions/recent-interactions.component';
+import { NotificationCardComponent } from '../../shared/components/notification-card/notification-card.component';
 
-type PacketOption = {
-  id: number | null;
-  name: string;
-  price?: number | null;
-};
+// Import new services
+import { PacketService } from './services/packet.service';
+import { SalesActionTypeService } from './services/action-type.service';
+import { SalesNotificationService } from './services/notification.service';
+import { SalesDataService } from './services/sales-data.service';
+import { LeadsDataService, LeadsFilterState } from './services/leads-data.service';
+import { LeadStatusEditorService } from './services/lead-status-editor.service';
+import { BudgetManagementService } from './services/budget-management.service';
+import { SalesActionDialogService } from './services/sales-action-dialog.service';
+import { AccountantAssignmentService } from './services/accountant-assignment.service';
+import { PacketOption } from './models/sales.types';
 
 @Component({
   selector: 'app-dashboard-sales',
+  standalone: true,
+  imports: [
+    CommonModule,
+    FormsModule,
+    ReactiveFormsModule,
+    RouterModule,
+    MatDialogModule,
+    CountCardComponent,
+    SearchInputComponent,
+    DropdownComponent,
+    ButtonComponent,
+    TableComponent,
+    RecentInteractionsComponent,
+    NotificationCardComponent,
+  ],
   templateUrl: './dashboard-sales.component.html',
   styleUrls: ['./dashboard-sales.component.css', '../sharedStyleDashboard.css'],
+  changeDetection: ChangeDetectionStrategy.OnPush, // ✅ Performance boost
 })
-export class DashboardSalesComponent implements OnInit {
-  stats: any[] = [];
-  searchPlaceholder = 'ابحث عن العملاء';
-  listLeadStatus: any[] = [];
-  leadStatusMap: Map<string, number> = new Map();
-  leadsList: any[] = [];
-  allLeadsCache: any[] = [];
-  allPackets: PacketOption[] = [];
+export class DashboardSalesComponent implements OnInit, OnDestroy {
+  // ✅ Convert all properties to signals
+  readonly stats = signal<any[]>([]);
+  readonly searchPlaceholder = signal<string>('ابحث عن العملاء');
+  readonly listLeadStatus = signal<any[]>([]);
+  readonly leadStatusMap = signal<Map<string, number>>(new Map());
+  readonly leadsList = signal<any[]>([]);
+  readonly allLeadsCache = signal<any[]>([]);
+  readonly allPackets = signal<PacketOption[]>([]);
 
-  actionLabels = {
+  readonly actionLabels = signal({
     edit: 'تعديل الميزانية',
-  };
+  });
 
-  columns: any[] = [
+  readonly columns = signal<any[]>([
     { key: 'contactName', header: 'الاسم' },
     { key: 'assignDate', header: 'تاريخ التعيين', formatter: 'date' },
     { key: 'leadStatus', header: 'حالة العميل المحتمل' },
@@ -60,47 +87,108 @@ export class DashboardSalesComponent implements OnInit {
     { key: 'actionNote', header: 'ملاحظة الإجراء' },
     { key: 'packet', header: 'الباقة' },
     { key: 'actions', header: 'الإجراءات' },
-  ];
+  ]);
+  
   // Filters
-  countryList: ICountry[] = [];
-  cityList: ICity[] = [];
-  actionDateFilterOptions: string[] = ['اليوم', 'آخر 7 أيام', 'آخر 30 يوم'];
-  selectedActionDateFilter: string = '--';
-  actionDisplayMode: 'inline' | 'dropdown' = 'dropdown';
+  readonly countryList = signal<ICountry[]>([]);
+  readonly cityList = signal<ICity[]>([]);
+  readonly actionDateFilterOptions = signal<string[]>(['اليوم', 'آخر 7 أيام', 'آخر 30 يوم']);
+  readonly selectedActionDateFilter = signal<string>('--');
+  readonly actionDisplayMode = signal<'inline' | 'dropdown'>('dropdown');
 
-  onResetFilters(): void {
-    this.selectedCountry = '';
-    this.selectedCity = '';
-    this.selectedActionDateFilter = '--';
-    this.selectedLeadStatusId = 0;
-    this.selectedLeadStatusName = '';
-    this.searchTerm = '';
-    this.currentPage = 1;
-    this.loadLeadsData(this._authService.getUsername() || '');
-  }
-  // Derived option lists for dropdowns (template-safe)
-  get countryNames(): string[] {
-    return (this.countryList || []).map((c: any) => c?.name).filter(Boolean);
-  }
+  // Pagination & loading
+  readonly pageSize = signal<number>(10);
+  readonly currentPage = signal<number>(1);
+  readonly totalCount = signal<number>(0);
+  readonly loadingLeads = signal<boolean>(false);
+  readonly teleSalesActions = signal<ITeleSalseActionResponse | null>(null);
+  readonly loadingActions = signal<boolean>(false);
 
-  get cityNames(): string[] {
-    return (this.cityList || []).map((c: any) => c?.name).filter(Boolean);
-  }
+  // Search and filter properties
+  readonly searchTerm = signal<string>('');
+  readonly selectedLeadStatusId = signal<number>(0);
+  readonly selectedLeadStatusName = signal<string>('');
+  readonly isSearching = signal<boolean>(false);
+  readonly selectedCountry = signal<string>('');
+  readonly selectedCity = signal<string>('');
+  
+  // Overall loading state - prevents content render until data is loaded
+  readonly isloading = signal<boolean>(true);
+  
+  private criticalDataLoaded = signal<boolean>(false);
+  private leadsDataLoaded = signal<boolean>(false);
+  
+  // ✅ Timeout reference for cleanup (prevent memory leak)
+  private secondaryDataTimeout?: ReturnType<typeof setTimeout>;
 
-  get cityDropdownLabel(): string {
-    return this.selectedCountry ? 'اختر المدينة' : 'يجب اختيار الدولة أولاً';
-  }
+  // Selected lead actions for dialog
+  readonly selectedLeadActions = signal<any[]>([]);
+  readonly selectedLead = signal<any>(null);
+  readonly showLeadActionsDialog = signal<boolean>(false);
 
-  get packetDropdownOptions(): PacketOption[] {
-    return [
-      { id: null, name: 'لم تحدد', price: null },
-      ...(this.allPackets || []),
-    ];
-  }
+  // User info
+  readonly userInfo = signal<any>({ name: '' });
 
-  get defaultPacketOption(): PacketOption {
-    return { id: null, name: 'لم تحدد', price: null };
-  }
+  // Recent interactions
+  readonly recentInteractions = signal<any[]>([]);
+  readonly loadingRecentInteractions = signal<boolean>(false);
+
+  // Notifications
+  readonly notifications = signal<any[]>([]);
+  readonly loadingNotifications = signal<boolean>(false);
+
+  // Lead status editing
+  readonly selectedLeadForEdit = signal<any>(null);
+  readonly leadStatusOptions = signal<string[]>([]);
+
+  // Persisted filters for refreshing actions after create
+  private actionsStartDate = signal<string | undefined>(undefined);
+  private actionsEndDate = signal<string | undefined>(undefined);
+
+  // ✅ Computed signals (getters)
+  readonly countryNames = computed(() => 
+    (this.countryList() || []).map((c: any) => c?.name).filter(Boolean)
+  );
+
+  readonly cityNames = computed(() => 
+    (this.cityList() || []).map((c: any) => c?.name).filter(Boolean)
+  );
+
+  readonly cityDropdownLabel = computed(() => 
+    this.selectedCountry() ? 'اختر المدينة' : 'يجب اختيار الدولة أولاً'
+  );
+
+  readonly packetDropdownOptions = computed(() => 
+    this.packetService.getPacketDropdownOptions(this.allPackets())
+  );
+
+  readonly defaultPacketOption = computed(() => 
+    this.packetService.getDefaultPacketOption()
+  );
+
+  readonly leadStatusColorMap = computed(() => 
+    this.statusColorService.getAllStatusColors()
+  );
+
+  // ✅ Inject services
+  private readonly _dashboardService = inject(DashboardSalseService);
+  private readonly _authService = inject(AuthService);
+  private readonly _leadStatusService = inject(LeadStatusService);
+  private readonly _pakegsService = inject(PakegsService);
+  private readonly dialog = inject(MatDialog);
+  private readonly notify = inject(NotifyDialogService);
+  private readonly _countryCityService = inject(CountryCityService);
+  private readonly statusColorService = inject(StatusColorService);
+  private readonly dateUtils = inject(DateUtilsService);
+  private readonly packetService = inject(PacketService);
+  private readonly actionTypeService = inject(SalesActionTypeService);
+  private readonly notificationService = inject(SalesNotificationService);
+  private readonly salesDataService = inject(SalesDataService);
+  private readonly leadsDataService = inject(LeadsDataService);
+  private readonly leadStatusEditor = inject(LeadStatusEditorService);
+  private readonly budgetService = inject(BudgetManagementService);
+  private readonly actionDialogService = inject(SalesActionDialogService);
+  private readonly accountantService = inject(AccountantAssignmentService);
 
   normalizePacketOption(
     packet: {
@@ -109,67 +197,27 @@ export class DashboardSalesComponent implements OnInit {
       price?: number | null;
     } | null
   ): PacketOption | null {
-    if (!packet) {
-      return null;
-    }
-
-    return {
-      id: this.normalizePacketIdValue(packet.id),
-      name: packet.name,
-      price: packet.price ?? null,
-    };
+    return this.packetService.normalizePacketOption(packet);
   }
 
-  pageSize = 10;
-  currentPage = 1; // Start from 1-based
-  totalCount = 0;
-  loadingLeads = false;
-  teleSalesActions: ITeleSalseActionResponse | null = null;
-  loadingActions = false;
-
-  // Search and filter properties
-  searchTerm: string = '';
-  selectedLeadStatusId: number = 0;
-  selectedLeadStatusName: string = '';
-  isSearching: boolean = false;
-  selectedCountry: string = '';
-  selectedCity: string = '';
-
-  // Selected lead actions for dialog
-  selectedLeadActions: any[] = [];
-  selectedLead: any = null;
-  showLeadActionsDialog: boolean = false;
-
-  // User info
-  userInfo: any = { name: this._authService.getUsername() || 'المستخدم' };
-
-  // Recent interactions
-  recentInteractions: any[] = [];
-  loadingRecentInteractions: boolean = false;
-
-  // Notifications
-  notifications: any[] = [];
-  loadingNotifications: boolean = false;
-
-  // Lead status editing
-  editingLeadId: number | null = null;
-  selectedLeadForEdit: any = null;
-  leadStatusOptions: string[] = [];
-
-  // Use the service for status colors instead of inline map
-  get leadStatusColorMap(): Record<string, string> {
-    return this.statusColorService.getAllStatusColors();
+  onResetFilters(): void {
+    this.selectedCountry.set('');
+    this.selectedCity.set('');
+    this.selectedActionDateFilter.set('--');
+    this.selectedLeadStatusId.set(0);
+    this.selectedLeadStatusName.set('');
+    this.searchTerm.set('');
+    this.currentPage.set(1);
+    this.loadLeadsData(this._authService.getUsername() || '');
   }
-  // Persisted filters for refreshing actions after create
-  private actionsStartDate?: string;
-  private actionsEndDate?: string;
 
   private addActionToGroupedState(action: {
     leadId: number;
     actionTypeId: number;
     actionNotes: string;
   }): void {
-    if (!this.teleSalesActions || !this.teleSalesActions.data) {
+    const currentActions = this.teleSalesActions();
+    if (!currentActions || !currentActions.data) {
       return;
     }
 
@@ -182,7 +230,7 @@ export class DashboardSalesComponent implements OnInit {
       actionDate: nowIso,
     };
 
-    const groups: any[] = this.teleSalesActions.data.actionsGrouped || [];
+    const groups: any[] = currentActions.data.actionsGrouped || [];
     let group = groups.find((g: any) => g.actionTypeId === action.actionTypeId);
     if (!group) {
       group = {
@@ -200,31 +248,34 @@ export class DashboardSalesComponent implements OnInit {
       ...g,
       actions: [...(g.actions || [])],
     }));
-    this.teleSalesActions = {
-      ...(this.teleSalesActions as any),
+    this.teleSalesActions.set({
+      ...(currentActions as any),
       data: {
-        ...(this.teleSalesActions as any).data,
+        ...(currentActions as any).data,
         actionsGrouped: clonedGroups,
       },
-    } as ITeleSalseActionResponse;
+    } as ITeleSalseActionResponse);
 
     // If the actions dialog is open for the same lead, update it too
     const actionTypeName = this.getActionTypeNameById(action.actionTypeId);
     const dialogItem = { ...newItem, actionTypeName };
-    const currentLeadId = this.selectedLead?.leadId ?? this.selectedLead?.id;
+    const currentLead = this.selectedLead();
+    const currentLeadId = currentLead?.leadId ?? currentLead?.id;
+    const currentLeadActions = this.selectedLeadActions();
     if (
       currentLeadId &&
       currentLeadId === action.leadId &&
-      Array.isArray(this.selectedLeadActions)
+      Array.isArray(currentLeadActions)
     ) {
-      this.selectedLeadActions = [dialogItem, ...this.selectedLeadActions];
+      this.selectedLeadActions.set([dialogItem, ...currentLeadActions]);
     }
 
     // Also reflect in recent interactions (optimistic) - match component schema
-    if (Array.isArray(this.recentInteractions)) {
-      const actionTypeKey = this.getActionTypeKeyById(action.actionTypeId); // 'Call' | 'Email' ...
+    const currentInteractions = this.recentInteractions();
+    if (Array.isArray(currentInteractions)) {
+      const actionTypeKey = this.getActionTypeKeyById(action.actionTypeId);
       const contactName =
-        this.selectedLead?.contactName ||
+        currentLead?.contactName ||
         this.tryGetContactNameByLeadId(action.leadId) ||
         '';
       const recentItem: any = {
@@ -233,157 +284,153 @@ export class DashboardSalesComponent implements OnInit {
         contactName,
         actionText: action.actionNotes,
       };
-      this.recentInteractions = [recentItem, ...this.recentInteractions];
+      this.recentInteractions.set([recentItem, ...currentInteractions]);
     }
-
-    // Force change detection for OnPush views
-    this.cdr.detectChanges();
   }
 
   private getActionTypeKeyById(actionTypeId: number): string {
-    switch (actionTypeId) {
-      case 1:
-        return 'Call';
-      case 2:
-        return 'Email';
-      case 3:
-        return 'Meeting';
-      case 4:
-        return 'Notes';
-      case 5:
-        return 'FollowUp';
-      default:
-        return 'Action';
-    }
+    return this.actionTypeService.getActionTypeKeyById(actionTypeId);
   }
 
   private tryGetContactNameByLeadId(leadId: number): string | null {
-    const lead = this.leadsList.find((l) => (l.leadId ?? l.id) === leadId);
-    return lead?.contactName || lead?.name || null;
+    return this.leadsDataService.tryGetContactNameByLeadId(leadId);
   }
 
-  constructor(
-    private _dashboardService: DashboardSalseService,
-    private _authService: AuthService,
-    private _leadStatusService: LeadStatusService,
-    private _pakegsService: PakegsService,
-    private dialog: MatDialog,
-    private notify: NotifyDialogService,
-    private _countryCityService: CountryCityService,
-    private statusColorService: StatusColorService,
-    private dateUtils: DateUtilsService,
-    private cdr: ChangeDetectorRef
-  ) {}
-
   ngOnInit(): void {
-    // Get username from auth service
     const username = this._authService.getUsername();
+    
+    // Set user info
+    this.userInfo.set({ name: username || 'المستخدم' });
+    
+    // ✅ Show loader immediately
+    this.isloading.set(true);
+    
+    // ✅ CRITICAL: Load essential data first (parallel)
+    this.loadCriticalData(username);
+    
+    // ✅ LAZY: Load non-critical data after a short delay (won't affect loader)
+    // Store timeout reference for cleanup in ngOnDestroy
+    this.secondaryDataTimeout = setTimeout(() => this.loadSecondaryData(), 500);
+  }
 
-    forkJoin({
-      totalLeadsAssignments: this._dashboardService
-        .LeadAssignmentsCountSales()
-        .pipe(catchError(() => of({ data: { count: 0 } }))),
-      closedLeads: this._dashboardService
-        .GetMyClosedLeads()
-        .pipe(catchError(() => of({ data: { closedLeadsCount: 0 } }))),
-      TotalMoney: this._dashboardService
-        .GetTotalMoney()
-        .pipe(catchError(() => of({ data: { budgets: [] } }))),
-      AverageCallDuration: this._dashboardService
-        .GetWaitingForFollowUp()
-        .pipe(catchError(() => of({ data: { leadAssignmentsCount: 0 } }))),
-    }).subscribe((res) => {
-      const budgets = Array.isArray(res.TotalMoney?.data?.budgets)
-        ? (res.TotalMoney.data.budgets as Array<{
-            totalBudget: number;
-            currency: string;
-          }>)
-        : [];
-      const totalBudget = budgets.reduce(
-        (acc: number, budget: { totalBudget: number }) =>
-          acc + budget.totalBudget,
-        0
-      );
+  ngOnDestroy(): void {
+    // ✅ Clear timeout to prevent memory leak
+    if (this.secondaryDataTimeout) {
+      clearTimeout(this.secondaryDataTimeout);
+      this.secondaryDataTimeout = undefined;
+    }
+  }
 
-      // Combine all budget values into a single card with multiple counts
-      const budgetDetails = budgets
-        .map((budget) => `${budget.totalBudget} ${budget.currency}`)
-        .join(' , ');
-
-      this.stats = [
-        {
-          title: 'اجمالي العملاء',
-          count: res.totalLeadsAssignments?.data?.count ?? 0,
-          icon: 'bi bi-person-lines-fill',
-        },
-        {
-          title: 'الصفقات المغلقة',
-          count: res.closedLeads?.data?.closedLeadsCount ?? 0,
-          icon: 'bi bi-exclamation-triangle',
-        },
-        {
-          title: 'القيمة الإجمالية',
-          count: `${budgetDetails} | الإجمالي: ${totalBudget}`,
-          icon: 'bi bi-cash-coin',
-        },
-        {
-          title: 'في انتظار المتابعة',
-          count: res.AverageCallDuration?.data?.leadAssignmentsCount ?? 0,
-          icon: 'bi bi-bar-chart',
-        },
-      ];
-
-      // call get list lead status
-      this.getListLeadStatus();
-    });
-
-    // Load tele sales actions
-    this.loadSalesActions();
-
-    // Load recent interactions
-    this.loadRecentInteractions();
-
-    // Load notifications
-    this.loadNotifications();
-
-    // Load countries
-    this.loadCountries();
-
-    // Load packet options
+  /**
+   * ✅ Load CRITICAL data in parallel (faster loading)
+   */
+  private loadCriticalData(username: string | null): void {
+    // Load packets immediately (needed for table)
     this.loadAllPackets();
 
-    // Load leads data
-    if (username) {
-      this.loadLeadsData(username);
+    if (!username) {
+      this.isloading.set(false);
+      return;
     }
+
+    // Load most important data in parallel using forkJoin
+    forkJoin({
+      stats: this.salesDataService.loadDashboardStats().pipe(
+        take(1)
+      ),
+      leadStatuses: this.salesDataService.loadLeadStatuses().pipe(
+        take(1)
+      ),
+      countries: this.salesDataService.loadCountries().pipe(
+        take(1)
+      ),
+    }).subscribe({
+      next: ({ stats, leadStatuses, countries }) => {
+        this.stats.set(stats);
+        this.listLeadStatus.set(leadStatuses.names);
+        this.leadStatusOptions.set(leadStatuses.names);
+        this.leadStatusMap.set(leadStatuses.map);
+        this.countryList.set(countries);
+        
+        // Mark critical data as loaded
+        this.criticalDataLoaded.set(true);
+        this.checkAndHideLoader();
+        
+        // Load leads data after critical data is loaded
+        this.loadLeadsData(username);
+      },
+      error: () => {
+        this.stats.set([]);
+        this.listLeadStatus.set([]);
+        this.countryList.set([]);
+        
+        // Even on error, mark as loaded to show UI
+        this.criticalDataLoaded.set(true);
+        this.checkAndHideLoader();
+        
+        if (username) {
+          this.loadLeadsData(username);
+        }
+      },
+    });
+  }
+
+  /**
+   * ✅ Check if all critical data is loaded and hide loader
+   */
+  private checkAndHideLoader(): void {
+    if (this.criticalDataLoaded() && this.leadsDataLoaded()) {
+      this.isloading.set(false);
+    }
+  }
+
+  /**
+   * ✅ Load SECONDARY data (lazy - not blocking UI)
+   */
+  private loadSecondaryData(): void {
+    // Load less important data in parallel (won't block initial render)
+    forkJoin({
+      actions: of(null), // Load when needed
+      interactions: this.salesDataService.loadRecentInteractions().pipe(take(1)),
+      notifications: this.salesDataService.loadNotifications().pipe(take(1)),
+    }).subscribe({
+      next: ({ interactions, notifications }) => {
+        this.recentInteractions.set(interactions);
+        this.notifications.set(notifications);
+      },
+      error: () => {
+        this.recentInteractions.set([]);
+        this.notifications.set([]);
+      },
+    });
   }
   //========================================= load all packets ===========================================
   loadAllPackets(): void {
     // Subscribe to the packets observable
     this._pakegsService.packets$.pipe(take(1)).subscribe((packets) => {
-      this.allPackets = packets;
+      this.allPackets.set(packets);
       this.refreshPacketAssignments();
     });
   }
   //========================================= search and filter =================================
   onCountrySelected(option: string): void {
-    this.selectedCountry = option || '';
-    this.currentPage = 1;
+    this.selectedCountry.set(option || '');
+    this.currentPage.set(1);
 
     // Find country ID and load cities for this country
-    const selectedCountry = this.countryList.find((c) => c.name === option);
+    const selectedCountry = this.countryList().find((c) => c.name === option);
     if (selectedCountry && selectedCountry.id != null) {
       this.loadCitiesByCountry(selectedCountry.id);
     } else {
-      this.cityList = [];
+      this.cityList.set([]);
     }
 
     this.applyClientSideFilter();
   }
 
   onCitySelected(option: string): void {
-    this.selectedCity = option || '';
-    this.currentPage = 1;
+    this.selectedCity.set(option || '');
+    this.currentPage.set(1);
     this.applyClientSideFilter();
   }
 
@@ -392,111 +439,51 @@ export class DashboardSalesComponent implements OnInit {
       return;
     }
 
-    const previousPacketId = row.packetId ?? null;
-    const previousPacket = row.packet;
-
-    const packetIdValue =
-      packet?.id === undefined || packet?.id === null
-        ? null
-        : typeof packet.id === 'string'
-        ? Number(packet.id)
-        : packet.id;
-    const normalizedPacketId =
-      typeof packetIdValue === 'number' && !Number.isNaN(packetIdValue)
-        ? packetIdValue
-        : null;
-
-    row.packetId = normalizedPacketId;
-    row.packet = packet;
-
     const assignmentId = row?.id ?? row?.leadId ?? row?.assignmentId;
-    if (!assignmentId || normalizedPacketId === null) {
-      row.packetId = previousPacketId;
-      row.packet = previousPacket;
-      this.notify.open({
-        type: 'error',
-        title: 'خطأ',
-        description: 'يجب اختيار باقة صالحة لتحديث الميزانية.',
-      });
-      return;
-    }
-
-    const selectedPacket =
-      this.allPackets.find(
-        (opt) => (opt.id ?? null) === (normalizedPacketId ?? null)
-      ) || null;
-    const packetPrice = Number(selectedPacket?.price ?? NaN);
-
-    this._dashboardService
-      .updateSalesBudget(assignmentId, normalizedPacketId)
-      .subscribe({
-        next: () => {
-          if (Number.isFinite(packetPrice)) {
-            row.budget = packetPrice;
-          }
-          const cached = this.allLeadsCache.find(
-            (lead) => (lead.leadId ?? lead.id) === assignmentId
-          );
-          if (cached) {
-            if (Number.isFinite(packetPrice)) {
-              cached.budget = packetPrice;
-            }
-            cached.packetId = normalizedPacketId;
-            cached.packet = packet;
-          }
-
-          this.notify.open({
-            type: 'success',
-            title: 'تم التحديث',
-            description: 'تم تحديث الميزانية بناءً على الباقة المختارة.',
+    this.budgetService.updatePacketSelection(
+      row,
+      packet,
+      this.allPackets(),
+      (packetPrice) => {
+        // Update in cache
+        if (Number.isFinite(packetPrice)) {
+          this.leadsDataService.updateLeadInCache(assignmentId, {
+            budget: packetPrice,
+            packetId: packet?.id,
+            packet: packet,
           });
-
-          this.refreshLeadsAfterBudgetChange();
-        },
-        error: () => {
-          row.packetId = previousPacketId;
-          row.packet = previousPacket;
-          this.notify.open({
-            type: 'error',
-            title: 'خطأ',
-            description: 'تعذر تحديث الميزانية، يرجى المحاولة لاحقاً.',
-          });
-        },
-      });
+        }
+        this.refreshLeadsAfterBudgetChange();
+      },
+      () => {
+        // Error handler - already handled by service
+      }
+    );
   }
 
   onActionDateFilterSelected(option: string): void {
-    this.selectedActionDateFilter = option || '--';
-    this.currentPage = 1;
+    this.selectedActionDateFilter.set(option || '--');
+    this.currentPage.set(1);
     this.applyClientSideFilter();
   }
 
   private loadCountries(): void {
-    this._countryCityService.getAllCountries().subscribe({
-      next: (response) => {
-        if (response.succeeded) {
-          this.countryList = response.data;
-        }
+    // ✅ No longer needed - loaded in loadCriticalData
+    // Kept for compatibility if called elsewhere
+    if (this.countryList().length > 0) return; // Already loaded
+    
+    this.salesDataService.loadCountries().subscribe({
+      next: (countries) => {
+        this.countryList.set(countries);
       },
       error: () => {
-        this.countryList = [];
+        this.countryList.set([]);
       },
     });
   }
 
   private normalizePacketIdValue(rawId: any): number | null {
-    if (rawId === null || rawId === undefined || rawId === '') {
-      return null;
-    }
-    const numericValue =
-      typeof rawId === 'string'
-        ? Number(rawId)
-        : typeof rawId === 'number'
-        ? rawId
-        : typeof rawId?.id === 'number'
-        ? rawId.id
-        : Number(rawId?.id ?? rawId);
-    return Number.isFinite(numericValue) ? numericValue : null;
+    return this.packetService.normalizePacketIdValue(rawId);
   }
 
   private resolvePacketOption(
@@ -504,115 +491,70 @@ export class DashboardSalesComponent implements OnInit {
     fallbackName?: string,
     fallbackPrice?: number | null
   ): PacketOption | null {
-    if (packetId === null) {
-      return null;
-    }
-    const fromList = this.allPackets.find((opt) => opt.id === packetId);
-    if (fromList) {
-      return fromList;
-    }
-    if (fallbackName) {
-      return {
-        id: packetId,
-        name: fallbackName,
-        price: fallbackPrice ?? null,
-      };
-    }
-    return null;
+    return this.packetService.resolvePacketOption(
+      packetId,
+      this.allPackets(),
+      fallbackName,
+      fallbackPrice
+    );
   }
 
   private resolvePacketByBudget(budget: number | null): PacketOption | null {
-    if (budget === null || budget === undefined) {
-      return null;
-    }
-
-    const numericBudget = Number(budget);
-    if (!Number.isFinite(numericBudget)) {
-      return null;
-    }
-
-    const byIdMatch =
-      this.allPackets.find((opt) => Number(opt.id) === numericBudget) ?? null;
-    if (byIdMatch) {
-      return byIdMatch;
-    }
-
-    const byPriceMatch =
-      this.allPackets.find((opt) =>
-        Number.isFinite(Number(opt.price))
-          ? Number(opt.price) === numericBudget
-          : false
-      ) ?? null;
-
-    return byPriceMatch;
+    return this.packetService.resolvePacketByBudget(budget, this.allPackets());
   }
 
   private attachPacketInfo(lead: any): any {
-    const rawPacketId = lead.packetId ?? lead.packet?.id ?? null;
-    const normalizedPacketId = this.normalizePacketIdValue(rawPacketId);
-    const packetName = lead.packetName || lead.packet?.name || null;
-    const packetPrice =
-      lead.packet?.price ?? lead.packetPrice ?? lead.productPrice ?? null;
-    const packetOption =
-      this.resolvePacketOption(
-        normalizedPacketId,
-        packetName ?? undefined,
-        packetPrice
-      ) ?? this.resolvePacketByBudget(lead?.budget ?? null);
-    const finalPacketId = packetOption?.id ?? normalizedPacketId;
-    return {
-      ...lead,
-      packetId: finalPacketId,
-      packet: packetOption,
-    };
+    return this.packetService.attachPacketInfo(lead, this.allPackets());
   }
 
   private refreshPacketAssignments(): void {
-    if (this.leadsList?.length) {
-      this.leadsList = this.leadsList.map((lead) =>
+    const currentLeads = this.leadsList();
+    const currentCache = this.allLeadsCache();
+    
+    if (currentLeads?.length) {
+      this.leadsList.set(currentLeads.map((lead) =>
         this.attachPacketInfo(lead)
-      );
+      ));
     }
-    if (this.allLeadsCache?.length) {
-      this.allLeadsCache = this.allLeadsCache.map((lead) =>
+    if (currentCache?.length) {
+      this.allLeadsCache.set(currentCache.map((lead) =>
         this.attachPacketInfo(lead)
-      );
+      ));
     }
   }
 
   private loadCitiesByCountry(countryId: number): void {
-    this._countryCityService.getCitiesByCountryId(countryId).subscribe({
-      next: (response) => {
-        if (response.succeeded) {
-          this.cityList = response.data;
-        }
+    this.salesDataService.loadCitiesByCountryId(countryId).subscribe({
+      next: (cities) => {
+        this.cityList.set(cities);
       },
       error: () => {
-        this.cityList = [];
+        this.cityList.set([]);
       },
     });
   }
   onSearch(event: any): void {
     // Handle search functionality
-    this.searchTerm = event.target?.value || event;
-    this.currentPage = 1; // Reset to first page on search
+    this.searchTerm.set(event.target?.value || event);
+    this.currentPage.set(1); // Reset to first page on search
 
     // Use client-side filter
     this.applyClientSideFilter();
   }
 
   getListLeadStatus(): void {
-    this._leadStatusService.getAllLeadStatus().subscribe({
-      next: (response) => {
-        this.listLeadStatus = response.data.map((status) => status.name);
-        this.leadStatusOptions = response.data.map((status) => status.name); // For editing dropdown
-        // Create map for quick lookup of ID by name
-        response.data.forEach((status) => {
-          this.leadStatusMap.set(status.name, status.id!);
-        });
+    // ✅ No longer needed - loaded in loadCriticalData
+    // Kept for compatibility if called elsewhere
+    if (this.listLeadStatus().length > 0) return; // Already loaded
+    
+    this.salesDataService.loadLeadStatuses().subscribe({
+      next: (result) => {
+        this.listLeadStatus.set(result.names);
+        this.leadStatusOptions.set(result.names);
+        this.leadStatusMap.set(result.map);
       },
       error: () => {
-        // Handle error silently or show user-friendly message
+        // Handle error silently
       },
     });
   }
@@ -621,9 +563,9 @@ export class DashboardSalesComponent implements OnInit {
   onOptionSelected(option: string): void {
     // Handle option selection
     // Get the ID from the map
-    this.selectedLeadStatusId = this.leadStatusMap.get(option) || 0;
-    this.selectedLeadStatusName = option || '';
-    this.currentPage = 1; // Reset to first page on filter change
+    this.selectedLeadStatusId.set(this.leadStatusMap().get(option) || 0);
+    this.selectedLeadStatusName.set(option || '');
+    this.currentPage.set(1); // Reset to first page on filter change
 
     // Use client-side filter
     this.applyClientSideFilter();
@@ -631,37 +573,37 @@ export class DashboardSalesComponent implements OnInit {
 
   onPageChange(event: any): void {
     // Prevent pagination if no data
-    if (this.totalCount === 0) {
+    if (this.totalCount() === 0) {
       return;
     }
 
-    this.currentPage = event.pageIndex + 1;
+    this.currentPage.set(event.pageIndex + 1);
 
     // Check if page size changed
-    if (event.pageSize && event.pageSize !== this.pageSize) {
-      this.pageSize = event.pageSize;
+    if (event.pageSize && event.pageSize !== this.pageSize()) {
+      this.pageSize.set(event.pageSize);
     }
 
     // Fetch current page from API (server-side paging)
     const username = this._authService.getUsername() || '';
     this.loadLeadsData(
       username,
-      this.searchTerm,
-      this.selectedLeadStatusId,
+      this.searchTerm(),
+      this.selectedLeadStatusId(),
       true
     );
   }
 
   onPageSizeChange(newPageSize: number): void {
-    this.pageSize = newPageSize;
-    this.currentPage = 1; // Reset to first page (1-based)
+    this.pageSize.set(newPageSize);
+    this.currentPage.set(1); // Reset to first page (1-based)
 
     // Fetch first page with new page size
     const username = this._authService.getUsername() || '';
     this.loadLeadsData(
       username,
-      this.searchTerm,
-      this.selectedLeadStatusId,
+      this.searchTerm(),
+      this.selectedLeadStatusId(),
       true
     );
   }
@@ -674,8 +616,8 @@ export class DashboardSalesComponent implements OnInit {
 
     this.loadLeadsData(
       username,
-      this.searchTerm,
-      this.selectedLeadStatusId,
+      this.searchTerm(),
+      this.selectedLeadStatusId(),
       true
     );
   }
@@ -700,234 +642,84 @@ export class DashboardSalesComponent implements OnInit {
     force: boolean = false
   ): void {
     // Use cached data if available and not forced
-    if (!force && this.allLeadsCache.length > 0) {
+    if (!force && this.leadsDataService.allLeadsCache.length > 0) {
       this.applyClientSideFilter();
       return;
     }
 
     // Load data with pagination/filters
-    this.loadingLeads = true;
-    this.isSearching = true;
+    this.loadingLeads.set(true);
+    this.isSearching.set(true);
 
-    const payload: GetTeleSalesTableDataRequest = {
-      contactName: this.searchTerm || '',
-      assigndate: '',
-      leadStatus: this.selectedLeadStatusId
-        ? String(this.selectedLeadStatusId)
-        : '',
-      country: '',
-      city: '',
-      lastActionTime: '',
-      actionNote: '',
-      // Align with teleSales: API expects 1-based page index
-      pageIndex: this.currentPage,
-      pageSize: this.pageSize,
+    const filterState: LeadsFilterState = {
+      searchTerm: this.searchTerm(),
+      selectedLeadStatusId: this.selectedLeadStatusId(),
+      selectedLeadStatusName: this.selectedLeadStatusName(),
+      selectedCountry: this.selectedCountry(),
+      selectedCity: this.selectedCity(),
+      selectedActionDateFilter: this.selectedActionDateFilter(),
+      currentPage: this.currentPage(),
+      pageSize: this.pageSize(),
     };
 
-    this._dashboardService.getLeadsBelongsToSales(payload).subscribe({
-      next: (response) => {
-        if (response && response.data) {
-          const responseData = response.data as any;
-          const items = Array.isArray(responseData.items)
-            ? responseData.items
-            : Array.isArray(responseData)
-            ? responseData
-            : [];
-
-          // Sync paginator from backend response when available
-          const apiPageIndex = Number(
-            (responseData as any).pageIndex ?? (responseData as any).PageIndex
-          );
-          if (!Number.isNaN(apiPageIndex) && apiPageIndex > 0) {
-            this.currentPage = apiPageIndex;
-          } else if (apiPageIndex === 0) {
-            // normalize 0-based to 1-based UI
-            this.currentPage = 1;
-          }
-
-          const apiPageSize = Number(
-            (responseData as any).pageSize ?? (responseData as any).PageSize
-          );
-          if (!Number.isNaN(apiPageSize) && apiPageSize > 0) {
-            this.pageSize = apiPageSize;
-          }
-
-          this.totalCount = Number(
-            (responseData as any).totalCount ??
-              (responseData as any).TotalCount ??
-              items.length ??
-              0
-          );
-
-          // Assign page items directly (server-side paging), with date formatting
-          this.leadsList = (items || []).map((lead: any) => {
-            // Get leadStatus from various possible field names
-            const rawStatus =
-              lead.leadStatus || lead.leadstatus || lead.LeadStatus || '';
-
-            // Try to match with leadStatusOptions (case-insensitive)
-            let matchedStatus = rawStatus;
-            if (rawStatus && this.leadStatusOptions.length > 0) {
-              const found = this.leadStatusOptions.find(
-                (opt) => opt.toLowerCase() === rawStatus.toLowerCase()
-              );
-              if (found) {
-                matchedStatus = found; // Use the exact option from list
-              }
-            }
-
-            return this.attachPacketInfo({
-              ...lead,
-              assignmentId: lead.id, // persist assignment id from GetSalesTableData
-              leadId: lead.leadId || lead.id,
-              assignDate: lead.assignDate || lead.assigndate || '', // Keep original for formatter
-              assigndate: lead.assignDate || lead.assigndate || '', // Also keep for compatibility
-              lastActionTime: lead.lastActionTime || lead.assignDate || '', // Keep original for formatter
-              leadStatus: matchedStatus,
-              city: lead.city || '',
-              country: lead.country || '',
-              actionNote: lead.notes || lead.actionNote || '',
-            });
-          });
-
-          // Update cache
-          this.allLeadsCache = [...this.leadsList];
-        } else {
-          this.leadsList = [];
-          this.totalCount = 0;
-        }
-
-        this.loadingLeads = false;
-        this.isSearching = false;
-      },
-      error: () => {
-        this.loadingLeads = false;
-        this.isSearching = false;
-        this.leadsList = [];
-        this.totalCount = 0;
-      },
-    });
+    this.leadsDataService
+      .loadLeadsData(
+        username,
+        filterState,
+        this.leadStatusOptions(),
+        this.allPackets(),
+        force
+      )
+      .subscribe({
+        next: (result) => {
+          this.leadsList.set(result.leadsList);
+          this.totalCount.set(result.totalCount);
+          this.currentPage.set(result.currentPage);
+          this.pageSize.set(result.pageSize);
+          this.allLeadsCache.set(this.leadsDataService.allLeadsCache);
+          this.loadingLeads.set(false);
+          this.isSearching.set(false);
+          
+          // Mark leads data as loaded
+          this.leadsDataLoaded.set(true);
+          this.checkAndHideLoader();
+        },
+        error: () => {
+          this.loadingLeads.set(false);
+          this.isSearching.set(false);
+          this.leadsList.set([]);
+          this.totalCount.set(0);
+          
+          // Even on error, mark as loaded to show UI
+          this.leadsDataLoaded.set(true);
+          this.checkAndHideLoader();
+        },
+      });
   }
 
   private applyClientSideFilter(): void {
-    if (this.allLeadsCache.length === 0) return;
+    const filterState: LeadsFilterState = {
+      searchTerm: this.searchTerm(),
+      selectedLeadStatusId: this.selectedLeadStatusId(),
+      selectedLeadStatusName: this.selectedLeadStatusName(),
+      selectedCountry: this.selectedCountry(),
+      selectedCity: this.selectedCity(),
+      selectedActionDateFilter: this.selectedActionDateFilter(),
+      currentPage: this.currentPage(),
+      pageSize: this.pageSize(),
+    };
 
-    let filtered = [...this.allLeadsCache];
+    const result = this.leadsDataService.applyClientSideFilter(
+      filterState,
+      this.listLeadStatus()
+    );
 
-    // Search filter
-    if (this.searchTerm?.trim()) {
-      const term = this.searchTerm.toLowerCase().trim();
-      filtered = filtered.filter(
-        (lead) =>
-          lead.contactName?.toLowerCase().includes(term) ||
-          lead.actionNote?.toLowerCase().includes(term) ||
-          lead.country?.toLowerCase().includes(term) ||
-          lead.city?.toLowerCase().includes(term) ||
-          lead.leadStatus?.toLowerCase().includes(term)
-      );
-    }
-
-    // Lead status filter
-    if (this.selectedLeadStatusId > 0) {
-      const selectedStatus = this.listLeadStatus[this.selectedLeadStatusId - 1];
-      filtered = filtered.filter((lead) => lead.leadStatus === selectedStatus);
-    }
-
-    // Country filter
-    if (this.selectedCountry) {
-      filtered = filtered.filter(
-        (lead) =>
-          (lead.country || '').toLowerCase() ===
-          this.selectedCountry.toLowerCase()
-      );
-    }
-
-    // City filter
-    if (this.selectedCity) {
-      filtered = filtered.filter(
-        (lead) =>
-          (lead.city || '').toLowerCase() === this.selectedCity.toLowerCase()
-      );
-    }
-
-    // Action date filter
-    if (
-      this.selectedActionDateFilter &&
-      this.selectedActionDateFilter !== '--'
-    ) {
-      const now = new Date();
-      let fromDate: Date | null = null;
-      if (this.selectedActionDateFilter === 'اليوم') {
-        fromDate = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      } else if (this.selectedActionDateFilter === 'أمس') {
-        fromDate = new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate() - 1
-        );
-      } else if (this.selectedActionDateFilter === 'آخر 7 أيام') {
-        fromDate = new Date(
-          now.getFullYear(),
-          now.getMonth(),
-          now.getDate() - 7
-        );
-      }
-
-      if (fromDate) {
-        filtered = filtered.filter((lead) => {
-          const dt = lead.lastActionTime ? new Date(lead.lastActionTime) : null;
-          return dt ? dt >= fromDate : false;
-        });
-      }
-    }
-
-    this.totalCount = filtered.length;
-
-    // Apply pagination
-    const start = (this.currentPage - 1) * this.pageSize;
-    const paginatedData = filtered.slice(start, start + this.pageSize);
-
-    // Format date fields before assigning
-    this.leadsList = paginatedData.map((lead) => ({
+    this.leadsList.set(result.leadsList.map((lead) => ({
       ...lead,
       assigndate: this.formatCellValue(lead.assigndate, 'date'),
       lastActionTime: this.formatCellValue(lead.lastActionTime, 'datetime'),
-    }));
-  }
-  // ============================= add note for phone call ===============================
-  addNoteForPhoneCall() {
-    const dialogRef = this.dialog.open(FormUiComponent, {
-      width: '50vw',
-      maxWidth: '500px',
-      height: 'auto',
-      maxHeight: '90vh',
-      data: {
-        title: 'إضافة ملاحظة للمكالمة',
-        subtitle: 'إضافة ملاحظة للمكالمة',
-        fields: [
-          {
-            name: 'note',
-            label: 'الملاحظة',
-          },
-        ],
-      },
-      disableClose: true,
-      panelClass: 'agreement-dialog',
-    });
-
-    dialogRef.afterClosed().subscribe((result) => {
-      if (result) {
-        // Add the new agreement to the data
-        const newAgreement = {
-          name: result.clientName,
-          stage: result.stage,
-          status: result.status,
-          value: `${result.contractValue?.toLocaleString()} ريال`,
-          periorety: result.priority,
-          date: result.dueDate,
-        };
-      }
-    });
+    })));
+    this.totalCount.set(result.totalCount);
   }
 
   loadSalesActions(
@@ -935,113 +727,85 @@ export class DashboardSalesComponent implements OnInit {
     startDate?: string,
     endDate?: string
   ): void {
-    this.loadingActions = true;
+    this.loadingActions.set(true);
     // Store provided dates if passed; otherwise reuse last ones
-    if (startDate !== undefined) this.actionsStartDate = startDate;
-    if (endDate !== undefined) this.actionsEndDate = endDate;
+    if (startDate !== undefined) this.actionsStartDate.set(startDate);
+    if (endDate !== undefined) this.actionsEndDate.set(endDate);
 
-    const effectiveStart = this.actionsStartDate;
-    const effectiveEnd = this.actionsEndDate;
+    const effectiveStart = this.actionsStartDate();
+    const effectiveEnd = this.actionsEndDate();
 
     this._dashboardService
       .getSalesActions(employeeId, effectiveStart, undefined, effectiveEnd)
       .subscribe({
         next: (response: any) => {
-          this.teleSalesActions = response;
-          this.loadingActions = false;
+          this.teleSalesActions.set(response);
+          this.loadingActions.set(false);
         },
         error: () => {
-          this.loadingActions = false;
+          this.loadingActions.set(false);
         },
       });
   }
 
   // Load recent interactions from API
   loadRecentInteractions(): void {
-    this.loadingRecentInteractions = true;
-    this._dashboardService.getRecentInteractions().subscribe({
-      next: (response) => {
-        if (response.succeeded) {
-          this.recentInteractions = response.data;
-        }
-        this.loadingRecentInteractions = false;
+    // ✅ No longer needed - loaded in loadSecondaryData
+    // Kept for compatibility
+    if (this.recentInteractions().length > 0) return;
+    
+    this.loadingRecentInteractions.set(true);
+    this.salesDataService.loadRecentInteractions().subscribe({
+      next: (interactions) => {
+        this.recentInteractions.set(interactions);
+        this.loadingRecentInteractions.set(false);
       },
       error: () => {
-        this.loadingRecentInteractions = false;
+        this.loadingRecentInteractions.set(false);
       },
     });
   }
 
-  // Load notifications from API
+  // Load notifications from API (using SalesDataService)
   loadNotifications(): void {
-    this.loadingNotifications = true;
-    this._dashboardService.getNotifications().subscribe({
-      next: (response) => {
-        if (response.succeeded) {
-          this.notifications = response.data.items.map((notification) => ({
-            id: notification.id,
-            type: notification.type,
-            typeText: this.getNotificationTypeText(notification.type),
-            message: notification.body,
-            time: this.formatNotificationTime(notification.createdAt),
-            isRead: notification.isRead,
-            title: notification.title,
-            createdAt: notification.createdAt,
-          }));
-        }
-        this.loadingNotifications = false;
+    // ✅ No longer needed - loaded in loadSecondaryData
+    // Kept for compatibility
+    if (this.notifications().length > 0) return;
+    
+    this.loadingNotifications.set(true);
+    this.salesDataService.loadNotifications().subscribe({
+      next: (items) => {
+        this.notifications.set(items.map((notification) => ({
+          id: notification.id,
+          type: notification.type,
+          typeText: this.notificationService.getNotificationTypeText(notification.type),
+          message: notification.body,
+          time: this.notificationService.formatNotificationTime(notification.createdAt),
+          isRead: notification.isRead,
+          title: notification.title,
+          createdAt: notification.createdAt,
+        })));
+        this.loadingNotifications.set(false);
       },
       error: () => {
-        this.loadingNotifications = false;
+        this.loadingNotifications.set(false);
       },
     });
   }
 
-  // Get notification type text in Arabic (inline mapping)
+  // Get notification type text in Arabic
   getNotificationTypeText(type: string): string {
-    switch (type) {
-      case 'login':
-        return 'تسجيل الدخول';
-      case 'reminder':
-        return 'تذكير';
-      case 'warning':
-        return 'تحذير';
-      case 'info':
-        return 'معلومة';
-      case 'assignment':
-        return 'تعيين';
-      case 'status_change':
-        return 'تغيير الحالة';
-      default:
-        return 'تنبيه';
-    }
+    return this.notificationService.getNotificationTypeText(type);
   }
 
   // Format notification time
   formatNotificationTime(dateString: string): string {
-    const date = new Date(dateString);
-    const now = new Date();
-    const diff = now.getTime() - date.getTime();
-    const minutes = Math.floor(diff / 60000);
-    const hours = Math.floor(diff / 3600000);
-    const days = Math.floor(diff / 86400000);
-
-    if (minutes < 1) {
-      return 'الآن';
-    } else if (minutes < 60) {
-      return `منذ ${minutes} دقيقة`;
-    } else if (hours < 24) {
-      return `منذ ${hours} ساعة`;
-    } else if (days < 7) {
-      return `منذ ${days} يوم`;
-    } else {
-      return date.toLocaleDateString('ar-EG');
-    }
+    return this.notificationService.formatNotificationTime(dateString);
   }
 
   // Get lead name by ID from leadsList
   getLeadNameByLeadId(leadId: number): string {
-    const lead = this.leadsList.find((l) => l.id === leadId);
+    const lead = this.leadsList().find((l) => l.id === leadId);
     if (lead) {
       return lead.contactName;
     } else {
@@ -1058,8 +822,9 @@ export class DashboardSalesComponent implements OnInit {
     }
 
     // Filter actions for this specific lead and map with action type info
+    const actions = this.teleSalesActions();
     const leadActions =
-      this.teleSalesActions?.data?.actionsGrouped?.flatMap((group: any) =>
+      actions?.data?.actionsGrouped?.flatMap((group: any) =>
         group.actions
           .filter((action: any) => (action.leadId ?? action.id) === id)
           .map((action: any) => ({
@@ -1154,77 +919,16 @@ export class DashboardSalesComponent implements OnInit {
 
   // Get action type icon by ID
   getActionTypeIconById(actionTypeId: number): string {
-    switch (actionTypeId) {
-      case 1:
-        return 'bi-telephone'; // Call
-      case 2:
-        return 'bi-envelope'; // Email
-      case 3:
-        return 'bi-camera-video'; // Meeting
-      case 4:
-        return 'bi-file-earmark-text'; // Notes
-      case 5:
-        return 'bi-arrow-repeat'; // FollowUp
-      default:
-        return 'bi-circle';
-    }
+    return this.actionTypeService.getActionTypeIconById(actionTypeId);
   }
 
   // Get action type name by ID or action object
   getActionTypeNameById(actionTypeId: number | any): string {
-    // If action object is passed, extract actionTypeName
-    if (typeof actionTypeId === 'object' && actionTypeId !== null) {
-      if (actionTypeId.actionTypeName) {
-        // Map English names to Arabic
-        const nameMap: { [key: string]: string } = {
-          Call: 'مكالمة',
-          Email: 'بريد إلكتروني',
-          Meeting: 'اجتماع',
-          Notes: 'ملاحظة',
-          FollowUp: 'متابعة',
-        };
-        return (
-          nameMap[actionTypeId.actionTypeName] || actionTypeId.actionTypeName
-        );
-      }
-      if (actionTypeId.actionTypeId) {
-        actionTypeId = actionTypeId.actionTypeId;
-      }
-    }
-
-    switch (actionTypeId) {
-      case 1:
-        return 'مكالمة';
-      case 2:
-        return 'بريد إلكتروني';
-      case 3:
-        return 'اجتماع';
-      case 4:
-        return 'ملاحظة';
-      case 5:
-        return 'متابعة';
-      default:
-        return 'إجراء';
-    }
+    return this.actionTypeService.getActionTypeNameById(actionTypeId);
   }
 
   getActionTypeIcon(actionTypeName: string): string {
-    switch (actionTypeName.toLowerCase()) {
-      case 'call':
-        return 'bi-telephone';
-      case 'email':
-        return 'bi-envelope';
-      case 'meeting':
-        return 'bi-camera-video';
-      case 'sms':
-        return 'bi-chat-dots';
-      case 'notes':
-        return 'bi-file-earmark-text';
-      case 'followup':
-        return 'bi-arrow-repeat';
-      default:
-        return 'bi-circle';
-    }
+    return this.actionTypeService.getActionTypeIcon(actionTypeName);
   }
 
   formatActionDate(dateString: string): string {
@@ -1244,102 +948,15 @@ export class DashboardSalesComponent implements OnInit {
 
   // Open action dialog with different types
   openActionDialog(lead: any, actionTypeId: number): void {
-    // Action type configuration
-    const actionTypes = {
-      1: {
-        name: 'مكالمة',
-        icon: 'bi-telephone',
-        label: 'الملاحظة',
-        placeholder: 'أدخل ملاحظات المكالمة...',
-        type: 'phone',
-      },
-      2: {
-        name: 'بريد إلكتروني',
-        icon: 'bi-envelope',
-        label: 'الملاحظة',
-        placeholder: 'أدخل ملاحظات البريد...',
-        type: 'email',
-      },
-      3: {
-        name: 'اجتماع',
-        icon: 'bi-camera-video',
-        label: 'الملاحظة',
-        placeholder: 'أدخل ملاحظات الاجتماع...',
-        type: 'meeting',
-      },
-      4: {
-        name: 'ملاحظة',
-        icon: 'bi-file-earmark-text',
-        label: 'الملاحظة',
-        placeholder: 'أدخل ملاحظتك هنا...',
-        type: 'note',
-      },
-      5: {
-        name: 'متابعة',
-        icon: 'bi-arrow-repeat',
-        label: 'الملاحظة',
-        placeholder: 'أدخل ملاحظات المتابعة...',
-        type: 'followup',
-      },
-    };
+    this.actionDialogService.openActionDialog(lead, actionTypeId, (data) => {
+      // Optimistically update actions list without refetch
+      this.addActionToGroupedState(data);
 
-    const actionConfig = actionTypes[actionTypeId as keyof typeof actionTypes];
-
-    if (!actionConfig) {
-      this.notify.open({
-        type: 'error',
-        title: 'خطأ',
-        description: 'نوع الإجراء غير معروف',
-      });
-      return;
-    }
-
-    const actionDialogConfig = {
-      title: `إضافة ${actionConfig.name}`,
-      submitText: 'حفظ',
-      cancelText: 'إلغاء',
-      fields: [
-        {
-          name: 'actionNotes',
-          label: actionConfig.label,
-          type: 'textarea',
-          placeholder: actionConfig.placeholder,
-          required: true,
-          colSpan: 3,
-        },
-      ],
-    };
-
-    const dialogRef = this.dialog.open(FormUiComponent, {
-      width: '700px',
-      panelClass: 'agreement-dialog',
-      data: {
-        config: actionDialogConfig,
-        initialData: {
-          actionNotes: '',
-        },
-      },
-    });
-
-    // Listen to formSubmit event
-    dialogRef.componentInstance.formSubmit.subscribe((formData) => {
-      if (formData) {
-        const requestData: ITeleSalseActionRequest = {
-          leadId: lead.leadId,
-          actionTypeId: actionTypeId,
-          actionNotes: formData.actionNotes,
-        };
-        this.createSalesAction(requestData);
-
-        // Close the dialog after successful submission
-        dialogRef.close();
+      // Update lead in the table
+      const username = this._authService.getUsername();
+      if (username) {
+        this.loadLeadsData(username, this.searchTerm(), this.selectedLeadStatusId());
       }
-    });
-
-    // Also listen for dialog close
-    dialogRef.afterClosed().subscribe(() => {
-      // Unsubscribe to prevent memory leaks
-      dialogRef.componentInstance.formSubmit.unsubscribe();
     });
   }
 
@@ -1349,169 +966,58 @@ export class DashboardSalesComponent implements OnInit {
 
   // Action button methods for table
   onCall(lead: any): void {
-    this.openActionDialog(lead, 1); // Call = 1
+    this.actionDialogService.openActionDialog(lead, 1, (data) => {
+      this.addActionToGroupedState(data);
+    });
   }
 
   onEmail(lead: any): void {
-    this.openActionDialog(lead, 2); // Email = 2
+    this.actionDialogService.openActionDialog(lead, 2, (data) => {
+      this.addActionToGroupedState(data);
+    });
   }
 
   onMeeting(lead: any): void {
-    this.openActionDialog(lead, 3); // Meeting = 3
+    this.actionDialogService.openActionDialog(lead, 3, (data) => {
+      this.addActionToGroupedState(data);
+    });
   }
 
   onNote(lead: any): void {
-    this.openActionDialog(lead, 4); // Notes = 4
+    this.actionDialogService.openActionDialog(lead, 4, (data) => {
+      this.addActionToGroupedState(data);
+    });
   }
 
   onFollowUp(lead: any): void {
-    this.openActionDialog(lead, 5); // FollowUp = 5
+    this.actionDialogService.openActionDialog(lead, 5, (data) => {
+      this.addActionToGroupedState(data);
+    });
   }
 
   // ============================ Edit budget ================================
   onEditBudget(lead: any): void {
-    // API expects the assignment row id, which is available as `id`
-    const id = lead.id;
     if (!lead.id) return;
 
-    const dialogRef = this.dialog.open(FormUiComponent, {
-      width: '500px',
-      panelClass: 'agreement-dialog',
-      data: {
-        config: {
-          title: 'تحديث الميزانية',
-          submitText: 'حفظ',
-          cancelText: 'إلغاء',
-          fields: [
-            {
-              name: 'budget',
-              label: 'الميزانية',
-              // type: 'number',
-              type: 'select',
-              options: this.allPackets.map((packet) => ({
-                label: packet.name,
-                value: packet.id,
-              })),
-              required: true,
-              placeholder: 'أدخل الميزانية',
-              colSpan: 3,
-            },
-          ],
-        },
-        initialData: {
-          budget: lead.budget,
-        },
-      },
-      // this.,
-    });
-
-    dialogRef.componentInstance.formSubmit.subscribe((formData) => {
-      const value = Number(formData?.budget);
-      if (!Number.isFinite(value) || value < 0) {
-        this.notify.open({
-          type: 'error',
-          title: 'خطأ',
-          description: 'يرجى إدخال ميزانية صحيحة',
+    this.budgetService.openBudgetEditDialog(
+      lead,
+      this.allPackets(),
+      (newBudget) => {
+        // Update in cache
+        this.leadsDataService.updateLeadInCache(lead.leadId ?? lead.id, {
+          budget: newBudget,
         });
-        return;
+        this.refreshLeadsAfterBudgetChange();
       }
-
-      this._dashboardService.updateSalesBudget(id, value).subscribe({
-        next: () => {
-          // Update row and cache
-          lead.budget = value;
-          const cached = this.allLeadsCache.find(
-            (l) => (l.leadId ?? l.id) === id
-          );
-          if (cached) cached.budget = value;
-
-          this.notify.open({
-            type: 'success',
-            title: 'تم بنجاح',
-            description: 'تم تحديث الميزانية بنجاح',
-          });
-          dialogRef.close();
-          this.refreshLeadsAfterBudgetChange();
-        },
-        error: (error) => {
-          const msg =
-            error?.error?.validationErrors?.[0]?.errorMessage ||
-            error?.error?.message ||
-            error?.message ||
-            'فشل تحديث الميزانية';
-          this.notify.open({ type: 'error', title: 'خطأ', description: msg });
-        },
-      });
-    });
-
-    dialogRef.afterClosed().subscribe(() => {
-      dialogRef.componentInstance.formSubmit.unsubscribe();
-    });
+    );
   }
 
-  private createSalesAction(data: ITeleSalseActionRequest): void {
-    // Show loading state
-    this.isSearching = true;
-
-    this._dashboardService.createSalesAction(data).subscribe({
-      next: (response: any) => {
-        this.isSearching = false;
-        if (response.succeeded) {
-          this.notify.open({
-            type: 'success',
-            title: 'تم بنجاح',
-            description: 'تم إضافة الملاحظة بنجاح',
-          });
-
-          // Refresh the leads data to show updated information
-          const username = this._authService.getUsername();
-          if (username) {
-            this.loadLeadsData(
-              username,
-              this.searchTerm,
-              this.selectedLeadStatusId
-            );
-          }
-
-          // Optimistically update actions list without refetch
-          this.addActionToGroupedState({
-            leadId: data.leadId,
-            actionTypeId: data.actionTypeId,
-            actionNotes: data.actionNotes,
-          });
-        } else {
-          this.notify.open({
-            type: 'error',
-            title: 'خطأ',
-            description: response.message || 'حدث خطأ أثناء إضافة الملاحظة',
-          });
-        }
-      },
-      error: (error) => {
-        this.isSearching = false;
-
-        let errorMessage = 'حدث خطأ أثناء إضافة الملاحظة';
-
-        if (error.error && error.error.message) {
-          errorMessage = error.error.message;
-        } else if (error.message) {
-          errorMessage = error.message;
-        }
-
-        this.notify.open({
-          type: 'error',
-          title: 'خطأ',
-          description: errorMessage,
-        });
-      },
-    });
-  }
 
   // Close the lead actions dialog
   closeLeadActionsDialog(): void {
-    this.showLeadActionsDialog = false;
-    this.selectedLeadActions = [];
-    this.selectedLead = null;
+    this.showLeadActionsDialog.set(false);
+    this.selectedLeadActions.set([]);
+    this.selectedLead.set(null);
   }
 
   // Format cell value based on column formatter
@@ -1537,260 +1043,62 @@ export class DashboardSalesComponent implements OnInit {
 
   //=========================== Edit lead status ================================
   onEdit(lead: any): void {
-    const id = lead.leadId;
-    this.editingLeadId = id;
-    if (!lead.id && lead.leadId) {
-      lead.id = lead.leadId;
-    }
-    this.selectedLeadForEdit = lead;
-    // Store original values for cancel
-    lead._originalLeadStatus = lead.leadStatus;
-    // Initialize draft status for auto-save
-    lead._draftLeadStatus = lead.leadStatus;
-    // Try multiple possible property names for assigned lead ID
-    lead._originalAssignLeadId =
-      lead.assignedLeadId ||
-      lead.assignedToId ||
-      lead.employeeId ||
-      lead.assignedEmployeeId ||
-      0;
+    this.leadStatusEditor.startEditing(lead);
+    this.selectedLeadForEdit.set(lead);
   }
 
   saveLeadStatus(lead: any): void {
-    const newStatus = lead._draftLeadStatus?.trim();
-    const leadId = lead.leadId ?? lead.id;
-
-    if (!leadId || !newStatus || newStatus === lead.leadStatus) {
-      this.cancelLeadStatus(lead);
-      return;
-    }
-
-    // Get assignLeadId from lead data or use current user's ID as fallback
-    const assignLeadId = lead.id || this._authService.getEmployeeId() || 1; // Final fallback
-
-    // Build payload with required fields
-    const payload: any = {
-      assignmentId: lead.assignmentId ?? lead.id, // ensure from GetSalesTableData
-      leadId: leadId,
-      assignLeadId: assignLeadId,
-      leadStatus: newStatus,
-    };
-
-    // Debug: payload keys can be inspected if needed
-
-    this._dashboardService.editLeadStatus(payload).subscribe({
-      next: (response) => {
-        // Check if response indicates success
-        if (response && response.succeeded === true) {
-          lead.leadStatus = newStatus; // Update optimistically
-          lead.assignLeadId = assignLeadId; // Update assignLeadId
-          this.editingLeadId = null;
-          this.selectedLeadForEdit = null;
-          delete lead._draftLeadStatus;
-          delete lead._originalLeadStatus;
-
-          // lead status updated
+    this.leadStatusEditor.saveLeadStatus(lead).subscribe({
+      next: (result) => {
+        if (result.success) {
+          this.selectedLeadForEdit.set(null);
           // Update in cache
-          const cachedLead = this.allLeadsCache.find(
-            (l) => (l.leadId ?? l.id) === leadId
-          );
-          if (cachedLead) {
-            cachedLead.leadStatus = newStatus;
-            cachedLead.assignLeadId = assignLeadId;
-          }
+          this.leadsDataService.updateLeadInCache(lead.leadId ?? lead.id, {
+            leadStatus: result.newStatus,
+            assignLeadId: result.assignLeadId,
+          });
 
           // If status is Confirmed, create assignment to account
-          if (newStatus === 'Confirmed') {
-            this.createAssignToAccount(lead);
+          if (result.needsAccountantAssignment) {
+            this.accountantService.assignToAccountant(lead, () => {
+              const username = this._authService.getUsername();
+              if (username) {
+                this.loadLeadsData(username);
+              }
+            });
           }
-
-          this.notify.open({
-            type: 'success',
-            title: 'نجح',
-
-            description:
-              newStatus === 'Confirmed'
-                ? 'تم تحويل العميل الي قسم الحسابات '
-                : 'تم تحديث حالة العميل المحتمل بنجاح',
-          });
-        } else {
-          // API returned unsuccessful response
-          this.handleUpdateError(lead);
         }
-      },
-      error: (error) => {
-        console.error('API Error:', error);
-        const errorMsg =
-          error?.error?.validationErrors?.[0]?.errorMessage ||
-          error?.error?.data ||
-          error?.message ||
-          'فشل تحديث حالة العميل المحتمل';
-        this.handleUpdateError(lead, errorMsg);
       },
     });
   }
 
   cancelLeadStatus(lead: any): void {
-    lead.leadStatus = lead._originalLeadStatus || lead.leadStatus;
-    lead.assignLeadId = lead._originalAssignLeadId || lead.assignLeadId;
-    this.editingLeadId = null;
-    this.selectedLeadForEdit = null;
-    delete lead._draftLeadStatus;
-    delete lead._originalLeadStatus;
-    delete lead._originalAssignLeadId;
+    this.leadStatusEditor.cancelEditing(lead);
+    this.selectedLeadForEdit.set(null);
   }
 
   isEditing(lead: any): boolean {
-    return this.editingLeadId === lead.id;
+    return this.leadStatusEditor.isEditing(lead.id);
   }
 
   onStatusChange(lead: any, newStatus: string): void {
-    lead._draftLeadStatus = newStatus;
+    this.leadStatusEditor.onStatusChange(lead, newStatus);
   }
 
   onAssignLeadIdChange(lead: any, newAssignLeadId: number): void {
     lead._draftAssignLeadId = newAssignLeadId;
   }
 
-  private handleUpdateError(lead: any, errorMsg?: string): void {
-    // Restore original value on error
-    lead.leadStatus = lead._originalLeadStatus;
-    lead.assignLeadId = lead._originalAssignLeadId;
-    this.cancelLeadStatus(lead);
-
-    this.notify.open({
-      type: 'error',
-      title: 'خطأ',
-      description: errorMsg || 'فشل تحديث حالة العميل المحتمل',
-    });
-  }
-
   // ============================ Create Assign To Account ================================
-  private createAssignToAccount(lead: any): void {
-    const employeeId = this._authService.getEmployeeId();
-
-    if (!employeeId) {
-      console.error('Could not get employee ID');
-      return;
-    }
-    if (!lead.budget || lead.budget == 0) {
-      this.notify.open({
-        type: 'error',
-        title: ' (يرجي ادخال الميزانية قبل التعيين)خطأ',
-        description: 'يرجي الذهاب الي الاجراءات > تعديل الميزانية',
-      });
-      return;
-    }
-    this.sendAssignToAccountRequest(lead, String(employeeId));
-  }
-
   // Public method to handle assign to accountant button click
   onAssignToAccountant(lead: any): void {
-    this.createAssignToAccount(lead);
-  }
-
-  private sendAssignToAccountRequest(lead: any, assignedByEmp: string): void {
-    const leadId = lead.leadId;
-    const notes = lead.actionNote || lead.notes || '';
-    const budgetValue = Number(lead.budget) || 0;
-    const currency = lead.currencyName || '';
-
-    const payload = {
-      assignedByEmp: assignedByEmp,
-      leadId: leadId,
-      notes: notes,
-      buddgetValue: budgetValue,
-      currncy: currency,
-    };
-
-    this._dashboardService.createAssignToAccount(payload).subscribe({
-      next: (response) => {
-        if (response && response.succeeded !== false) {
-          // Successfully assigned to account
-          // Now update lead status to 'Confirmed'
-          this.updateLeadStatusToConfirmed(lead, assignedByEmp);
-        }
-      },
-      error: (error) => {
-        console.error('Error creating assign to account:', error);
-        this.notify.open({
-          type: 'error',
-          title: 'خطأ',
-          description: 'تعذر تعيين العميل للمحاسب',
-        });
-      },
+    this.accountantService.assignToAccountant(lead, () => {
+      // Reload leads to reflect changes
+      const username = this._authService.getUsername();
+      if (username) {
+        this.loadLeadsData(username);
+      }
     });
   }
 
-  private updateLeadStatusToConfirmed(lead: any, assignedByEmp: string): void {
-    const leadId = lead.leadId ?? lead.id;
-    const assignLeadId =
-      lead.id || Number(assignedByEmp) || this._authService.getEmployeeId();
-
-    // Build payload for editLeadStatus
-    const statusPayload: any = {
-      assignmentId: lead.assignmentId ?? lead.id,
-      leadId: leadId,
-      assignLeadId: assignLeadId,
-      leadStatus: 'Confirmed',
-    };
-
-    this._dashboardService.editLeadStatus(statusPayload).subscribe({
-      next: (response) => {
-        // Check if response indicates success
-        if (response && response.succeeded !== false) {
-          // Successfully updated lead status to Confirmed
-          this.notify.open({
-            type: 'success',
-            title: 'تم التعيين',
-            description: 'تم تعيين العميل للمحاسب',
-          });
-          // Reload leads to reflect changes
-          const username = this._authService.getUsername();
-          if (username) {
-            this.loadLeadsData(username);
-          }
-        }
-      },
-      error: (error) => {
-        console.error('Error updating lead status to Confirmed:', error);
-        // Still show success for assign to account, but warn about status update
-        this.notify.open({
-          type: 'error',
-          title: 'تم التعيين',
-          description:
-            'تم تعيين العميل للمحاسب، لكن تعذر تحديث الحالة إلى Confirmed',
-        });
-        // Reload leads anyway
-        const username = this._authService.getUsername();
-        if (username) {
-          this.loadLeadsData(username);
-        }
-      },
-    });
-  }
-
-  // ============================ assign lead to contract =====================================
-  private assignLeadToContract(lead: any): void {
-    const payload: TransferredLeadsToLegal = {
-      contactId: lead.contactId,
-      contactName: lead.contactName,
-      contactPhone: lead.contactPhone,
-      assignedBy: lead.assignedBy,
-      contractAmount: lead.contractAmount,
-    };
-  }
-
-  private sendAssignLeadToContractRequest(
-    lead: any,
-    assignedByEmp: number
-  ): void {
-    const payload: TransferredLeadsToLegal = {
-      contactId: lead.contactId,
-      contactName: lead.contactName,
-      contactPhone: lead.contactPhone,
-      assignedBy: assignedByEmp,
-      contractAmount: lead.contractAmount,
-    };
-  }
 }

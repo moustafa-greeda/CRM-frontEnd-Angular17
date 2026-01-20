@@ -1,45 +1,51 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { Subscription, timer } from 'rxjs';
+import { Component, OnDestroy, OnInit, CUSTOM_ELEMENTS_SCHEMA, DestroyRef, inject } from '@angular/core';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { CommonModule } from '@angular/common';
+import { timer } from 'rxjs';
 import { NotifyDialogData, NotifyDialogService } from './notify-dialog.service';
 
 @Component({
   selector: 'app-notify-dialog-host',
+  standalone: true,
+  imports: [CommonModule],
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
   templateUrl: './notify-dialog-host.component.html',
   styleUrls: ['./notify-dialog-host.component.css'],
 })
 export class NotifyDialogHostComponent implements OnInit, OnDestroy {
   data: NotifyDialogData | null = null;
-  private sub?: Subscription;
-  private autoCloseSub?: Subscription;
+  private readonly destroyRef = inject(DestroyRef);
 
   constructor(private notify: NotifyDialogService) {}
 
   ngOnInit(): void {
-    this.sub = this.notify.state$.subscribe((d) => {
-      if (!d) {
-        this.data = null;
-        return;
-      }
+    this.notify.state$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe((d) => {
+        if (!d) {
+          this.data = null;
+          return;
+        }
 
-      const autoCloseMs = d.autoCloseMs ?? 2000;
-      // Ensure imageUrl is set
-      const dataWithImage = {
-        ...d,
-        autoCloseMs,
-        imageUrl: d.imageUrl || 'assets/logo.svg',
-      };
-      this.data = dataWithImage;
+        const autoCloseMs = d.autoCloseMs ?? 6000;
+        // Ensure imageUrl is set
+        const dataWithImage = {
+          ...d,
+          autoCloseMs,
+          imageUrl: d.imageUrl || 'assets/logo.svg',
+        };
+        this.data = dataWithImage;
 
-      this.autoCloseSub?.unsubscribe();
-      if (autoCloseMs && autoCloseMs > 0) {
-        this.autoCloseSub = timer(autoCloseMs).subscribe(() => this.close());
-      }
-    });
+        if (autoCloseMs && autoCloseMs > 0) {
+          timer(autoCloseMs)
+            .pipe(takeUntilDestroyed(this.destroyRef))
+            .subscribe(() => this.close());
+        }
+      });
   }
 
   ngOnDestroy(): void {
-    this.sub?.unsubscribe();
-    this.autoCloseSub?.unsubscribe();
+    // Cleanup is handled automatically by takeUntilDestroyed
   }
 
   close() {
@@ -65,8 +71,8 @@ export class NotifyDialogHostComponent implements OnInit, OnDestroy {
 
   get iconName() {
     return this.data?.type === 'success'
-      ? 'bi:check-circle-fill'
-      : 'bi:x-circle-fill';
+      ? 'bi bi-check-circle-fill'
+      : 'bi bi-x-circle-fill';
   }
 
   get autoVars() {

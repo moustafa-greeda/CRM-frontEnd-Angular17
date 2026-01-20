@@ -1,7 +1,11 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { ButtonComponent } from '../../ui/button/button.component';
 
 @Component({
   selector: 'app-no-results-message',
+  standalone: true,
+  imports: [CommonModule, ButtonComponent],
   templateUrl: './no-results-message.component.html',
   styleUrls: ['./no-results-message.component.css'],
 })

@@ -1,0 +1,155 @@
+@if(!isLoadingCompanies()){
+  <div class="parent-container">
+  <!-- page header -->
+  <app-page-header
+    [title]="'ادارة الشركات'"
+    [breadcrumb]="breadcrumb"
+    [actionButtons]="actionButtons"
+  ></app-page-header>
+
+  <!--------------- import and export ------------>
+  <div class="search-parent border-gradient mb-4">
+    <div class="form-grid-search">
+      <div class="form-field">
+        <app-dropdown
+          [options]="countryOptions()"
+          [selectedOption]="selectedCountry() || ''"
+          [label]="'اختر الدولة'"
+          (optionSelected)="onCountryMethodChange($event)"
+        ></app-dropdown>
+      </div>
+
+      <div class="form-field">
+        <app-dropdown
+          *ngIf="selectedCountry()"
+          [disabled]="!selectedCountry"
+          [options]="cityOptions()"
+          [selectedOption]="selectedCity() || ''"
+          [label]="selectedCountry() ? 'اختر المدينة' : 'اختر الدولة اولا'"
+          (optionSelected)="onCityChange($event)"
+          [disabled]="!selectedCountry"
+        ></app-dropdown>
+      </div>
+
+      <div class="form-field search-field">
+        <app-search-input
+          [placeholder]="'ابحث عن شركة'"
+          (search)="onSearch($event)"
+        ></app-search-input>
+      </div>
+      @if(selectedCountry() || selectedCity() || lastSearchTerm()){
+      <app-button
+        [buttonClass]="'btn-danger'"
+        [buttonText]="'مسح الفلتر'"
+        [icon]="'bi bi-trash'"
+        (click)="resetFilters()"
+      ></app-button>
+      }
+    </div>
+  </div>
+
+  <div class="filter">
+    <div class="parent-import">
+      <!----------------------- View Toggle Button ----------->
+      <div class="view-toggle-container">
+        <app-view-toggle
+          [viewMode]="viewMode()"
+          (viewModeChange)="viewMode.set($event)"
+        ></app-view-toggle>
+      </div>
+    </div>
+    <!-- Custom Pagination Controls (cards only) -->
+    <app-pagination-card-controls
+      *ngIf="viewMode() === 'card'"
+      [currentPage]="currentPage()"
+      [totalPages]="totalPages()"
+      [pageSize]="pageSize()"
+      [pageSizeOptions]="[10, 50, 100, 500]"
+      (pageSizeChange)="onPageSizeChange($event)"
+    ></app-pagination-card-controls>
+  </div>
+
+  <!-- grid cards -->
+  <app-grid-cards
+    [isLoading]="false"
+    [error]="false"
+    *ngIf="viewMode() === 'card'"
+  >
+    <app-card
+      *ngFor="
+        let company of companyList();
+        trackBy: trackByCompanyId;
+        index as i
+      "
+      [data]="company"
+      [index]="i"
+      [selectable]="true"
+      [showEditIcon]="true"
+      [isSelected]="isCompanySelected(company)"
+      (editClick)="onEditCompany(company)"
+      (selectionChange)="onCardSelectionChange(company, $any($event))"
+      [titleKey]="'name'"
+      [subTitleKey]="'industeryName'"
+      [fields]="[
+        { label: 'البريد الإلكتروني', key: 'email', icon: 'bi bi-envelope' },
+        { label: 'الهاتف', key: 'phoneNumber', icon: 'bi bi-telephone-fill' }
+      ]"
+      [infoBoxes]="[
+        {
+          label: 'الدولة',
+          key: 'countryName',
+          icon: 'bi bi-geo-alt',
+          colspan: 2
+        },
+        { label: 'المدينة', key: 'cityName', icon: 'bi bi-geo-alt' },
+        { label: 'الملكيه', key: 'ownershipId', icon: 'bi bi-building' },
+        { label: 'حجم الشركة', key: 'companySizeId', icon: 'bi bi-people' },
+        { label: 'المرحلة', key: 'comapanyStageId', icon: 'bi bi-briefcase' }
+      ]"
+    ></app-card>
+  </app-grid-cards>
+
+  <!-- Pagination for cards -->
+  <app-pagination-card
+    *ngIf="viewMode() === 'card'"
+    [currentPage]="currentPage()"
+    [totalPages]="totalPages()"
+    [isLoading]="isLoadingCompanies()"
+    (pageChange)="handlePageChange($event)"
+  ></app-pagination-card>
+
+  <!------------------------- Table View (Reusable) ---------------------->
+  <div
+    class="table-view-container"
+    *ngIf="!isLoadingCompanies() && viewMode() === 'table'"
+  >
+    <app-table
+      [data]="companyList()"
+      [columns]="tableColumns()"
+      [pageSize]="pageSize()"
+      [currentPage]="currentPage()"
+      [totalCount]="totalCount()"
+      [showIndex]="true"
+      [hasNoData]="false"
+      [noDataMessage]="'لا يوجد شركات متاحة'"
+      [showView]="true"
+      [showEdit]="true"
+      [showDelete]="true"
+      (pageChange)="onTablePage($any($event))"
+      (pageSizeChange)="onTablePageSize($any($event))"
+      (view)="onViewClient($any($event))"
+      (edit)="onEditClient($any($event))"
+      (delete)="onDeleteClient($any($event))"
+    ></app-table>
+  </div>
+
+  <!-- in no data message -->
+  <app-no-results-message
+    *ngIf="totalCount() == 0 && !isLoadingCompanies() && viewMode() === 'card'"
+    title="لا يوجد شركات متاحة حاليا "
+    description=""
+    icon="bi bi-building-x"
+    [showResetButton]="false"
+  ></app-no-results-message>
+</div>
+}

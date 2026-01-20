@@ -1,7 +1,10 @@
 import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-grid-cards',
+  standalone: true,
+  imports: [CommonModule],
   template: `<div class="clients-grid-wrapper">
     <!-- حالة التحميل -->
     <div *ngIf="isLoading" class="loading-state">

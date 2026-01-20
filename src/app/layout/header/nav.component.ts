@@ -1,11 +1,13 @@
-import { Component, Inject, Input, Output, EventEmitter } from '@angular/core';
-import { Router } from '@angular/router';
+import { Component, Inject, Input, Output, EventEmitter, PLATFORM_ID } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router, RouterModule } from '@angular/router';
 import { ThemeService } from '../../core/services/theme.service';
 import { AuthService } from '../../Auth/auth.service';
-import { PLATFORM_ID } from '@angular/core';
 
 @Component({
   selector: 'app-nav',
+  standalone: true,
+  imports: [CommonModule, RouterModule],
   templateUrl: './nav.component.html',
   styleUrls: ['./nav.component.css'],
 })

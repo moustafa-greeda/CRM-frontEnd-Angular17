@@ -1,7 +1,10 @@
 import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-recent-interactions',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './recent-interactions.component.html',
   styleUrls: ['./recent-interactions.component.css'],
   encapsulation: ViewEncapsulation.None,

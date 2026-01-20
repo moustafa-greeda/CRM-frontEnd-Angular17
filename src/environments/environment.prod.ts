@@ -2,5 +2,6 @@
 export const environment = {
   production: true,
   // apiUrl: 'http://178.18.250.40:5001/api',
-  apiUrl: 'http://178.18.250.40:5003/api',
+  // apiUrl: 'http://178.18.250.40:5003/api',
+  apiUrl: 'http://178.18.250.40:5022/api',
 };

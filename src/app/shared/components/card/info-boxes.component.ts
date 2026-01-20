@@ -1,4 +1,5 @@
 import { Component, Input } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 export interface InfoBox {
   colspan?: number;
@@ -10,6 +11,8 @@ export interface InfoBox {
 
 @Component({
   selector: 'app-info-boxes',
+  standalone: true,
+  imports: [CommonModule],
   template: `
     <div class="info-boxes">
       <div

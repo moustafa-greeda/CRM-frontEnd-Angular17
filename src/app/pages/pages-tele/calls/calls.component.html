@@ -1,0 +1,25 @@
+@if(!loading()) {
+  <div class="calls-container">
+  <app-page-header
+    [title]="pageTitle"
+    [breadcrumb]="breadcrumb"
+  ></app-page-header>
+
+  <!-- Table Section -->
+    <div class="table-responsive mt-md">
+    <app-table
+        [data]="calls()"
+      [columns]="callColumns"
+        [selectedRows]="selectedCalls()"
+      [showDataTable]="true"
+        [hasNoData]="hasNoData()"
+        [pageSize]="pageSize()"
+        [currentPage]="currentPage()"
+        [totalCount]="totalCount()"
+      [tableClass]="'erb-data-table'"
+      [containerClass]="'erb-table-container'"
+      [showIndex]="true"
+    ></app-table>
+  </div>
+</div>
+}

@@ -1,7 +1,10 @@
-import { Component, Input, ViewEncapsulation } from '@angular/core';
+import { Component, Input, ViewEncapsulation, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-notification-card',
+  standalone: true,
+  imports: [CommonModule],
   templateUrl: './notification-card.component.html',
   styleUrls: ['./notification-card.component.css'],
   encapsulation: ViewEncapsulation.None,

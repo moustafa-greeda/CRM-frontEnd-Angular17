@@ -219,22 +219,8 @@ export class AuthService {
   getRedirectUrl(): string {
     const userType = this.getUserType();
 
-    switch (userType) {
-      case 'TeleSales':
-        return '/dashboard/telesales';
-      case 'Sales':
-        return '/dashboard/sales';
-      case 'Accountant':
-        return '/dashboard/accountant/invoicesWorkOrders';
-      case 'Tech':
-        return '/dashboard/tech';
-      case 'Legal Affairs':
-        return '/dashboard/legal';
-      case 'Admin':
-        return '/dashboard/admin';
-      default:
-        return '/dashboard/admin';
-    }
+    // All users redirect to unified dashboard, which will route to appropriate module
+    return '/dashboard';
   }
 
   /**

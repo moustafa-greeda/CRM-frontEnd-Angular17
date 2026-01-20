@@ -1,0 +1,38 @@
+<div class="search-container border-gradient animate-fadeUpSearchContainer">
+  <app-search-input
+    [placeholder]="searchPlaceholder()"
+    (search)="onSearch($event)"
+  ></app-search-input>
+  <div class="dropdown-container">
+    <app-dropdown
+      label="اختر الحالة"
+      [options]="listLeadStatus()"
+      [selectedOption]="selectedLeadStatusName()"
+      (optionSelected)="onLeadStatusSelected($event)"
+    ></app-dropdown>
+    <app-dropdown
+      label="اختر الدولة"
+      [options]="countryNames()"
+      [selectedOption]="selectedCountry()"
+      (optionSelected)="onCountrySelected($event)"
+    ></app-dropdown>
+    <app-dropdown
+      [label]="cityDropdownLabel()"
+      [options]="cityNames()"
+      [selectedOption]="selectedCity()"
+      [disabled]="isCityDisabled()"
+      (optionSelected)="onCitySelected($event)"
+    ></app-dropdown>
+    <app-dropdown
+      label="تاريخ الإجراء"
+      [options]="actionDateFilterLabels()"
+      (optionSelected)="onActionDateFilterSelected($event)"
+    ></app-dropdown>
+    <app-button
+      *ngIf="hasActiveFilters()"
+      [buttonClass]="'btn btn-danger'"
+      [buttonText]="'اعادة تعيين الفلاتر'"
+      (buttonClick)="onReset()"
+    ></app-button>
+  </div>
+</div>

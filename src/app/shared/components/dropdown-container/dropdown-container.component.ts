@@ -5,10 +5,13 @@ import {
   EventEmitter,
   ViewEncapsulation,
 } from '@angular/core';
+import { CommonModule } from '@angular/common';
 import { StatusColorService } from '../../../core/services/common/status-color.service';
 
 @Component({
   selector: 'app-dropdown-container',
+  standalone: true,
+  imports: [CommonModule],
   template: `
     <div class="dropdown-container">
       <select

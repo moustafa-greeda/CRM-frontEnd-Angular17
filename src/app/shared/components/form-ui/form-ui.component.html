@@ -1,268 +1,304 @@
-<div class="form-ui-container" *ngIf="config; else loadingTemplate">
-  <div class="form-header">
-    <button
-      type="button"
-      class="form-close-btn"
-      (click)="onCancel()"
-      title="إغلاق"
-    >
-      <img src="assets/icon/close-icon.svg" alt="إغلاق" loading="lazy" />
-    </button>
-    <h2 class="form-title">{{ config.title }}</h2>
-  </div>
-
-  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-ui">
-    <div class="form-grid">
-      <ng-container *ngFor="let field of config.fields">
-        <div
-          *ngIf="!field.hidden"
-          class="form-field"
-          [class]="'col-span-' + (field.colSpan || 1)"
+@if(activeConfig(); as config) {
+  @if(form(); as formGroup) {
+    <div class="form-ui-container">
+      <div class="form-header">
+        <button
+          type="button"
+          class="form-close-btn"
+          (click)="onCancel()"
+          title="إغلاق"
         >
-          <label class="field-label">
-            {{ field.label }}
-            <span *ngIf="field.required" class="required-asterisk">*</span>
-          </label>
+          <img src="assets/icon/close-icon.svg" alt="إغلاق" loading="lazy" />
+        </button>
+        <h2 class="form-title">{{ config.title }}</h2>
+      </div>
 
-          <!-- Text Input -->
-          <input
-            *ngIf="
-              field.type === 'text' ||
-              field.type === 'email' ||
-              field.type === 'number' ||
-              field.type === 'datetime-local'
-            "
-            [type]="field.type"
-            [formControlName]="field.name"
-            [placeholder]="field.placeholder"
-            class="form-input"
-            [class.error]="
-              form.get(field.name)?.invalid && form.get(field.name)?.touched
-            "
-          />
-
-          <!-- Textarea -->
-          <textarea
-            *ngIf="field.type === 'textarea'"
-            [formControlName]="field.name"
-            [placeholder]="field.placeholder"
-            class="form-textarea"
-            [class.error]="
-              form.get(field.name)?.invalid && form.get(field.name)?.touched
-            "
-          ></textarea>
-
-          <!-- Select Dropdown -->
-          <div *ngIf="field.type === 'select'" class="select-wrapper">
-            <select
-              [formControlName]="field.name"
-              [disabled]="field.disabled ?? false"
-              class="form-select"
-              [class.error]="
-                form.get(field.name)?.invalid && form.get(field.name)?.touched
-              "
-            >
-              <option value="" disabled>{{ field.placeholder }}</option>
-              <option
-                *ngFor="let option of field.options"
-                [value]="option.value"
+      <form [formGroup]="formGroup" (ngSubmit)="onSubmit()" class="form-ui">
+        <div class="form-grid">
+          @for(field of config.fields; track field.name) {
+            @if(!field.hidden) {
+              <div
+                class="form-field"
+                [class]="'col-span-' + (field.colSpan || 1)"
               >
-                {{ option.label }}
-              </option>
-            </select>
-          </div>
+                <label class="field-label">
+                  {{ field.label }}
+                  @if(field.required) {
+                    <span class="required-asterisk">*</span>
+                  }
+                </label>
 
-          <!-- Date Input -->
-          <input
-            *ngIf="field.type === 'date'"
-            type="date"
-            [formControlName]="field.name"
-            class="form-input"
-            [class.error]="
-              form.get(field.name)?.invalid && form.get(field.name)?.touched
-            "
-          />
+                <!-- Text Input -->
+                @if(
+                  field.type === 'text' ||
+                  field.type === 'email' ||
+                  field.type === 'number' ||
+                  field.type === 'datetime-local'
+                ) {
+                  <input
+                    [type]="field.type"
+                    [formControlName]="field.name"
+                    [placeholder]="field.placeholder"
+                    class="form-input"
+                    [class.error]="
+                      formGroup.get(field.name)?.invalid &&
+                      formGroup.get(field.name)?.touched
+                    "
+                  />
+                }
 
-          <!-- Radio Buttons -->
-          <div *ngIf="field.type === 'radio'" class="radio-group">
-            <div *ngFor="let option of field.options" class="radio-option">
-              <input
-                type="radio"
-                [id]="field.name + '_' + option.value"
-                [formControlName]="field.name"
-                [value]="option.value"
-                class="radio-input"
-              />
-              <label
-                [for]="field.name + '_' + option.value"
-                class="radio-label"
-              >
-                {{ option.label }}
-              </label>
-            </div>
-          </div>
+                <!-- Textarea -->
+                @if(field.type === 'textarea') {
+                  <textarea
+                    [formControlName]="field.name"
+                    [placeholder]="field.placeholder"
+                    class="form-textarea"
+                    [class.error]="
+                      formGroup.get(field.name)?.invalid &&
+                      formGroup.get(field.name)?.touched
+                    "
+                  ></textarea>
+                }
 
-          <!-- Two Inputs in One Span -->
-          <div *ngIf="field.type === 'two-inputs'" class="two-inputs-container">
-            <div class="input-group" *ngIf="field.input1">
-              <label class="sub-field-label" *ngIf="field.input1.label">{{
-                field.input1.label
-              }}</label>
-              <input
-                *ngIf="field.input1.type !== 'select'"
-                [type]="field.input1.type || 'text'"
-                [formControlName]="field.input1.name"
-                [placeholder]="field.input1.placeholder"
-                [disabled]="field.input1.disabled ?? false"
-                class="form-input"
-                [class.error]="
-                  form.get(field.input1.name)?.invalid &&
-                  form.get(field.input1.name)?.touched
-                "
-              />
-              <select
-                *ngIf="field.input1.type === 'select'"
-                [formControlName]="field.input1.name"
-                class="form-select"
-                [class.error]="
-                  form.get(field.input1.name)?.invalid &&
-                  form.get(field.input1.name)?.touched
-                "
-              >
-                <option value="" disabled>
-                  {{ field.input1.placeholder }}
-                </option>
-                <option
-                  *ngFor="let option of field.input1.options"
-                  [value]="option.value"
-                >
-                  {{ option.label }}
-                </option>
-              </select>
-            </div>
-            <div class="input-group" *ngIf="field.input2">
-              <label class="sub-field-label" *ngIf="field.input2.label">{{
-                field.input2.label
-              }}</label>
-              <input
-                *ngIf="field.input2.type !== 'select'"
-                [type]="field.input2.type || 'text'"
-                [formControlName]="field.input2.name"
-                [placeholder]="field.input2.placeholder"
-                [disabled]="field.input2.disabled ?? false"
-                class="form-input"
-                [class.error]="
-                  form.get(field.input2.name)?.invalid &&
-                  form.get(field.input2.name)?.touched
-                "
-              />
-              <select
-                *ngIf="field.input2.type === 'select'"
-                [formControlName]="field.input2.name"
-                class="form-select"
-                [class.error]="
-                  form.get(field.input2.name)?.invalid &&
-                  form.get(field.input2.name)?.touched
-                "
-              >
-                <option value="" disabled>
-                  {{ field.input2.placeholder }}
-                </option>
-                <option
-                  *ngFor="let option of field.input2.options"
-                  [value]="option.value"
-                >
-                  {{ option.label }}
-                </option>
-              </select>
-            </div>
-          </div>
+                <!-- Select Dropdown -->
+                @if(field.type === 'select') {
+                  <div class="select-wrapper">
+                    <select
+                      [formControlName]="field.name"
+                      [disabled]="field.disabled ?? false"
+                      class="form-select"
+                      [class.error]="
+                        formGroup.get(field.name)?.invalid &&
+                        formGroup.get(field.name)?.touched
+                      "
+                    >
+                      <option value="" disabled>{{ field.placeholder }}</option>
+                      @for(option of field.options ?? []; track option.value) {
+                        <option [value]="option.value">
+                          {{ option.label }}
+                        </option>
+                      }
+                    </select>
+                  </div>
+                }
 
-          <!-- Checkbox -->
-          <div *ngIf="field.type === 'checkbox'" class="checkbox-group">
-            <div *ngFor="let option of field.options" class="checkbox-option">
-              <input
-                type="checkbox"
-                [id]="field.name + '_' + option.value"
-                [value]="option.value"
-                class="checkbox-input"
-                (change)="onCheckboxChange(field.name, option.value, $event)"
-              />
-              <label
-                [for]="field.name + '_' + option.value"
-                class="checkbox-label"
-              >
-                {{ option.label }}
-              </label>
-            </div>
-          </div>
+                <!-- Date Input -->
+                @if(field.type === 'date') {
+                  <input
+                    type="date"
+                    [formControlName]="field.name"
+                    class="form-input"
+                    [class.error]="
+                      formGroup.get(field.name)?.invalid &&
+                      formGroup.get(field.name)?.touched
+                    "
+                  />
+                }
 
-          <!-- File Input -->
-          <div *ngIf="field.type === 'file'" class="file-input-wrapper">
-            <input
-              type="file"
-              [id]="field.name"
-              [accept]="field.accept"
-              class="file-input"
-              (change)="onFileChange(field.name, $event)"
-              #fileInput
-            />
-            <label [for]="field.name" class="file-input-label">
-              <i class="bi bi-cloud-upload"></i>
-              <span class="file-input-text">{{
-                getFileInputText(field.name)
-              }}</span>
-            </label>
-            <button
-              *ngIf="getSelectedFile(field.name)"
-              type="button"
-              class="file-clear-btn"
-              (click)="clearFile(field.name)"
-              title="إزالة الملف"
-            >
-              <i class="bi bi-x"></i>
-            </button>
-          </div>
+                <!-- Radio Buttons -->
+                @if(field.type === 'radio') {
+                  <div class="radio-group">
+                    @for(option of field.options ?? []; track option.value) {
+                      <div class="radio-option">
+                        <input
+                          type="radio"
+                          [id]="field.name + '_' + option.value"
+                          [formControlName]="field.name"
+                          [value]="option.value"
+                          class="radio-input"
+                        />
+                        <label
+                          [for]="field.name + '_' + option.value"
+                          class="radio-label"
+                        >
+                          {{ option.label }}
+                        </label>
+                      </div>
+                    }
+                  </div>
+                }
 
-          <!-- Error Message -->
-          <div
-            *ngIf="
-              form.get(field.name)?.invalid && form.get(field.name)?.touched
-            "
-            class="error-message"
-          >
-            {{ getFieldError(field.name) }}
-          </div>
+                <!-- Two Inputs in One Span -->
+                @if(field.type === 'two-inputs') {
+                  <div class="two-inputs-container">
+                    @if(field.input1) {
+                      <div class="input-group">
+                        @if(field.input1.label) {
+                          <label class="sub-field-label">
+                            {{ field.input1.label }}
+                          </label>
+                        }
+                        @if(field.input1.type !== 'select') {
+                          <input
+                            [type]="field.input1.type || 'text'"
+                            [formControlName]="field.input1.name"
+                            [placeholder]="field.input1.placeholder"
+                            [disabled]="field.input1.disabled ?? false"
+                            class="form-input"
+                            [class.error]="
+                              formGroup.get(field.input1.name)?.invalid &&
+                              formGroup.get(field.input1.name)?.touched
+                            "
+                          />
+                        } @else {
+                          <select
+                            [formControlName]="field.input1.name"
+                            class="form-select"
+                            [class.error]="
+                              formGroup.get(field.input1.name)?.invalid &&
+                              formGroup.get(field.input1.name)?.touched
+                            "
+                          >
+                            <option value="" disabled>
+                              {{ field.input1.placeholder }}
+                            </option>
+                            @for(option of field.input1.options ?? []; track option.value) {
+                              <option [value]="option.value">
+                                {{ option.label }}
+                              </option>
+                            }
+                          </select>
+                        }
+                      </div>
+                    }
+                    @if(field.input2) {
+                      <div class="input-group">
+                        @if(field.input2.label) {
+                          <label class="sub-field-label">
+                            {{ field.input2.label }}
+                          </label>
+                        }
+                        @if(field.input2.type !== 'select') {
+                          <input
+                            [type]="field.input2.type || 'text'"
+                            [formControlName]="field.input2.name"
+                            [placeholder]="field.input2.placeholder"
+                            [disabled]="field.input2.disabled ?? false"
+                            class="form-input"
+                            [class.error]="
+                              formGroup.get(field.input2.name)?.invalid &&
+                              formGroup.get(field.input2.name)?.touched
+                            "
+                          />
+                        } @else {
+                          <select
+                            [formControlName]="field.input2.name"
+                            class="form-select"
+                            [class.error]="
+                              formGroup.get(field.input2.name)?.invalid &&
+                              formGroup.get(field.input2.name)?.touched
+                            "
+                          >
+                            <option value="" disabled>
+                              {{ field.input2.placeholder }}
+                            </option>
+                            @for(option of field.input2.options ?? []; track option.value) {
+                              <option [value]="option.value">
+                                {{ option.label }}
+                              </option>
+                            }
+                          </select>
+                        }
+                      </div>
+                    }
+                  </div>
+                }
+
+                <!-- Checkbox -->
+                @if(field.type === 'checkbox') {
+                  <div class="checkbox-group">
+                    @for(option of field.options ?? []; track option.value) {
+                      <div class="checkbox-option">
+                        <input
+                          type="checkbox"
+                          [id]="field.name + '_' + option.value"
+                          [value]="option.value"
+                          class="checkbox-input"
+                          (change)="onCheckboxChange(field.name, option.value, $event)"
+                        />
+                        <label
+                          [for]="field.name + '_' + option.value"
+                          class="checkbox-label"
+                        >
+                          {{ option.label }}
+                        </label>
+                      </div>
+                    }
+                  </div>
+                }
+
+                <!-- File Input -->
+                @if(field.type === 'file') {
+                  <div class="file-input-wrapper">
+                    <input
+                      type="file"
+                      [id]="field.name"
+                      [accept]="field.accept"
+                      class="file-input"
+                      (change)="onFileChange(field.name, $event)"
+                      #fileInput
+                    />
+                    <label [for]="field.name" class="file-input-label">
+                      <i class="bi bi-cloud-upload"></i>
+                      <span class="file-input-text">{{
+                        getFileInputText(field.name)
+                      }}</span>
+                    </label>
+                    @if(getSelectedFile(field.name)) {
+                      <button
+                        type="button"
+                        class="file-clear-btn"
+                        (click)="clearFile(field.name)"
+                        title="إزالة الملف"
+                      >
+                        <i class="bi bi-x"></i>
+                      </button>
+                    }
+                  </div>
+                }
+
+                <!-- Error Message -->
+                @if(
+                  formGroup.get(field.name)?.invalid &&
+                  formGroup.get(field.name)?.touched
+                ) {
+                  <div class="error-message">
+                    {{ getFieldError(field.name) }}
+                  </div>
+                }
+              </div>
+            }
+          }
         </div>
-      </ng-container>
-    </div>
 
-    <div class="form-actions">
-      <button
-        type="button"
-        class="btn btn-cancel"
-        (click)="onCancel()"
-        [disabled]="isLoading"
-      >
-        {{ config.cancelText || "إلغاء" }}
-      </button>
-      <button
-        type="submit"
-        class="btn btn-submit"
-        [disabled]="form.invalid || isLoading"
-      >
-        <span *ngIf="isLoading" class="button-spinner"></span>
-        <span>{{
-          isLoading ? "جاري الحفظ..." : config.submitText || "حفظ"
-        }}</span>
-      </button>
+        <div class="form-actions">
+          <button
+            type="button"
+            class="btn btn-cancel"
+            (click)="onCancel()"
+            [disabled]="isLoading()"
+          >
+            {{ config.cancelText || "إلغاء" }}
+          </button>
+          <button
+            type="submit"
+            class="btn btn-submit"
+            [disabled]="formGroup.invalid || isLoading()"
+          >
+            @if(isLoading()) {
+              <span class="button-spinner"></span>
+            }
+            <span>{{
+              isLoading() ? "جاري الحفظ..." : config.submitText || "حفظ"
+            }}</span>
+          </button>
+        </div>
+      </form>
     </div>
-  </form>
-</div>
-
-<ng-template #loadingTemplate>
+  }
+} @else {
   <div class="loading-container">
     <div class="loading-spinner"></div>
     <p>جاري تحميل النموذج...</p>
   </div>
-</ng-template>
+}

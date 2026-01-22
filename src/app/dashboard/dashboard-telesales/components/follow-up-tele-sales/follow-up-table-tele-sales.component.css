@@ -1,0 +1,14 @@
+/* --------------------------- search and dropdown container ---------------- */
+:host ::ng-deep .dropdown-trigger {
+  width: 300px !important;
+}
+
+/* --------------------------- responsive design ---------------------------- */
+@media (max-width: 768px) {
+  .search-container {
+    flex-direction: column-reverse;
+  }
+  .search-container app-search-input {
+    width: 100% !important;
+  }
+}

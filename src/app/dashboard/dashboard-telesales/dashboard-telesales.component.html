@@ -1,41 +1,66 @@
-@if(!isloading()){
-  <section class="dashboard-info">
+<section class="dashboard-info">
   <h1 class="welcome-section">
-    مرحباً بك <span>{{ userInfo().name || "المستخدم" }}</span> في لوحة تحكم -
+    مرحباً بك <span>{{ userInfo.name || "المستخدم" }}</span> في لوحة تحكم -
     TeleSalse
   </h1>
   <!-- count card -->
-  <app-count-card [stats]="dashboardData.stats()"></app-count-card>
+  <app-count-card [stats]="stats"></app-count-card>
   <!-- search and dropdown -->
-  <app-telesales-filter
-    [searchPlaceholder]="searchPlaceholder"
-    [listLeadStatus]="dashboardData.listLeadStatus()"
-    [countryNames]="countryNames()"
-    [cityNames]="cityNames()"
-    [actionDateFilterLabels]="actionDateFilterLabels()"
-    [searchTerm]="searchTerm()"
-    [selectedLeadStatusName]="selectedLeadStatusName()"
-    [selectedCountry]="selectedCountry()"
-    [selectedCity]="selectedCity()"
-    [selectedActionDateFilter]="selectedActionDateFilter()"
-    (searchChange)="onSearch($event)"
-    (leadStatusChange)="onOptionSelected($event)"
-    (countryChange)="onCountrySelected($event)"
-    (cityChange)="onCitySelected($event)"
-    (actionDateFilterChange)="onActionDateFilterSelected($event)"
-    (resetFilters)="onResetFilters()"
-  ></app-telesales-filter>
+  <div class="search-container border-gradient">
+    <app-search-input
+      [placeholder]="searchPlaceholder"
+      (search)="onSearch($event)"
+    ></app-search-input>
+    <div class="dropdown-container">
+      <app-dropdown
+        label="اختر الحالة"
+        [options]="listLeadStatus"
+        [selectedOption]="selectedLeadStatusName"
+        (optionSelected)="onOptionSelected($event)"
+      ></app-dropdown>
+      <app-dropdown
+        label="اختر الدولة"
+        [options]="countryNames"
+        [selectedOption]="selectedCountry"
+        (optionSelected)="onCountrySelected($event)"
+      ></app-dropdown>
+      <app-dropdown
+        [label]="cityDropdownLabel"
+        [options]="cityNames"
+        [selectedOption]="selectedCity"
+        [disabled]="!selectedCountry"
+        (optionSelected)="onCitySelected($event)"
+      ></app-dropdown>
+      <app-dropdown
+        label="تاريخ الإجراء"
+        [options]="actionDateFilterLabels"
+        (optionSelected)="onActionDateFilterSelected($event)"
+      ></app-dropdown>
+      <app-button
+        *ngIf="
+          searchTerm ||
+          selectedCountry ||
+          selectedCity ||
+          selectedActionDateFilter ||
+          selectedLeadStatusName
+        "
+        [buttonClass]="'btn btn-danger'"
+        [buttonText]="'اعادة تعيين الفلاتر'"
+        (buttonClick)="onResetFilters()"
+      ></app-button>
+    </div>
+  </div>
   <!-- table -->
-  <div class="table-container table-responsive" [ngClass]="tableContainerClass()">
+  <div class="table-container table-responsive">
     <app-table
-      *ngIf="!loadingLeads() && !isSearching()"
-      [data]="leadsList()"
+      *ngIf="!loadingLeads && !isSearching"
+      [data]="leadsList"
       [columns]="columns"
-      [pageSize]="pageSize()"
-      [currentPage]="currentPage()"
-      [totalCount]="totalCount()"
+      [pageSize]="pageSize"
+      [currentPage]="currentPage"
+      [totalCount]="totalCount"
       [showDataTable]="true"
-      [hasNoData]="leadsList().length === 0"
+      [hasNoData]="leadsList.length === 0"
       [showIndex]="true"
       [showView]="true"
       [showAdd]="true"
@@ -48,8 +73,8 @@
       [showMeeting]="true"
       [showFollowUp]="true"
       [actionLabels]="actionLabels"
-      [leadStatusOptions]="dashboardData.leadStatusOptions()"
-      [leadStatusColorMap]="leadStatusColorMap()"
+      [leadStatusOptions]="leadStatusOptions"
+      [leadStatusColorMap]="leadStatusColorMap"
       [alwaysEditLeadStatus]="true"
       [actionDisplayMode]="actionDisplayMode"
       (pageChange)="onPageChange($event)"
@@ -73,17 +98,16 @@
   <div class="notifications-interactions-container">
     <!-- Recent Interactions Panel -->
     <app-recent-interactions
-      [recentInteractions]="recentInteractions()"
-      [loadingRecentInteractions]="loadingRecentInteractions()"
+      [recentInteractions]="recentInteractions"
+      [loadingRecentInteractions]="loadingRecentInteractions"
     >
     </app-recent-interactions>
 
     <!-- notifications panel -->
     <app-notification-card
-      [notifications]="notifications()"
-      [loadingNotifications]="loadingNotifications()"
+      [notifications]="notifications"
+      [loadingNotifications]="loadingNotifications"
     >
     </app-notification-card>
   </div>
 </section>
-}

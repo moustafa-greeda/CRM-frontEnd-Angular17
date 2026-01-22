@@ -1,9 +1,6 @@
-import { Component, OnInit, OnDestroy, ChangeDetectorRef, DestroyRef, inject, signal, computed, ChangeDetectionStrategy } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { forkJoin, of } from 'rxjs';
-import { take } from 'rxjs/operators';
-import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
+import { switchMap, catchError } from 'rxjs/operators';
 import {
   ITeleSalseActionResponse,
   ITeleSalseActionRequest,
@@ -11,99 +8,50 @@ import {
 import { DashboardTeleService } from './dashboard.service';
 import { AuthService } from '../../Auth/auth.service';
 import { LeadStatusService } from '../../core/services/common/lead-status.service';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { FormUiComponent } from '../../shared/components/form-ui/form-ui.component';
+import { MatDialog } from '@angular/material/dialog';
 import { NotifyDialogService } from '../../shared/components/notify-dialog-host/notify-dialog.service';
+import {
+  DetailViewDialogComponent,
+  DetailViewDialogData,
+} from '../../shared/components/detail-view-dialog/detail-view-dialog.component';
 import { GetTeleSalesTableDataRequest } from '../../core/Models/teleSalse/get-tele-sales-table-data-request';
+import { ICountry } from '../../core/Models/common/icountry';
+import { ICity } from '../../core/Models/common/country-city.models';
 import { CountryCityService } from '../../core/services/common/country-city.service';
 import { StatusColorService } from '../../core/services/common/status-color.service';
 import { DateUtilsService } from '../../core/services/common/date-utils.service';
 import { AssignLeadsToSalesRequest } from '../../core/Models/teleSalse/tele-sales-dashboard.types';
 import { GetAllSalesService } from '../../core/services/common/get-all-sales.service';
 import { CurruncyService } from '../../core/services/common/curruncy.service';
+import { ICall } from '../../core/Models/teleSalse/ICall';
+import { ICallStatus } from '../../core/Models/common/call-status';
 import { CallStatusService } from '../../core/services/common/call-status.service';
-import { CallDialogService } from '../../pages/pages-tele/calls/call-dialog.service';
-import { CountCardComponent } from '../../shared/components/count-card/count-card.component';
-import { TableComponent } from '../../shared/components/table/table.component';
-import { RecentInteractionsComponent } from '../../shared/components/recent-interactions/recent-interactions.component';
-import { NotificationCardComponent } from '../../shared/components/notification-card/notification-card.component';
-import { FormsModule, ReactiveFormsModule } from '@angular/forms';
-import { MatPaginatorModule } from '@angular/material/paginator';
-import { TelesalesFilterComponent } from './telesales-filter/telesales-filter.component';
-import { ActionTypeService } from './services/action-type.service';
-import { NotificationUtilsService } from './services/notification.service';
-import { TeleActionDialogService } from './services/tele-action-dialog.service';
-import { AssignSalesDialogService } from './services/assign-sales-dialog.service';
-import { LeadViewService } from './services/lead-view.service';
-import { LeadStatusEditorService } from './services/lead-status-editor.service';
-import { DashboardDataService } from './services/dashboard-data.service';
+import { CallDialogService } from './components/calls/call-dialog.service';
 
 @Component({
   selector: 'app-dashboard-telesales',
-  standalone: true,
-  imports: [
-    CommonModule,
-    RouterModule,
-    FormsModule,
-    ReactiveFormsModule,
-    MatDialogModule,
-    MatPaginatorModule,
-    CountCardComponent,
-    TableComponent,
-    RecentInteractionsComponent,
-    NotificationCardComponent,
-    TelesalesFilterComponent,
-  ],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   templateUrl: './dashboard-telesales.component.html',
   styleUrls: [
     './dashboard-telesales.component.css',
     '../sharedStyleDashboard.css',
   ],
 })
-export class DashboardTelesalesComponent implements OnInit, OnDestroy {
-  // ========================================
-  // Dependency Injection
-  // ========================================
-  private readonly _dashboardService = inject(DashboardTeleService);
-  private readonly _authService = inject(AuthService);
-  
-  // Track first table load to disable animation after initial render
-  private readonly isFirstTableLoad = signal<boolean>(true);
-  readonly tableContainerClass = computed(() => 
-    this.isFirstTableLoad() ? '' : 'no-table-animation'
-  );
-  private readonly notify = inject(NotifyDialogService);
-  private readonly statusColorService = inject(StatusColorService);
-  private readonly dateUtils = inject(DateUtilsService);
-
-  private readonly _callDialogService = inject(CallDialogService);
-  private readonly actionTypeService = inject(ActionTypeService);
-  private readonly notificationUtils = inject(NotificationUtilsService);
-  private readonly teleActionDialog = inject(TeleActionDialogService);
-  private readonly assignSalesDialog = inject(AssignSalesDialogService);
-  private readonly leadViewService = inject(LeadViewService);
-  private readonly leadStatusEditor = inject(LeadStatusEditorService);
-  readonly dashboardData = inject(DashboardDataService);
-  private readonly cdr = inject(ChangeDetectorRef);
-  private readonly destroyRef = inject(DestroyRef);
-
-  // ✅ Loading state management
-  readonly isloading = signal<boolean>(true);
-  private readonly criticalDataLoaded = signal<boolean>(false);
-  private readonly leadsDataLoaded = signal<boolean>(false);
-  
-  // ✅ Timeout reference for cleanup (prevent memory leak)
-  private secondaryDataTimeout?: ReturnType<typeof setTimeout>;
-
-  // ========================================
-  // Static Data
-  // ========================================
-  readonly searchPlaceholder = 'ابحث عن العملاء';
-  readonly actionLabels = {
+export class DashboardTelesalesComponent implements OnInit {
+  stats: any[] = [];
+  searchPlaceholder = 'ابحث عن العملاء';
+  listLeadStatus: any[] = [];
+  leadStatusMap: Map<string, number> = new Map();
+  leadsList: any[] = [];
+  salesList: any[] = [];
+  currencyList: any[] = [];
+  callStatusList: ICallStatus[] = [];
+  actionLabels = {
     edit: 'تعديل الميزانية',
     add: 'تعيين موظف سيلز',
   };
-  readonly columns: any[] = [
+
+  columns: any[] = [
     { key: 'contactName', header: 'الاسم' },
     { key: 'assigndate', header: 'تاريخ التعيين', formatter: 'date' },
     { key: 'leadStatus', header: 'حالة العميل المحتمل' },
@@ -113,181 +61,229 @@ export class DashboardTelesalesComponent implements OnInit, OnDestroy {
     { key: 'actionNote', header: 'ملاحظة الإجراء' },
     { key: 'actions', header: 'الإجراءات' },
   ];
-  readonly actionDisplayMode: 'inline' | 'dropdown' = 'dropdown';
-  readonly actionDateFilterOptions: { value: number; label: string }[] = [
+
+  // Action display mode for table
+  actionDisplayMode: 'inline' | 'dropdown' = 'dropdown';
+  // Filters
+  countryList: ICountry[] = [];
+  cityList: ICity[] = [];
+  actionDateFilterOptions: { value: number; label: string }[] = [
     { value: 0, label: 'اليوم' },
     { value: 1, label: 'هذا الأسبوع' },
     { value: 2, label: 'هذا الشهر' },
   ];
+  selectedActionDateFilter: number | null = null;
 
-  // ========================================
-  // State Signals
-  // ========================================
-  readonly leadsList = signal<any[]>([]);
-  readonly selectedActionDateFilter = signal<number | null>(null);
-  readonly pageSize = signal<number>(10);
-  readonly currentPage = signal<number>(1);
-  readonly totalCount = signal<number>(0);
-  readonly loadingLeads = signal<boolean>(false);
-  readonly teleSalesActions = signal<ITeleSalseActionResponse | null>(null);
-  readonly loadingActions = signal<boolean>(false);
-  readonly searchTerm = signal<string>('');
-  readonly selectedLeadStatusName = signal<string>('');
-  readonly isSearching = signal<boolean>(false);
-  readonly selectedCountry = signal<string>('');
-  readonly selectedCity = signal<string>('');
-  readonly userInfo = signal<any>({ name: this._authService.getUsername() || 'المستخدم' });
-  readonly recentInteractions = signal<any[]>([]);
-  readonly loadingRecentInteractions = signal<boolean>(false);
-  readonly notifications = signal<any[]>([]);
-  readonly loadingNotifications = signal<boolean>(false);
+  // Derived option lists for dropdowns (template-safe)
+  get countryNames(): string[] {
+    return (this.countryList || []).map((c: any) => c?.name).filter(Boolean);
+  }
 
-  // ========================================
-  // Computed Signals
-  // ========================================
-  readonly countryNames = computed(() => 
-    (this.dashboardData.countryList() || []).map((c: any) => c?.name).filter(Boolean)
-  );
+  get cityNames(): string[] {
+    return (this.cityList || []).map((c: any) => c?.name).filter(Boolean);
+  }
 
-  readonly cityNames = computed(() => 
-    (this.dashboardData.cityList() || []).map((c: any) => c?.name).filter(Boolean)
-  );
+  get cityDropdownLabel(): string {
+    return this.selectedCountry ? 'اختر المدينة' : 'يجب اختيار الدولة أولاً';
+  }
 
-  readonly actionDateFilterLabels = computed(() => 
-    this.actionDateFilterOptions.map((opt) => opt.label)
-  );
+  // Get action date filter labels for dropdown display
+  get actionDateFilterLabels(): string[] {
+    return this.actionDateFilterOptions.map((opt) => opt.label);
+  }
 
-  readonly leadStatusColorMap = computed(() => 
-    this.statusColorService.getAllStatusColors()
-  );
+  onResetFilters(): void {
+    // Reset all filters
+    this.searchTerm = '';
+    this.selectedCountry = '';
+    this.selectedCity = '';
+    this.selectedActionDateFilter = null;
+    this.selectedLeadStatusName = '';
+    this.currentPage = 1;
+
+    // Clear city list when country is reset
+    this.cityList = [];
+
+    // Reload data with reset filters
+    const username = this._authService.getUsername() || '';
+    this.loadLeadsData(username);
+  }
+  pageSize = 10;
+  currentPage = 1; // Start from 1-based
+  totalCount = 0;
+  loadingLeads = false;
+  teleSalesActions: ITeleSalseActionResponse | null = null;
+  loadingActions = false;
+
+  // Search and filter properties
+  searchTerm: string = '';
+  selectedLeadStatusName: string = '';
+  isSearching: boolean = false;
+  selectedCountry: string = '';
+  selectedCity: string = '';
+
+  // User info
+  userInfo: any = { name: this._authService.getUsername() || 'المستخدم' };
+
+  // Recent interactions
+  recentInteractions: any[] = [];
+  loadingRecentInteractions: boolean = false;
+
+  // Notifications
+  notifications: any[] = [];
+  loadingNotifications: boolean = false;
+
+  // Lead status editing
+  editingLeadId: number | null = null;
+  selectedLeadForEdit: any = null;
+  leadStatusOptions: string[] = [];
+  // Use the service for status colors instead of inline map
+  get leadStatusColorMap(): Record<string, string> {
+    return this.statusColorService.getAllStatusColors();
+  }
+
+  constructor(
+    private _dashboardService: DashboardTeleService,
+    private _authService: AuthService,
+    private _leadStatusService: LeadStatusService,
+    private _callStatusService: CallStatusService,
+    private dialog: MatDialog,
+    private notify: NotifyDialogService,
+    private _countryCityService: CountryCityService,
+    private statusColorService: StatusColorService,
+    private dateUtils: DateUtilsService,
+    private _salesService: GetAllSalesService,
+    private _currencyService: CurruncyService,
+    private _callDialogService: CallDialogService,
+    private cdr: ChangeDetectorRef
+  ) {}
 
   ngOnInit(): void {
+    // Get username from auth service
     const username = this._authService.getUsername();
-    
-    // ✅ Show loader immediately
-    this.isloading.set(true);
-    
-    // ✅ CRITICAL: Load essential data first (parallel)
-    this.loadCriticalData(username);
-    
-    // ✅ LAZY: Load non-critical data after a short delay (won't affect loader)
-    // Store timeout reference for cleanup in ngOnDestroy
-    this.secondaryDataTimeout = setTimeout(() => this.loadSecondaryData(), 500);
-  }
 
-  ngOnDestroy(): void {
-    // ✅ Clear timeout to prevent memory leak
-    if (this.secondaryDataTimeout) {
-      clearTimeout(this.secondaryDataTimeout);
-      this.secondaryDataTimeout = undefined;
-    }
-  }
-
-  /**
-   * ✅ Load CRITICAL data in parallel (faster loading)
-   */
-  private loadCriticalData(username: string | null): void {
-    if (!username) {
-      this.isloading.set(false);
-      return;
-    }
-
-    // Load most important data in parallel using forkJoin
     forkJoin({
-      stats: this.dashboardData.loadDashboardStatsObservable().pipe(take(1)),
-      leadStatuses: this.dashboardData.loadLeadStatusesObservable().pipe(take(1)),
-      callStatuses: this.dashboardData.loadCallStatusesObservable().pipe(take(1)),
-      countries: this.dashboardData.loadCountriesObservable().pipe(take(1)),
-      salesList: this.dashboardData.loadSalesListObservable().pipe(take(1)),
-      currencyList: this.dashboardData.loadCurrencyListObservable().pipe(take(1)),
+      totalCalls: this._dashboardService.getCallCountTele(),
+      closedLeads: this._dashboardService.GetMyClosedLeads(),
+      TotalSales: this._dashboardService.GettelesalesTotalLeadCount(),
+      AverageCallDuration:
+        this._dashboardService.GetAverageCallDurationThisMonth(),
     }).subscribe({
-      next: () => {
-        // Mark critical data as loaded
-        this.criticalDataLoaded.set(true);
-        this.checkAndHideLoader();
-        
-        // Load leads data after critical data is loaded
-        this.loadLeadsData(username);
+      next: (res) => {
+        this.stats = [
+          {
+            title: 'Total Calls This Month',
+            count: res.totalCalls?.data?.totalLeadsAssignedThisMonth || 0,
+            icon: 'bi-telephone',
+          },
+          {
+            title: 'Total closed leads this month',
+            count: res.closedLeads?.data?.closedLeadsThisMonth || 0,
+            icon: 'bi bi-exclamation-triangle',
+          },
+          {
+            title: 'Total Clients',
+            count: res.TotalSales?.data?.count || 0,
+            icon: 'bi-person-fill-add',
+          },
+          {
+            title: 'Avarage call distribution this month',
+            count: res.AverageCallDuration?.data?.averageCallDuration || 0,
+            icon: 'bi bi-bar-chart',
+          },
+        ];
+        // call get list lead status
+        this.getListLeadStatus();
       },
-      error: () => {
-        // Even on error, mark as loaded to show UI
-        this.criticalDataLoaded.set(true);
-        this.checkAndHideLoader();
-        
-        if (username) {
-          this.loadLeadsData(username);
-        }
+      error: (error) => {
+        console.error('Error loading dashboard stats:', error);
+        // Set default stats on error
+        this.stats = [
+          {
+            title: 'Total Calls This Month',
+            count: 0,
+            icon: 'bi-telephone',
+          },
+          {
+            title: 'Total closed leads this month',
+            count: 0,
+            icon: 'bi bi-exclamation-triangle',
+          },
+          {
+            title: 'Total Clients',
+            count: 0,
+            icon: 'bi-person-fill-add',
+          },
+          {
+            title: 'Avarage call distribution this month',
+            count: 0,
+            icon: 'bi bi-bar-chart',
+          },
+        ];
+        this.getListLeadStatus();
       },
     });
-  }
+    // call get call status list
+    this.getCallStatusList();
 
-  /**
-   * ✅ Check if all critical data is loaded and hide loader
-   */
-  private checkAndHideLoader(): void {
-    if (this.criticalDataLoaded() && this.leadsDataLoaded()) {
-      this.isloading.set(false);
-    }
-  }
-
-  /**
-   * ✅ Load SECONDARY data (lazy - not blocking UI)
-   */
-  private loadSecondaryData(): void {
-    // Load less important data in parallel (won't block initial render)
-    forkJoin({
-      actions: of(null).pipe(take(1)), // Load when needed
-      interactions: this._dashboardService.getRecentInteractions().pipe(take(1)),
-      notifications: this._dashboardService.getNotifications().pipe(take(1)),
-    }).subscribe({
-      next: ({ interactions, notifications }) => {
-        if (interactions?.succeeded) {
-          this.recentInteractions.set(interactions.data);
-        }
-        if (notifications?.succeeded) {
-          this.notifications.set(notifications.data.items.map((notification: any) => ({
-            id: notification.id,
-            type: notification.type,
-            typeText: this.getNotificationTypeText(notification.type),
-            message: notification.body,
-            time: this.formatNotificationTime(notification.createdAt),
-            isRead: notification.isRead,
-            title: notification.title,
-            createdAt: notification.createdAt,
-          })));
-        }
-        this.loadingRecentInteractions.set(false);
-        this.loadingNotifications.set(false);
-      },
-      error: () => {
-        this.recentInteractions.set([]);
-        this.notifications.set([]);
-        this.loadingRecentInteractions.set(false);
-        this.loadingNotifications.set(false);
-      },
-    });
-
-    // Load actions separately (may take longer)
+    // Load tele sales actions
     this.loadTeleSalesActions();
+
+    // Load recent interactions
+    this.loadRecentInteractions();
+
+    // Load notifications
+    this.loadNotifications();
+
+    // Load countries
+    this.loadCountries();
+
+    // Load sales list
+    this.getSalesList();
+
+    // Load currency list
+    this.getCurrencyList();
+
+    // Load leads data
+    if (username) {
+      this.loadLeadsData(username);
+    }
   }
 
-  // ========================================
-  // Data Loading Methods
-  // ========================================
-  // ========================================
-  // Search and Filter Handlers
-  // ========================================
+  //========================================= get call status list =================================
+  getCallStatusList(): void {
+    this._callStatusService.getAllCallStatus().subscribe({
+      next: (response) => {
+        if (response.succeeded && response.data) {
+          // API returns array of objects with id and status
+          this.callStatusList = response.data.map(
+            (item: any): ICallStatus => ({
+              id: item.id,
+              status: item.status,
+            })
+          );
+        } else {
+          this.callStatusList = [];
+        }
+      },
+      error: (error) => {
+        console.error('Error loading call statuses:', error);
+        this.callStatusList = [];
+      },
+    });
+  }
+  //========================================= search and filter =================================
   onCountrySelected(option: string): void {
-    this.selectedCountry.set(option || '');
-    this.selectedCity.set('');
-    this.currentPage.set(1);
+    this.selectedCountry = option || '';
+    this.selectedCity = '';
+    this.currentPage = 1;
 
     // Find country ID and load cities for this country
-    const selectedCountry = this.dashboardData.countryList().find((c) => c.name === option);
+    const selectedCountry = this.countryList.find((c) => c.name === option);
     if (selectedCountry && selectedCountry.id != null) {
-      this.dashboardData.loadCitiesByCountry(selectedCountry.id, this.destroyRef);
+      this.loadCitiesByCountry(selectedCountry.id);
     } else {
-      this.dashboardData.cityList.set([]);
+      this.cityList = [];
       const username = this._authService.getUsername() || '';
       this.loadLeadsData(username);
       return;
@@ -299,11 +295,11 @@ export class DashboardTelesalesComponent implements OnInit, OnDestroy {
   }
 
   onCitySelected(option: string): void {
-    if (!this.selectedCountry()) {
+    if (!this.selectedCountry) {
       return;
     }
-    this.selectedCity.set(option || '');
-    this.currentPage.set(1);
+    this.selectedCity = option || '';
+    this.currentPage = 1;
 
     // Get data from backend with city filter
     const username = this._authService.getUsername() || '';
@@ -318,65 +314,105 @@ export class DashboardTelesalesComponent implements OnInit, OnDestroy {
     const selectedOption = this.actionDateFilterOptions.find(
       (opt) => opt.label === selectedOptionValue
     );
-    this.selectedActionDateFilter.set(selectedOption
+    this.selectedActionDateFilter = selectedOption
       ? selectedOption.value
-      : null);
-    this.currentPage.set(1);
+      : null;
+    this.currentPage = 1;
 
     // Get data from backend with date filter
     const username = this._authService.getUsername() || '';
     this.loadLeadsData(username);
   }
 
+  private loadCountries(): void {
+    this._countryCityService.getAllCountries().subscribe({
+      next: (response) => {
+        if (response.succeeded) {
+          this.countryList = response.data;
+        }
+      },
+      error: () => {
+        this.countryList = [];
+      },
+    });
+  }
+
+  private loadCitiesByCountry(countryId: number): void {
+    this._countryCityService.getCitiesByCountryId(countryId).subscribe({
+      next: (response) => {
+        if (response.succeeded) {
+          this.cityList = response.data;
+        }
+      },
+      error: () => {
+        this.cityList = [];
+      },
+    });
+  }
   onSearch(event: any): void {
     // Handle search functionality
-    this.searchTerm.set(event.target?.value || event);
-    this.currentPage.set(1); // Reset to first page on search
+    this.searchTerm = event.target?.value || event;
+    this.currentPage = 1; // Reset to first page on search
 
     // Get data from backend with search filter
     const username = this._authService.getUsername() || '';
     this.loadLeadsData(username);
   }
 
+  getListLeadStatus(): void {
+    this._leadStatusService.getAllLeadStatus().subscribe({
+      next: (response) => {
+        this.listLeadStatus = response.data.map((status) => status.name);
+        this.leadStatusOptions = response.data.map((status) => status.name); // For editing dropdown
+        // Create map for quick lookup of ID by name
+        response.data.forEach((status) => {
+          this.leadStatusMap.set(status.name, status.id!);
+        });
+      },
+      error: () => {
+        // Handle error silently or show user-friendly message
+      },
+    });
+  }
 
+  // ========================================= get sales list =================================
+  getSalesList(): void {
+    this._salesService.getAllSales().subscribe({
+      next: (response) => {
+        this.salesList = response.data;
+      },
+    });
+  }
+  // ========================================= get currency list =================================
+  getCurrencyList(): void {
+    this._currencyService.getCurruncy().subscribe({
+      next: (response) => {
+        this.currencyList = response.data;
+      },
+    });
+  }
+  // ========================================= option selected =================================
   onOptionSelected(option: string): void {
     // Get the ID from the map
-    this.selectedLeadStatusName.set(option || '');
-    this.currentPage.set(1); // Reset to first page on filter change
+    this.selectedLeadStatusName = option || '';
+    this.currentPage = 1; // Reset to first page on filter change
 
     // Get data from backend with lead status filter
     const username = this._authService.getUsername() || '';
     this.loadLeadsData(username);
   }
 
-  onResetFilters(): void {
-    // Reset all filters
-    this.searchTerm.set('');
-    this.selectedCountry.set('');
-    this.selectedCity.set('');
-    this.selectedActionDateFilter.set(null);
-    this.selectedLeadStatusName.set('');
-    this.currentPage.set(1);
-
-    // Clear city list when country is reset
-    this.dashboardData.cityList.set([]);
-
-    // Reload data with reset filters
-    const username = this._authService.getUsername() || '';
-    this.loadLeadsData(username);
-  }
-
   onPageChange(event: any): void {
     // Prevent pagination if no data
-    if (this.totalCount() === 0) {
+    if (this.totalCount === 0) {
       return;
     }
 
-    this.currentPage.set(event.pageIndex + 1); // Convert from 0-based to 1-based
+    this.currentPage = event.pageIndex + 1; // Convert from 0-based to 1-based
 
     // Check if page size changed
-    if (event.pageSize && event.pageSize !== this.pageSize()) {
-      this.pageSize.set(event.pageSize);
+    if (event.pageSize && event.pageSize !== this.pageSize) {
+      this.pageSize = event.pageSize;
     }
 
     // Fetch current page from API (server-side paging)
@@ -385,29 +421,34 @@ export class DashboardTelesalesComponent implements OnInit, OnDestroy {
   }
 
   onPageSizeChange(newPageSize: number): void {
-    this.pageSize.set(newPageSize);
-    this.currentPage.set(1); // Reset to first page (1-based)
+    this.pageSize = newPageSize;
+    this.currentPage = 1; // Reset to first page (1-based)
 
     // Fetch first page with new page size
     const username = this._authService.getUsername() || '';
     this.loadLeadsData(username);
   }
 
+  getNotificationIcon(type: string): string {
+    switch (type) {
+      case 'reminder':
+        return 'bi-info-circle';
+      case 'warning':
+        return 'bi-exclamation-triangle';
+      case 'info':
+        return 'bi-info-circle';
+      default:
+        return 'bi-info-circle';
+    }
+  }
 
   loadLeadsData(username: string): void {
-    // Disable table animation after first load
-    if (this.isFirstTableLoad()) {
-      setTimeout(() => {
-        this.isFirstTableLoad.set(false);
-      }, 1000); // Wait for initial animation to complete
-    }
-
     // Always load data from backend (no client-side filtering)
-    this.loadingLeads.set(true);
-    this.isSearching.set(true);
+    this.loadingLeads = true;
+    this.isSearching = true;
 
     // Get date filter for API
-    const dateFilter = this.selectedActionDateFilter() ?? undefined;
+    const dateFilter = this.selectedActionDateFilter ?? undefined;
 
     // Debug: log the actionDateFilter being sent
     if (dateFilter !== undefined) {
@@ -425,22 +466,20 @@ export class DashboardTelesalesComponent implements OnInit, OnDestroy {
     }
 
     const payload: GetTeleSalesTableDataRequest = {
-      contactName: this.searchTerm() || '',
-      searchKeyword: this.searchTerm() || '',
+      contactName: this.searchTerm || '',
+      searchKeyword: this.searchTerm || '',
       assigndate: '',
-      leadStatus: this.selectedLeadStatusName() || '',
-      country: this.selectedCountry() || '',
-      city: this.selectedCity() || '',
+      leadStatus: this.selectedLeadStatusName || '',
+      country: this.selectedCountry || '',
+      city: this.selectedCity || '',
       lastActionTime: '', // Keep for backward compatibility if needed
       actionNote: '',
       actionDateFilter: dateFilter, // Pass date filter number (0, 1, or 2) to API
-      pageIndex: this.currentPage(),
-      pageSize: this.pageSize(),
+      pageIndex: this.currentPage,
+      pageSize: this.pageSize,
     };
 
-    this._dashboardService.getLeadsBelongsToTeleSales(payload)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
+    this._dashboardService.getLeadsBelongsToTeleSales(payload).subscribe({
       next: (response) => {
         if (response && response.data) {
           const items = Array.isArray(response.data.items)
@@ -449,38 +488,30 @@ export class DashboardTelesalesComponent implements OnInit, OnDestroy {
             ? response.data
             : [];
 
-          this.totalCount.set(response.data.totalCount ?? items.length ?? 0);
+          this.totalCount = response.data.totalCount ?? items.length ?? 0;
 
           // Assign page items directly (server-side paging), with date formatting
-          this.leadsList.set((items || []).map((lead: any) => ({
+          this.leadsList = (items || []).map((lead: any) => ({
             ...lead,
             assigndate: this.formatCellValue(lead.assigndate, 'date'),
             lastActionTime: this.formatCellValue(
               lead.lastActionTime,
               'datetime'
             ),
-          })));
+          }));
         } else {
-          this.leadsList.set([]);
-          this.totalCount.set(0);
+          this.leadsList = [];
+          this.totalCount = 0;
         }
 
-        this.loadingLeads.set(false);
-        this.isSearching.set(false);
-        
-        // ✅ Mark leads data as loaded
-        this.leadsDataLoaded.set(true);
-        this.checkAndHideLoader();
+        this.loadingLeads = false;
+        this.isSearching = false;
       },
       error: () => {
-        this.loadingLeads.set(false);
-        this.isSearching.set(false);
-        this.leadsList.set([]);
-        this.totalCount.set(0);
-        
-        // ✅ Even on error, mark as loaded to show UI
-        this.leadsDataLoaded.set(true);
-        this.checkAndHideLoader();
+        this.loadingLeads = false;
+        this.isSearching = false;
+        this.leadsList = [];
+        this.totalCount = 0;
       },
     });
   }
@@ -490,18 +521,17 @@ export class DashboardTelesalesComponent implements OnInit, OnDestroy {
     startDate?: string,
     endDate?: string
   ): void {
-    this.loadingActions.set(true);
+    this.loadingActions = true;
     this._dashboardService
       .getTeleSalesActions(employeeId, startDate, endDate)
-      .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: (response) => {
-          this.teleSalesActions.set(response);
-          console.log(this.teleSalesActions());
-          this.loadingActions.set(false);
+          this.teleSalesActions = response;
+          console.log(this.teleSalesActions);
+          this.loadingActions = false;
         },
         error: () => {
-          this.loadingActions.set(false);
+          this.loadingActions = false;
         },
       });
   }
@@ -511,8 +541,7 @@ export class DashboardTelesalesComponent implements OnInit, OnDestroy {
     actionTypeId: number;
     actionNotes: string;
   }): void {
-    const currentActions = this.teleSalesActions();
-    if (!currentActions || !currentActions.data) {
+    if (!this.teleSalesActions || !this.teleSalesActions.data) {
       return;
     }
 
@@ -525,7 +554,7 @@ export class DashboardTelesalesComponent implements OnInit, OnDestroy {
       actionDate: nowIso,
     };
 
-    const groups: any[] = currentActions.data.actionsGrouped || [];
+    const groups: any[] = this.teleSalesActions.data.actionsGrouped || [];
     let group = groups.find((g: any) => g.actionTypeId === action.actionTypeId);
     if (!group) {
       group = {
@@ -542,17 +571,16 @@ export class DashboardTelesalesComponent implements OnInit, OnDestroy {
       ...g,
       actions: [...(g.actions || [])],
     }));
-    this.teleSalesActions.set({
-      ...(currentActions as any),
+    this.teleSalesActions = {
+      ...(this.teleSalesActions as any),
       data: {
-        ...(currentActions as any).data,
+        ...(this.teleSalesActions as any).data,
         actionsGrouped: clonedGroups,
       },
-    } as ITeleSalseActionResponse);
+    } as ITeleSalseActionResponse;
 
     // Optimistic recent interactions
-    const currentInteractions = this.recentInteractions();
-    if (Array.isArray(currentInteractions)) {
+    if (Array.isArray(this.recentInteractions)) {
       const actionTypeKey = this.getActionTypeKeyById(action.actionTypeId);
       const contactName = this.tryGetContactNameByLeadId(action.leadId) || '';
       const recentItem: any = {
@@ -561,69 +589,57 @@ export class DashboardTelesalesComponent implements OnInit, OnDestroy {
         contactName,
         actionText: action.actionNotes,
       };
-      this.recentInteractions.set([recentItem, ...currentInteractions]);
+      this.recentInteractions = [recentItem, ...this.recentInteractions];
     }
-
-    // Update the lead's lastActionTime in the table without reloading
-    this.updateLeadLastActionTime(action.leadId, nowIso, action.actionNotes);
 
     this.cdr.detectChanges();
   }
 
-  /**
-   * Update lead's last action time in the table optimistically
-   */
-  private updateLeadLastActionTime(leadId: number, actionTime: string, actionNote: string): void {
-    const currentLeads = this.leadsList();
-    const updatedLeads = currentLeads.map((lead: any) => {
-      if (lead.leadId === leadId || lead.id === leadId) {
-        return {
-          ...lead,
-          lastActionTime: this.formatCellValue(actionTime, 'datetime'),
-          actionNote: actionNote,
-        };
-      }
-      return lead;
-    });
-    this.leadsList.set(updatedLeads);
-  }
-
   private getActionTypeKeyById(actionTypeId: number): string {
-    return this.actionTypeService.getActionKey(actionTypeId);
+    switch (actionTypeId) {
+      case 1:
+        return 'Call';
+      case 2:
+        return 'Email';
+      case 3:
+        return 'Meeting';
+      case 4:
+        return 'Notes';
+      case 5:
+        return 'FollowUp';
+      default:
+        return 'Action';
+    }
   }
 
   private tryGetContactNameByLeadId(leadId: number): string | null {
-    const lead = this.leadsList().find((l) => (l.leadId ?? l.id) === leadId);
+    const lead = this.leadsList.find((l) => (l.leadId ?? l.id) === leadId);
     return lead?.contactName || lead?.name || null;
   }
 
   // Load recent interactions from API
   loadRecentInteractions(): void {
-    this.loadingRecentInteractions.set(true);
-    this._dashboardService.getRecentInteractions()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
+    this.loadingRecentInteractions = true;
+    this._dashboardService.getRecentInteractions().subscribe({
       next: (response) => {
         if (response.succeeded) {
-          this.recentInteractions.set(response.data);
+          this.recentInteractions = response.data;
         }
-        this.loadingRecentInteractions.set(false);
+        this.loadingRecentInteractions = false;
       },
       error: () => {
-        this.loadingRecentInteractions.set(false);
+        this.loadingRecentInteractions = false;
       },
     });
   }
 
   // Load notifications from API
   loadNotifications(): void {
-    this.loadingNotifications.set(true);
-    this._dashboardService.getNotifications()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
+    this.loadingNotifications = true;
+    this._dashboardService.getNotifications().subscribe({
       next: (response) => {
         if (response.succeeded) {
-          this.notifications.set(response.data.items.map((notification) => ({
+          this.notifications = response.data.items.map((notification) => ({
             id: notification.id,
             type: notification.type,
             typeText: this.getNotificationTypeText(notification.type),
@@ -632,59 +648,524 @@ export class DashboardTelesalesComponent implements OnInit, OnDestroy {
             isRead: notification.isRead,
             title: notification.title,
             createdAt: notification.createdAt,
-          })));
+          }));
         }
-        this.loadingNotifications.set(false);
+        this.loadingNotifications = false;
       },
       error: () => {
-        this.loadingNotifications.set(false);
+        this.loadingNotifications = false;
       },
     });
   }
 
-  // Notification utilities
+  // Get notification type text in Arabic (inline mapping)
   getNotificationTypeText(type: string): string {
-    return this.notificationUtils.getNotificationTypeText(type);
+    switch (type) {
+      case 'login':
+        return 'تسجيل الدخول';
+      case 'reminder':
+        return 'تذكير';
+      case 'warning':
+        return 'تحذير';
+      case 'info':
+        return 'معلومة';
+      case 'assignment':
+        return 'تعيين';
+      case 'status_change':
+        return 'تغيير الحالة';
+      default:
+        return 'تنبيه';
+    }
   }
 
+  // Format notification time
   formatNotificationTime(dateString: string): string {
-    return this.notificationUtils.formatNotificationTime(dateString);
+    const date = new Date(dateString);
+    const now = new Date();
+    const diff = now.getTime() - date.getTime();
+    const minutes = Math.floor(diff / 60000);
+    const hours = Math.floor(diff / 3600000);
+    const days = Math.floor(diff / 86400000);
+
+    if (minutes < 1) {
+      return 'الآن';
+    } else if (minutes < 60) {
+      return `منذ ${minutes} دقيقة`;
+    } else if (hours < 24) {
+      return `منذ ${hours} ساعة`;
+    } else if (days < 7) {
+      return `منذ ${days} يوم`;
+    } else {
+      return date.toLocaleDateString('ar-EG');
+    }
   }
 
-  getNotificationIcon(type: string): string {
-    return this.notificationUtils.getNotificationIcon(type);
+  // Get lead name by ID from leadsList
+  getLeadNameByLeadId(leadId: number): string {
+    const lead = this.leadsList.find((l) => l.id === leadId);
+    if (lead) {
+      return lead.contactName;
+    } else {
+      return `Lead #${leadId}`;
+    }
   }
 
-  // ========================================
-  // View Lead Actions Dialog
-  // ========================================
+  // Show all notifications/actions for a selected user
   onView(lead: any): void {
-    this.leadViewService.showLeadActionsDialog(lead, this.teleSalesActions());
+    const id = lead?.leadId ?? lead?.id;
+    if (!id) {
+      console.warn('onView: No leadId or id found in lead object', lead);
+      return;
+    }
+
+    // Filter actions for this specific lead and map with action type info
+    const leadActions =
+      this.teleSalesActions?.data?.actionsGrouped?.flatMap((group: any) =>
+        group.actions
+          .filter((action: any) => (action.leadId ?? action.id) === id)
+          .map((action: any) => ({
+            ...action,
+            actionTypeName: group.actionTypeName,
+            actionTypeId: group.actionTypeId,
+          }))
+      ) || [];
+
+    if (leadActions.length === 0) {
+      this.notify.open({
+        type: 'error',
+        title: 'لا توجد إجراءات',
+        description: 'لا توجد إجراءات مسجلة لهذا العميل',
+      });
+      return;
+    }
+
+    // Format actions data for detail-view-dialog
+    const actionsData: Record<string, any> = {};
+    const fields: Array<{
+      key: string;
+      label: string;
+      type?: 'text' | 'url' | 'email' | 'phone' | 'date' | 'boolean' | 'json';
+    }> = [];
+
+    leadActions.forEach((action: any, index: number) => {
+      const actionNumber = index + 1;
+      const actionTypeName = this.getActionTypeNameById(action);
+      const actionDate = this.formatActionDate(action.actionDate);
+      const actionDateFormatted = action.actionDate
+        ? this.formatCreatedDate(action.actionDate)
+        : 'غير محدد';
+
+      // Create a formatted action string with each field on a separate line
+      const actionKey = `action_${actionNumber}`;
+      const actionLabel = `إجراء ${actionNumber} - ${actionTypeName}`;
+
+      // Format all attributes with each field on a separate line
+      let actionValue = `النوع: ${actionTypeName}\nالتاريخ: ${actionDate}`;
+      if (action.actionNotes) {
+        actionValue += `\nالملاحظات: ${action.actionNotes}`;
+      }
+
+      actionsData[actionKey] = actionValue;
+      fields.push({
+        key: actionKey,
+        label: actionLabel,
+        type: 'text' as const,
+      });
+
+      // Add actionDate as a separate field with proper date/time formatting
+      if (action.actionDate) {
+        const actionDateKey = `actionDate_${actionNumber}`;
+        const actionDateLabel = `تاريخ ووقت الإجراء ${actionNumber}`;
+        actionsData[actionDateKey] = action.actionDate;
+        fields.push({
+          key: actionDateKey,
+          label: actionDateLabel,
+          type: 'date' as const,
+        });
+      }
+    });
+
+    // Add lead information
+    actionsData['leadName'] = lead.contactName || lead.name || 'غير محدد';
+    actionsData['leadId'] = id;
+    actionsData['totalActions'] = leadActions.length;
+
+    fields.unshift(
+      { key: 'leadName', label: 'اسم العميل', type: 'text' as const },
+      { key: 'totalActions', label: 'إجمالي الإجراءات', type: 'text' as const }
+    );
+
+    const dialogData: DetailViewDialogData = {
+      title: `إجراءات ${lead.contactName || lead.name || 'العميل'}`,
+      data: actionsData,
+      fields: fields,
+    };
+
+    this.dialog.open(DetailViewDialogComponent, {
+      width: '900px',
+      maxWidth: '95vw',
+      maxHeight: '90vh',
+      data: dialogData,
+      panelClass: 'agreement-dialog',
+      hasBackdrop: true,
+      backdropClass: 'agreement-dialog-backdrop',
+    });
   }
 
-  // ========================================
-  // Utility Methods (delegated to services)
-  // ========================================
-  getActionTypeNameById(actionTypeId: number | any): string {
-    return this.actionTypeService.getActionName(actionTypeId);
+  // Get action type ID from type name
+  getActionTypeIdFromType(actionType: string): number {
+    switch (actionType) {
+      case 'Call':
+        return 1;
+      case 'Email':
+        return 2;
+      case 'Meeting':
+        return 3;
+      case 'Notes':
+        return 4;
+      case 'FollowUp':
+        return 5;
+      default:
+        return 0;
+    }
   }
 
+  // Get action type icon by ID
   getActionTypeIconById(actionTypeId: number): string {
-    return this.actionTypeService.getActionIcon(actionTypeId);
+    switch (actionTypeId) {
+      case 1:
+        return 'bi-telephone'; // Call
+      case 2:
+        return 'bi-envelope'; // Email
+      case 3:
+        return 'bi-camera-video'; // Meeting
+      case 4:
+        return 'bi-file-earmark-text'; // Notes
+      case 5:
+        return 'bi-arrow-repeat'; // FollowUp
+      default:
+        return 'bi-circle';
+    }
+  }
+
+  // Get action type name by ID or action object
+  getActionTypeNameById(actionTypeId: number | any): string {
+    // If action object is passed, extract actionTypeName
+    if (typeof actionTypeId === 'object' && actionTypeId !== null) {
+      if (actionTypeId.actionTypeName) {
+        // Map English names to Arabic
+        const nameMap: { [key: string]: string } = {
+          Call: 'مكالمة',
+          Email: 'بريد إلكتروني',
+          Meeting: 'اجتماع',
+          Notes: 'ملاحظة',
+          FollowUp: 'متابعة',
+        };
+        return (
+          nameMap[actionTypeId.actionTypeName] || actionTypeId.actionTypeName
+        );
+      }
+      if (actionTypeId.actionTypeId) {
+        actionTypeId = actionTypeId.actionTypeId;
+      }
+    }
+
+    switch (actionTypeId) {
+      case 1:
+        return 'مكالمة';
+      case 2:
+        return 'بريد إلكتروني';
+      case 3:
+        return 'اجتماع';
+      case 4:
+        return 'ملاحظة';
+      case 5:
+        return 'متابعة';
+      default:
+        return 'إجراء';
+    }
   }
 
   getActionTypeIcon(actionTypeName: string): string {
-    return this.actionTypeService.getActionIconByName(actionTypeName);
+    switch (actionTypeName.toLowerCase()) {
+      case 'call':
+        return 'bi-telephone';
+      case 'email':
+        return 'bi-envelope';
+      case 'meeting':
+        return 'bi-camera-video';
+      case 'sms':
+        return 'bi-chat-dots';
+      case 'notes':
+        return 'bi-file-earmark-text';
+      case 'followup':
+        return 'bi-arrow-repeat';
+      default:
+        return 'bi-circle';
+    }
   }
 
   formatActionDate(dateString: string): string {
-    return dateString ? this.dateUtils.relativeTimeArabic(dateString) : '';
+    if (!dateString) return '';
+    return this.dateUtils.relativeTimeArabic(dateString);
   }
 
   formatCreatedDate(dateString: string): string {
-    return dateString ? this.dateUtils.formatDateTime(dateString) : '';
+    if (!dateString) return '';
+    return this.dateUtils.formatDateTime(dateString);
   }
 
+  formatUpdatedDate(dateString: string): string {
+    if (!dateString) return '';
+    return this.dateUtils.formatDateTime(dateString);
+  }
+
+  // Open action dialog with different types
+  openActionDialog(lead: any, actionTypeId: number): void {
+    // Action type configuration
+    const actionTypes = {
+      1: {
+        name: 'مكالمة',
+        icon: 'bi-telephone',
+        label: 'الملاحظة',
+        placeholder: 'أدخل ملاحظات المكالمة...',
+        type: 'phone',
+      },
+      2: {
+        name: 'بريد إلكتروني',
+        icon: 'bi-envelope',
+        label: 'الملاحظة',
+        placeholder: 'أدخل ملاحظات البريد...',
+        type: 'email',
+      },
+      3: {
+        name: 'اجتماع',
+        icon: 'bi-camera-video',
+        label: 'لينك الاجتماع',
+        placeholder: 'أدخل لينك الاجتماع...',
+        type: 'meeting',
+      },
+      4: {
+        name: 'ملاحظة',
+        icon: 'bi-file-earmark-text',
+        label: 'الملاحظة',
+        placeholder: 'أدخل ملاحظتك هنا...',
+        type: 'note',
+      },
+      5: {
+        name: 'متابعة',
+        icon: 'bi-arrow-repeat',
+        label: 'الملاحظة',
+        placeholder: 'أدخل ملاحظات المتابعة...',
+        type: 'followup',
+      },
+    };
+
+    const actionConfig = actionTypes[actionTypeId as keyof typeof actionTypes];
+
+    if (!actionConfig) {
+      this.notify.open({
+        type: 'error',
+        title: 'خطأ',
+        description: 'نوع الإجراء غير معروف',
+      });
+      return;
+    }
+
+    // Build fields array - add actionDate if type is 'meeting'
+    const fields: any[] = [
+      {
+        name: 'actionNotes',
+        label: actionConfig.label,
+        type: 'textarea',
+        placeholder: actionConfig.placeholder,
+        required: true,
+        colSpan: 3,
+      },
+    ];
+
+    // Add actionDate field for meeting type
+    if (actionConfig.type === 'meeting') {
+      fields.push({
+        name: 'actionDate',
+        label: 'تاريخ الاجتماع',
+        type: 'datetime-local',
+        placeholder: 'اختر تاريخ ووقت الاجتماع',
+        required: true,
+        colSpan: 3,
+      });
+    }
+
+    if (actionConfig.type === 'followup') {
+      fields.push({
+        name: 'actionDate',
+        label: 'تاريخ المتابعة',
+        type: 'datetime-local',
+        placeholder: 'اختر تاريخ ووقت المتابعة',
+        required: false,
+        colSpan: 3,
+      });
+    }
+
+    const actionDialogConfig = {
+      title: `إضافة ${actionConfig.name}`,
+      submitText: 'حفظ',
+      cancelText: 'إلغاء',
+      fields: fields,
+    };
+
+    const initialData: any = {
+      actionNotes: '',
+    };
+
+    // Add actionDate to initialData if meeting type
+    if (actionConfig.type === 'meeting' || actionConfig.type === 'followup') {
+      // Set default to current date/time
+      const now = new Date();
+      const year = now.getFullYear();
+      const month = String(now.getMonth() + 1).padStart(2, '0');
+      const day = String(now.getDate()).padStart(2, '0');
+      const hours = String(now.getHours()).padStart(2, '0');
+      const minutes = String(now.getMinutes()).padStart(2, '0');
+      initialData.actionDate = `${year}-${month}-${day}T${hours}:${minutes}`;
+    }
+
+    const dialogRef = this.dialog.open(FormUiComponent, {
+      width: '700px',
+      panelClass: 'agreement-dialog',
+      data: {
+        config: actionDialogConfig,
+        initialData: initialData,
+      },
+      hasBackdrop: true,
+      backdropClass: 'agreement-dialog-backdrop',
+    });
+
+    // Listen to formSubmit event
+    dialogRef.componentInstance.formSubmit.subscribe((formData) => {
+      if (formData) {
+        const requestData: ITeleSalseActionRequest = {
+          leadId: lead.leadId,
+          actionTypeId: actionTypeId,
+          actionNotes: formData.actionNotes,
+        };
+
+        // Add actionDate if it's a meeting or followup type and provided
+        if (
+          (actionConfig.type === 'meeting' ||
+            actionConfig.type === 'followup') &&
+          formData.actionDate
+        ) {
+          // Convert datetime-local to ISO string
+          const date = new Date(formData.actionDate);
+          requestData.actionDate = date.toISOString();
+        }
+
+        this.createTeleSalesAction(requestData);
+
+        // Close the dialog after successful submission
+        dialogRef.close();
+      }
+    });
+
+    // Also listen for dialog close
+    dialogRef.afterClosed().subscribe(() => {
+      // Unsubscribe to prevent memory leaks
+      dialogRef.componentInstance.formSubmit.unsubscribe();
+    });
+  }
+
+  // Action button methods for table
+  onCall(lead: any): void {
+    // Open full call form with CreateTeleSalesCall API
+    this.openCreateCallDialog(undefined, lead);
+  }
+
+  // Open create call dialog with full form
+  openCreateCallDialog(call?: ICall, lead?: any): void {
+    const username = this._authService.getUsername();
+    this._callDialogService.openCreateCallDialog({
+      call,
+      lead,
+      onSuccess: () => {
+        // Refresh data after successful call creation
+        if (username) {
+          this.loadLeadsData(username);
+        }
+      },
+    });
+  }
+
+  onEmail(lead: any): void {
+    this.openActionDialog(lead, 2); // Email = 2
+  }
+
+  onMeeting(lead: any): void {
+    this.openActionDialog(lead, 3); // Meeting = 3
+  }
+
+  onNote(lead: any): void {
+    this.openActionDialog(lead, 4); // Notes = 4
+  }
+
+  onFollowUp(lead: any): void {
+    this.openActionDialog(lead, 5); // FollowUp = 5
+  }
+
+  private createTeleSalesAction(data: ITeleSalseActionRequest): void {
+    // Show loading state
+    this.isSearching = true;
+
+    this._dashboardService.createTeleSalesAction(data).subscribe({
+      next: (response: any) => {
+        this.isSearching = false;
+        if (response.succeeded) {
+          this.notify.open({
+            type: 'success',
+            title: 'تم بنجاح',
+            description: 'تم إضافة الملاحظة بنجاح',
+          });
+
+          // Refresh the leads data to show updated information
+          const username = this._authService.getUsername();
+          if (username) {
+            this.loadLeadsData(username);
+          }
+          // Optimistically update actions list and recent interactions
+          this.addActionToGroupedState({
+            leadId: data.leadId,
+            actionTypeId: data.actionTypeId,
+            actionNotes: data.actionNotes,
+          });
+        } else {
+          this.notify.open({
+            type: 'error',
+            title: 'خطأ',
+            description: response.message || 'حدث خطأ أثناء إضافة الملاحظة',
+          });
+        }
+      },
+      error: (error) => {
+        this.isSearching = false;
+
+        let errorMessage = 'حدث خطأ أثناء إضافة الملاحظة';
+
+        if (error.error && error.error.message) {
+          errorMessage = error.error.message;
+        } else if (error.message) {
+          errorMessage = error.message;
+        }
+
+        this.notify.open({
+          type: 'error',
+          title: 'خطأ',
+          description: errorMessage,
+        });
+      },
+    });
+  }
+
+  // Format cell value based on column formatter
   formatCellValue(value: any, formatter?: string): string {
     if (!value) return '';
 
@@ -705,203 +1186,285 @@ export class DashboardTelesalesComponent implements OnInit, OnDestroy {
     return value;
   }
 
-  // ========================================
-  // Action button handlers
-  // ========================================
-  openActionDialog(lead: any, actionTypeId: number): void {
-    this.teleActionDialog.openActionDialog(lead, actionTypeId, (data) => {
-      this.createTeleSalesAction(data);
-    });
-  }
-  onCall(lead: any): void {
-    this._callDialogService.openCreateCallDialog({
-      lead,
-      onSuccess: () => {
-        // No need to reload table, actions are updated optimistically
-        this.notify.open({
-          type: 'success',
-          title: 'تم بنجاح',
-          description: 'تم إضافة المكالمة بنجاح',
-        });
-      },
-    });
-  }
+  // ============================ Assign lead to sales ================================
 
-  onEmail(lead: any): void {
-    this.openActionDialog(lead, 2);
-  }
-
-  onMeeting(lead: any): void {
-    this.openActionDialog(lead, 3);
-  }
-
-  onNote(lead: any): void {
-    this.openActionDialog(lead, 4);
-  }
-
-  onFollowUp(lead: any): void {
-    this.openActionDialog(lead, 5);
-  }
-
-  // ========================================
-  // Create TeleSales Action
-  // ========================================
-  private createTeleSalesAction(data: ITeleSalseActionRequest): void {
-    this.isSearching.set(true);
-
-    this._dashboardService.createTeleSalesAction(data)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-      next: (response: any) => {
-        this.isSearching.set(false);
-        if (response.succeeded) {
-          this.notify.open({
-            type: 'success',
-            title: 'تم بنجاح',
-            description: 'تم إضافة الملاحظة بنجاح',
-          });
-
-          // Optimistically update actions list and recent interactions without reloading table
-          this.addActionToGroupedState({
-            leadId: data.leadId,
-            actionTypeId: data.actionTypeId,
-            actionNotes: data.actionNotes,
-          });
-        } else {
-          this.notify.open({
-            type: 'error',
-            title: 'خطأ',
-            description: response.message || 'حدث خطأ أثناء إضافة الملاحظة',
-          });
-        }
-      },
-      error: (error) => {
-        this.isSearching.set(false);
-
-        let errorMessage = 'حدث خطأ أثناء إضافة الملاحظة';
-
-        if (error.error && error.error.message) {
-          errorMessage = error.error.message;
-        } else if (error.message) {
-          errorMessage = error.message;
-        }
-
-        this.notify.open({
-          type: 'error',
-          title: 'خطأ',
-          description: errorMessage,
-        });
-      },
-    });
-  }
-
-
-  // ========================================
-  // Assign lead to sales
-  // ========================================
   onAddButtonClick(lead: any): void {
-    const salesList = this.dashboardData.salesList();
-    const currencyList = this.dashboardData.currencyList();
+    // Handle add button click - can delegate to assign or edit
+    this.openAssignLeadToSalesDialog(lead);
+  }
 
-    // Ensure data is loaded
-    if (!salesList || salesList.length === 0 || !currencyList || currencyList.length === 0) {
-      console.warn('Sales or currency data not loaded');
-      return;
+  openAssignLeadToSalesDialog(lead: any): void {
+    // Ensure data is loaded - reload if empty
+    if (!this.salesList || this.salesList.length === 0) {
+      this.getSalesList();
+    }
+    if (!this.currencyList || this.currencyList.length === 0) {
+      this.getCurrencyList();
     }
 
-    this.assignSalesDialog.openAssignDialog(
-      lead,
-      salesList,
-      currencyList,
-      (payload: AssignLeadsToSalesRequest[], closeDialog: () => void) => 
-        this.handleAssignToSales(payload, closeDialog)
-    );
-  }
+    // Convert salesList to FormUiComponent expected format: { value, label }[]
+    const salesOptions = (this.salesList || []).map((sales: any) => ({
+      value: sales.id,
+      label: sales.name,
+    }));
 
-  private handleAssignToSales(
-    payload: AssignLeadsToSalesRequest[],
-    closeDialog: () => void
-  ): void {
-    this._dashboardService.AssignLeadsToSales(payload)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (response: any) => {
-          const isSuccess =
-            response?.succeeded === true ||
-            (response?.message && response?.assignments) ||
-            (response?.message?.includes('نجاح'));
+    // Convert currencyList to FormUiComponent expected format: { value, label }[]
+    const currencyOptions = (this.currencyList || []).map((currency: any) => ({
+      value: currency.id,
+      label: currency.currency,
+    }));
 
-          if (isSuccess) {
-            // Close dialog on success
-            closeDialog();
+    // Warn if no options available
+    if (salesOptions.length === 0) {
+      console.warn('No sales employees available');
+      // Dialog will show empty dropdown - user can close and retry
+    }
+    if (currencyOptions.length === 0) {
+      console.warn('No currencies available');
+      // Dialog will show empty dropdown - user can close and retry
+    }
 
-            this.notify.open({
-              type: 'success',
-              title: 'نجح',
-              description: 'تم تعيين العميل للمبيعات بنجاح',
-            });
+    const dialogRef = this.dialog.open(FormUiComponent, {
+      width: '700px',
+      panelClass: 'agreement-dialog',
+      data: {
+        config: {
+          title: 'تعيين العميل لموظف للمبيعات',
+          submitText: 'حفظ',
+          cancelText: 'إلغاء',
+          fields: [
+            {
+              name: 'salesId',
+              label: 'موظف المبيعات',
+              type: 'select',
+              options: salesOptions,
+              required: true,
+              placeholder: 'اختر موظف المبيعات',
+              colSpan: 2,
+            },
+            {
+              name: 'currencyId',
+              label: 'العملة',
+              type: 'select',
+              options: currencyOptions,
+              required: true,
+              placeholder: 'اختر العملة',
+              colSpan: 1,
+            },
+            {
+              name: 'notes',
+              label: 'الملاحظات',
+              type: 'textarea',
+              required: false,
+              placeholder: 'أدخل الملاحظات...',
+              colSpan: 3,
+            },
+          ],
+        },
+      },
+    });
 
-            const username = this._authService.getUsername();
-            if (username) {
-              this.loadLeadsData(username);
+    // Listen to formSubmit event
+    dialogRef.componentInstance.formSubmit.subscribe((formData) => {
+      if (formData) {
+        // API expects array with single object
+        const payload: AssignLeadsToSalesRequest[] = [
+          {
+            leadId: lead.leadId || 0,
+            salesId: Number(formData.salesId) || 0,
+            notes: formData.notes || 'string',
+            currencyId: Number(formData.currencyId) || 0,
+            buddgetValue: 0,
+          },
+        ];
+
+        this._dashboardService.AssignLeadsToSales(payload).subscribe({
+          next: (response) => {
+            // Check if response is successful
+            // API returns: { message: "تم تعيين العملاء بنجاح", assignments: [...] }
+            // or: { succeeded: true, message: "...", data: {...} }
+            const responseData = response as any;
+
+            // Check multiple success indicators
+            const isSuccess =
+              responseData?.succeeded === true ||
+              (responseData?.message && responseData?.assignments) ||
+              (responseData?.message &&
+                typeof responseData.message === 'string' &&
+                responseData.message.includes('نجاح'));
+
+            if (isSuccess) {
+              // Close the dialog first
+              dialogRef.close();
+
+              // Show success notification with API message or default
+              const successMessage =
+                (typeof responseData?.message === 'string'
+                  ? responseData.message
+                  : null) || 'تم تعيين العميل للمبيعات بنجاح';
+
+              this.notify.open({
+                type: 'success',
+                title: 'نجح',
+                description: 'تم تعيين العميل للمبيعات بنجاح',
+              });
+
+              // Refresh leads data
+              const username = this._authService.getUsername();
+              if (username) {
+                this.loadLeadsData(username);
+              }
+            } else {
+              // Show error but don't close dialog so user can fix and retry
+              // Extract error message from nested structure
+              const errorMsg =
+                responseData?.validationErrors?.[0]?.errorMessage ||
+                responseData?.message ||
+                'حدث خطأ أثناء تعيين العميل';
+
+              this.notify.open({
+                type: 'error',
+                title: 'خطأ',
+                description: errorMsg,
+              });
             }
-          } else {
+          },
+          error: (error) => {
+            // Extract error message from error response
+            const errorResponse = error?.error || error;
+            const errorData = errorResponse?.message;
+
             const errorMsg =
-              response?.validationErrors?.[0]?.errorMessage ||
-              response?.message ||
-              'حدث خطأ أثناء تعيين العميل';
+              errorData?.validationErrors?.[0]?.errorMessage ||
+              errorData?.message ||
+              errorResponse?.validationErrors?.[0]?.errorMessage ||
+              errorResponse?.message ||
+              error?.message ||
+              'فشل تعيين العميل للمبيعات';
 
             this.notify.open({
               type: 'error',
               title: 'خطأ',
               description: errorMsg,
             });
-          }
-        },
-        error: (error) => {
-          const errorMsg =
-            error?.error?.validationErrors?.[0]?.errorMessage ||
-            error?.error?.message ||
-            error?.message ||
-            'فشل تعيين العميل للمبيعات';
+            // Don't close dialog on error so user can fix and retry
+          },
+        });
+      }
+    });
 
-          this.notify.open({
-            type: 'error',
-            title: 'خطأ',
-            description: errorMsg,
-          });
-        },
-      });
+    // Unsubscribe on close
+    dialogRef.afterClosed().subscribe(() => {
+      dialogRef.componentInstance.formSubmit.unsubscribe();
+    });
   }
-  // ========================================
-  // Edit lead status - delegated to service
-  // ========================================
+  //=========================== Edit lead status ================================
   onEdit(lead: any): void {
-    this.leadStatusEditor.startEdit(lead);
+    const id = lead.leadId;
+    this.editingLeadId = id;
+    if (!lead.id && lead.leadId) {
+      lead.id = lead.leadId;
+    }
+    this.selectedLeadForEdit = lead;
+    // Store original values for cancel
+    lead._originalLeadStatus = lead.leadStatus;
+    // Initialize draft status for auto-save
+    lead._draftLeadStatus = lead.leadStatus;
+    // Try multiple possible property names for assigned lead ID
+    lead._originalAssignLeadId =
+      lead.assignedLeadId ||
+      lead.assignedToId ||
+      lead.employeeId ||
+      lead.assignedEmployeeId ||
+      0;
   }
 
   saveLeadStatus(lead: any): void {
-    const username = this._authService.getUsername();
-    this.leadStatusEditor.saveLeadStatus(lead, () => {
-      if (username) {
-        this.loadLeadsData(username);
-      }
+    const newStatus = lead._draftLeadStatus?.trim();
+    const leadId = lead.leadId ?? lead.id;
+
+    if (!leadId || !newStatus || newStatus === lead.leadStatus) {
+      this.cancelLeadStatus(lead);
+      return;
+    }
+
+    // Build payload with required fields
+    const payload: any = {
+      leadId: leadId,
+      // assignLeadId: assignLeadId,
+      assignLeadId: leadId,
+      leadStatus: newStatus,
+    };
+
+    // Debug: payload keys can be inspected if needed
+
+    this._dashboardService.editLeadStatus(payload).subscribe({
+      next: (response) => {
+        // Check if response indicates success
+        if (response && response.succeeded === true) {
+          lead.leadStatus = newStatus; // Update optimistically
+          // lead.assignLeadId = assignLeadId;
+          lead.assignLeadId = leadId;
+          this.editingLeadId = null;
+          this.selectedLeadForEdit = null;
+          delete lead._draftLeadStatus;
+          delete lead._originalLeadStatus;
+
+          this.notify.open({
+            type: 'success',
+            title: 'نجح',
+
+            description: response.data || 'تم تحديث حالة العميل المحتمل بنجاح',
+          });
+        } else {
+          // API returned unsuccessful response
+          this.handleUpdateError(lead);
+        }
+      },
+      error: (error) => {
+        console.error('API Error:', error);
+        const errorMsg =
+          error?.error?.validationErrors?.[0]?.errorMessage ||
+          error?.error?.data ||
+          error?.message ||
+          'فشل تحديث حالة العميل المحتمل';
+        this.handleUpdateError(lead, errorMsg);
+      },
     });
   }
 
   cancelLeadStatus(lead: any): void {
-    this.leadStatusEditor.cancelEdit(lead);
+    lead.leadStatus = lead._originalLeadStatus || lead.leadStatus;
+    lead.assignLeadId = lead._originalAssignLeadId || lead.assignLeadId;
+    this.editingLeadId = null;
+    this.selectedLeadForEdit = null;
+    delete lead._draftLeadStatus;
+    delete lead._originalLeadStatus;
+    delete lead._originalAssignLeadId;
   }
 
   isEditing(lead: any): boolean {
-    return this.leadStatusEditor.isEditing(lead);
+    return this.editingLeadId === lead.id;
   }
 
   onStatusChange(lead: any, newStatus: string): void {
-    this.leadStatusEditor.onStatusChange(lead, newStatus);
+    lead._draftLeadStatus = newStatus;
   }
 
   onAssignLeadIdChange(lead: any, newAssignLeadId: number): void {
-    this.leadStatusEditor.onAssignLeadIdChange(lead, newAssignLeadId);
+    lead._draftAssignLeadId = newAssignLeadId;
+  }
+
+  private handleUpdateError(lead: any, errorMsg?: string): void {
+    // Restore original value on error
+    lead.leadStatus = lead._originalLeadStatus;
+    lead.assignLeadId = lead._originalAssignLeadId;
+    this.cancelLeadStatus(lead);
+
+    this.notify.open({
+      type: 'error',
+      title: 'خطأ',
+      description: errorMsg || 'فشل تحديث حالة العميل المحتمل',
+    });
   }
 }

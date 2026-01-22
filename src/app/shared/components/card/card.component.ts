@@ -14,7 +14,7 @@ export interface CardField {
   imports: [CommonModule, InfoBoxesComponent],
   template: `
     <!-- <div class="client-card border-gradient diagonal medium rounded-lg"> -->
-    <div class="client-card" [style.animation-delay]="index * 0.2 + 's'">
+    <div class="client-card" [style.--animation-delay]="index * 0.2 + 's'">
       <!-- border -->
       <span class="corner tl"></span>
       <span class="corner tr"></span>
@@ -24,7 +24,6 @@ export interface CardField {
       <div class="client-avatar">
         <div class="icon" *ngIf="showEditIcon" (click)="onEditClick($event)">
           <i class="bi bi-pencil-square edit"></i>
-          <!-- <i class="bi bi-three-dots-vertical"></i> -->
         </div>
         <div class="avatar-placeholder">
           <!-- {{ (data[titleKey]?.charAt(0) || '?').toUpperCase() }} -->
@@ -51,7 +50,7 @@ export interface CardField {
           />
         </div>
         <!-- Status indicator: uses data['status'] to respect index signature typing -->
-        <div class="status" *ngIf="data?.['isActive'] !== undefined">
+        <div class="status" *ngIf="data['isActive'] !== undefined">
           <span
             [ngClass]="{
               'status-active': data['isActive'] === true,
@@ -186,22 +185,22 @@ export interface CardField {
         opacity: 0;
         transform: translateY(20px);
         animation: fadeInUp 0.4s ease-out forwards;
+        animation-delay: var(--animation-delay, 0s);
 
-        // transform: perspective(600px) rotateX(5deg) rotateY(-5deg);
         transition: transform 0.4s ease, box-shadow 0.4s ease,
           opacity 0.4s ease background 0.4s ease;
       }
+
 
       @keyframes fadeInUp {
         0% {
           opacity: 0;
           transform: translateY(40px);
-        },
-        50%{
+        }
+        50% {
           opacity: 0.5;
           transform: translateY(20px);
         }
-
         100% {
           opacity: 1;
           transform: translateY(0);

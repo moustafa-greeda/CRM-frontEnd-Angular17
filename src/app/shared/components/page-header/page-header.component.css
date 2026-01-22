@@ -71,6 +71,7 @@
   justify-content: center;
   border-radius: 12px;
   border: 1px solid var(--color-primary);
+  transition: transform 0.3s ease;
   color: #fff;
   background: linear-gradient(90deg, #008299 0%, #002b33 100%);
 }
@@ -80,6 +81,7 @@
 }
 
 .btn-primary:hover {
+  box-shadow: var(--button-hover-shadow);
   background: linear-gradient(90deg, #002b33 0%, #008299 100%);
-  transform: translateY(-2px);
+  transform: translateY(-2px) scale(1.05);
 }

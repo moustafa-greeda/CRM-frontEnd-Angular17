@@ -1,3 +1,13 @@
+
+.dashboard-info {
+  width: 100%;
+  min-height: 100vh;
+  padding: 20px;
+  display: grid;
+  background-size: cover;
+  background-image: none;
+  background-repeat: no-repeat;
+}
 .table-container {
   margin-top: 30px;
   width: 100%;
@@ -66,122 +76,25 @@
 }
 
 ::ng-deep .stat-card:nth-child(6) {
-  animation: enhancedFadeUp 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s both !important;
+  animation: enhancedFadeUp 2.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.6s both !important;
 }
 
 ::ng-deep .stat-card:nth-child(7) {
-  animation: enhancedFadeUp 2.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.7s both !important;
+  animation: enhancedFadeUp 3.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.7s both !important;
 }
 
 ::ng-deep .stat-card:nth-child(8) {
-  animation: enhancedFadeUp 3s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s both !important;
+  animation: enhancedFadeUp 3.6s cubic-bezier(0.25, 0.46, 0.45, 0.94) 0.8s both !important;
 }
 
-/* Top Salespeople Section Responsive */
-.top-salespeople-section {
-  margin-top: 30px;
-  padding: 20px;
-}
-
-.section-title {
-  font-size: 24px;
-  margin-bottom: 25px;
-}
-
-.salespeople-list {
-  display: flex;
-  flex-direction: column;
-  gap: 15px;
-}
-
-.salesperson-content {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 20px;
-  flex-wrap: wrap;
-}
-
-.profile-section {
-  display: flex;
-  align-items: center;
-  gap: 15px;
-  flex: 1;
-  min-width: 200px;
-}
-
-.profile-image-wrapper {
-  width: 80px;
-  height: 80px;
-  flex-shrink: 0;
-}
-
-.profile-image {
-  width: 100%;
-  height: 100%;
-  border-radius: 50%;
-  object-fit: cover;
-}
-
-.salesperson-name {
-  font-size: 20px;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-.stat-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 5px;
-  padding: 10px 20px;
-  min-width: 150px;
-}
-
-.stat-label {
-  font-size: 18px;
-}
-
-.stat-value {
-  font-size: 16px;
-  text-align: center;
-}
-
-/* Responsive: 2 cards per row on tablets */
+/* Responsive: stats-grid for tablets */
 @media (max-width: 1024px) {
   ::ng-deep .stats-grid {
     grid-template-columns: repeat(3, 1fr) !important;
   }
-
-  .section-title {
-    font-size: 22px;
-  }
-
-  .salesperson-content {
-    gap: 15px;
-  }
-
-  .profile-section {
-    gap: 12px;
-  }
-
-  .profile-image-wrapper {
-    width: 70px;
-    height: 70px;
-  }
-
-  .salesperson-name {
-    font-size: 18px;
-  }
-
-  .stat-item {
-    min-width: 120px;
-    padding: 8px 15px;
-  }
 }
 
-/* Responsive: Mobile devices */
+/* Responsive: stats-grid and table for mobile */
 @media (max-width: 768px) {
   ::ng-deep .stats-grid {
     grid-template-columns: repeat(2, 1fr) !important;
@@ -190,115 +103,6 @@
   .table-container {
     margin-top: 20px;
     padding: 0 10px;
-  }
-
-  .top-salespeople-section {
-    margin-top: 20px;
-    padding: 15px;
-  }
-
-  .section-title {
-    font-size: 20px;
-    margin-bottom: 20px;
-    text-align: center;
-  }
-
-  .salespeople-list {
-    gap: 12px;
-  }
-
-  .salesperson-card {
-    padding: 10px;
-  }
-
-  .salesperson-content {
-    flex-direction: column;
-    align-items: center;
-    gap: 15px;
-    text-align: center;
-  }
-
-  .profile-section {
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
-    width: 100%;
-  }
-
-  .profile-image-wrapper {
-    width: 60px;
-    height: 60px;
-  }
-
-  .salesperson-name {
-    font-size: 16px;
-    text-align: center;
-    width: 100%;
-  }
-
-  .stat-item {
-    width: 100%;
-    min-width: 100%;
-    padding: 10px;
-  }
-
-  .stat-label {
-    font-size: 16px;
-  }
-
-  .stat-value {
-    font-size: 14px;
-  }
-
-  .medal-badge {
-    width: 30px;
-    height: 30px;
-  }
-
-  .medal-number {
-    font-size: 9px;
-  }
-}
-
-/* Responsive: Small mobile devices */
-@media (max-width: 480px) {
-  .top-salespeople-section {
-    padding: 10px;
-  }
-
-  .section-title {
-    font-size: 18px;
-    margin-bottom: 15px;
-  }
-
-  .salesperson-card {
-    padding: 8px;
-  }
-
-  .profile-image-wrapper {
-    width: 50px;
-    height: 50px;
-  }
-
-  .salesperson-name {
-    font-size: 14px;
-  }
-
-  .stat-label {
-    font-size: 14px;
-  }
-
-  .stat-value {
-    font-size: 12px;
-  }
-
-  .medal-badge {
-    width: 25px;
-    height: 25px;
-  }
-
-  .medal-number {
-    font-size: 8px;
   }
 }
 

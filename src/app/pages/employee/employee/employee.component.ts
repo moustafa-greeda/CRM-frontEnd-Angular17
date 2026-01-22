@@ -17,13 +17,12 @@ import { EmployeeFormHandler } from './services/employee-form.handler';
 import { EmployeeCrudService } from './services/employee-crud.service';
 import {
   IGetAllEmployee,
-  EmployeeFormData,
   EmployeeFilters,
 } from '../../../core/Models/employee/iemployee';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
-import { DropdownComponent } from '../../../shared/components/dropdown/dropdown.component';
+import { DropdownComponent } from '../../../shared/ui/dropdown/dropdown.component';
 import { SearchInputComponent } from '../../../shared/ui/search-input/search-input.component';
-import { GridCardsComponent } from '../../../shared/ui/grid-cards/grid-cards.component';
+import { GridCardsComponent } from '../../../shared/components/card/grid-cards.component';
 import { CardComponent } from '../../../shared/components/card/card.component';
 import { NoResultsMessageComponent } from '../../../shared/components/no-results-message/no-results-message.component';
 

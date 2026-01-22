@@ -13,7 +13,6 @@ import { TeleSalesService } from './tele-sales.service';
 import { forkJoin } from 'rxjs';
 import {
   ITransferredLead,
-  ITransferredLeadsData,
 } from '../../core/Models/teleSalse/itransferred-leads-to-sales';
 import { ITop3TeleSales } from '../../core/Models/teleSalse/ITop3TeleSales';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
@@ -21,6 +20,7 @@ import { CountCardComponent } from '../../shared/components/count-card/count-car
 import { TableComponent } from '../../shared/components/table/table.component';
 import { NoResultsMessageComponent } from '../../shared/components/no-results-message/no-results-message.component';
 import { ChartsTeleSalesComponent } from './chart/first-charts.component';
+import { TopEmployeeCardComponent } from '../../shared/components/top-employee-card/top-employee-card.component';
 
 interface StatCard {
   title: string;
@@ -44,11 +44,11 @@ interface TableColumn {
     PageHeaderComponent,
     CountCardComponent,
     TableComponent,
-    NoResultsMessageComponent,
     ChartsTeleSalesComponent,
+    TopEmployeeCardComponent,
   ],
   templateUrl: './teleSales.component.html',
-  styleUrls: ['./teleSales.component.css', '../sales/sales.component.css'],
+  styleUrls: ['./teleSales.component.css'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TeleSalesComponent implements OnInit {

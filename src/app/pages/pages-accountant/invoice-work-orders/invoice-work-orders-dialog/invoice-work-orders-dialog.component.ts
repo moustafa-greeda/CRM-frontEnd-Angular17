@@ -15,7 +15,7 @@ import {
   PdfPreviewDialogData,
 } from '../../../../shared/components/pdf-preview-dialog/pdf-preview-dialog.component';
 import { CommonModule } from '@angular/common';
-import { DropdownComponent } from '../../../../shared/components/dropdown/dropdown.component';
+import { DropdownComponent } from '../../../../shared/ui/dropdown/dropdown.component';
 
 export interface InvoiceService {
   id: number;

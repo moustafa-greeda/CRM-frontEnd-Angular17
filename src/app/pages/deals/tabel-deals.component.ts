@@ -50,16 +50,6 @@ export class TabelDealsComponent implements OnInit {
       iconClass: 'bi bi-plus',
       click: () => this.onAddAgreement(),
     },
-    {
-      iconClass: 'bi bi-box-arrow-in-up',
-      click: () => this.onUpload(),
-      tooltip: 'Upload',
-    },
-    {
-      iconClass: 'bi bi-box-arrow-right',
-      click: () => this.onDownload(),
-      tooltip: 'Download',
-    },
   ];
 
   ngOnInit(): void {

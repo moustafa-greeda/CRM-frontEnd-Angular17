@@ -32,20 +32,19 @@
         [disabled]="!selectedCountry()"
         (optionSelected)="onCitySelected($event)"
       ></app-dropdown>
+      @if(searchTerm() || selectedLeadStatusId() || selectedCountry() || selectedCity()){
       <app-button
-        *ngIf="
-          searchTerm() || selectedLeadStatusId() || selectedCountry() || selectedCity()
-        "
         [buttonClass]="'btn btn-danger'"
         [buttonText]="' مسح الفلاتر'"
         (buttonClick)="onResetFilters()"
       ></app-button>
+      }
     </div>
   </div>
   <!-- table -->
   <div class="table-container">
+    @if(!loadingLeads() && !isSearching()){
     <app-table
-      *ngIf="!loadingLeads() && !isSearching()"
       [data]="leadsList()"
       [columns]="columns()"
       [pageSize]="pageSize()"
@@ -91,6 +90,7 @@
       (cancelLeadStatus)="cancelLeadStatus($event)"
     >
     </app-table>
+    }
   </div>
 
   <!--------------------------- Notifications and Recent Interactions ----------------------->
@@ -112,9 +112,9 @@
 </section>
 
 <!------------------------ Lead Actions Dialog --------------------->
+@if(showLeadActionsDialog()){
 <div
   class="lead-actions-dialog"
-  *ngIf="showLeadActionsDialog()"
   (click)="closeLeadActionsDialog()"
 >
   <div class="dialog-content" (click)="$event.stopPropagation()">
@@ -126,10 +126,8 @@
     </div>
 
     <div class="dialog-body">
-      <div
-        *ngFor="let action of selectedLeadActions(); trackBy: trackByAction"
-        class="action-item"
-      >
+      @for(action of selectedLeadActions(); track trackByAction($index, action)) {
+        <div class="action-item">
         <div class="action-header">
           <div class="action-type">
             <i
@@ -145,8 +143,10 @@
           <p>{{ action.actionNotes }}</p>
         </div>
       </div>
+      }
     </div>
   </div>
 </div>
+}
 
 }

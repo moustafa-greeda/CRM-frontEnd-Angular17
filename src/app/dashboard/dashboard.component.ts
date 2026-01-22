@@ -22,7 +22,6 @@ import { Subject } from 'rxjs';
 export class DashboardComponent implements OnInit, OnDestroy {
   private authService = inject(AuthService);
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
   private destroy$ = new Subject<void>();
 
   // Use signals for better performance

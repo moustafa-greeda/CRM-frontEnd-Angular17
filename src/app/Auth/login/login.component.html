@@ -1,5 +1,4 @@
 <div class="parent">
-  <!-- <img src="assets/bg-login.svg" alt="bg-login" class="bg-login" /> -->
   <div class="section">
     <div class="logo">
       <img src="assets/logo.svg" alt="logo zawolf" loading="lazy" />
@@ -18,9 +17,11 @@
           autocomplete="off"
           required
         />
-        <small class="error" *ngIf="fieldErrors['login']">
+        @if(fieldErrors['login']){
+                <small class="error" >
           {{ fieldErrors["login"] }}
         </small>
+        }
       </div>
 
       <!-- input password  -->
@@ -43,9 +44,11 @@
           ></i>
         </div>
 
-        <small class="error" *ngIf="fieldErrors['password']">
-          {{ fieldErrors["password"] }}
-        </small>
+        @if(fieldErrors['password']){
+          <small class="error">
+            {{ fieldErrors["password"] }}
+          </small>
+        }
       </div>
 
       <div class="check-group">
@@ -53,8 +56,9 @@
         <input type="checkbox" class="custom-checkbox" />
       </div>
       <button type="submit">متابعه</button>
-
-      <p class="error" *ngIf="errorMessage">{{ errorMessage }}</p>
+      @if(errorMessage){
+        <p class="error" >{{ errorMessage }}</p>
+      }
     </form>
   </div>
 </div>

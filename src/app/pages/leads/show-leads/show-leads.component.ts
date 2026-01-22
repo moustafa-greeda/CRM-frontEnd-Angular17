@@ -9,9 +9,7 @@ import {
 import { CommonModule } from '@angular/common';
 import { Router, RouterModule } from '@angular/router';
 import { MatPaginatorModule } from '@angular/material/paginator';
-import { PageEvent } from '@angular/material/paginator';
 import { Subject } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { ILeads, ILeadsSearchParams } from '../../../core/Models/leads/ileads';
 import { BreadcrumbItem } from '../../../shared/interfaces/breadcrumb-item.interface';
 import { ActionButton } from '../../../shared/interfaces/action-button.interface';
@@ -24,7 +22,7 @@ import { SearchInputComponent } from '../../../shared/ui/search-input/search-inp
 import { ButtonComponent } from '../../../shared/ui/button/button.component';
 import { ViewToggleComponent } from '../../../shared/ui/view-toggle/view-toggle.component';
 import { PaginationControlsComponent } from '../../../shared/components/pagination-card/pagination-card-controls.component';
-import { GridCardsComponent } from '../../../shared/ui/grid-cards/grid-cards.component';
+import { GridCardsComponent } from '../../../shared/components/card/grid-cards.component';
 import { CardComponent } from '../../../shared/components/card/card.component';
 import { TableComponent } from '../../../shared/components/table/table.component';
 import { PaginationComponent } from '../../../shared/components/pagination-card/pagination.component';

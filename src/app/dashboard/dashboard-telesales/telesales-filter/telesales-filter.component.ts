@@ -1,7 +1,7 @@
 import { Component, input, output, signal, computed, ChangeDetectionStrategy, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { SearchInputComponent } from '../../../shared/ui/search-input/search-input.component';
-import { DropdownComponent } from '../../../shared/components/dropdown/dropdown.component';
+import { DropdownComponent } from '../../../shared/ui/dropdown/dropdown.component';
 import { ButtonComponent } from '../../../shared/ui/button/button.component';
 
 @Component({

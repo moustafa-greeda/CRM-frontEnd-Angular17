@@ -17,7 +17,7 @@ import {
 } from './../../../core/Models/invoices/Invoice';
 import { NotifyDialogService } from '../../../shared/components/notify-dialog-host/notify-dialog.service';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
-import { DropdownComponent } from '../../../shared/components/dropdown/dropdown.component';
+import { DropdownComponent } from '../../../shared/ui/dropdown/dropdown.component';
 import { TableComponent } from '../../../shared/components/table/table.component';
 
 @Component({

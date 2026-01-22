@@ -22,7 +22,7 @@ import { DashboardSalseService } from './dashboard-salse.service';
 import { PakegsService } from '../../core/services/common/pakegs.service';
 import { CountCardComponent } from '../../shared/components/count-card/count-card.component';
 import { SearchInputComponent } from '../../shared/ui/search-input/search-input.component';
-import { DropdownComponent } from '../../shared/components/dropdown/dropdown.component';
+import { DropdownComponent } from '../../shared/ui/dropdown/dropdown.component';
 import { ButtonComponent } from '../../shared/ui/button/button.component';
 import { TableComponent } from '../../shared/components/table/table.component';
 import { RecentInteractionsComponent } from '../../shared/components/recent-interactions/recent-interactions.component';

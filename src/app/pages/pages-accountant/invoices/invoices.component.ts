@@ -26,7 +26,7 @@ import { RouterModule } from '@angular/router';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { SearchInputComponent } from '../../../shared/ui/search-input/search-input.component';
 import { TableComponent } from '../../../shared/components/table/table.component';
-import { DropdownComponent } from '../../../shared/components/dropdown/dropdown.component';
+import { DropdownComponent } from '../../../shared/ui/dropdown/dropdown.component';
 
 @Component({
   selector: 'app-invoices',

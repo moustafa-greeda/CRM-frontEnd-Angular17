@@ -1,19 +1,17 @@
 import { Component, Input, Output, EventEmitter } from '@angular/core';
-import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-button',
   standalone: true,
-  imports: [CommonModule],
   template: `
     <button
       class="btn"
-      [ngClass]="buttonClass"
+      [class]="'buttonClass'"
       [type]="type"
       (click)="onClick()"
       [disabled]="disabled"
     >
-      <i *ngIf="icon" [class]="icon"></i>
+      @if(icon){<i [class]="icon"></i>}
       {{ buttonText }}
     </button>
   `,

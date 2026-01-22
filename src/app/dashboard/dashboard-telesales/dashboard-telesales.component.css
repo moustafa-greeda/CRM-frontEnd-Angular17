@@ -1,0 +1,65 @@
+/* Disable table animation after first load */
+.no-table-animation ::ng-deep .table-container,
+.no-table-animation ::ng-deep .data-table,
+.no-table-animation ::ng-deep .table-frame-left,
+.no-table-animation ::ng-deep .table-frame-right {
+  animation: none !important;
+}
+
+/* ✅ Fix dropdown z-index to appear above table header */
+::ng-deep app-telesales-filter {
+  position: relative;
+  z-index: 50;
+  overflow: visible !important;
+}
+
+::ng-deep app-telesales-filter .dropdown-container {
+  position: relative;
+  z-index: 50;
+  overflow: visible !important;
+}
+
+/* Ensure dropdown appears above everything */
+::ng-deep app-telesales-filter app-dropdown {
+  position: relative;
+  overflow: visible !important;
+}
+
+::ng-deep app-telesales-filter app-dropdown .custom-dropdown {
+  position: relative;
+  overflow: visible !important;
+}
+
+/* When dropdown is open, increase its z-index */
+::ng-deep app-telesales-filter app-dropdown .custom-dropdown.open {
+  z-index: 999990 !important;
+}
+
+/* Dropdown menu should have highest z-index */
+::ng-deep app-telesales-filter app-dropdown .dropdown-menu {
+  position: absolute;
+  z-index: 999999 !important;
+  background: rgba(17, 24, 31, 0.98);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.7);
+  border: 1px solid var(--primary-color);
+  backdrop-filter: blur(10px);
+}
+
+/* ✅ Ensure parent containers don't clip dropdown */
+::ng-deep .search-container,
+::ng-deep .border-gradient {
+  overflow: visible !important;
+  position: relative;
+}
+
+.dashboard-info {
+  position: relative;
+  overflow: visible !important;
+}
+
+/* Search container should allow dropdown overflow */
+::ng-deep .search-container {
+  position: relative;
+  z-index: 40;
+  overflow: visible !important;
+}

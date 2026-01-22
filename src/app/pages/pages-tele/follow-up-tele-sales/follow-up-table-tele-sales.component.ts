@@ -8,11 +8,10 @@ import { FollowUpTableTeleSalseService } from './follow-up-table-tele-salse.serv
 import { IFollowUp } from './interfaces/IFollowUp';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { SearchInputComponent } from '../../../shared/ui/search-input/search-input.component';
-import { DropdownComponent } from '../../../shared/components/dropdown/dropdown.component';
+import { DropdownComponent } from '../../../shared/ui/dropdown/dropdown.component';
 import { ButtonComponent } from '../../../shared/ui/button/button.component';
 import { TableComponent } from '../../../shared/components/table/table.component';
 import { NoResultsMessageComponent } from '../../../shared/components/no-results-message/no-results-message.component';
-import { PaginationComponent } from '../../../shared/components/pagination-card/pagination.component';
 
 @Component({
   selector: 'app-follow-up-table-tele-sales',
@@ -26,7 +25,6 @@ import { PaginationComponent } from '../../../shared/components/pagination-card/
     ButtonComponent,
     TableComponent,
     NoResultsMessageComponent,
-    PaginationComponent,
   ],
   templateUrl: './follow-up-table-tele-sales.component.html',
   styleUrl: './follow-up-table-tele-sales.component.css',

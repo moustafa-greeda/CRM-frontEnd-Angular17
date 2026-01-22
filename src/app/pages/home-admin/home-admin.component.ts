@@ -9,7 +9,7 @@ import { ChartsSalesComponent } from '../sales/first-charts/first-charts.compone
 @Component({
   selector: 'app-home-admin',
   standalone: true,
-  imports: [CommonModule, CountCardComponent, ChartsTeleSalesComponent, ChartsSalesComponent],
+  imports: [CommonModule],
   templateUrl: './home-admin.component.html',
   styleUrl: './home-admin.component.css',
 })

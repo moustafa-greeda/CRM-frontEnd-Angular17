@@ -23,8 +23,8 @@ import {
 import { SalesService } from './sales.service';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { CountCardComponent } from '../../shared/components/count-card/count-card.component';
-import { NoResultsMessageComponent } from '../../shared/components/no-results-message/no-results-message.component';
 import { ChartsSalesComponent } from './first-charts/first-charts.component';
+import { TopEmployeeCardComponent } from '../../shared/components/top-employee-card/top-employee-card.component';
 
 interface CurrencyEarning {
   currencyId: number;
@@ -62,8 +62,8 @@ interface StatCard {
     RouterModule,
     PageHeaderComponent,
     CountCardComponent,
-    NoResultsMessageComponent,
     ChartsSalesComponent,
+    TopEmployeeCardComponent,
   ],
   templateUrl: './sales.component.html',
   styleUrl: './sales.component.css',
@@ -255,27 +255,5 @@ export class SalesComponent implements OnInit {
       minimumFractionDigits: 0,
       maximumFractionDigits: 0,
     }).format(value ?? 0);
-  }
-
-  // ========== Template Helper Methods ==========
-  getMedalIcon(rank: number): string {
-    switch (rank) {
-      case 1:
-        return './assets/img/first.svg';
-      case 2:
-        return './assets/img/second.svg';
-      case 3:
-        return './assets/img/third.svg';
-      default:
-        return '';
-    }
-  }
-
-  formatCurrency(amount: number): string {
-    return new Intl.NumberFormat('ar-SA', {
-      style: 'currency',
-      currency: 'SAR',
-      minimumFractionDigits: 0,
-    }).format(amount);
   }
 }

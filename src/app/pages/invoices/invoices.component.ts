@@ -17,7 +17,7 @@ import { InvoicesDataService } from './services/invoices-data.service';
 import { InvoicesPaymentService } from './services/invoices-payment.service';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
 import { CountCardComponent } from '../../shared/components/count-card/count-card.component';
-import { DropdownComponent } from '../../shared/components/dropdown/dropdown.component';
+import { DropdownComponent } from '../../shared/ui/dropdown/dropdown.component';
 import { SearchInputComponent } from '../../shared/ui/search-input/search-input.component';
 import { TableComponent } from '../../shared/components/table/table.component';
 

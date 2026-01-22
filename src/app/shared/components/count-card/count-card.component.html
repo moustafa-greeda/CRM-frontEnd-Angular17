@@ -26,6 +26,7 @@
       [src]="stat.imageSrc" 
       [alt]="stat.title" 
       class="stat-card-image"
+      [style.animation-delay]="i * 0.6 + 's'"
       [loading]="i === 0 ? 'eager' : 'lazy'"
       [attr.fetchpriority]="i === 0 ? 'high' : 'auto'"
       [decoding]="'async'"
@@ -34,7 +35,7 @@
       (error)="onImageError($event, stat.imageSrc)"
     />
     } @else {
-    <i class="bi {{ stat.icon }}"></i>
+    <i  class="bi {{ stat.icon }}" [style.animation-delay]="i * 0.6 + 's'"></i>
     }
   </div>
 </div>

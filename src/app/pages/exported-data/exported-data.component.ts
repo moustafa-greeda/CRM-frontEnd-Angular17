@@ -15,7 +15,7 @@ import {
 } from '../../shared/components/detail-view-dialog/detail-view-dialog.component';
 import { BreadcrumbItem } from '../../shared/interfaces/breadcrumb-item.interface';
 import { PageHeaderComponent } from '../../shared/components/page-header/page-header.component';
-import { DropdownComponent } from '../../shared/components/dropdown/dropdown.component';
+import { DropdownComponent } from '../../shared/ui/dropdown/dropdown.component';
 import { TableComponent } from '../../shared/components/table/table.component';
 
 @Component({

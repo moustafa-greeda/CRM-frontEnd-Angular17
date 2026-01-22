@@ -12,11 +12,11 @@ import { DistributionStateHandler } from './handlers/distribution-state.handler'
 import { DistributionFilterHandler } from './handlers/distribution-filter.handler';
 import { DistributionAssignmentHandler } from './handlers/distribution-assignment.handler';
 import { DistributionDragDropHandler } from './handlers/distribution-drag-drop.handler';
-import { DropdownComponent } from '../../../shared/components/dropdown/dropdown.component';
+import { DropdownComponent } from '../../../shared/ui/dropdown/dropdown.component';
 import { SearchInputComponent } from '../../../shared/ui/search-input/search-input.component';
-import { CountLeadComponent } from '../../../shared/components/count-lead/count-lead.component';
 import { PageHeaderComponent } from '../../../shared/components/page-header/page-header.component';
 import { TableComponent } from '../../../shared/components/table/table.component';
+import { CountLeadComponent } from '../../../shared/ui/count-lead/count-lead.component';
 
 @Component({
   selector: 'app-distribution',

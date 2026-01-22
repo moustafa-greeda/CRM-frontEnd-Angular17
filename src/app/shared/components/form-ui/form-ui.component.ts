@@ -1,11 +1,8 @@
 import {
   Component,
-  ChangeDetectionStrategy,
-  input,
-  output,
-  signal,
-  computed,
-  effect,
+  Input,
+  Output,
+  EventEmitter,
   OnInit,
   AfterViewInit,
   Inject,
@@ -34,20 +31,19 @@ import { formUiConfig } from '../../interfaces/formUi.interface';
   ],
   templateUrl: './form-ui.component.html',
   styleUrls: ['./form-ui.component.css'],
-  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FormUiComponent implements OnInit, AfterViewInit {
-  readonly config = input<formUiConfig | null>(null);
-  readonly initialData = input<Record<string, any> | null>(null);
-  readonly isLoading = input<boolean>(false);
-  readonly formSubmit = output<any>();
-  readonly formCancel = output<void>();
+  @Input() config?: formUiConfig;
+  @Input() initialData?: Record<string, any>;
+  @Input() isLoading: boolean = false;
+  @Output() formSubmit = new EventEmitter<any>();
+  @Output() formCancel = new EventEmitter<void>();
 
-  readonly isDialog: boolean;
-  private readonly isFormReady = signal(false);
+  isDialog = false;
+  private isFormReady = false;
 
-  readonly form = signal<FormGroup | null>(null);
-  readonly selectedFiles = signal<Record<string, File>>({});
+  form!: FormGroup;
+  selectedFiles: { [key: string]: File } = {};
 
   constructor(
     private fb: FormBuilder,
@@ -63,47 +59,27 @@ export class FormUiComponent implements OnInit, AfterViewInit {
   }
 
   ngOnInit(): void {
-    effect(() => {
-      const config = this.activeConfig();
-      const initialData = this.activeInitialData();
-
-      if (!config) {
-        this.form.set(null);
-        return;
-      }
-
-      this.buildForm(config, initialData ?? undefined);
-    });
+    // Use dialog data if available, otherwise use input properties
+    if (this.isDialog && this.dialogData) {
+      this.config = this.dialogData.config;
+      this.initialData = this.dialogData.initialData;
+    }
+    this.buildForm();
   }
 
   ngAfterViewInit(): void {
     // Add a small delay to prevent immediate close when form opens
     setTimeout(() => {
-      this.isFormReady.set(true);
+      this.isFormReady = true;
     }, 100);
   }
 
-  readonly activeConfig = computed<formUiConfig | null>(() => {
-    if (this.isDialog && this.dialogData?.config) {
-      return this.dialogData.config;
-    }
-    return this.config();
-  });
+  private buildForm(): void {
+    if (!this.config) return;
 
-  readonly activeInitialData = computed<Record<string, any> | null>(() => {
-    if (this.isDialog && this.dialogData?.initialData) {
-      return this.dialogData.initialData;
-    }
-    return this.initialData();
-  });
-
-  private buildForm(
-    config: formUiConfig,
-    initialData?: Record<string, any>
-  ): void {
     const controls: Record<string, any> = {};
 
-    for (const field of config.fields) {
+    for (const field of this.config.fields) {
       const validators: any[] = [];
 
       // Add required validator if field is required
@@ -135,7 +111,7 @@ export class FormUiComponent implements OnInit, AfterViewInit {
         validators.push(Validators.maxLength(field.maxLength));
       }
 
-      const initialValue = initialData?.[field.name] ?? '';
+      const initialValue = this.initialData?.[field.name] ?? '';
 
       if (field.type === 'checkbox') {
         // For checkboxes, use FormArray to handle multiple selections
@@ -172,7 +148,7 @@ export class FormUiComponent implements OnInit, AfterViewInit {
           if (field.input1.maxLength !== undefined) {
             input1Validators.push(Validators.maxLength(field.input1.maxLength));
           }
-          const input1Value = initialData?.[field.input1.name] ?? '';
+          const input1Value = this.initialData?.[field.input1.name] ?? '';
           const input1Control = new FormControl(input1Value, input1Validators);
           // Disable if specified in config
           if (field.input1.disabled) {
@@ -198,7 +174,7 @@ export class FormUiComponent implements OnInit, AfterViewInit {
           if (field.input2.maxLength !== undefined) {
             input2Validators.push(Validators.maxLength(field.input2.maxLength));
           }
-          const input2Value = initialData?.[field.input2.name] ?? '';
+          const input2Value = this.initialData?.[field.input2.name] ?? '';
           const input2Control = new FormControl(input2Value, input2Validators);
           // Disable if specified in config
           if (field.input2.disabled) {
@@ -211,29 +187,24 @@ export class FormUiComponent implements OnInit, AfterViewInit {
       }
     }
 
-    this.form.set(this.fb.group(controls));
+    this.form = this.fb.group(controls);
   }
 
   onSubmit(): void {
-    const form = this.form();
-    if (!form) {
-      return;
-    }
-
-    if (form.valid) {
+    if (this.form.valid) {
       // Merge form data with selected files
-      const formData = { ...form.value };
+      const formData = { ...this.form.value };
 
       // Replace file_selected flags with actual file objects
-      Object.keys(this.selectedFiles()).forEach((fieldName) => {
-        formData[fieldName] = this.selectedFiles()[fieldName];
+      Object.keys(this.selectedFiles).forEach((fieldName) => {
+        formData[fieldName] = this.selectedFiles[fieldName];
       });
 
       // Do NOT close dialog automatically on submit.
       // Emit the data and let the parent decide when to close (e.g., on API success)
       this.formSubmit.emit(formData);
     } else {
-      this.markFormGroupTouched(form);
+      this.markFormGroupTouched();
     }
   }
 
@@ -245,19 +216,15 @@ export class FormUiComponent implements OnInit, AfterViewInit {
     }
   }
 
-  private markFormGroupTouched(form: FormGroup): void {
-    Object.keys(form.controls).forEach((key) => {
-      const control = form.get(key);
+  private markFormGroupTouched(): void {
+    Object.keys(this.form.controls).forEach((key) => {
+      const control = this.form.get(key);
       control?.markAsTouched();
     });
   }
 
   getFieldError(fieldName: string): string {
-    const form = this.form();
-    if (!form) {
-      return '';
-    }
-    const control = form.get(fieldName);
+    const control = this.form.get(fieldName);
     if (control?.errors && control.touched) {
       if (control.errors['required']) {
         return `${this.getFieldLabel(fieldName)} مطلوب`;
@@ -286,17 +253,16 @@ export class FormUiComponent implements OnInit, AfterViewInit {
   }
 
   private getPatternErrorMessage(fieldName: string): string | null {
-    const config = this.activeConfig();
-    if (!config) return null;
+    if (!this.config) return null;
 
     // Check in regular fields
-    const field = config.fields.find((f) => f.name === fieldName);
+    const field = this.config.fields.find((f) => f.name === fieldName);
     if (field?.patternErrorMessage) {
       return field.patternErrorMessage;
     }
 
     // Check in two-inputs fields (input1 and input2)
-    for (const f of config.fields) {
+    for (const f of this.config.fields) {
       if (f.type === 'two-inputs') {
         if (f.input1?.name === fieldName && f.input1.patternErrorMessage) {
           return f.input1.patternErrorMessage;
@@ -311,19 +277,14 @@ export class FormUiComponent implements OnInit, AfterViewInit {
   }
 
   private getFieldLabel(fieldName: string): string {
-    const config = this.activeConfig();
-    if (!config) return fieldName;
-    const field = config.fields.find((f) => f.name === fieldName);
+    if (!this.config) return fieldName;
+    const field = this.config.fields.find((f) => f.name === fieldName);
     return field?.label || fieldName;
   }
 
   onCheckboxChange(fieldName: string, optionValue: any, event: any): void {
-    const form = this.form();
-    if (!form) {
-      return;
-    }
-    const checkboxArray = form.get(fieldName) as FormArray;
-    const field = this.activeConfig()?.fields.find((f) => f.name === fieldName);
+    const checkboxArray = this.form.get(fieldName) as FormArray;
+    const field = this.config?.fields.find((f) => f.name === fieldName);
 
     if (field && field.options) {
       const optionIndex = field.options.findIndex(
@@ -336,49 +297,38 @@ export class FormUiComponent implements OnInit, AfterViewInit {
   }
 
   onFileChange(fieldName: string, event: any): void {
-    const form = this.form();
-    if (!form) {
-      return;
-    }
     const file = event.target.files[0];
     if (file) {
       // Store the file in a separate property instead of form control
-      this.selectedFiles.update((current) => ({
-        ...current,
-        [fieldName]: file,
-      }));
+      if (!this.selectedFiles) {
+        this.selectedFiles = {};
+      }
+      this.selectedFiles[fieldName] = file;
 
       // Set a flag in the form control to indicate file is selected
-      form.get(fieldName)?.setValue('file_selected');
+      this.form.get(fieldName)?.setValue('file_selected');
     }
   }
 
   getFileInputText(fieldName: string): string {
-    const files = this.selectedFiles();
-    if (files && files[fieldName]) {
-      return files[fieldName].name || 'تم اختيار ملف';
+    if (this.selectedFiles && this.selectedFiles[fieldName]) {
+      return this.selectedFiles[fieldName].name || 'تم اختيار ملف';
     }
     return 'اختر ملف أو اسحب الملف هنا';
   }
 
   // Get the actual file object
   getSelectedFile(fieldName: string): File | null {
-    const files = this.selectedFiles();
-    return files && files[fieldName]
-      ? files[fieldName]
+    return this.selectedFiles && this.selectedFiles[fieldName]
+      ? this.selectedFiles[fieldName]
       : null;
   }
 
   // Clear selected file
   clearFile(fieldName: string): void {
-    const files = this.selectedFiles();
-    if (files && files[fieldName]) {
-      this.selectedFiles.update((current) => {
-        const next = { ...current };
-        delete next[fieldName];
-        return next;
-      });
-      this.form()?.get(fieldName)?.setValue('');
+    if (this.selectedFiles && this.selectedFiles[fieldName]) {
+      delete this.selectedFiles[fieldName];
+      this.form.get(fieldName)?.setValue('');
     }
   }
 
@@ -386,7 +336,7 @@ export class FormUiComponent implements OnInit, AfterViewInit {
   @HostListener('document:click', ['$event'])
   onDocumentClick(event: MouseEvent): void {
     // Only handle if form is configured and ready
-    if (!this.activeConfig() || !this.isFormReady()) {
+    if (!this.config || !this.isFormReady) {
       return;
     }
 

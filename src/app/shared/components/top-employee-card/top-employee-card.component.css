@@ -1,0 +1,256 @@
+/* ========================================
+   Top Salespeople Section
+   ======================================== */
+
+.top-salespeople-section {
+  position: relative;
+  padding: 20px;
+  border-radius: 16px;
+  background: var(--bg-light);
+  margin: 20px 0;
+}
+
+/* Border Corners */
+.border-card {
+  position: relative;
+}
+
+.corner {
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  pointer-events: none;
+  border-radius: 12px;
+  background-repeat: no-repeat;
+}
+
+.corner.tl {
+  top: 0;
+  left: 0;
+  background: linear-gradient(to right, var(--secondary-color) 4px, transparent 100%) top left no-repeat,
+    linear-gradient(to bottom, var(--secondary-color) 4px, transparent 100%) top left no-repeat;
+  background-size: 100% 6px, 6px 100%;
+}
+
+.corner.tr {
+  top: 0;
+  right: 0;
+  background: linear-gradient(to left, var(--secondary-color) 4px, transparent 100%) top right no-repeat,
+    linear-gradient(to bottom, var(--secondary-color) 4px, transparent 100%) top right no-repeat;
+  background-size: 100% 6px, 6px 100%;
+}
+
+.corner.bl {
+  bottom: 0;
+  left: 0;
+  background: linear-gradient(to right, var(--secondary-color) 4px, transparent 100%) bottom left no-repeat,
+    linear-gradient(to top, var(--secondary-color) 4px, transparent 100%) bottom left no-repeat;
+  background-size: 100% 6px, 6px 100%;
+}
+
+.corner.br {
+  bottom: 0;
+  right: 0;
+  background: linear-gradient(to left, var(--secondary-color) 4px, transparent 100%) bottom right no-repeat,
+    linear-gradient(to top, var(--secondary-color) 4px, transparent 100%) bottom right no-repeat;
+  background-size: 100% 6px, 6px 100%;
+}
+
+/* Section Title */
+.section-title {
+  color: var(--primary-color);
+  font-size: 24px;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+  text-shadow: 0 0 10px var(--primary-color-dark);
+}
+
+/* Salespeople List */
+.salespeople-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 20px;
+}
+
+/* Salesperson Card */
+.salesperson-card {
+  position: relative;
+  background: rgba(17, 24, 31, 0.9);
+  border-radius: 16px;
+  padding: 24px;
+  transition: all 0.3s ease;
+  border: 2px solid transparent;
+  overflow: hidden;
+}
+
+.salesperson-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--primary-color), var(--secondary-color));
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.salesperson-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 30px rgba(70, 227, 255, 0.3);
+}
+
+.salesperson-card:hover::before {
+  opacity: 1;
+}
+
+/* Rank Colors */
+.rank-1 {
+  border-color: #ffd700;
+  background: linear-gradient(135deg, rgba(255, 215, 0, 0.1), rgba(17, 24, 31, 0.9));
+}
+
+.rank-2 {
+  border-color: #c0c0c0;
+  background: linear-gradient(135deg, rgba(192, 192, 192, 0.1), rgba(17, 24, 31, 0.9));
+}
+
+.rank-3 {
+  border-color: #cd7f32;
+  background: linear-gradient(135deg, rgba(205, 127, 50, 0.1), rgba(17, 24, 31, 0.9));
+}
+
+/* Salesperson Content */
+.salesperson-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  text-align: center;
+}
+
+/* Profile Section */
+.profile-section {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+/* Medal Badge */
+.medal-badge {
+  position: absolute;
+  top: -10px;
+  right: -10px;
+  z-index: 2;
+}
+
+.medal-icon {
+  width: 40px;
+  height: 40px;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Profile Image */
+.profile-image-wrapper {
+  position: relative;
+  width: 80px;
+  height: 80px;
+}
+
+.profile-image {
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary-color);
+  box-shadow: 0 4px 12px rgba(70, 227, 255, 0.3);
+  transition: all 0.3s ease;
+}
+
+.salesperson-card:hover .profile-image {
+  transform: scale(1.1);
+  border-color: var(--secondary-color);
+}
+
+/* Salesperson Name */
+.salesperson-name {
+  color: var(--white-color);
+  font-size: 18px;
+  font-weight: 600;
+  margin: 0;
+  transition: color 0.3s ease;
+}
+
+.salesperson-card:hover .salesperson-name {
+  color: var(--primary-color);
+}
+
+/* Stat Item */
+.stat-item {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 12px;
+  background: rgba(70, 227, 255, 0.05);
+  border-radius: 8px;
+  border: 1px solid rgba(70, 227, 255, 0.1);
+  transition: all 0.3s ease;
+}
+
+.salesperson-card:hover .stat-item {
+  background: rgba(70, 227, 255, 0.1);
+  border-color: rgba(70, 227, 255, 0.2);
+}
+
+.stat-label {
+  color: var(--secondary-color);
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-value {
+  color: var(--white-color);
+  font-size: 16px;
+  font-weight: 700;
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+  .salespeople-list {
+    grid-template-columns: 1fr;
+  }
+
+  .section-title {
+    font-size: 20px;
+  }
+
+  .salesperson-card {
+    padding: 20px;
+  }
+
+  .profile-image-wrapper {
+    width: 60px;
+    height: 60px;
+  }
+
+  .medal-icon {
+    width: 32px;
+    height: 32px;
+  }
+}

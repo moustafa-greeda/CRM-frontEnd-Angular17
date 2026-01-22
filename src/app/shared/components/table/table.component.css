@@ -1,3 +1,6 @@
+:root{
+    --accent-yellow: #ffd700;
+}
 /* Table Container */
 .table-container {
   position: relative;
@@ -841,7 +844,7 @@
 }
 
 .note-btn {
-  color: var(--accent-yellow);
+  color: var(--accent-yellow , #fff);
   border-radius: 6px;
   border: 1.5px solid var(--accent-yellow);
   background: rgba(69, 72, 72, 0.38);

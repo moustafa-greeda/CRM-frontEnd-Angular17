@@ -1,15 +1,12 @@
 <div class="parent-container">
-  <!-- page header -->
   <app-page-header
     [title]="pageTitle"
     [breadcrumb]="breadcrumb"
     [actionButtons]="actionButtons"
   ></app-page-header>
 
-  <!-- count card -->
   <app-count-card [stats]="stats"></app-count-card>
 
-  <!-- table -->
   <div class="table-container">
     <app-table
       [data]="companyData"
